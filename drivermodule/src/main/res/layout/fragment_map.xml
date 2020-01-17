@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <variable
+            name="map_fr_Model"
+            type="com.example.drivermodule.ViewModel.MapFrViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/blackTextColor"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_44"
+            android:layout_marginTop="@dimen/d_20"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:src="@drawable/rain" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:text="@{map_fr_Model.week}"
+                    android:textColor="@color/text_nomal_color"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:text="@{map_fr_Model.tem}"
+                    android:textColor="@color/text_nomal_color"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:layout_marginRight="@dimen/d_10"
+                    android:drawableLeft="@drawable/ic_line_location"
+                    android:drawablePadding="@dimen/d_05"
+                    android:text="@{map_fr_Model.loacation}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="@dimen/d_345"
+            android:layout_height="@dimen/d_115"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@drawable/map_fr_exzam"></LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="@dimen/d_345"
+            android:layout_height="@dimen/d_222"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@drawable/corner_fivewhite_dialog"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_50"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/ex_icon"
+                    android:drawablePadding="@dimen/d_10"
+                    android:gravity="center_vertical"
+                    android:text="哈雷 肥霸经典"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_15" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_17"
+                    android:src="@drawable/ic_refresh" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ex_map"
+
+                android:gravity="bottom">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/d_10"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="  6'32 "
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/s_18" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/total_distance"
+                            android:textColor="@color/text_nomal_color"
+                            android:textSize="@dimen/s_12" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="01:21:07"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/s_18" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/total_time"
+                            android:textColor="@color/text_nomal_color"
+                            android:textSize="@dimen/s_12" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/s_18" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/total_count"
+                            android:textColor="@color/text_nomal_color"
+                            android:textSize="@dimen/s_12" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/map_click"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:onClick="@{map_fr_Model::onClick}" />
+    </LinearLayout>
+
+</layout>
+
+

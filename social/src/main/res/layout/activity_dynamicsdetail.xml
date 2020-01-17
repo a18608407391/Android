@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="dynamics_detail_model"
+            type="com.cstec.administrator.social.ViewModel.DynamicsDetailViewModel"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_60"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
+            android:elevation="@dimen/d_05"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/back_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{dynamics_detail_model::onClick}"
+                android:src="@drawable/arrow_black" />
+
+            <ImageView
+                android:id="@+id/avatar_click"
+                android:layout_width="@dimen/d_36"
+                android:layout_height="@dimen/d_36"
+                android:layout_marginLeft="@dimen/d_15"
+                android:onClick="@{dynamics_detail_model::onClick}"
+                app:socialAvatar="@{dynamics_detail_model.avatar}" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{dynamics_detail_model.memberName}"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_12"
+                    app:ParseTime="@{dynamics_detail_model.field.createDate}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/focus_click"
+                    android:layout_width="@dimen/d_66"
+                    android:layout_height="@dimen/d_27"
+                    android:background="@drawable/focus_bg"
+                    android:gravity="center"
+                    android:onClick="@{dynamics_detail_model::onClick}"
+                    android:text="@string/focus_str"
+                    android:textColor="#FFFFFF"
+                    android:visibility="@{dynamics_detail_model.focus==0?View.VISIBLE:View.GONE}" />
+
+                <ImageView
+                    android:id="@+id/share_click"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:onClick="@{dynamics_detail_model::onClick}"
+                    android:src="@drawable/share_icon" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/top_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/d_40"
+                    android:text="@{dynamics_detail_model.field.publishContent}"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_15" />
+
+                <com.elder.zcommonmodule.NineGridSimpleLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:layout_marginRight="@dimen/d_10"
+                    app:initGridImage="@{dynamics_detail_model.field.dynamicImageList}"
+                    app:initGridListener="@{dynamics_detail_model.clickBinding}"
+                    app:oneImageHeight="@dimen/d_180"
+                    app:oneImageWidth="@dimen/d_180"></com.elder.zcommonmodule.NineGridSimpleLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:background="@color/grasd"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/d_40"
+                    android:orientation="vertical"
+                    android:visibility="@{dynamics_detail_model.field.parentDynamin==null?View.GONE:View.VISIBLE}">
+
+                    <com.elder.zcommonmodule.Widget.RichEditText.RichTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:layout_marginRight="@dimen/d_15"
+                        android:textColor="#121212"
+                        android:textSize="16sp"
+                        app:initRichText="@{dynamics_detail_model.field.parentDynamin}"
+                        app:spanClick="@{dynamics_detail_model.spanclick}" />
+
+                    <com.elder.zcommonmodule.NineGridSimpleLayout
+                        android:id="@+id/grid1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/d_10"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:layout_marginRight="@dimen/d_10"
+                        android:layout_marginTop="@dimen/d_10"
+                        app:initGridImage="@{dynamics_detail_model.field.parentDynamin.dynamicImageList}"
+                        app:initGridListener="@{dynamics_detail_model.clickBinding}"></com.elder.zcommonmodule.NineGridSimpleLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_15"
+                    android:drawableLeft="@drawable/location_icon"
+                    android:text="@{dynamics_detail_model.field.releaseAddress}"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_10"
+                    android:visibility="@{dynamics_detail_model.field.releaseAddress.isEmpty?View.GONE:View.VISIBLE}" />
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_1"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_15"
+                    android:background="@color/FivepercentBlackColor"></View>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_60"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <HorizontalScrollView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/social_linear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"></LinearLayout>
+                    </HorizontalScrollView>
+
+
+                    <TextView
+                        android:id="@+id/like_click"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@{dynamics_detail_model.like==1?@drawable/like_icon :@drawable/like_default}"
+                        android:drawablePadding="@dimen/d_05"
+                        android:gravity="center"
+                        android:onClick="@{dynamics_detail_model::onClick}"
+                        android:text="@{dynamics_detail_model.field.fabulousCount}" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_1"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:background="@color/FivepercentBlackColor"></View>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_15"
+                    android:text="@{dynamics_detail_model.commentText}"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_15" />
+
+
+                <com.cstec.administrator.social.ViewAdapter.CommentExpandableListView
+                    android:id="@+id/commonlist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/d_64"
+                    android:layout_marginTop="@dimen/d_20"
+                    android:divider="@null"
+                    android:listSelector="@android:color/transparent"
+                    android:scrollbars="none"></com.cstec.administrator.social.ViewAdapter.CommentExpandableListView>
+
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/collection_click"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginLeft="@dimen/d_15"
+                android:onClick="@{dynamics_detail_model::onClick}"
+                android:src="@{dynamics_detail_model.collection==0?@drawable/start_default:@drawable/star_icon}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@{dynamics_detail_model.collectionCount}"
+                android:textColor="#9A9A9A"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/comment_con" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="14dp"
+                android:text="@{dynamics_detail_model.commentCount}"
+                android:textColor="#9A9A9A"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/detail_page_do_comment"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="22dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:onClick="@{dynamics_detail_model::onCommentClick}"
+                android:paddingLeft="18dp"
+                android:text="发布评论"
+                android:textColor="#B6B6B6"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

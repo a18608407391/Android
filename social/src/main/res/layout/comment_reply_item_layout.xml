@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="@dimen/d_47"
+        android:background="#F6F6F6" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="@dimen/d_47"
+            android:layout_weight="1"
+            android:background="#F6F6F6"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/reply_item_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_12" />
+
+                <TextView
+                    android:id="@+id/return_talk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 回复 "
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_12" />
+
+                <TextView
+                    android:id="@+id/second_reply_item_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/reply_item_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="10"
+                android:paddingLeft="4dp"
+                android:paddingRight="8dp"
+                android:textColor="#121212"
+                android:textSize="@dimen/s_12" />
+
+
+        </LinearLayout>
+
+        <!--<ImageView-->
+            <!--android:id="@+id/reply_comment_item_like"-->
+            <!--android:layout_width="@dimen/d_15"-->
+            <!--android:layout_height="@dimen/d_15"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_marginRight="@dimen/d_10"-->
+            <!--android:theme="?android:selectableItemBackgroundBorderless" />-->
+    </LinearLayout>
+</LinearLayout>

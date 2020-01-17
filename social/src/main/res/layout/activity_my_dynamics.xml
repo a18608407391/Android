@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="my_dynamics_viewmodel"
+            type="com.cstec.administrator.social.ViewModel.MyDynamicsViewModel"></variable>
+    </data>
+
+
+    <com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mysocial_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <include
+                layout="@layout/private_tab_layout"
+                app:data="@{my_dynamics_viewmodel.titleComponent}"></include>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_15"
+                app:initRecyclerView="@{my_dynamics_viewmodel.adapter}"
+                app:onLoadMoreCommand="@{my_dynamics_viewmodel.scrollerBinding}"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+    </com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>
+</layout>

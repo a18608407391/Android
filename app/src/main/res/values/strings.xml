@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="log_str">首页</string>
+    <string name="privateTitle">我的</string>
+    <string name="wx_loading_login">正在微信登录中......</string>
+    <string name="location_address">当前定位城市</string>
+    <string name="same_city">同城</string>
+
+    <string name="checked_exception_out">检测到您上一次骑行时异常退出，是否继续上一次骑行！</string>
+    <string name="checked_not_white">检测到您没有设置应用白名单，在骑行过程中关闭屏幕或退到后台有可能会导致定位点获取不准确！</string>
+    <string name="ingnore">以后再说</string>
+    <string name="go_update">前往更新</string>
+    <string name="update_notice">版本更新</string>
+    <string name="active_notify">您当前有个活动火热报名中，是否前往？</string>
+
+</resources>

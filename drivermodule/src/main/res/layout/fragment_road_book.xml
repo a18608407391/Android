@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="road_book_model"
+            type="com.example.drivermodule.ViewModel.RoadBookViewModel"></variable>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_10"
+                android:background="@color/transparent"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/road_book_hori_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"></LinearLayout>
+            </HorizontalScrollView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_80   ">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="@dimen/d_90"
+                        android:layout_height="@dimen/d_44"
+                        android:layout_marginBottom="@dimen/d_10"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:background="@drawable/corner_dialog"
+                        android:gravity="center"
+                        android:visibility="@{road_book_model.FrondVisible?View.VISIBLE:View.GONE}"
+                        android:onClick="@{road_book_model.NextRoadClick}"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/road_sign_left"
+                            android:drawablePadding="@dimen/d_05"
+                            android:text="前方路况"
+                            android:textColor="#121212"
+                            android:textSize="@dimen/s_12" />
+                    </LinearLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/bottom_pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_149"
+                        android:orientation="horizontal"
+                        app:adapter="@{road_book_model.pagerAdapter}"
+                        app:itemBinding="@{road_book_model.itemBinding}"
+                        app:items="@{road_book_model.items}"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        app:onScrollStateChangedCommand="@{road_book_model.ScrollChangeCommand}"></android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_182"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/d_10"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:background="@drawable/corner_dialog"
+                    android:orientation="vertical"
+                    android:visibility="@{road_book_model.bottomVisible?View.VISIBLE:View.GONE}">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_25"
+                        android:text="@{road_book_model.title}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_24"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:text="@{road_book_model.pointAddress}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/s_15" />
+
+                    <TextView
+                        android:id="@+id/distance_andtime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:text="@{road_book_model.distance_andtime}"
+                        android:textColor="#67676F"
+                        android:textSize="@dimen/s_12" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginRight="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/span_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textColor="@color/nomalTextColor"
+                            android:textSize="@dimen/s_15"
+                            app:HtmlText="@{road_book_model.discribe}" />
+
+
+                        <TextView
+                            android:id="@+id/road_line_detail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{road_book_model::onClick}"
+                            android:text="详情>>"
+                            android:textColor="@color/line_color"
+                            android:textSize="@dimen/s_15" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/behavior_by_route"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_500"
+            android:background="@drawable/corner_dialog_18dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="@dimen/d_80"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_15"
+                android:src="@drawable/corner_line_circle" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_20"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/road_tab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:initTabLayout="@{road_book_model.dayCount}"
+                    app:tabIndicatorColor="#000000"
+                    app:tabIndicatorHeight="@dimen/d_02"
+                    app:tabMinWidth="@dimen/d_60"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="#000000"
+                    app:tabTextAppearance="@style/TabLayoutTextStyle"
+                    app:tabTextColor="#66121212"></android.support.design.widget.TabLayout>
+
+            </LinearLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/roadbook_recycle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="always"
+                app:adapter="@{road_book_model.driverViewModel.recycleComponent.adapter}"
+                app:itemBinding="@{road_book_model.driverViewModel.recycleComponent.itemsbinding}"
+                app:items="@{road_book_model.driverViewModel.recycleComponent.megerList}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

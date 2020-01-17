@@ -1,0 +1,20 @@
+<resources>
+
+    <string name="download">下载</string>
+    <string name="download_tolocal">下载到本地</string>
+    <string name="share">分享</string>
+    <string name="add_water_maker">添加水印</string>
+    <string name="save_local_success">保存成功！</string>
+    <string name="save_net_success">收藏成功！</string>
+    <string name="save_net_fail">收藏失败！</string>
+    <string name="save_local_fail">保存失败</string>
+    <string name="check_picture">查看图片</string>
+    <string name="party_str">俱乐部</string>
+    <string name="my_restore">我的收藏</string>
+    <string name="system_busy">系统繁忙</string>
+    <string name="my_fans">我的粉丝</string>
+    <string name="http_focus_request">正在获取关注数据......</string>
+    <string name="cancle_focus_warm">是否取消关注？</string>
+    <string name="my_like">我的点赞</string>
+    <string name="get_http_location">正在获取定位信息中......</string>
+</resources>

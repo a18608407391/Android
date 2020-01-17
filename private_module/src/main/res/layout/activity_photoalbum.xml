@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="photo_album"
+            type="com.example.private_module.ViewModel.PhotoAlbumViewModel"></variable>
+    </data>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+        android:id="@+id/Swiperefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/app_theme_white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <include
+                layout="@layout/base_tab_layout"
+                app:data="@{photo_album.component}"></include>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/empty"
+                android:visibility="@{photo_album.isEmpty?View.VISIBLE: View.GONE}" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/album_recy"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginRight="@dimen/d_01"
+                android:layout_weight="1"
+                app:adapter="@{photo_album.adapter}"
+                app:itemBinding="@{photo_album.itemBinding}"
+                app:items="@{photo_album.items}"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:onLoadMoreCommand="@{photo_album.onLoadMoreCommand}"
+                app:spanCount="4"></android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_60"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="@{photo_album.isLongClick?View.VISIBLE:View.GONE}">
+
+                <TextView
+                    android:id="@+id/album_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_16"
+                    android:background="@drawable/little_btn_bg"
+                    android:gravity="center"
+                    android:onClick="@{photo_album::onClick}"
+                    android:text="@string/delete"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/album_cancle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_16"
+                    android:background="@drawable/little_btn_bg"
+                    android:gravity="center"
+                    android:onClick="@{photo_album::onClick}"
+                    android:text="@string/cancle"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_16"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/line_color"
+                        android:text="@string/all_select"
+                        app:onCheckedChangedCommand="@{photo_album.checkCommand}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:text="@{photo_album.checedCount}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{photo_album.totalCount}" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/empty_visible" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+</layout>

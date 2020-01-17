@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="picmodel"
+            type="com.cstec.administrator.social.ViewModel.DynamicsPhotoViewModel"></variable>
+
+        <variable
+            name="position"
+            type="Integer"></variable>
+
+        <variable
+            name="picture_img_item"
+            type="com.elder.zcommonmodule.PictureInfo"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="1dp">
+
+        <ImageView
+            android:layout_width="@dimen/d_93"
+            android:layout_height="@dimen/d_93"
+            android:onClick="@{()->picmodel.onItemClick(picture_img_item,position)}"
+            android:scaleType="centerCrop"
+            app:socialImageselectLoad="@{picture_img_item.path}" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:onClick="@{()->picmodel.onAdapterItemClick(picture_img_item,position)}"
+            android:padding="@dimen/d_10"
+            android:src="@{picture_img_item.isCheced?@drawable/check_on:@drawable/circle_stroke_drawable}"
+            android:visibility="@{picture_img_item.size==0?View.GONE:View.VISIBLE}" />
+    </RelativeLayout>
+</layout>

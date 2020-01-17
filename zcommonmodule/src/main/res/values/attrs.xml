@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="suitlines">
+        <attr name="xySize" format="float" />
+        <attr name="xyColor" format="reference|color" />
+        <attr name="lineType">
+            <enum name="curve" value="0" />
+            <enum name="segment" value="1" />
+        </attr>
+        <attr name="lineStyle">
+            <enum name="solid" value="0" />
+            <enum name="dashed" value="1" />
+        </attr>
+        <attr name="needEdgeEffect" format="boolean" />
+        <attr name="colorEdgeEffect" format="reference|color" />
+        <attr name="needClickHint" format="boolean" />
+        <attr name="colorHint" format="reference|color" />
+        <attr name="maxOfVisible" format="integer" />
+        <attr name="countOfY" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="SwipeBackLayout">
+        <attr name="edge_size" format="dimension"/>
+        <attr name="edge_flag">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+            <enum name="bottom" value="2" />
+            <enum name="all" value="3" />
+        </attr>
+        <attr name="shadow_left" format="reference"/>
+        <attr name="shadow_right" format="reference"/>
+        <attr name="shadow_bottom" format="reference"/>
+    </declare-styleable>
+
+    <attr name="SwipeBackLayoutStyle" format="reference"/>
+    <declare-styleable name="RatioImageView">
+        <attr name="ratio" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="NineGridLayout">
+        <attr name="sapcing" format="dimension"/>
+        <attr name="oneImageWidth" format="dimension"/>
+        <attr name="oneImageHeight" format="dimension"/>
+        <attr name="image_ratio" format="float"/>
+    </declare-styleable>
+    <declare-styleable name="MaxHeightRecyclerView">
+        <attr name="maxHeight" format="dimension" />
+    </declare-styleable>
+
+
+    <declare-styleable name="RestrictFlowLayout">
+        <attr name="width_space" format="dimension" />
+        <attr name="height_space" format="dimension" />
+    </declare-styleable>
+
+        <declare-styleable name="RichEditText">
+            <attr name="richMaxLength" format="integer" />
+            <attr name="richIconSize" format="dimension" />
+            <attr name="editTextAtUtilJumpListener" format="reference" />
+            <attr name="richEditTopicList" format="reference" />
+            <attr name="richEditNameList" format="reference" />
+            <attr name="richEditColorAtUser" format="string" />
+            <attr name="richEditColorTopic" format="string" />
+        </declare-styleable>
+
+        <declare-styleable name="EmojiLayout">
+            <attr name="richIndicatorFocus" format="integer|reference" />
+            <attr name="richIndicatorUnFocus" format="integer|reference" />
+            <attr name="richDeleteIconName" format="string" />
+            <attr name="richMarginBottom" format="dimension" />
+            <attr name="richMarginTop" format="dimension" />
+            <attr name="richLayoutNumColumns" format="integer|reference" />
+            <attr name="richLayoutNumRows" format="integer|reference" />
+        </declare-styleable>
+
+        <declare-styleable name="RichTextView">
+            <attr name="needNumberShow" format="boolean" />
+            <attr name="needUrlShow" format="boolean" />
+            <attr name="richText" format="string" />
+            <attr name="topicList" format="reference" />
+            <attr name="nameList" format="reference" />
+            <attr name="atColor" format="color" />
+            <attr name="topicColor" format="color" />
+            <attr name="linkColor" format="color" />
+            <attr name="emojiSize" format="integer|reference" />
+            <attr name="emojiVerticalAlignment" format="integer|reference" />
+            <attr name="spanUrlCallBackListener" format="reference" />
+            <attr name="spanAtUserCallBackListener" format="reference" />
+            <attr name="spanTopicCallBackListener" format="reference" />
+            <attr name="spanCreateListener" format="reference" />
+        </declare-styleable>
+        <attr name="cpCancelTextSize" format="dimension|reference" />
+        <attr name="cpCancelTextColor" format="color|reference" />
+
+        <attr name="cpClearTextIcon" format="reference" />
+        <attr name="cpSearchTextSize" format="dimension|reference" />
+        <attr name="cpSearchTextColor" format="color|reference" />
+        <attr name="cpSearchHintText" format="string|reference" />
+        <attr name="cpSearchHintTextColor" format="color|reference" />
+        <attr name="cpSearchCursorDrawable" format="reference" />
+
+        <attr name="cpListItemTextSize" format="dimension|reference" />
+        <attr name="cpListItemTextColor" format="color|reference" />
+        <attr name="cpListItemHeight" format="dimension|reference"/>
+
+        <attr name="cpEmptyIcon" format="reference"/>
+        <attr name="cpEmptyIconWidth" format="dimension|reference"/>
+        <attr name="cpEmptyIconHeight" format="dimension|reference"/>
+        <attr name="cpEmptyText" format="string|reference"/>
+        <attr name="cpEmptyTextSize" format="dimension|reference"/>
+        <attr name="cpEmptyTextColor" format="color|reference"/>
+
+        <attr name="cpGridItemBackground" format="color|reference"/>
+        <attr name="cpGridItemSpace" format="reference"/>
+
+        <attr name="cpSectionHeight" format="reference"/>
+        <attr name="cpSectionTextSize" format="reference" />
+        <attr name="cpSectionTextColor" format="reference" />
+        <attr name="cpSectionBackground" format="reference" />
+
+        <attr name="cpIndexBarTextSize" format="reference" />
+        <attr name="cpIndexBarNormalTextColor" format="reference" />
+        <attr name="cpIndexBarSelectedTextColor" format="reference" />
+
+        <attr name="cpOverlayWidth" format="dimension|reference"/>
+        <attr name="cpOverlayHeight" format="dimension|reference"/>
+        <attr name="cpOverlayTextSize" format="dimension|reference"/>
+        <attr name="cpOverlayTextColor" format="color|reference"/>
+        <attr name="cpOverlayBackground" format="color|reference"/>
+
+
+    <declare-styleable name="ExpandableTextView">
+        <attr name="maxCollapsedLines" format="integer"/>
+        <attr name="animDuration" format="integer"/>
+        <attr name="contentTextSize" format="dimension"/>
+        <attr name="contentTextColor" format="color"/>
+        <attr name="contentLineSpacingMultiplier" format="float"/>
+        <attr name="expandDrawable" format="reference"/>
+        <attr name="expandText" format="string"/>
+        <attr name="collapseDrawable" format="reference"/>
+        <attr name="collapseText" format="string"/>
+        <attr name="expandCollapseTextColor" format="color"/>
+        <attr name="DrawableAndTextGravity">
+            <enum name="left" value="0"/>
+            <enum name="center" value="1"/>
+            <enum name="right" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>

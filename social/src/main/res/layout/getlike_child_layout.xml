@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.DoubleClickListener"></variable>
+
+
+        <variable
+            name="getlike_model"
+            type="com.elder.zcommonmodule.Entity.LikesEntity.LikeBean"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/d_15"
+        android:paddingRight="@dimen/d_15"
+        android:paddingTop="@dimen/d_15">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                android:onClick="@{()->listener.onImgClick(getlike_model)}"
+                app:socialAvatar="@{getlike_model.memberImages}" />
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_10"
+                android:layout_marginRight="@dimen/d_10"
+                android:layout_weight="1"
+                android:onClick="@{()->listener.onItemClick(getlike_model)}"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/d_45"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{getlike_model.memberName}"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_15" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="  赞了你:  "
+                        android:textColor="#A4A4A4"
+                        android:textSize="@dimen/s_12" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@{getlike_model.dynamicCommentParent==null?getlike_model.releaseDynamicParent.publishContent:getlike_model.dynamicCommentParent.commentContent}"
+                        android:textColor="#A4A4A4"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_05"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_10"
+                    app:ParseTime="@{getlike_model.createDate}" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                android:scaleType="centerCrop"
+                android:onClick="@{()->listener.onItemClick(getlike_model)}"
+                app:localEntityImageLoad="@{getlike_model.releaseDynamicParent}" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_1"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@color/FivepercentBlackColor"></View>
+    </LinearLayout>
+</layout>

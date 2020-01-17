@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="register_enterpassModel"
+            type="com.elder.blogin.ViewModel.RegisterEnterPassViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/appThemeBlack"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/d_30">
+
+            <ImageView
+                android:id="@+id/main_back_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:onClick="@{register_enterpassModel::onClick}"
+                android:src="@drawable/arrow_white" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@{register_enterpassModel.phone}"
+            android:textColor="@color/telephone_text_color"
+            android:textSize="@dimen/s_26" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/s_10"
+            android:text="@{register_enterpassModel.topText}"
+            android:textColor="@color/nomalTextColor"
+            android:textSize="@dimen/s_15" />
+
+
+        <LinearLayout
+            android:id="@+id/enter_verifyCode_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_60"
+            android:layout_marginLeft="@dimen/d_31"
+            android:layout_marginRight="@dimen/d_31"
+            android:layout_marginTop="@dimen/d_30"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="@dimen/d_60"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="@string/EnterverifyCodeHint"
+                android:inputType="number"
+                android:maxLength="8"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/nomalTextColor"
+                android:textSize="@dimen/s_22"
+                app:textChanged="@{register_enterpassModel.verifyTextChange}" />
+
+            <TextView
+                android:id="@+id/start_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_20"
+                android:clickable="@{register_enterpassModel.clickable}"
+                android:onClick="@{register_enterpassModel::onClick}"
+                android:text="@{register_enterpassModel.text}"
+                android:textColor="@{register_enterpassModel.textColor}"
+                android:textSize="@dimen/s_18" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/enter_verifyCode_layout_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/d_31"
+            android:layout_marginRight="@dimen/d_31"
+            android:background="@color/FivepercentWhiteColor"></View>
+
+        <LinearLayout
+            android:id="@+id/enterpass_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_60"
+            android:layout_marginLeft="@dimen/d_31"
+            android:layout_marginRight="@dimen/d_31"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <EditText
+                android:id="@+id/register_pass"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/d_60"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="@string/EnterPassWordWarm"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:maxLength="18"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/nomalTextColor"
+                android:textSize="@dimen/s_22"
+                app:textChanged="@{register_enterpassModel.passwordTextChange}" />
+
+            <ImageView
+                android:id="@+id/register_visible_icon"
+                android:layout_width="wrap_content"
+                android:onClick="@{register_enterpassModel::onClick}"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_20"
+                android:src="@{register_enterpassModel.visibleIcon?@drawable/visible_icon:@drawable/invisible_icon}" />
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/bottom_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/d_31"
+            android:layout_marginRight="@dimen/d_31"
+            android:background="@color/FivepercentWhiteColor"></View>
+
+        <LinearLayout
+            android:id="@+id/warm_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_22"
+            android:layout_marginTop="@dimen/d_20">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/password_enter_warm"
+                android:textColor="@color/nomalTextColor"
+                android:textSize="@dimen/s_12" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/register_btn"
+            android:layout_width="@dimen/d_300"
+            android:layout_height="@dimen/d_50"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@drawable/register_btn_shape_nomal"
+            android:gravity="center"
+            android:onClick="@{register_enterpassModel::onClick}"
+            android:text="@string/confirm"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/s_15" />
+
+    </LinearLayout>
+</layout>

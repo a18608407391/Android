@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_130"
+    android:layout_height="@dimen/d_49"
+    android:background="@drawable/ic_window_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:id="@+id/left_img"
+        android:layout_marginLeft="@dimen/d_7"
+        android:layout_width="@dimen/d_32"
+        android:layout_height="@dimen/d_32"
+        android:src="@drawable/road_book_ex_icon" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/d_7"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_marginRight="@dimen/d_7"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/top_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#1A051D"
+            android:text="太平山"
+            android:singleLine="true"
+            android:textSize="@dimen/s_12" />
+
+        <TextView
+            android:id="@+id/bottom_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#A5A5BC"
+            android:singleLine="true"
+            android:text="常州新北区河..."
+            android:textSize="@dimen/s_11" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,142 @@
+<LinearLayout android:id="@+id/behavior"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#00FFFFFF"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:line="http://schemas.android.com/tools">
+
+
+    <LinearLayout
+        android:layout_width="@dimen/d_345"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_10"
+        android:background="@drawable/corner_dialog"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="@string/today"
+                android:textColor="@color/nomalTextColor"
+                android:textSize="@dimen/s_15" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:text="14℃/24℃"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_18" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="@dimen/d_345"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d_10"
+            android:layout_marginTop="@dimen/d_10"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/horizontalLinear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"></LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/d_345"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/d_10"
+        android:layout_marginTop="@dimen/d_10"
+        android:background="@drawable/corner_dialog"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:drawableLeft="@drawable/ic_elevation"
+                    android:drawablePadding="@dimen/d_05"
+                    android:text="@string/height" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hightest"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="326.70"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_18" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="m"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.elder.zcommonmodule.Widget.Chart.SuitLines
+                android:id="@+id/suitlines"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_150"
+                android:layout_marginTop="@dimen/d_10"
+                line:Style="solid"
+                line:colorEdgeEffect="@color/colorPrimaryDark"
+                line:colorHint="@color/colorPrimary"
+                line:countOfY="6"
+                line:lineType="curve"
+                line:maxOfVisible="7"
+                line:needClickHint="true"
+                line:needEdgeEffect="true"
+                line:xyColor="@color/colorAccent"
+                line:xySize="8" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

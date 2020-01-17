@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="road_book_three_entity"
+            type="com.example.drivermodule.Entity.RoadBook.RoadBookRecycleEntity"></variable>
+
+        <variable
+            name="child_road_book_model"
+            type="com.example.drivermodule.Component.SimpleRecycleComponent"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_15"
+        android:layout_marginRight="@dimen/d_15"
+        android:layout_marginTop="@dimen/d_20"
+        android:elevation="@dimen/d_05"
+        android:layout_marginBottom="@dimen/d_20"
+        android:background="@drawable/corner_dialog">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/roadbook_child_recycle"
+            android:layout_width="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:adapter="@{child_road_book_model.childAdapter}"
+            app:items="@{child_road_book_model.childItems}"
+            app:itemBinding="@{child_road_book_model.childBinding}"
+            android:layout_marginBottom="@dimen/d_20"
+            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+</layout>

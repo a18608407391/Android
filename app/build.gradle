@@ -1,0 +1,84 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.elder.amoski"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 20
+        versionName "1.2.3"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
+        packagingOptions {
+            exclude 'assets/ap1.data'
+            exclude 'assets/marker_gps_no_sharing.png'
+            exclude 'assets/map_assets/roadarrow.data'
+            exclude 'assets/location_map_gps_locked.png'
+            exclude 'assets/location_map_gps_3d.png'
+        }
+        manifestPlaceholders = [
+                JPUSH_PKGNAME : "com.elder.amoski",
+                JPUSH_APPKEY : "35e2033d379dabfde25d9321", //JPush上注册的包名对应的appkey.
+                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+        ]
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+    }
+    dataBinding {
+        enabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+//    aaptOptions.cruncherEnabled = false
+//    aaptOptions.useNewCruncher = false
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
+    buildToolsVersion '27.0.3'
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+kapt {
+    generateStubs = true
+}
+
+dependencies {
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    kapt 'com.alibaba:arouter-annotation:1.0.4'
+    kapt rootProject.ext.dependencies["arouter-compiler"]
+    implementation 'com.liulishuo.filedownloader:library:1.7.7'
+    api project(':blogin')
+    api project(':private_module')
+    api project(':party_module')
+    api project(':drivermodule')
+    api project(':same_city_module')
+    api project(':social')
+    api project(':chart_module')
+}
+

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="player"
+            type="com.elder.logrecodemodule.ViewModel.PlayerViewModel"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/screen_view">
+
+        <com.amap.api.maps.TextureMapView
+            android:id="@+id/player_mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></com.amap.api.maps.TextureMapView>
+
+
+        <com.elder.zcommonmodule.Widget.FixedTextureVideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+        <ImageView
+            android:id="@+id/player_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_16"
+            android:layout_marginTop="@dimen/d_30"
+            android:onClick="@{player::onClick}"
+            android:src="@drawable/arrow_white" />
+
+        <ImageView
+            android:id="@+id/upload"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/d_30"
+            android:onClick="@{player::onClick}"
+            android:layout_marginRight="@dimen/d_16"
+            android:visibility="@{player.upload?View.VISIBLE:View.GONE}"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_system_update" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_16"
+            android:layout_marginTop="@dimen/d_100"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/acse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/user_avater"
+                    android:layout_width="@dimen/d_60"
+                    android:layout_height="@dimen/d_60"
+                    android:layout_marginLeft="@dimen/d_05"
+                    android:padding="5dp"
+                    app:cardCornerRadius="@dimen/d_30">
+
+                    <ImageView
+                        android:id="@+id/user_fr_avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:localAvatar="@{player.player_avatar}" />
+                </android.support.v7.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:text="@{player.name}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s_22" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/scroll_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/d_10"
+            android:layout_marginTop="@dimen/d_20"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{player.distance}"
+                android:textAppearance="@style/TextAppearanceFontPath"
+                android:textColor="@color/white"
+                android:textSize="@dimen/d_26" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:drawableLeft="@drawable/log_clock"
+                android:drawablePadding="@dimen/d_10"
+                android:gravity="center"
+                android:text="@{player.onTime}"
+                android:textAppearance="@style/TextAppearanceFontPath"
+                android:textColor="@color/white"
+                android:visibility="@{player.visibleField?View.VISIBLE:View.GONE}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_10"
+                android:drawableLeft="@drawable/log_spped"
+                android:drawablePadding="@dimen/d_10"
+                android:gravity="center"
+                android:text="@{player.onSpeed}"
+                android:textAppearance="@style/TextAppearanceFontPath"
+                android:textColor="@color/white"
+                android:visibility="@{player.visibleField?View.VISIBLE:View.GONE}" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/d_10"
+            android:layout_marginRight="@dimen/d_20"
+            android:src="@drawable/log_right_bottom" />
+
+
+        <ImageView
+            android:id="@+id/player_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:onClick="@{player::onClick}"
+            android:src="@drawable/player"
+            android:visibility="@{player.isPlay?View.GONE:View.VISIBLE}" />
+
+
+        <com.elder.zcommonmodule.Widget.SportTrailView
+            android:id="@+id/sportView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/out_bg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@drawable/start_earth">-->
+        <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:onClick="@{player::onClick}"-->
+        <!--android:src="@drawable/player" />-->
+        <!--</RelativeLayout>-->
+
+
+    </RelativeLayout>
+</layout>

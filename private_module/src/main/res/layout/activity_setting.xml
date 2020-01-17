@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="setting_viewmodel"
+            type="com.example.private_module.ViewModel.SettingViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{setting_viewmodel.component}"></include>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+        <LinearLayout
+            android:id="@+id/user_manager"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_20"
+            android:visibility="@{setting_viewmodel.visibleType==0?View.GONE:View.VISIBLE}"
+            android:onClick="@{setting_viewmodel::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/user_bond"
+              />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_request"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{setting_viewmodel::onClick}"
+            android:visibility="@{setting_viewmodel.visibleType==0?View.GONE:View.VISIBLE}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/request_idea" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/battery_request"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{setting_viewmodel::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/battery_request" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/start_self_request"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{setting_viewmodel::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/request_start_self" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="重启生效"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/god_model_request"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{setting_viewmodel::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/god_model" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/d_20"
+            android:layout_weight="1"
+            android:visibility="@{setting_viewmodel.visibleType==0?View.GONE:View.VISIBLE}"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/exit_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_30"
+                android:background="@drawable/register_btn_shape_nomal"
+                android:gravity="center"
+                android:onClick="@{setting_viewmodel::onClick}"
+                android:text="@string/exit_login"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

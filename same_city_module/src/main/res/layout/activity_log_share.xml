@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:line="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="log_share_model"
+            type="com.elder.logrecodemodule.ViewModel.LogShareViewModel"></variable>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:imgUrlBig="@{log_share_model.bigImg}"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <include
+                layout="@layout/base_tab_layout"
+                app:data="@{log_share_model.component}"></include>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/behavior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="@dimen/d_165"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_16"
+                    android:background="@drawable/corner_dialog"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_90"
+                        android:layout_marginTop="@dimen/d_13"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{log_share_model.userName}"
+                            android:textSize="@dimen/s_12" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{log_share_model.finishTime}"
+                            android:textSize="@dimen/s_12" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{log_share_model.Totaldistance}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_30" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/d_05"
+                                android:text="km"
+                                android:textSize="@dimen/s_14" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/toRoadLook"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/d_15"
+                            android:layout_weight="1"
+                            android:gravity="right|center_vertical"
+                            android:onClick="@{log_share_model::onClick}"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/trends_route" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_01"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:background="@color/FivepercentBlackColor"></View>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/d_05"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{log_share_model.averageRate}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_24" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/peisu"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{log_share_model.Totaltime}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_24" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/user_time"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{log_share_model.maxUp}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_24" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/up_hight"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/d_05"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{log_share_model.maxSpeed}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_24" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/fastest"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{log_share_model.direct}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_24" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/yawan"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{log_share_model.onehunSpeed}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_24" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0-100M"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="@dimen/d_65"
+                    android:layout_height="@dimen/d_65"
+                    android:layout_marginLeft="@dimen/d_18"
+                    android:gravity="center">
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/user_info_avater"
+                        android:layout_width="@dimen/d_65"
+                        android:layout_height="@dimen/d_65"
+                        android:background="@drawable/circle_no_stroke_drawable"
+                        app:cardCornerRadius="@dimen/d_30"
+                        app:cardElevation="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#FFFFFF"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/user_avater_icon"
+                                android:layout_width="@dimen/d_60"
+                                android:layout_height="@dimen/d_60"
+                                app:log_addcar_local="@{log_share_model.driverAvatar}" />
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_marginTop="@dimen/d_10"
+                android:background="@drawable/corner_dialog"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:layout_weight="1"
+                        android:gravity="left|center_vertical"
+                        android:text="@string/today"
+                        android:textColor="@color/nomalTextColor"
+                        android:textSize="@dimen/s_15" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/d_15"
+                        android:layout_weight="1"
+                        android:gravity="right|center_vertical"
+                        android:text="14℃/24℃"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_18" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/d_10"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/horizontalLinear"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"></LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_10"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_marginTop="@dimen/d_10"
+                android:background="@drawable/corner_dialog"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/d_15"
+                            android:drawableLeft="@drawable/ic_elevation"
+                            android:drawablePadding="@dimen/d_05"
+                            android:text="@string/height" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hightest"
+                            android:textColor="@color/nomalTextColor"
+                            android:textSize="@dimen/s_15" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{log_share_model.maxHight}"
+                            android:textColor="@color/blackTextColor"
+                            android:textSize="@dimen/s_18" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="m"
+                            android:textColor="@color/nomalTextColor"
+                            android:textSize="@dimen/s_15" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.elder.zcommonmodule.Widget.Chart.SuitLines
+                        android:id="@+id/basesult"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_150"
+                        android:layout_marginTop="@dimen/d_10"
+                        line:Style="solid"
+                        line:colorEdgeEffect="@color/colorPrimaryDark"
+                        line:colorHint="@color/colorPrimary"
+                        line:countOfY="20"
+                        line:lineType="curve"
+                        line:maxOfVisible="20"
+                        line:needClickHint="true"
+                        line:needEdgeEffect="true"
+                        line:xyColor="@color/colorAccent"
+                        line:xySize="8" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/share_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_10"
+                android:background="@drawable/login_btn_shape_nomal"
+                android:gravity="center"
+                android:text="分享"
+                android:onClick="@{log_share_model::onClick}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_15"></TextView>
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/d_10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="@{log_share_model.bottomVisible?View.GONE:View.VISIBLE}">
+
+                <TextView
+                    android:id="@+id/share_show"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_30"
+                    android:background="@drawable/register_btn_shape_nomal"
+                    android:gravity="center"
+                    android:onClick="@{log_share_model::onClick}"
+                    android:text="@string/showBottom"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </RelativeLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

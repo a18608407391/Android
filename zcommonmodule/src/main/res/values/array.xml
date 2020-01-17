@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="month_array">
+        <item>JAN</item>
+        <item>FEB</item>
+        <item>MAR</item>
+        <item>APR</item>
+        <item>MAY</item>
+        <item>JUN</item>
+        <item>JUL</item>
+        <item>AUG</item>
+        <item>SEPT</item>
+        <item>OCT</item>
+        <item>NOV</item>
+        <item>DEC</item>
+    </string-array>
+
+
+
+    <string-array name="team_roly_name">
+        <item>骑士</item>
+        <item>骑行官</item>
+        <item>家属</item>
+        <item>队长</item>
+        <item>安全官</item>
+        <item>后勤保障</item>
+    </string-array>
+</resources>

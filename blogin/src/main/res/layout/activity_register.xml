@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="register"
+            type="com.elder.blogin.ViewModel.RegisterViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/appThemeBlack"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <include layout="@layout/base_top_arrow"></include>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_29"
+            android:layout_marginRight="@dimen/d_29"
+            android:layout_marginTop="@dimen/d_55"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+86"
+                android:textColor="@color/colorWhite22"
+                android:textSize="@dimen/s_18" />
+
+            <EditText
+                android:id="@+id/register_edit"
+                android:layout_width="@dimen/d_315"
+                android:layout_height="@dimen/d_60"
+                android:layout_marginLeft="@dimen/d_15"
+                android:background="@null"
+                android:hint="@string/enter_phone_warm"
+                android:inputType="number"
+                android:maxLength="11"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite22"
+                app:textChanged="@{register.phoneChangeCommand}" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/d_29"
+            android:layout_marginRight="@dimen/d_29"
+            android:background="#22FFFFFF"></View>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginTop="@dimen/d_8"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/error_warm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{register.warmText}"
+                android:textColor="@color/warmColor"
+                android:textSize="@dimen/s_12" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/noPassLogin"
+                android:textColor="@color/colorWhite" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/forgetPassword"
+                android:textColor="@color/colorWhite" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/register_next"
+            android:layout_width="@dimen/d_300"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_30"
+            android:background="@{register.isClick?@drawable/register_btn_shape_nomal:@drawable/register_btn_shape_press }"
+            android:gravity="center"
+            android:onClick="@{register::onClick}"
+            android:text="@string/next"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/s_18" />
+
+        <TextView
+            android:id="@+id/noregister_warm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:text="@string/nopasswarm"
+            android:textColor="#6B6B6F"
+            android:textSize="@dimen/s_12" />
+
+
+        <LinearLayout
+            android:id="@+id/register_warm"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/d_40"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/isRegisterOrno"
+                android:textColor="@color/nomalTextColor"
+                android:textSize="@dimen/s_12" />
+
+            <TextView
+                android:id="@+id/return_login"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/isLogin"
+                android:textColor="@color/againSendColor"
+                android:textSize="@dimen/s_12" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</layout>

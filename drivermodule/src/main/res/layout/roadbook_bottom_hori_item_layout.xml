@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="horiDatas"
+            type="com.example.drivermodule.Entity.RoadBook.BottomHoriDatas"></variable>
+
+        <variable
+            name="road_model"
+            type="com.example.drivermodule.ViewModel.RoadBookViewModel"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/d_315"
+        android:layout_height="@dimen/d_120"
+        android:layout_marginLeft="@dimen/d_15"
+        android:background="@drawable/corner_dialog"
+        android:onClick="@{()->road_model.BottomhoriClick(horiDatas)}"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+
+                <RelativeLayout
+                    android:layout_width="@dimen/d_64"
+                    android:layout_height="@dimen/d_64"
+                    android:layout_marginLeft="@dimen/d_15">
+
+                    <ImageView
+                        android:layout_width="@dimen/d_64"
+                        android:layout_height="@dimen/d_64"
+                        app:LoadRoadBottomImg="@{horiDatas.imgUrl}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s_11"
+                        android:background="@drawable/pic_yellow"
+                        android:text="@{horiDatas.number}" />
+
+                </RelativeLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_weight="1"
+                    android:onClick="@{()->road_model.MiddleRoadClick(horiDatas)}"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{horiDatas.topTv}"
+                        android:textColor="#1A051D"
+                        android:textSize="@dimen/s_15" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:drawableLeft="@drawable/location_tv_left"
+                        android:singleLine="true"
+                        android:text="@{horiDatas.describe}"
+                        android:textColor="#A5A5BC"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_10"
+                    android:onClick="@{()->road_model.toNavi(horiDatas)}"
+                    android:src="@drawable/road_navi_icon" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/hori_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@{horiDatas.isCheck ?@color/line_color:@color/black}"
+            android:textSize="@dimen/s_18" />
+
+    </RelativeLayout>
+</layout>
+
+

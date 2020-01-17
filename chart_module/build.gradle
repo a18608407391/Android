@@ -1,0 +1,37 @@
+apply from: "../module.gradle"
+
+dependencies {
+    api project(':zcommonmodule')
+    kapt rootProject.ext.dependencies["arouter-compiler"]
+
+}
+
+android {
+    defaultConfig {
+        compileSdkVersion 28
+        buildToolsVersion '27.0.3'
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'armeabi-v8a', 'x86', 'x86_64', 'mips', 'mips64'
+        }
+    }
+
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lintOptions {
+        disable 'GoogleAppIndexingWarning'
+    }
+}

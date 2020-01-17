@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="certification_ViewModel"
+            type="com.example.private_module.ViewModel.CertificationViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{certification_ViewModel.component}"></include>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/d_20">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@{certification_ViewModel.visibleEdit?@drawable/certification:@drawable/uncertification}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{certification_ViewModel.visibleEdit?@string/certification:@string/uncertification}"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_15" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_10"
+                android:text="@string/uncertification_warm"
+                android:textColor="@color/hint_color_edit"
+                android:textSize="@dimen/s_12" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/UserInfoLinearLayout">
+
+            <TextView
+                style="@style/UserInfoTextView1"
+                android:text="@string/real_name" />
+
+            <EditText
+                android:id="@+id/person_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="right"
+                android:hint="@string/enter_name_warm"
+                android:maxLength="12"
+                android:textColor="@color/blackTextColor"
+                android:textColorHint="@color/hint_color_edit"
+                android:textSize="@dimen/s_15"
+                android:visibility="@{certification_ViewModel.visibleEdit?View.GONE:View.VISIBLE}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:text="@{certification_ViewModel.name}"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_15"
+                android:visibility="@{certification_ViewModel.visibleEdit?View.VISIBLE:View.GONE}" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01">
+
+            <TextView
+                style="@style/UserInfoTextView1"
+                android:text="@string/code_type" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="right"
+                android:text="@string/shenfenzheng"
+                android:textColor="@color/hint_color_edit"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01">
+
+            <TextView
+                style="@style/UserInfoTextView1"
+                android:text="@string/code_number" />
+
+            <EditText
+                android:id="@+id/person_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_weight="1"
+                android:background="@null"
+                android:digits="xy0123456789"
+                android:gravity="right"
+                android:hint="@string/enter_code_warm"
+                android:maxLength="18"
+                android:textColor="@color/blackTextColor"
+                android:textColorHint="@color/hint_color_edit"
+                android:textSize="@dimen/s_15"
+                android:visibility="@{certification_ViewModel.visibleEdit?View.GONE:View.VISIBLE}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:text="@{certification_ViewModel.number}"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_15"
+                android:visibility="@{certification_ViewModel.visibleEdit?View.VISIBLE:View.GONE}" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom|center_horizontal"
+            android:visibility="@{certification_ViewModel.visibleEdit?View.GONE :View.VISIBLE}">
+
+
+            <TextView
+                android:id="@+id/start_auth"
+                android:layout_width="@dimen/d_300"
+                android:layout_height="@dimen/d_50"
+                android:layout_marginBottom="@dimen/d_15"
+                android:background="@drawable/birthday_dialog_bottom_ok"
+                android:gravity="center"
+                android:onClick="@{certification_ViewModel::onClick}"
+                android:text="@string/begin_certification"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

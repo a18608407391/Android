@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="social_model"
+            type="com.cstec.administrator.social.ViewModel.SocialViewModel"></variable>
+    </data>
+
+
+    <com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/social_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_50"
+                android:layout_marginTop="@dimen/d_20"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/mTabLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/d_42"
+                    android:layout_marginLeft="@dimen/d_15"
+                    app:tabIndicatorColor="@color/black"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabRippleColor="@color/trans"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/black"
+                    app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_marginRight="@dimen/d_15"
+                        android:src="@drawable/search_icon" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/social_viewpager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:adapter="@{social_model.adapter}"
+                    app:itemBinding="@{social_model.itemBinding}"
+                    app:items="@{social_model.items}"
+                    app:pageTitles="@{social_model.pagerTitle}"></android.support.v4.view.ViewPager>
+
+                <ImageView
+                    android:id="@+id/release_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="@dimen/d_20"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:onClick="@{social_model::onClick}"
+                    android:src="@drawable/release_photo" />
+            </RelativeLayout>
+        </LinearLayout>
+    </com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>
+</layout>

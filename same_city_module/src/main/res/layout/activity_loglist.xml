@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="log_recode_model"
+            type="com.elder.logrecodemodule.ViewModel.LogListViewModel"></variable>
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/blackTextColor"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_44"
+            android:layout_marginTop="@dimen/d_20">
+
+            <ImageView
+                android:id="@+id/log_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/d_16"
+                android:onClick="@{log_recode_model::onImgClick}"
+                android:src="@drawable/arrow_white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/driver_log"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_18" />
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_26"
+                android:gravity="center"
+                android:text="@{log_recode_model.years}"
+                android:onClick="@{log_recode_model::onClick}"
+                android:textColor="@color/line_color"
+                android:textSize="@dimen/s_16" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableRight="@drawable/up_arrow"
+                android:gravity="center"
+                android:text="年"
+                android:textColor="@color/line_color"
+                android:textSize="@dimen/s_16" />
+        </LinearLayout>
+
+
+        <HorizontalScrollView
+            android:id="@+id/hori_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/log_hori"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"></LinearLayout>
+
+        </HorizontalScrollView>
+
+
+        <LinearLayout
+            android:layout_width="@dimen/d_345"
+            android:layout_height="@dimen/d_91"
+            android:background="@drawable/corner_dialog"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="@{log_recode_model.isEmpty ?View.GONE :View.VISIBLE}">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{log_recode_model.totalDistance}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/d_05"
+                    android:text="@string/total_month_km"
+                    android:textColor="@color/hint_color_edit"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{log_recode_model.totalTime}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/d_05"
+                    android:text="@string/total_time"
+                    android:textColor="@color/hint_color_edit"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{log_recode_model.totalCount}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/d_05"
+                    android:text="@string/total_count"
+                    android:textColor="@color/hint_color_edit"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+
+        </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/empty"
+            android:visibility="@{log_recode_model.isEmpty?View.VISIBLE: View.GONE}" />
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/d_20"
+            app:adapter="@{log_recode_model.adapter}"
+            app:itemBinding="@{log_recode_model.itembinding}"
+            app:items="@{log_recode_model.items}"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:viewHolder="@{log_recode_model.viewHolder}"></android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
+</layout>

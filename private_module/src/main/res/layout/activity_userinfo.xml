@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="AcUserInfo_Model"
+            type="com.example.private_module.ViewModel.AcUserInfoViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{AcUserInfo_Model.component}"></include>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/app_theme_white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                style="@style/UserInfoLinearLayout"
+                android:layout_marginTop="@dimen/d_20">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:text="@string/avatar" />
+
+                <LinearLayout
+                    android:id="@+id/user_info_avater"
+                    android:onClick="@{AcUserInfo_Model::onClick}"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="@dimen/d_42"
+                        android:layout_height="@dimen/d_42"
+                        android:background="@drawable/circle_stroke_drawable"
+                        android:padding="@dimen/d_5"
+                        app:cardCornerRadius="@dimen/d_21">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/user_avater_icon"
+                                android:layout_width="@dimen/d_40"
+                                android:layout_height="@dimen/d_40"
+                                app:addcar_local="@{AcUserInfo_Model.avatars}" />
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <ImageView
+                        android:id="@+id/user_info_avater_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:onClick="@{AcUserInfo_Model::onClick}"
+                        android:src="@drawable/arrow_right_gray" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/UserInfoLinearLayout"
+                android:layout_marginTop="@dimen/d_01">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:text="@string/nickname" />
+
+                <LinearLayout
+                    android:id="@+id/user_info_nickname"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_weight="1"
+                    android:onClick="@{AcUserInfo_Model::onClick}"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+
+                        android:text="@{AcUserInfo_Model.nickname}"
+                        android:gravity="right"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_15" />
+
+                    <ImageView
+                        android:id="@+id/user_info_name_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:src="@drawable/arrow_right_gray" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/UserInfoLinearLayout"
+                android:id="@+id/user_info_gender"
+                android:onClick="@{AcUserInfo_Model::onClick}"
+                android:layout_marginTop="@dimen/d_01">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:text="性别" />
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{AcUserInfo_Model.gender}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_15" />
+
+                    <ImageView
+                        android:id="@+id/user_info_gender_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:onClick="@{AcUserInfo_Model::onClick}"
+                        android:src="@drawable/arrow_right_gray" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/UserInfoLinearLayout"
+                android:id="@+id/user_info_birthday"
+                android:onClick="@{AcUserInfo_Model::onClick}"
+                android:layout_marginTop="@dimen/d_20">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:text="出生年月" />
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{AcUserInfo_Model.birthday}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_15" />
+
+                    <ImageView
+                        android:id="@+id/user_info_birthday_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:onClick="@{AcUserInfo_Model::onClick}"
+                        android:src="@drawable/arrow_right_gray" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                style="@style/UserInfoLinearLayout"
+                android:id="@+id/user_info_address"
+                android:onClick="@{AcUserInfo_Model::onClick}"
+                android:layout_marginTop="@dimen/d_01">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:text="所在城市" />
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{AcUserInfo_Model.adress}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_15" />
+
+                    <ImageView
+                        android:id="@+id/user_info_address_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:onClick="@{AcUserInfo_Model::onClick}"
+                        android:src="@drawable/arrow_right_gray" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/UserInfoLinearLayout"
+                android:layout_marginTop="@dimen/d_20">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:text="简介" />
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_01"
+                android:layout_weight="1"
+                android:background="@color/white">
+
+                <EditText
+                    android:id="@+id/edit_introduce"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:gravity="left|top"
+                    android:hint="@string/enter_introduce_hint"
+                    android:paddingLeft="@dimen/d_10"
+                    android:text="@{AcUserInfo_Model.content}"
+                    app:textChanged="@{AcUserInfo_Model.contentChange}" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="@dimen/d_5"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/user_info_change_word"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{AcUserInfo_Model.contentSize}"
+                        android:textColor="@color/hint_color_edit"
+                        android:textSize="@dimen/s_15" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="/160"
+                        android:textColor="@color/hint_color_edit"
+                        android:textSize="@dimen/s_15" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

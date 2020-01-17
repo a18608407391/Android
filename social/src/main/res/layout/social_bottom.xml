@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="release_model"
+            type="com.cstec.administrator.social.ViewModel.ReleaseDynamicsViewModel"></variable>
+
+        <variable
+            name="social_bottom_item"
+            type="com.cstec.administrator.social.Entity.NearlyAdressEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_70"
+        android:layout_marginLeft="@dimen/d_15"
+        android:layout_marginRight="@dimen/d_15"
+        android:onClick="@{()->release_model.bottom_item_click(social_bottom_item)}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_69"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/location_icon2" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{social_bottom_item.name}"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_05"
+                    android:text="@{social_bottom_item.address}"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_12"
+                    android:visibility="@{social_bottom_item.address==null?View.GONE:View.VISIBLE}" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/FivepercentBlackColor"></View>
+    </LinearLayout>
+</layout>

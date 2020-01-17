@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="position"
+            type="Integer"></variable>
+
+        <variable
+            name="extra_model"
+            type="com.cstec.administrator.social.ViewModel.ReleaseDynamicsViewModel"></variable>
+
+        <variable
+            name="release_dynaimg"
+            type="String"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_05">
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="@{()->extra_model.ImageShowBig(release_dynaimg,position)}"
+            android:scaleType="centerCrop"
+            app:LoadPicture="@{release_dynaimg}" />
+
+        <ImageView
+            android:layout_width="@dimen/d_45"
+            android:layout_height="@dimen/d_45"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/d_10"
+            android:onClick="@{()->extra_model.ImageDelete(release_dynaimg,position)}"
+            android:src="@drawable/cancle_img_icon"
+            android:visibility="@{release_dynaimg.isEmpty?View.GONE:View.VISIBLE}" />
+    </RelativeLayout>
+</layout>

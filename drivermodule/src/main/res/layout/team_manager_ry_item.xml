@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="manager_items"
+            type="com.elder.zcommonmodule.Entity.PersonDatas"></variable>
+
+        <variable
+            name="position"
+            type="Integer"></variable>
+
+        <variable
+            name="manager_model_controller"
+            type="com.example.drivermodule.ViewModel.TeamManagerViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_60"
+        android:gravity="center_vertical"
+        android:background="@color/white"
+        android:onClick="@{()->manager_model_controller.onItemClick(position,manager_items)}"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_48"
+            android:layout_height="@dimen/d_48"
+            android:layout_marginLeft="@dimen/d_15"
+            app:TeamHead="@{manager_items.url}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:text="@{manager_items.name}"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_15" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/d_7"
+                android:drawablePadding="@dimen/d_10"
+                android:drawableRight="@drawable/arrow_right_gray"
+                android:gravity="center_vertical"
+                android:text="@{manager_items.teamName}"
+                android:textColor="@{manager_items.textColor}"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

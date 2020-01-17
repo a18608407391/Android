@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_225"
+    android:layout_height="@dimen/d_402">
+
+
+    <ImageView
+        android:id="@+id/share_item_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/share_second_bg" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_20"
+        android:layout_marginTop="@dimen/d_14"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="@dimen/d_40"
+            android:layout_height="@dimen/d_40">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/white_circle" />
+
+            <ImageView
+                android:id="@+id/share_item_avatar"
+                android:layout_width="@dimen/d_36"
+                android:layout_height="@dimen/d_36"
+                android:layout_centerInParent="true"
+                android:src="@drawable/default_avatar" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_10"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/share_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="爱摩老司机"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_07" />
+
+            <TextView
+                android:id="@+id/share_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2019-03-09 14:45"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_07" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_18"
+        android:layout_marginTop="@dimen/d_74"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/share_user_nomal_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/licheng_tv"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_07" />
+
+        <TextView
+            android:id="@+id/share_item_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_15" />
+
+        <TextView
+            android:id="@+id/share_user_nomal_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_16"
+            android:text="@string/user_time"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_07" />
+
+        <TextView
+            android:id="@+id/share_item_total_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="02:21:07"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_15" />
+
+
+        <TextView
+            android:id="@+id/share_user_nomal_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_16"
+            android:text="@string/peisu"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_07" />
+
+        <TextView
+            android:id="@+id/share_item_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_15" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="@dimen/d_190"
+        android:layout_height="@dimen/d_60"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/d_18"
+        android:background="@drawable/corner_dialog"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_12"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_09" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="满足你对骑行的美好期待"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_09" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_04"
+                android:background="@drawable/corner_green_dialog"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="长按识别二维码"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_06" />
+
+                <ImageView
+                    android:layout_width="@dimen/d_7"
+                    android:layout_height="@dimen/d_7"
+                    android:layout_marginLeft="@dimen/d_03"
+                    android:src="@drawable/share_item_arrow" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/d_36"
+            android:layout_height="@dimen/d_36"
+            android:layout_marginRight="@dimen/d_12"
+            android:src="@drawable/tencent_img" />
+
+    </LinearLayout>
+
+</RelativeLayout>

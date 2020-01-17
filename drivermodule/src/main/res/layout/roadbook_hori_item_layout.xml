@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="horiDatas"
+            type="com.example.drivermodule.Entity.RoadBook.HoriDatas"></variable>
+
+        <variable
+            name="road_model"
+            type="com.example.drivermodule.Component.SimpleRecycleComponent"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/d_68"
+        android:layout_height="@dimen/d_28"
+        android:layout_marginLeft="@dimen/d_10"
+        android:background="@drawable/corner_dialog_fivedp"
+        android:onClick="@{()->road_model.horiClick(horiDatas)}"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/hori_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@{horiDatas.title}"
+            android:textColor="@{horiDatas.isCheck ?@color/line_color:@color/black}"
+            android:textSize="@dimen/s_18" />
+
+    </RelativeLayout>
+</layout>
+
+

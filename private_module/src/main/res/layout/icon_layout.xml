@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="user_model"
+            type="com.example.private_module.ViewModel.UserInfoViewModel"></variable>
+
+        <variable
+            name="icon_model"
+            type="com.example.private_module.ViewModel.UserInfoViewModel.IconEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_marginTop="@dimen/d_10"
+        android:layout_width="@dimen/d_86"
+        android:layout_height="@dimen/d_46"
+        android:gravity="center"
+        android:onClick="@{()->user_model.IconClick(icon_model)}"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/d_05"
+            android:drawableTop="@{icon_model.icon}"
+            android:text="@{icon_model.title}"
+            android:textColor="#A4A4A4"
+            android:textSize="@dimen/s_12" />
+
+
+    </LinearLayout>
+</layout>
+
+

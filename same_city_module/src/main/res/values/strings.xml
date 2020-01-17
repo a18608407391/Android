@@ -1,0 +1,13 @@
+<resources>
+
+
+    <string name="log_detail">日志详情</string>
+    <string name="getDriverInfo">正在获取骑行数据信息!!!</string>
+    <string name="net_error">网络错误！</string>
+    <string name="not_team">无兄弟 不重机 让骑行更有乐趣</string>
+    <string name="location_error">正在获取定位点数据！！！</string>
+    <string name="add_team">加入队伍</string>
+    <string name="add_road_book">添加路书</string>
+    <string name="add_destrict">加入目的地</string>
+    <string name="add_ticket">添加电子票</string>
+</resources>

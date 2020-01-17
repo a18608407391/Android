@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="create_team"
+            type="com.example.drivermodule.ViewModel.CreateTeamViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{create_team.component}"></include>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_20"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_30"
+                android:src="@drawable/team_create_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_15"
+                android:text="@string/create_notice"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_18" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/create_btn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_50"
+                android:layout_marginTop="@dimen/d_34"
+                android:background="@drawable/login_btn_shape_nomal"
+                android:gravity="center"
+                android:onClick="@{create_team::onClick}"
+                android:text="@string/create_team"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_15" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:background="@drawable/team_corner_stroke_bg"
+                    android:gravity="center"
+                    android:hint="@string/team_create_number_hint"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:singleLine="true"
+                    app:textChanged="@{create_team.textChange}" />
+
+                <TextView
+                    android:id="@+id/join_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/d_50"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/login_btn_shape_nomal"
+                    android:gravity="center"
+                    android:onClick="@{create_team::onClick}"
+                    android:text="@string/join_team"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

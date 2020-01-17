@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="cavalier_ranking_model"
+            type="com.elder.logrecodemodule.ViewModel.CavalierRankingViewModel"></variable>
+    </data>
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_304"
+                android:background="@drawable/ranking_top">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_40"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:layout_marginTop="@dimen/d_40"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/ranking_arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{cavalier_ranking_model::onClick}"
+                            android:src="@drawable/arrow_white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/d_20"
+                            android:text="@{cavalier_ranking_model.title}"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/s_18" />
+                    </LinearLayout>
+
+
+                    <RadioGroup
+                        android:id="@+id/rg_ranking"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:layout_marginTop="@dimen/d_15"
+                        android:checkedButton="@id/cur_week"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <RadioButton
+                            android:id="@+id/cur_week"
+                            android:layout_width="@dimen/d_102"
+                            android:layout_height="@dimen/d_34"
+                            android:background="@drawable/ranking_select"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:text="本周"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/s_12" />
+
+                        <RadioButton
+                            android:id="@+id/last_week"
+                            android:layout_width="@dimen/d_102"
+                            android:layout_height="@dimen/d_34"
+                            android:background="@drawable/ranking_select"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:text="上周"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/s_12" />
+
+                    </RadioGroup>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:layout_weight="1"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/ranking_numbertwo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/d_15"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{cavalier_ranking_model::onClick}"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="@dimen/d_56"
+                                android:layout_height="@dimen/d_74"
+                                android:background="@drawable/ranking_round_number_two">
+
+                                <ImageView
+                                    android:layout_width="@dimen/d_56"
+                                    android:layout_height="@dimen/d_56"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_centerHorizontal="true"
+                                    app:log_addcar_local="@{cavalier_ranking_model.numberTwoUrl}" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ranking_number_two">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/d_10"
+                                        android:text="@{cavalier_ranking_model.numberTwoName}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_15" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@{cavalier_ranking_model.numberTwoDis}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_15" />
+                                </LinearLayout>
+
+                            </RelativeLayout>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ranking_numberone"
+                            android:layout_width="@dimen/d_135"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{cavalier_ranking_model::onClick}"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="@dimen/d_70"
+                                android:layout_height="@dimen/d_88"
+                                android:background="@drawable/ranking_round_number_one">
+
+                                <ImageView
+                                    android:layout_width="@dimen/d_70"
+                                    android:layout_height="@dimen/d_70"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="@dimen/d_05"
+                                    app:log_addcar_local="@{cavalier_ranking_model.numberOneUrl}" />
+                            </RelativeLayout>
+
+
+                            <RelativeLayout
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ranking_number_one">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/d_10"
+                                        android:text="@{cavalier_ranking_model.numberOneName}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_15" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@{cavalier_ranking_model.numberOneDis}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_15" />
+                                </LinearLayout>
+
+                            </RelativeLayout>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ranking_numberthree"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/d_15"
+                            android:gravity="center_horizontal"
+                            android:onClick="@{cavalier_ranking_model::onClick}"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="@dimen/d_56"
+                                android:layout_height="@dimen/d_74"
+                                android:background="@drawable/ranking_round_number_three">
+
+                                <ImageView
+                                    android:layout_width="@dimen/d_56"
+                                    android:layout_height="@dimen/d_56"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_centerHorizontal="true"
+                                    app:log_addcar_local="@{cavalier_ranking_model.numberThreeUrl}" />
+                            </RelativeLayout>
+
+
+                            <RelativeLayout
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ranking_number_three">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/d_10"
+                                        android:text="@{cavalier_ranking_model.numberThreeName}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_15" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@{cavalier_ranking_model.numberThreeDis}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_15" />
+                                </LinearLayout>
+
+                            </RelativeLayout>
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_70"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                app:adapter="@{cavalier_ranking_model.adapter}"
+                app:itemBinding="@{cavalier_ranking_model.cityPartyitemBinding}"
+                app:items="@{cavalier_ranking_model.items}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/myself_click"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_70"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:onClick="@{cavalier_ranking_model::onClick}"
+            android:paddingLeft="@dimen/d_15"
+            android:paddingRight="@dimen/d_15">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_69"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    fontPath="fonts/DIN-BoldItalic.otf"
+                    android:layout_width="@dimen/d_26"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="-"
+                    android:textColor="#585364"
+                    android:textSize="@dimen/s_22" />
+
+
+                <ImageView
+                    android:layout_width="@dimen/d_45"
+                    android:layout_height="@dimen/d_45"
+                    android:layout_marginLeft="@dimen/d_20"
+                    app:log_addcar_local="@{cavalier_ranking_model.memberImage}" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:text="@{cavalier_ranking_model.name}"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_15" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            fontPath="fonts/DIN-Regular.otf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#121212"
+                            android:textSize="@dimen/s_18"
+                            app:DistanceInit="@{cavalier_ranking_model.distanceSum}" />
+                    </RelativeLayout>
+
+                    <TextView
+                        fontPath="fonts/DIN-Regular.otf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_02"
+                        android:text="KM"
+                        android:textColor="#121212"
+                        android:textSize="@dimen/s_16" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

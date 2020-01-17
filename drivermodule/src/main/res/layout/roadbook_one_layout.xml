@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+
+        <import type="android.view.View"></import>
+        <variable
+            name="simple_model"
+            type="com.example.drivermodule.Component.SimpleRecycleComponent"></variable>
+
+        <variable
+            name="road_book_one_entity"
+            type="com.example.drivermodule.Entity.RoadBook.RoadBookDistanceEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/d_20"
+        android:elevation="@dimen/d_05"
+        android:gravity="center_horizontal"
+        android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_145"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
+            android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+            android:background="@drawable/corner_dialog"
+            android:elevation="@dimen/d_05"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_20"
+                android:layout_marginTop="@dimen/d_20"
+                android:text="@{road_book_one_entity.title}"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_18" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="@dimen/d_20"
+                android:layout_marginRight="@dimen/d_20"
+                android:layout_marginTop="@dimen/d_20"
+                android:background="@color/FivepercentBlackColor"></View>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_10"
+                android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{road_book_one_entity.distance}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_24"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:text="预计里程(km)"
+                        android:textColor="@color/nomalTextColor"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{road_book_one_entity.day_count}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_24"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:text="天数"
+                        android:textColor="@color/nomalTextColor"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{road_book_one_entity.pointCount}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_24"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:text="途经点"
+                        android:textColor="@color/nomalTextColor"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_80"
+            android:layout_marginLeft="@dimen/d_15"
+            android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@drawable/corner_dialog"
+            android:elevation="@dimen/d_05"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@{road_book_one_entity.carType}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_18"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_05"
+                    android:text="车型建议"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@{road_book_one_entity.seasonType}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_18"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_05"
+                    android:text="适宜天气"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@{road_book_one_entity.speType}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_18"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_05"
+                    android:text="特色标签"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d_10"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:visibility="@{road_book_one_entity.visible?View.GONE:View.VISIBLE}"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@drawable/corner_dialog"
+            android:elevation="@dimen/d_05"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_20"
+                android:layout_marginTop="@dimen/d_15"
+                android:text="路书介绍"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_15" />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_05"
+                android:layout_marginLeft="@dimen/d_20"
+                android:layout_marginRight="@dimen/d_20"
+                android:layout_marginTop="@dimen/d_05">
+
+                <TextView
+                    android:id="@+id/one_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:textColor="#67676F"
+                    android:textSize="@dimen/s_15"
+                    app:HtmlText="@{road_book_one_entity.content}"></TextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/one_tv"
+                    android:onClick="@{()->simple_model.detalClick(road_book_one_entity)}"
+                    android:text="详情>>"
+                    android:textColor="@color/line_color"
+                    android:textSize="@dimen/s_15" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

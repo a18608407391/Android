@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"></import>
+
+        <variable
+            name="add_car_ViewModel"
+            type="com.example.private_module.ViewModel.AddCarViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{add_car_ViewModel.component}"></include>
+
+        <com.elder.zcommonmodule.Widget.RecyclerCoverFlow
+            android:id="@+id/add_car_recycle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></com.elder.zcommonmodule.Widget.RecyclerCoverFlow>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_130"
+            android:gravity="center_horizontal"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/set_car_default"
+                android:layout_width="@dimen/d_300"
+                android:layout_height="@dimen/d_50"
+                android:visibility="@{add_car_ViewModel.bottomVisible ? View.VISIBLE : View.GONE}"
+                android:layout_marginBottom="@dimen/d_15"
+                android:background="@drawable/birthday_dialog_bottom_ok"
+                android:gravity="center"
+                android:onClick="@{add_car_ViewModel::onClick}"
+                android:text="@string/set_default"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_15" />
+            <TextView
+                android:id="@+id/delete_cars"
+                android:layout_width="@dimen/d_300"
+                android:layout_height="@dimen/d_50"
+                android:layout_marginBottom="@dimen/d_15"
+                android:visibility="@{add_car_ViewModel.bottomVisible ? View.VISIBLE : View.GONE}"
+                android:background="@drawable/birthday_dialog_bottom_cancle"
+                android:gravity="center"
+                android:onClick="@{add_car_ViewModel::onClick}"
+                android:text="@string/delete"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

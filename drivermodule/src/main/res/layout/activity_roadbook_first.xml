@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="roadbook_first_model"
+            type="com.example.drivermodule.ViewModel.RoadBook.RoadBookFirstViewModel"></variable>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.amap.api.maps.MapView
+            android:id="@+id/first_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></com.amap.api.maps.MapView>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <include
+                layout="@layout/base_tab_layout"
+                app:data="@{roadbook_first_model.componet}"></include>
+
+            <HorizontalScrollView
+                android:id="@+id/first_hori"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/road_book_first_hori_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    android:orientation="horizontal"></LinearLayout>
+
+            </HorizontalScrollView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/d_90">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_10"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:gravity="right"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/scenery_icon"
+                        android:visibility="gone" />
+
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/gas_icon"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/trafficlight_icon"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="@dimen/d_90"
+                    android:layout_height="@dimen/d_44"
+                    android:layout_marginBottom="@dimen/d_10"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:background="@drawable/corner_dialog"
+                    android:gravity="center"
+                    android:onClick="@{roadbook_first_model.NextRoadClick}"
+                    android:orientation="vertical"
+                    android:visibility="@{roadbook_first_model.FrondVisible?View.VISIBLE:View.GONE}">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/road_sign_left"
+                        android:drawablePadding="@dimen/d_05"
+                        android:text="前方路况"
+                        android:textColor="#121212"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/first_bottom_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_149"
+                    android:orientation="horizontal"
+                    android:scrollbars="none"
+                    app:adapter="@{roadbook_first_model.pagerAdapter}"
+                    app:itemBinding="@{roadbook_first_model.itemBinding}"
+                    app:items="@{roadbook_first_model.items}"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:onScrollStateChangedCommand="@{roadbook_first_model.ScrollChangeCommand}"></android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_182"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/d_10"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:background="@drawable/corner_dialog"
+                    android:orientation="vertical"
+                    android:visibility="@{roadbook_first_model.bottomVisible?View.VISIBLE:View.GONE}">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_25"
+                        android:text="@{roadbook_first_model.title}"
+                        android:textColor="@color/blackTextColor"
+                        android:textSize="@dimen/s_24"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:text="@{roadbook_first_model.pointAddress}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/s_15" />
+
+                    <TextView
+                        android:id="@+id/distance_andtime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:text="@{roadbook_first_model.distance_andtime}"
+                        android:textColor="#67676F"
+                        android:textSize="@dimen/s_12" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:layout_marginRight="@dimen/d_20"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/span_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:singleLine="true"
+                            android:textColor="@color/nomalTextColor"
+                            android:textSize="@dimen/s_15"
+                            app:HtmlText="@{roadbook_first_model.discribe}" />
+
+
+                        <TextView
+                            android:id="@+id/road_book_first_detail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{roadbook_first_model::onClick}"
+                            android:text="详情>>"
+                            android:textColor="@color/line_color"
+                            android:textSize="@dimen/s_15" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/behavior_by_rout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_500"
+            android:background="@drawable/corner_dialog_18dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="@dimen/d_80"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_15"
+                android:src="@drawable/corner_line_circle" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_20"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/first_road_tab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:initTabLayout="@{roadbook_first_model.dayCount}"
+                    app:tabIndicatorColor="#000000"
+                    app:tabIndicatorHeight="@dimen/d_02"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="#000000"
+                    app:tabTextColor="#66121212"></android.support.design.widget.TabLayout>
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/first_roadbook_recycle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="always"
+                app:adapter="@{roadbook_first_model.recycleComponent.adapter}"
+                app:itemBinding="@{roadbook_first_model.recycleComponent.itemsbinding}"
+                app:items="@{roadbook_first_model.recycleComponent.megerList}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

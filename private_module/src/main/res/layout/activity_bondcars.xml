@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="bond_car_Model"
+            type="com.example.private_module.ViewModel.BondCarViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{bond_car_Model.component}"></include>
+
+        <LinearLayout
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_20">
+
+            <EditText
+                android:id="@+id/car_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:background="@null"
+                android:hint="@string/set_car_name"
+                android:maxLength="20"
+                android:text="@{bond_car_Model.carName}"
+                android:textColor="@color/hint_color_edit"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cars_type_choice"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{bond_car_Model::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/brand_text" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{bond_car_Model.brandName}"
+                    android:textColor="@color/hint_color_edit"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_05"
+                    android:layout_marginRight="@dimen/d_05"
+                    android:text="@{bond_car_Model.brandTypeName}"
+                    android:textColor="@color/hint_color_edit"
+                    android:textSize="@dimen/s_15" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_260"
+            android:layout_marginTop="@dimen/d_01"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/bond_car_camera"
+                android:layout_width="@dimen/d_240"
+                android:layout_height="@dimen/d_160"
+                android:onClick="@{bond_car_Model::onClick}"
+                android:scaleType="center"
+                android:src="@drawable/bond_car_camera"
+                app:addcar="@{bond_car_Model.avatar}" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom|center_horizontal">
+
+            <TextView
+                android:id="@+id/make_sure_add_car"
+                android:layout_width="@dimen/d_300"
+                android:layout_height="@dimen/d_50"
+                android:layout_marginBottom="@dimen/d_15"
+                android:background="@drawable/birthday_dialog_bottom_ok"
+                android:gravity="center"
+                android:onClick="@{bond_car_Model::onClick}"
+                android:text="@string/confirm"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

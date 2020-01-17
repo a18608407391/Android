@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.SimpleClickListener"></variable>
+
+        <variable
+            name="search_child_model"
+            type="com.elder.zcommonmodule.Entity.CountryMemberEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_70"
+        android:onClick="@{()->listener.onSimpleClick(search_child_model)}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_69"
+            android:layout_marginLeft="@dimen/d_15"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                app:log_addcar_local="@{search_child_model.memberImage}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_10"
+                android:text="@{search_child_model.name}"
+                android:textColor="#121212"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_01"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:background="@color/FivepercentBlackColor"></View>
+    </LinearLayout>
+</layout>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="Chart_ViewModel"
+            type="com.cstec.administrator.chart_module.ViewModel.ChartViewModel"></variable>
+    </data>
+
+    <com.cstec.administrator.chart_module.View.MainView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/actionbar_layout_tmp"
+                android:layout_width="match_parent"
+                android:layout_height="53.33dp"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/actionbar_msg_btn"
+                        style="@style/ActionBarItem"
+                        android:drawableTop="@drawable/actionbar_conversation_bg"
+                        android:text="@string/actionbar_msg"/>
+
+                    <TextView
+                        android:id="@+id/all_unread_number"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@drawable/unread_msg_red"
+                        android:elevation="7dp"
+                        android:gravity="center"
+                        android:text="99+"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp"
+                        android:visibility="gone"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/actionbar_chatroom_btn"
+                        style="@style/ActionBarItem"
+                        android:drawableTop="@drawable/actionbar_msg_drawable_bg"
+                        android:text="@string/actionbar_chatroom_btn"/>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/actionbar_contact_btn"
+                        style="@style/ActionBarItem"
+                        android:drawableTop="@drawable/actionbar_contact_drawable_bg"
+                        android:text="@string/actionbar_contact"/>
+
+                    <TextView
+                        android:id="@+id/all_contact_number"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@drawable/unread_msg_red"
+                        android:elevation="7dp"
+                        android:gravity="center"
+                        android:text="99+"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp"
+                        android:visibility="gone"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/actionbar_me_btn"
+                        style="@style/ActionBarItem"
+                        android:drawableTop="@drawable/actionbar_me_drawable_bg"
+                        android:text="@string/actionbar_me"/>
+
+                </FrameLayout>
+            </LinearLayout>
+
+            <com.cstec.administrator.chart_module.View.ScrollControlViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/actionbar_layout_tmp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true">
+
+            </com.cstec.administrator.chart_module.View.ScrollControlViewPager>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.33dp"
+                android:layout_above="@+id/actionbar_layout_tmp"
+                android:background="#D2D2D2"/>
+
+        </RelativeLayout>
+
+
+    </com.cstec.administrator.chart_module.View.MainView>
+</layout>

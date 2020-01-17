@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/team_window_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/d_02"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/team_window_sna"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_05"
+            android:layout_marginRight="@dimen/d_05"
+            android:background="@drawable/little_tv_color_corner"
+            android:paddingLeft="@dimen/d_04"
+            android:paddingRight="@dimen/d_04"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_08" />
+
+
+        <TextView
+            android:id="@+id/team_window_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/d_05"
+            android:singleLine="true"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_12" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/team_distance_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_marginLeft="@dimen/d_05"
+        android:layout_marginRight="@dimen/d_05"
+        android:layout_marginTop="@dimen/d_02"
+        android:textColor="@color/blackTextColor"
+        android:layout_marginBottom="@dimen/d_05"
+        android:paddingBottom="@dimen/d_02"
+        android:text="当前距离"
+        android:textSize="@dimen/d_10" />
+
+
+</LinearLayout>

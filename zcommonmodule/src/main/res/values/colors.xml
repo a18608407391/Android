@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#3FC5C9</color>
+
+
+    <color name="passColor">#005FC1</color>
+
+    <color name="grasd">#FAFAFA</color>
+    <color name="appThemeBlack">#24272D</color>
+    <color name="app_theme_white">#F7F7FF</color>
+    <color name="nomalTextColor">#6B6B6F</color>
+    <color name="blackTextColor">#2D3138</color>
+    <color name="totaldrivebgColor">#E88F59</color>
+    <color name="color_stroke">#E9EBF3</color>
+    <color name="private_bottom_themeColor">#62B297</color>
+    <color name="warmColor">#E44A44</color>
+    <color name="FivepercentWhiteColor">#05FFFFFF</color>
+    <color name="FivepercentBlackColor">#05000000</color>
+    <color name="TenpercentBlackColor">#10000000</color>
+    <color name="againSendColor">#EA8D59</color>
+    <color name="colorWhite22">#D8D8D8</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="telephone_text_color">#62B297</color>
+    <color name="register_btn_bg_nomal">#62B297</color>
+    <color name="login_btn_bg_nomal">#21C766</color>
+    <color name="register_btn_bg_press">#D1D1D1</color>
+    <color name="hint_color_edit">#A5A5BC</color>
+    <color name="trans">#00FFFFFF</color>
+    <color name="text_nomal_color">#96969E</color>
+
+    <color name="light_line_color">#44D7B6</color>
+    <color name="line_color">#3FC5C9</color>
+    <color name="black_color">#1D1F25</color>
+    <!-- -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+    <color name="cp_colorPrimary">#3F51B5</color>
+    <color name="cp_colorPrimaryDark">#303F9F</color>
+    <color name="cp_colorAccent">#3F51B5</color>
+
+    <color name="cp_color_gray_light">#cdcdcd</color>
+    <color name="cp_color_gray">#999999</color>
+    <color name="cp_color_gray_deep">#666666</color>
+    <color name="cp_color_gray_dark">#333333</color>
+    <color name="cp_color_section_bg">#EDEDED</color>
+    <color name="cp_color_grid_item_bg">#f5f5f5</color>
+    <color name="black_12">#121212</color>
+</resources>

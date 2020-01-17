@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="share_viewModel"
+            type="com.example.drivermodule.ViewModel.ShareDriverViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/blackTextColor"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blackTextColor"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_44">
+
+            <ImageView
+                android:id="@+id/share_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/d_15"
+                android:onClick="@{share_viewModel::onClick}"
+                android:src="@drawable/arrow_white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/share_my_result"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_18" />
+        </RelativeLayout>
+
+        <com.elder.zcommonmodule.Widget.RecyclerCoverFlow
+            android:id="@+id/share_recycle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_402"
+            android:layout_marginTop="@dimen/d_10"></com.elder.zcommonmodule.Widget.RecyclerCoverFlow>
+
+
+        <!--<RelativeLayout-->
+        <!--android:id="@+id/share_layout"-->
+        <!--android:layout_width="@dimen/d_345"-->
+        <!--android:layout_height="@dimen/d_345"-->
+        <!--android:layout_marginTop="@dimen/d_20"-->
+        <!--android:background="@drawable/corner_dialog">-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/d_231"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="fitXY"-->
+        <!--app:LoadBitmapForbg="@{share_viewModel.bitmapcrop}" />-->
+        <!--</LinearLayout>-->
+
+
+        <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/d_130"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:background="#00FFFFFF">-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="@dimen/d_345"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="@dimen/d_16"-->
+        <!--android:background="@drawable/corner_dialog"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="@dimen/d_90"-->
+        <!--android:layout_marginTop="@dimen/d_13"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@{share_viewModel.nickname}"-->
+        <!--android:textSize="@dimen/s_12" />-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@{share_viewModel.date}"-->
+        <!--android:textSize="@dimen/s_12" />-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="@dimen/d_10"-->
+        <!--android:layout_marginTop="@dimen/d_10"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@{share_viewModel.distance}"-->
+        <!--android:textColor="@color/blackTextColor"-->
+        <!--android:textSize="@dimen/s_24" />-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/distance"-->
+        <!--android:textColor="@color/hint_color_edit"-->
+        <!--android:textSize="@dimen/s_12" />-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@{share_viewModel.peisu}"-->
+        <!--android:textColor="@color/blackTextColor"-->
+        <!--android:textSize="@dimen/s_24" />-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/peisu"-->
+        <!--android:textColor="@color/hint_color_edit"-->
+        <!--android:textSize="@dimen/s_12" />-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@{share_viewModel.time}"-->
+        <!--android:textColor="@color/blackTextColor"-->
+        <!--android:textSize="@dimen/s_24" />-->
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/user_time"-->
+        <!--android:textColor="@color/hint_color_edit"-->
+        <!--android:textSize="@dimen/s_12" />-->
+        <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="@dimen/d_65"-->
+        <!--android:layout_height="@dimen/d_65"-->
+        <!--android:layout_marginLeft="@dimen/d_18"-->
+        <!--android:gravity="center">-->
+
+        <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/user_info_avater"-->
+        <!--android:layout_width="@dimen/d_65"-->
+        <!--android:layout_height="@dimen/d_65"-->
+        <!--android:background="@drawable/circle_no_stroke_drawable"-->
+        <!--app:cardCornerRadius="@dimen/d_30"-->
+        <!--app:cardElevation="0dp">-->
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#FFFFFF"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/user_avater_icon"-->
+        <!--android:layout_width="@dimen/d_60"-->
+        <!--android:layout_height="@dimen/d_60"-->
+        <!--app:addcar_local="@{share_viewModel.avatar}" />-->
+        <!--</LinearLayout>-->
+        <!--</android.support.v7.widget.CardView>-->
+        <!--</LinearLayout>-->
+        <!--</RelativeLayout>-->
+        <!--</RelativeLayout>-->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:padding="@dimen/d_10">
+
+                <TextView
+                    android:id="@+id/share_left_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/set_dauf"
+                    android:onClick="@{share_viewModel::onClick}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:id="@+id/share_right_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="@{share_viewModel::onClick}"
+                    android:gravity="center"
+                    android:text="@string/change_bg"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/d_10">
+
+                    <TextView
+                        android:id="@+id/share_frend"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="@dimen/d_10"
+                        android:drawableTop="@drawable/share_wx"
+                        android:gravity="center"
+                        android:onClick="@{share_viewModel::onClick}"
+                        android:text="@string/wx_friend"
+                        android:textColor="@color/nomalTextColor"
+                        android:textSize="@dimen/s_12" />
+
+                    <TextView
+                        android:id="@+id/share_frendQ"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="@dimen/d_10"
+                        android:drawableTop="@drawable/share_friend"
+                        android:gravity="center"
+                        android:onClick="@{share_viewModel::onClick}"
+                        android:text="@string/wx_pyq"
+                        android:textColor="@color/nomalTextColor"
+                        android:textSize="@dimen/s_12" />
+
+                    <TextView
+                        android:id="@+id/restore_phone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawablePadding="@dimen/d_10"
+                        android:drawableTop="@drawable/restore_photo"
+                        android:gravity="center"
+                        android:onClick="@{share_viewModel::onClick}"
+                        android:text="@string/restore_phone"
+                        android:textColor="@color/nomalTextColor"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

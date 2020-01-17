@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="aite_user_model"
+            type="com.cstec.administrator.social.Entity.SocialUserModel"></variable>
+
+        <variable
+            name="aite_item_model"
+            type="com.cstec.administrator.social.ViewModel.AiteViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_60"
+        android:gravity="center_vertical"
+        android:onClick="@{()->aite_item_model.ItemClick(aite_user_model)}"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_45"
+            android:layout_height="@dimen/d_45"
+            android:layout_marginLeft="@dimen/d_15"
+            app:socialAvatar="@{aite_user_model.img}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:text="@{aite_user_model.name}"
+            android:textColor="#121212"
+            android:textSize="@dimen/s_15" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/d_15"
+                android:onClick="@{()->aite_item_model.ImgItemClick(aite_user_model)}"
+                android:src="@{aite_user_model.check ? @drawable/check_on :@drawable/check_off}" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

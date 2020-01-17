@@ -1,0 +1,17 @@
+<resources>
+    <string name="focus_str">关注</string>
+    <string name="focused_str">已关注</string>
+    <string name="hot_str">热门</string>
+    <string name="release_dynamics">发布动态</string>
+    <string name="warm_watch">提醒谁看</string>
+    <string name="send_dynamics_success">动态发布成功！</string>
+    <string name="focus_list_str">点赞列表</string>
+    <string name="focused_success">关注成功！</string>
+    <string name="single_commen_stop_warm">单次评论最多不超过140个字符！</string>
+    <string name="exit_edit">是否退出动态编辑？</string>
+    <string name="http_load_social">正在加载动态数据......</string>
+    <string name="delete_social">是否删除该动态？</string>
+    <string name="social_delete_success">动态删除成功！</string>
+    <string name="social_delete_fail">删除失败！请重试</string>
+    <string name="getHttp_location">正在获取定位信息......</string>
+</resources>

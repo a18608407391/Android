@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="auth_ViewModel"
+            type="com.example.private_module.ViewModel.AuthViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{auth_ViewModel.component}"></include>
+
+
+        <LinearLayout
+            android:id="@+id/user_auth"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_20"
+            android:onClick="@{auth_ViewModel::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/name_auth"></TextView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@{auth_ViewModel.isAuth?@drawable/isauth:@drawable/no_auth}" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{auth_ViewModel.isAuth?@string/auth:@string/no_auth}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_15" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/car_binder"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{auth_ViewModel::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/car_bond"></TextView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{auth_ViewModel.isBinder}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_15" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/click_there"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_12" />
+
+            <TextView
+                android:id="@+id/add_car"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{auth_ViewModel::onClick}"
+                android:text="@string/add_cars"
+                android:textColor="@color/totaldrivebgColor"
+                android:textSize="@dimen/s_12" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

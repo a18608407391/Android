@@ -1,0 +1,27 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cstec.administrator.chart_module" >
+
+    <application>
+
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="jchat.db"/>
+        <meta-data
+            android:name="AA_MODELS"
+            android:value="jiguang.chat.database.UserEntry, jiguang.chat.database.FriendEntry,              jiguang.chat.database.FriendRecommendEntry, jiguang.chat.database.GroupApplyEntry             , jiguang.chat.database.RefuseGroupEntry"/>
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="4"/> <!-- Since JCore2.0.0 Required SDK核心功能 -->
+
+
+        <service
+            android:name=".Serivce.ChartSerivce"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":pushcore">
+            <intent-filter>
+                <action android:name="cn.jiguang.user.service.action"/>
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

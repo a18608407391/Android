@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="road_book_recycle_three_entity"
+            type="com.example.drivermodule.Entity.RoadBook.RoadBookRecycleTwoEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_50"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_25"
+                android:layout_marginTop="@dimen/d_03"
+                android:src="@drawable/roadbook_circle_shape1" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_25"
+                android:layout_marginTop="@dimen/d_05"
+                android:src="@drawable/roadbook_circle_shape2" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_23"
+                android:layout_marginTop="@dimen/d_05"
+                android:src="@drawable/roadbook_circle_shape3" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_25"
+                android:layout_marginTop="@dimen/d_05"
+                android:src="@drawable/roadbook_circle_shape2" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_25"
+                android:layout_marginTop="@dimen/d_05"
+                android:src="@drawable/roadbook_circle_shape1" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_27"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{road_book_recycle_three_entity.distanceTv}" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

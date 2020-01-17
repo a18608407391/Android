@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <variable
+            name="search_model"
+            type="com.example.drivermodule.ViewModel.RoadBook.RoadBookSearchViewModel"></variable>
+
+        <variable
+            name="roadbook_itemmodel"
+            type="com.elder.zcommonmodule.Entity.HotData"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_80"
+        android:gravity="center_vertical"
+        android:onClick="@{()->search_model.ItemClick(roadbook_itemmodel)}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/d_15"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/d_29"
+                android:layout_height="@dimen/d_17"
+                android:background="@drawable/green_corner_bg"
+                android:gravity="center"
+                android:text="@{roadbook_itemmodel.ridingtime + @string/day_name}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_11" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_10"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="@{roadbook_itemmodel.title}"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@{roadbook_itemmodel.startaddr}"
+                android:textColor="@color/nomalTextColor"
+                android:textSize="@dimen/s_12" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:drawableLeft="@drawable/already_open_icon"
+                android:drawablePadding="@dimen/d_05"
+                android:gravity="center"
+                android:text="@{@string/empty + roadbook_itemmodel.lookcount}" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

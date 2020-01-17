@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+
+        <variable
+            name="horiDatas"
+            type="com.elder.zcommonmodule.Entity.HotData"></variable>
+
+
+        <variable
+            name="log_road_model"
+            type="com.elder.logrecodemodule.ViewModel.LogRecodeViewModel"></variable>
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/d_230"
+        android:layout_height="@dimen/d_120"
+        android:gravity="center"
+        android:onClick="@{()->log_road_model.itemClick(horiDatas)}"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:LoadLogRoadImg="@{horiDatas.bill}" />
+
+    </LinearLayout>
+</layout>

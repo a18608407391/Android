@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="hot_itemmodel"
+            type="com.example.drivermodule.ItemModel.HotRoadItemModle"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_20"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/hot_hori"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:AddHotDataView="@{hot_itemmodel.listDatas}"></LinearLayout>
+        </HorizontalScrollView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/hot_recy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d_10"
+            android:layout_marginTop="@dimen/d_10"
+            app:StrategySetting="@{hot_itemmodel}"
+            app:adapter="@{hot_itemmodel.adapter}"
+            app:itemBinding="@{hot_itemmodel.itemBinding}"
+            app:items="@{hot_itemmodel.items}"
+            app:layoutManager="android.support.v7.widget.StaggeredGridLayoutManager"
+            app:onLoadMoreCommand="@{hot_itemmodel.loadMore}"
+            app:spanCount="2"></android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+</layout>
+

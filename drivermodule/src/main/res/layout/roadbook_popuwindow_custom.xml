@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_130"
+    android:layout_height="@dimen/d_65"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="@dimen/d_114"
+        android:layout_height="@dimen/d_50"
+        android:gravity="center_vertical"
+        android:background="@drawable/road_book_windows"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/window_img"
+            android:layout_width="@dimen/d_32"
+            android:layout_height="@dimen/d_32"
+            android:layout_marginLeft="@dimen/d_05"
+            android:src="@drawable/road_windown_img" />
+
+        <TextView
+            android:id="@+id/window_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_05"
+            android:textColor="@color/theme_color"
+            android:textSize="@dimen/s_12"
+            android:text="D1"/>
+
+        <View
+            android:layout_width="@dimen/d_01"
+            android:layout_height="@dimen/d_32"
+            android:layout_marginLeft="@dimen/d_05"
+            android:background="#10000000"></View>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/window_day_count"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/s_16"
+                android:layout_height="wrap_content"
+                android:textColor="#121212"
+                android:textStyle="bold"
+                android:text="8"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FD9A1E"
+                android:textSize="@dimen/s_10"
+                android:text="途经点"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/maker_oval"/>
+
+
+
+</LinearLayout>

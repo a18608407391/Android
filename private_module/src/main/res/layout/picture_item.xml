@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="picmodel"
+            type="com.example.private_module.ViewModel.PictureSelectorViewModel"></variable>
+
+        <variable
+            name="position"
+            type="Integer"></variable>
+
+        <variable
+            name="picture_img_item"
+            type="com.elder.zcommonmodule.PictureInfo"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="@{()->picmodel.onItemClick(picture_img_item,position)}"
+            android:scaleType="centerCrop"
+            app:localImageLoad="@{picture_img_item.path}" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:onClick="@{()->picmodel.onAdapterItemClick(picture_img_item,position)}"
+            android:padding="@dimen/d_10"
+            android:src="@{picture_img_item.isCheced?@drawable/check_on:@drawable/circle_stroke_drawable}"
+            android:visibility="@{picture_img_item.size==0?View.GONE:View.VISIBLE}"
+
+
+            />
+    </RelativeLayout>
+</layout>

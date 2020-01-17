@@ -1,0 +1,21 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cstec.administrator.social">
+
+
+    <application>
+
+        <activity android:name=".Activity.DynamicsDetailActivity"></activity>
+        <activity android:name=".Activity.DynamicsPhotoActivity"></activity>
+        <activity
+            android:name=".Activity.ReleaseDynamicsActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+
+        <activity android:name=".Activity.AiteActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+
+        <activity android:name=".Activity.FocusListActivity"></activity>
+        <activity android:name=".Activity.MyDynamicsActivity"></activity>
+        <activity android:name=".Activity.DriverHomeActivity"></activity>
+        <activity android:name=".Activity.GetLikeActivity"></activity>
+    </application>
+</manifest>

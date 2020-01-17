@@ -1,0 +1,18 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.elder.blogin">
+
+    <application>
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:theme="@style/ActivityTheme"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activity.RegisterActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activity.LoginPassActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activity.RegisterEnterPasswordActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activity.WebActivity"
+            android:screenOrientation="portrait"></activity>
+    </application>
+</manifest>

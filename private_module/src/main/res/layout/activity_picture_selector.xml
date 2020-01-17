@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="picture_selector_ViewModel"
+            type="com.example.private_module.ViewModel.PictureSelectorViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{picture_selector_ViewModel.titleComponent}"></include>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recy"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="1dp"
+            app:adapter="@{picture_selector_ViewModel.adapter}"
+            app:itemBinding="@{picture_selector_ViewModel.itemBinding}"
+            app:items="@{picture_selector_ViewModel.items}"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:spanCount="4"
+            app:viewHolder="@{picture_selector_ViewModel.viewHolder}"></android.support.v7.widget.RecyclerView>
+
+
+    </LinearLayout>
+</layout>

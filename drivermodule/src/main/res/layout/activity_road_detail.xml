@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="road_detail_model"
+            type="com.example.drivermodule.ViewModel.RoadDetailViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{road_detail_model.component}"></include>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/d_20"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_30"
+                android:layout_marginTop="@dimen/d_19"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{road_detail_model.time}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_30" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_20"
+                    android:text="@{road_detail_model.distance}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_30" />
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:adapter="@{road_detail_model.adapter}"
+                app:itemBinding="@{road_detail_model.itemBinding}"
+                app:items="@{road_detail_model.items}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:viewHolder="@{road_detail_model.viewHolder}"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d_10"
+            android:layout_marginTop="@dimen/d_10"
+            android:onClick="@{road_detail_model::onClick}"
+            android:src="@drawable/start_driver" />
+
+
+    </LinearLayout>
+</layout>
+
+

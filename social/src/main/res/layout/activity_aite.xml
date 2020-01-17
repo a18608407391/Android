@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="aite_model"
+            type="com.cstec.administrator.social.ViewModel.AiteViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{aite_model.component}"></include>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_10"
+            android:background="@drawable/corner_gray_bg"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="@dimen/d_15"
+                android:layout_height="@dimen/d_15"
+                android:layout_marginLeft="@dimen/d_15"
+                android:src="@drawable/search_icon" />
+
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_10"
+                android:background="@color/trans"
+                android:hint="搜索好友与备注"
+                android:textColor="#A4A4A4"
+                app:textChanged="@{aite_model.onEditTextChange}"
+                android:textSize="@dimen/s_15" />
+
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            app:adapter="@{aite_model.adapter}"
+            app:itemBinding="@{aite_model.itemBinding}"
+            app:items="@{aite_model.items}"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+</layout>

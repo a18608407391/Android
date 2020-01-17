@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="near_itemmodel"
+            type="com.example.drivermodule.ItemModel.NearRoadItemModle"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginTop="@dimen/d_20">
+
+            <LinearLayout
+                android:id="@+id/hot_hori"
+                android:layout_width="match_parent"
+                app:AddHotDataView="@{near_itemmodel.listDatas}"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"></LinearLayout>
+        </HorizontalScrollView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/hot_recy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/d_10"
+            app:adapter="@{near_itemmodel.adapter}"
+            android:layout_marginLeft="@dimen/d_10"
+            app:StrategySettingNear="@{near_itemmodel}"
+            app:itemBinding="@{near_itemmodel.itemBinding}"
+            app:items="@{near_itemmodel.items}"
+            app:onLoadMoreCommand="@{near_itemmodel.loadMore}"
+            app:spanCount="2"
+            app:layoutManager="android.support.v7.widget.StaggeredGridLayoutManager"></android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+</layout>

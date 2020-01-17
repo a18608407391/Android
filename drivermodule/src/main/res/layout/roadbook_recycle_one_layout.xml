@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="road_book_recycle_one_entity"
+            type="com.example.drivermodule.Entity.RoadBook.RoadBookRecycleOneEntity"></variable>
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginTop="@dimen/d_25"
+            android:text="@{road_book_recycle_one_entity.title}"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_24"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginTop="@dimen/d_10"
+            android:text="@{road_book_recycle_one_entity.address}"
+            android:textColor="@color/black"
+            android:textSize="@dimen/s_15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:layout_marginTop="@dimen/d_10"
+            app:HtmlText="@{road_book_recycle_one_entity.addressContent}"
+            android:textColor="@color/nomalTextColor"
+            android:textSize="@dimen/s_15" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:layout_marginTop="@dimen/d_10"
+            android:visibility="gone"
+            android:text="用餐建议：早 午"
+            android:textColor="@color/nomalTextColor"
+            android:textSize="@dimen/s_15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:layout_marginTop="@dimen/d_10"
+            android:text="@{road_book_recycle_one_entity.driverTime}"
+            android:textColor="@color/nomalTextColor"
+            android:layout_marginBottom="@dimen/d_20"
+            android:textSize="@dimen/s_15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_20"
+            android:layout_marginTop="@dimen/d_05"
+            android:visibility="gone"
+            android:text="HILTON LONDON OLYMPIA或其他当地四星级市区酒店"
+            android:textColor="@color/nomalTextColor"
+            android:layout_marginBottom="@dimen/d_20"
+            android:textSize="@dimen/s_15" />
+    </LinearLayout>
+
+
+</layout>

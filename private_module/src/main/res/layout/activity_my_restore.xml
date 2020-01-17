@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="my_restore_model"
+            type="com.example.private_module.ViewModel.NewVession.MyRestoreViewModel"></variable>
+    </data>
+
+    <com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/restore_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <include
+                layout="@layout/private_tab_layout"
+                app:data="@{my_restore_model.titleComponent}"></include>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_15"
+                app:adapter="@{my_restore_model.adapter}"
+                app:itemBinding="@{my_restore_model.itemBinding}"
+                app:items="@{my_restore_model.items}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:onLoadMoreCommand="@{my_restore_model.scrollerBinding}"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+    </com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>
+</layout>

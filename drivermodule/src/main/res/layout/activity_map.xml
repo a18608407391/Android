@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="mapViewModel"
+            type="com.example.drivermodule.ViewModel.MapViewModel"></variable>
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include layout="@layout/base_tab_driver_layout"
+            app:data ="@{mapViewModel.component}"></include>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:keepScreenOn="true">
+
+            <com.amap.api.maps.MapView
+                android:id="@+id/map_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"></com.amap.api.maps.MapView>
+
+            <FrameLayout
+                android:id="@+id/main_rootlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include
+                    layout="@layout/right_five_btn_layout"
+                    android:visibility="@{mapViewModel.component.type == 1 ? View.VISIBLE : View.GONE}"
+                    app:data="@{mapViewModel.component}"></include>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/d_10"
+                android:background="@color/white"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="@{mapViewModel.showBottomSheet?View.VISIBLE:View.GONE}">
+
+                <TextView
+                    android:id="@+id/share_btn"
+                    android:layout_width="@dimen/d_345"
+                    android:layout_height="@dimen/d_50"
+                    android:layout_marginBottom="@dimen/d_10"
+                    android:background="@drawable/birthday_dialog_bottom_ok"
+                    android:gravity="center"
+                    android:onClick="@{mapViewModel::onClick}"
+                    android:text="@string/share_notes"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+</layout>
+

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00FFFFFF"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_20"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/share_left_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/set_dauf"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_15" />
+
+        <TextView
+            android:id="@+id/share_right_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/change_bg"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_15" />
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/d_19"
+        android:background="@color/FivepercentBlackColor"
+        android:visibility="gone"></View>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_20"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/share_frend"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/d_10"
+            android:drawableTop="@drawable/share_wx"
+            android:gravity="center"
+            android:text="@string/wx_friend"
+            android:textColor="@color/nomalTextColor"
+            android:textSize="@dimen/s_12" />
+
+        <TextView
+            android:id="@+id/share_frendQ"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/d_10"
+            android:drawableTop="@drawable/share_friend"
+            android:gravity="center"
+            android:text="@string/wx_pyq"
+            android:textColor="@color/nomalTextColor"
+            android:textSize="@dimen/s_12" />
+
+        <TextView
+            android:id="@+id/restore_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/d_10"
+            android:drawableTop="@drawable/restore_photo"
+            android:gravity="center"
+            android:text="@string/restore_phone"
+            android:textColor="@color/nomalTextColor"
+            android:textSize="@dimen/s_12"
+            android:visibility="gone" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/share_dialog_cancle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_18"
+        android:text="@string/cancle"
+        android:layout_marginBottom="@dimen/d_15"
+        android:textColor="@color/blackTextColor"
+        android:textSize="@dimen/s_15" />
+</LinearLayout>

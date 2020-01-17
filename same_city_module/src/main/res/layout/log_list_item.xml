@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="log_activity_model"
+            type="com.elder.logrecodemodule.ViewModel.LogListViewModel"></variable>
+
+        <variable
+            name="log_driver_item"
+            type="com.elder.zcommonmodule.Entity.UIdeviceInfo"></variable>
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_10"
+        android:gravity="center_horizontal"
+        android:onClick="@{()->log_activity_model.ItemClick(log_driver_item)}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="@dimen/d_345"
+            android:layout_height="@dimen/d_131"
+            android:background="@drawable/corner_dialog"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginTop="@dimen/d_15"
+                android:text="@{log_driver_item.date}"
+                android:textColor="@color/blackTextColor"
+                android:textSize="@dimen/s_12" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/d_76"
+                    android:layout_height="@dimen/d_76"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:imgUrl="@{log_driver_item.img}"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{log_driver_item.distance}"
+                            android:textColor="@color/blackTextColor"
+                            android:textSize="@dimen/s_24" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/d_05"
+                            android:text="km"
+                            android:textColor="@color/hint_color_edit" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/user_time"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/d_10"
+                                android:text="@{log_driver_item.time}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_14" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/peisu"
+                                android:textColor="@color/hint_color_edit"
+                                android:textSize="@dimen/s_12" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/d_10"
+                                android:text="@{log_driver_item.avar}"
+                                android:textColor="@color/blackTextColor"
+                                android:textSize="@dimen/s_14" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

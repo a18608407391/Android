@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="navigation_model"
+            type="com.example.drivermodule.ViewModel.NavigationViewModel"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.amap.api.navi.AMapNaviView
+                android:id="@+id/navi_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"></com.amap.api.navi.AMapNaviView>
+
+            <include
+                layout="@layout/navigation_bottom_layout"
+                app:data="@{navigation_model}"></include>
+        </LinearLayout>
+
+        <include
+            layout="@layout/right_five_btn_layout"
+            android:visibility="gone"
+            app:data="@{navigation_model.drivercomponent}"></include>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_64"
+            android:background="@drawable/next_road_info_bg"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.amap.api.navi.view.NextTurnTipView
+                android:id="@+id/next_turn_view"
+                android:layout_width="@dimen/d_40"
+                android:layout_height="@dimen/d_40" />
+
+            <TextView
+                android:id="@+id/next_turn_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:textSize="@dimen/s_22" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</layout>

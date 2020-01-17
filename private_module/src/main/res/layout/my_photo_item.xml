@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="img_position"
+            type="Integer"></variable>
+
+        <variable
+            name="album_click"
+            type="com.example.private_module.ViewModel.PhotoAlbumViewModel"></variable>
+
+        <variable
+            name="item"
+            type="com.example.private_module.Bean.PhotoEntitiy"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/d_90"
+        android:layout_height="@dimen/d_90"
+        android:layout_marginLeft="@dimen/d_01"
+        android:layout_marginTop="@dimen/d_01">
+
+        <ImageView
+            android:id="@+id/photo_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:imgUrl="@{item.path}"
+            android:scaleType="centerCrop"
+            android:onClick="@{()->album_click.onAdapterItemClick(item,img_position)}"
+            app:onImageDatas="@{item}"
+            app:onImageLongClick="@{album_click.longCommand}" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:onClick="@{()->album_click.onAdapterItemClick(item,img_position)}"
+            android:padding="@dimen/d_10"
+            android:src="@{item.isCheced?@drawable/check_on:@drawable/circle_stroke_drawable}"
+            android:visibility="@{album_click.isLongClick?View.VISIBLE:View.GONE}"></ImageView>
+    </RelativeLayout>
+</layout>

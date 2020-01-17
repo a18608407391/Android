@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="near_item_model"
+            type="com.example.drivermodule.ItemModel.NearRoadItemModle"></variable>
+
+        <variable
+            name="hot_data"
+            type="com.elder.zcommonmodule.Entity.HotData"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_15"
+        android:elevation="@dimen/d_5"
+        android:layout_marginRight="@dimen/d_10"
+        android:onClick="@{()->near_item_model.ItemClickCommand(hot_data)}"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/road_strage_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                app:StrageImageLoad="@{hot_data}" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/d_8"
+                    android:layout_marginLeft="@dimen/d_8"
+                    android:background="@drawable/black_circle"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_05"
+                        android:layout_marginRight="@dimen/d_10"
+                        android:drawableLeft="@drawable/littlest_location"
+                        android:drawablePadding="@dimen/d_02"
+                        android:text="@{hot_data.routepoint}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s_10" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_10"
+            android:layout_marginRight="@dimen/d_10"
+            android:layout_marginTop="@dimen/d_8"
+            android:text="@{hot_data.title}"
+            android:textColor="#121212"
+            android:textSize="@dimen/s_14"
+            android:textStyle="bold" />
+    </LinearLayout>
+</layout>

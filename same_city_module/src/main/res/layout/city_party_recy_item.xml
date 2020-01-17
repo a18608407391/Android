@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="listener"
+            type="com.elder.logrecodemodule.Inteface.RankingClickListener"></variable>
+
+        <variable
+            name="city_party_model"
+            type="com.elder.zcommonmodule.Entity.CountryMemberEntity"></variable>
+
+        <variable
+            name="position"
+            type="Integer"></variable>
+    </data>
+
+
+    <!--fontPath="fonts/DIN-BoldItalic.otf"-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_70"
+        android:gravity="center_vertical"
+        android:onClick="@{()->listener.RankingItemClick(position,city_party_model)}"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_69"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                fontPath="fonts/DIN-BoldItalic.otf"
+                android:layout_width="@dimen/d_40"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#585364"
+                android:textSize="@dimen/s_22"
+                app:setNumberImage="@{position}" />
+
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                android:layout_marginLeft="@dimen/d_20"
+                app:log_addcar_local="@{city_party_model.memberImage}" />
+
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_10"
+                android:layout_marginRight="@dimen/d_15"
+                android:text="@{city_party_model.name}"
+                android:singleLine="true"
+                android:textColor="#121212"
+                android:textSize="@dimen/s_15" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        fontPath="fonts/DIN-Bold.otf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:DistanceInit="@{city_party_model.distanceSum}"
+                        android:textColor="#121212"
+                        android:textSize="@dimen/s_24"
+                        android:visibility="@{position==0?View.VISIBLE:View.GONE}" />
+
+                    <TextView
+                        fontPath="fonts/DIN-Regular.otf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:DistanceInit="@{city_party_model.distanceSum}"
+                        android:textColor="#121212"
+                        android:textSize="@dimen/s_18"
+                        android:visibility="@{position==0?View.GONE:View.VISIBLE}" />
+                </RelativeLayout>
+
+
+                <TextView
+                    fontPath="fonts/DIN-Regular.otf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_02"
+                    android:text="KM"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_16" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/FivepercentBlackColor"></View>
+    </LinearLayout>
+</layout>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="hori_item_data"
+            type="com.elder.logrecodemodule.Entity.LogData"></variable>
+
+        <variable
+            name="log_hor_model"
+            type="com.elder.logrecodemodule.ViewModel.LogListViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/hori_layout"
+        android:layout_width="@dimen/d_55"
+        android:layout_height="@dimen/d_80"
+        android:gravity="center"
+        android:onClick="@{()->log_hor_model.onClick(hori_item_data)}"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="@dimen/d_36"
+            android:layout_height="@dimen/d_36"
+            android:background="@{hori_item_data.isChecked?@drawable/four_corner_bg:@drawable/trans}"
+            android:gravity="center"
+            android:text="@{hori_item_data.month}"
+            android:textColor="@{hori_item_data.isChecked?@color/register_btn_bg_nomal:@color/text_nomal_color}"
+            android:textSize="@dimen/s_15" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:gravity="center"
+            android:textColor="@color/register_btn_bg_nomal"
+            android:text="@{hori_item_data.BigMoth}"
+            android:textSize="@dimen/s_10" />
+    </LinearLayout>
+</layout>

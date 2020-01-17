@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="team_setting"
+            type="com.example.drivermodule.ViewModel.TeamSettingViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{team_setting.component}"></include>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginTop="@dimen/d_10"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/validity_time"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:text="@{team_setting.date}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_10"
+                app:adapter="@{team_setting.adapter}"
+                app:itemBinding="@{team_setting.itemBinding}"
+                app:items="@{team_setting.items}"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:spanCount="4"></android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/team_name_click"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_20"
+            android:onClick="@{team_setting::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/team_name" />
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:layout_marginRight="@dimen/d_10"
+                    android:text="@{team_setting.teamName}" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_7"
+                    android:visibility="@{team_setting.teamerVisible?View.VISIBLE:View.GONE}"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/manager_click"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{team_setting::onClick}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/team_manager" />
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:text="@{team_setting.roleName}" />
+
+                <TextView
+                    style="@style/UserInfoTextView"
+                    android:layout_marginRight="@dimen/d_10"
+                    android:text="@{team_setting.teamerName}" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_7"
+                    android:visibility="@{team_setting.teamerVisible?View.VISIBLE:View.GONE}"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/teamer_setting_click"
+            style="@style/UserInfoLinearLayout"
+            android:layout_marginTop="@dimen/d_01"
+            android:onClick="@{team_setting::onClick}"
+            android:visibility="@{team_setting.teamerVisible?View.VISIBLE:View.GONE}">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="@string/teamer_pass" />
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/d_7"
+                    android:src="@drawable/arrow_right_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_weight="1"
+            android:gravity="bottom|center_horizontal">
+
+            <TextView
+                android:id="@+id/exit_team"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_50"
+                android:layout_marginBottom="@dimen/d_10"
+                android:background="@drawable/register_btn_shape_nomal"
+                android:gravity="center"
+                android:onClick="@{team_setting::onClick}"
+                android:text="@{team_setting.bottomText}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</layout>

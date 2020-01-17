@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="requestmodel"
+            type="com.example.private_module.ViewModel.RequestViewModel"></variable>
+
+        <variable
+            name="position"
+            type="Integer"></variable>
+
+        <variable
+            name="request_item"
+            type="com.example.private_module.Entitiy.RequestUiEntity"></variable>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_62"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_60"
+            android:layout_marginTop="@dimen/d_01"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:padding="@dimen/d_10"
+                app:checkboxPosition="@{position}"
+                app:onCheckedChangedInfoCommand="@{requestmodel.checkInfo}"
+                android:text="@{request_item.name}" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_01"
+            android:background="@color/app_theme_white"></View>
+
+    </LinearLayout>
+</layout>

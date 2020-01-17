@@ -1,0 +1,25 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.elder.logrecodemodule">
+
+    <application>
+        <activity
+            android:name=".Activity.LogListActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Activity.LogShareActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Activity.PlayerActivity"
+            android:screenOrientation="portrait"></activity>
+
+
+        <activity
+            android:name=".Activity.CityLocationActivity"
+            android:theme="@style/DefaultCityPickerTheme"></activity>
+
+        <activity android:name=".Activity.CavalierRankingActivity"></activity>
+
+        <activity android:name=".Activity.SearchActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+    </application>
+</manifest>

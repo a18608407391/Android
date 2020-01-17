@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="data"
+            type="com.example.drivermodule.ViewModel.NavigationViewModel"></variable>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_50"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/d_10"
+        android:layout_marginLeft="@dimen/d_15"
+        android:layout_marginRight="@dimen/d_15"
+        android:background="@drawable/corner_dialog"
+        android:elevation="@dimen/d_03"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <TextView
+
+            android:id="@+id/navi_arrow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="@{data::onClick}"
+            android:text="返回"
+            android:textColor="#E44A44"
+            android:textSize="@dimen/s_18" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/d_24"
+            android:background="@color/FivepercentBlackColor"></View>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@{data.totalDistance}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_18" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_05"
+                    android:gravity="center"
+                    android:text="@{data.totalTime}"
+                    android:textColor="@color/blackTextColor"
+                    android:textSize="@dimen/s_18" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/d_24"
+            android:background="@color/FivepercentBlackColor"></View>
+
+        <TextView
+            android:id="@+id/stop_navagation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="@{data::onClick}"
+            android:text="退出"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_18" />
+
+    </LinearLayout>
+</layout>
+

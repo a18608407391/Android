@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="focus_list_model"
+            type="com.cstec.administrator.social.ViewModel.FocusListViewModel"></variable>
+    </data>
+
+    <com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/focuslist_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <include
+                layout="@layout/base_tab_layout"
+                app:data="@{focus_list_model.component}"></include>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_20"
+                app:adapter="@{focus_list_model.adapter}"
+                app:itemBinding="@{focus_list_model.itemBinding}"
+                app:items="@{focus_list_model.items}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+    </com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>
+</layout>

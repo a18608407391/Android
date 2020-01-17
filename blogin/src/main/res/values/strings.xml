@@ -1,0 +1,7 @@
+<resources>
+
+
+    <string name="setting_new_phone">设置新手机号</string>
+    <string name="network_error">网络错误</string>
+    <string name="finish_driver">结束骑行</string>
+</resources>

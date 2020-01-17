@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="share_edit_model"
+            type="com.example.private_module.ViewModel.Picture.ShareEditPictureViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/blackTextColor"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blackTextColor"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_black_tab_layout"
+            app:data="@{share_edit_model.component}"></include>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/d_05"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/save_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:HttpImageLoadLayout="@{share_edit_model.path}">
+
+                <ImageView
+                    android:id="@+id/move_right"
+                    android:layout_width="@dimen/d_100"
+                    android:layout_height="@dimen/d_40"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="@dimen/d_17"
+                    android:setColorFilter="@{share_edit_model.isWhite}"
+                    android:src="@drawable/log_right_bottom"
+                    android:visibility="@{share_edit_model.rightIcon?View.VISIBLE:View.GONE}" />
+
+                <ImageView
+                    android:id="@+id/move_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="@dimen/d_10"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:setColorFilter="@{share_edit_model.isWhite}"
+                    app:makerLoad="@{share_edit_model.currentMoveMaker}" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/d_15"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:gravity="left|center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="@{share_edit_model.locationTitle?View.VISIBLE:View.GONE}">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:setColorFilter="@{share_edit_model.isWhite}"
+                        android:src="@drawable/maker_location"
+                        android:visibility="@{share_edit_model.leftImageVisible?View.VISIBLE:View.GONE}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{share_edit_model.bottomtitle}"
+                        android:textColor="@{share_edit_model.isWhite?@color/white:@color/colorBlack}"
+                        android:textSize="@dimen/s_10" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_10"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/share_horizontallayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"></LinearLayout>
+            </HorizontalScrollView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_20"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/d_10"
+                android:paddingTop="@dimen/d_10">
+
+                <TextView
+                    android:id="@+id/share_frend"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/d_05"
+                    android:drawableTop="@drawable/share_wx"
+                    android:gravity="center"
+                    android:onClick="@{share_edit_model::onBottomClick}"
+                    android:text="@string/wx_friend"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_12" />
+
+                <TextView
+                    android:id="@+id/share_frendQ"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/d_05"
+                    android:drawableTop="@drawable/share_friend"
+                    android:gravity="center"
+                    android:onClick="@{share_edit_model::onBottomClick}"
+                    android:text="@string/wx_pyq"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_12" />
+
+                <TextView
+                    android:id="@+id/share_download"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/d_05"
+                    android:drawableTop="@drawable/download_tolocal"
+                    android:gravity="center"
+                    android:onClick="@{share_edit_model::onBottomClick}"
+                    android:text="@string/download_tolocal"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_12" />
+
+                <TextView
+                    android:id="@+id/restore_net_phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/d_05"
+                    android:drawableTop="@drawable/restore_photo"
+                    android:gravity="center"
+                    android:onClick="@{share_edit_model::onBottomClick}"
+                    android:text="@string/restore_phone"
+                    android:textColor="@color/nomalTextColor"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

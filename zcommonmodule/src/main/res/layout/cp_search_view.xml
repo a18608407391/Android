@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cp_search_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:fitsSystemWindows="true"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    tools:showIn="@layout/cp_dialog_city_picker">
+
+    <ImageView
+        android:id="@+id/cp_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arrow_black"/>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="@dimen/d_15"
+        android:background="@drawable/corner_gray_bg"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_15"
+            android:layout_height="@dimen/d_15"
+            android:layout_marginLeft="@dimen/d_15"
+            android:src="@drawable/search_icon" />
+
+        <EditText
+            android:id="@+id/cp_search_box"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d_10"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="?attr/cpSearchHintText"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:textColor="?attr/cpSearchTextColor"
+            android:textColorHint="?attr/cpSearchHintTextColor"
+            android:textCursorDrawable="?attr/cpSearchCursorDrawable"
+            android:textSize="?attr/cpSearchTextSize" />
+
+        <ImageView
+            android:id="@+id/cp_clear_all"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            android:src="?attr/cpClearTextIcon"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="6dp"
+        android:layout_height="match_parent" />
+
+    <View
+        android:layout_width="1px"
+        android:layout_height="14dp"
+        android:background="@color/cp_color_gray_light" />
+
+    <Space
+        android:layout_width="16dp"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

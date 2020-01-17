@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/maker_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#00FFFFFF">
+
+
+    <ImageView
+        android:layout_width="@dimen/d_53"
+        android:layout_height="@dimen/d_53"
+        android:layout_centerInParent="true"
+        android:src="@drawable/team_maker_bg" />
+
+    <ImageView
+        android:id="@+id/team_marker_img"
+        android:layout_width="@dimen/d_48"
+        android:layout_height="@dimen/d_48"
+        android:layout_centerInParent="true"
+        android:src="@drawable/default_avatar"/>
+
+    <ImageView
+        android:id="@+id/team_marker_upBg"
+        android:layout_width="@dimen/d_48"
+        android:layout_height="@dimen/d_48"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:src="@drawable/percent_serven"/>
+</RelativeLayout>

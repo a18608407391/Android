@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/d_250"
+    android:layout_height="@dimen/d_60"
+    android:background="@drawable/ic_window_bg">
+
+
+    <TextView
+        android:id="@+id/window_title"
+        android:layout_width="@dimen/d_200"
+        android:layout_height="@dimen/d_53"
+        android:layout_marginRight="@dimen/d_05"
+        android:layout_marginLeft="@dimen/d_05"
+        android:textSize="@dimen/s_12"
+        android:maxLines="2"
+        android:background="#00FFFFFF"
+        android:gravity="center" />
+
+
+    <LinearLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_right_bg"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/navigation_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:drawableTop="@drawable/ic_point_add"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_11" />
+    </LinearLayout>
+
+
+</LinearLayout>

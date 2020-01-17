@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/d_100"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/d_05"
+    android:layout_marginTop="@dimen/d_05"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="@dimen/d_72"
+        android:layout_height="@dimen/d_72">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardview"
+            android:layout_width="@dimen/d_62"
+            android:layout_height="@dimen/d_62"
+            android:layout_margin="@dimen/d_05"
+            app:cardBackgroundColor="@color/TenpercentBlackColor"
+            app:cardCornerRadius="@dimen/d_31"
+            app:cardElevation="0dp"
+            app:cardMaxElevation="2dp"
+            app:cardPreventCornerOverlap="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/white_circle" />
+
+            <ImageView
+                android:id="@+id/img_load"
+                android:layout_width="@dimen/d_55"
+                android:layout_height="@dimen/d_55"
+                android:layout_gravity="center"
+                android:src="@drawable/team_first" />
+
+            <ImageView
+                android:id="@+id/img_load_sevenPerson"
+                android:layout_width="@dimen/d_55"
+                android:layout_height="@dimen/d_55"
+                android:layout_gravity="center"
+                android:src="@drawable/percent_serven" />
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/team_name"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/d_15"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom|right"
+            android:background="@drawable/little_tv_color_corner"
+            android:gravity="center"
+            android:paddingLeft="@dimen/d_04"
+            android:paddingRight="@dimen/d_04"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/s_08" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_05"
+        android:textColor="@color/blackTextColor"
+        android:textSize="@dimen/s_15" />
+
+
+</LinearLayout>

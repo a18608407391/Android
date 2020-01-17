@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="position"
+            type="Integer"></variable>
+
+        <variable
+            name="re_child_road_book_model"
+            type="com.example.drivermodule.Component.SimpleRecycleComponent"></variable>
+
+        <variable
+            name="road_book_two_entity"
+            type="com.example.drivermodule.Entity.RoadBook.RoadBookListEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_15"
+        android:layout_marginRight="@dimen/d_15"
+        android:layout_marginTop="@dimen/d_10"
+        android:elevation="@dimen/d_05"
+        android:gravity="center_vertical"
+        android:onClick="@{()->re_child_road_book_model.itemClickModel(road_book_two_entity,position)}"
+        android:orientation="horizontal"
+        android:visibility="@{road_book_two_entity.visible?View.GONE:View.VISIBLE}"
+        app:setLinearBackWhiteGround="@{road_book_two_entity.type}">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:text="@{road_book_two_entity.title}"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_15"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d_05"
+            android:layout_marginLeft="@dimen/d_39"
+            android:layout_marginRight="@dimen/d_05"
+            android:layout_marginTop="@dimen/d_05"
+            android:text="@{road_book_two_entity.city}"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_15"
+            android:textStyle="bold" />
+    </LinearLayout>
+</layout>

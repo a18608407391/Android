@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="roadbook_viewmodel"
+            type="com.example.drivermodule.ViewModel.RoadBook.AcRoadBookViewModel"></variable>
+    </data>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+
+            <include
+                layout="@layout/base_tab_layout"
+                app:data="@{roadbook_viewmodel.titleComponent}"></include>
+
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/mTabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_44"
+                android:background="@color/white"
+                app:tabIndicatorColor="@color/line_color"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="@dimen/d_02"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/line_color"
+                app:tabTextColor="@color/blackTextColor" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/road_book_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="@dimen/d_10"
+                app:adapter="@{roadbook_viewmodel.adapter}"
+                app:itemBinding="@{roadbook_viewmodel.itembingding}"
+                app:items="@{roadbook_viewmodel.items}"
+                app:onPageSelectedCommand="@{roadbook_viewmodel.pagerSelectCommand}"
+                app:pageTitles="@{roadbook_viewmodel.pagerTitle}"></android.support.v4.view.ViewPager>
+
+
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</layout>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.DoubleClickListener"></variable>
+
+        <variable
+            name="focus_item_entity"
+            type="com.elder.zcommonmodule.Entity.FansEntity.FansBean"></variable>
+
+
+    </data>
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_60"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/d_45"
+            android:layout_height="@dimen/d_45"
+            android:layout_marginLeft="@dimen/d_15"
+            android:onClick="@{()->listener.onImgClick(focus_item_entity)}"
+            app:addcar_local="@{focus_item_entity.memberImage}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:text="@{focus_item_entity.memberName}"
+            android:textColor="#121212"
+            android:textSize="@dimen/s_15" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="@dimen/d_66"
+                android:layout_height="@dimen/d_27"
+                android:layout_marginRight="@dimen/d_15"
+                android:background="@drawable/foucs_corner_gray_bg"
+                android:gravity="center"
+                android:onClick="@{()->listener.onItemClick(focus_item_entity)}"
+                android:text="@{focus_item_entity.followed==0? @string/focused : @string/focus_together}"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_12" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

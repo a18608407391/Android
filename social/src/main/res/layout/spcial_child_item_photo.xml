@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+
+        <variable
+            name="model"
+            type="com.cstec.administrator.social.ItemViewModel.SocialItemModel"></variable>
+
+        <variable
+            name="photo_item_model"
+            type="com.elder.zcommonmodule.Entity.DynamicsCategoryEntity.Dynamics"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_45"
+            android:layout_marginTop="@dimen/d_20"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                android:layout_marginLeft="@dimen/d_15"
+                android:onClick="@{()->model.avatarClick(photo_item_model)}"
+                app:socialAvatar="@{photo_item_model.memberImageUrl}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{photo_item_model.memberName}"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_05"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_10"
+                    app:ParseTime="@{photo_item_model.createDate}" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginTop="@dimen/d_05"
+                android:text="@string/delete"
+                android:textColor="@color/black"
+                android:onClick="@{()->model.deleteClick(photo_item_model)}"
+                android:textSize="@dimen/s_12"
+                android:visibility="@{photo_item_model.followed==2?View.VISIBLE:View.GONE}" />
+        </LinearLayout>
+
+        <com.elder.zcommonmodule.Widget.ExpandableTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_15"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:background="@color/trans"
+            android:textColor="#121212"
+            app:contentTextSize="@dimen/s_15"
+            app:expandCollapseTextColor="@color/theme_color"
+            app:initExpand="@{photo_item_model.publishContent}"
+            app:maxCollapsedLines="3" />
+
+        <com.elder.zcommonmodule.NineGridSimpleLayout
+            android:id="@+id/grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_05"
+            android:layout_marginLeft="@dimen/d_10"
+            android:layout_marginRight="@dimen/d_10"
+            app:initGridImage="@{photo_item_model.dynamicImageList}"
+            app:initGridListener="@{model.clickBinding}"></com.elder.zcommonmodule.NineGridSimpleLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <com.elder.zcommonmodule.Widget.RichEditText.RichTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:background="@color/grasd"
+                android:layout_marginTop="@dimen/d_05"
+                android:layout_marginBottom="@dimen/d_05"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="#121212"
+                android:textSize="16sp"
+                app:initRichText="@{photo_item_model.parentDynamin}"
+                app:spanClick="@{model.spanclick}" />
+
+            <com.elder.zcommonmodule.NineGridSimpleLayout
+                android:id="@+id/grid1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_10"
+                android:layout_marginRight="@dimen/d_10"
+                android:background="@color/grasd"
+                app:initGrid1Image="@{photo_item_model.parentDynamin.dynamicImageList}"
+                app:initGrid1Listener="@{model.clickBinding}"></com.elder.zcommonmodule.NineGridSimpleLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/d_60"
+                android:layout_height="@dimen/d_60"
+                android:src="@drawable/road_book_ex_icon" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_60"
+                android:layout_marginRight="@dimen/d_15"
+                android:background="#FAFAFA"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:singleLine="true"
+                    android:text="图层山西省阳城县凤西生态公园"
+                    android:textColor="#121212"
+                    android:textSize="@dimen/s_14" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
+                    android:layout_marginTop="@dimen/d_02"
+                    android:singleLine="true"
+                    android:text="图层山西省阳城县凤西生态公园"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_12" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:orientation="horizontal"
+            android:visibility="@{photo_item_model.releaseAddress.isEmpty?View.GONE:View.VISIBLE}">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/location_tv_left"
+                android:text="@{photo_item_model.releaseAddress}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_10" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/d_15"
+                android:text="@{photo_item_model.distance}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_10" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/like_count"
+                    android:layout_width="@dimen/d_71"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@{photo_item_model.isLike==1?@drawable/like_icon:@drawable/like_default}"
+                    android:drawablePadding="@dimen/d_05"
+                    android:gravity="center_vertical"
+                    android:onClick="@{()->model.LikeClick(photo_item_model)}"
+                    android:text="@{photo_item_model.fabulousCount}"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_10" />
+
+                <TextView
+                    android:id="@+id/star_count"
+                    android:layout_width="@dimen/d_71"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@{photo_item_model.hasCollection==1?@drawable/star_icon:@drawable/start_default}"
+                    android:drawablePadding="@dimen/d_05"
+                    android:gravity="center_vertical"
+                    android:onClick="@{()->model.storeClick(photo_item_model)}"
+                    android:text="@{photo_item_model.collectionCount}"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_10" />
+
+                <TextView
+                    android:layout_width="@dimen/d_71"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/comment_con"
+                    android:drawablePadding="@dimen/d_05"
+                    android:gravity="center_vertical"
+                    android:onClick="@{()->model.yelpClick(photo_item_model)}"
+                    android:text="@{photo_item_model.commentCount}"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/s_10" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/d_15"
+                android:onClick="@{()->model.retransClick(photo_item_model)}"
+                android:src="@drawable/retransmission_icon" />
+            <!--android:visibility="@{photo_item_model.followed==2?View.GONE :View.VISIBLE}"-->
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_02"
+            android:layout_marginTop="@dimen/d_15"
+            android:background="@color/FivepercentBlackColor"></View>
+    </LinearLayout>
+</layout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="party_main_model"
+            type="com.cstec.administrator.party_module.ViewModel.PartyViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <com.tencent.smtt.sdk.WebView
+            android:id="@+id/web_active1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/d_20"
+            app:LoadingFinishs="@{party_main_model.LoadingFinishCommand}"
+            app:Logrenders="@{party_main_model.webUrl}"
+            app:LogwebCommands="@{party_main_model.roadCommand}"></com.tencent.smtt.sdk.WebView>
+
+    </LinearLayout>
+</layout>

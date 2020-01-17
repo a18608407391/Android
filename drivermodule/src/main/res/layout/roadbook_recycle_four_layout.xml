@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <variable
+            name="road_book_recycle_four_entity"
+            type="com.example.drivermodule.Entity.RoadBook.RoadBookRecycleFourEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_44"
+        android:layout_marginLeft="@dimen/d_15"
+        android:layout_marginRight="@dimen/d_15"
+        android:background="#F2F2F2"
+        android:layout_marginBottom="@dimen/d_20"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:text="@{road_book_recycle_four_entity.title}"
+            android:textStyle="bold"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_15" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:text="线路安排"
+            android:textStyle="bold"
+            android:textColor="@color/blackTextColor"
+            android:textSize="@dimen/s_15" />
+    </LinearLayout>
+</layout>
