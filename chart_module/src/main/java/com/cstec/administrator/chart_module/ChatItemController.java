@@ -36,6 +36,7 @@ import com.cstec.administrator.chart_module.View.ChatUtils.SimpleCommonUtils;
 //import com.nostra13.universalimageloader.core.DisplayImageOptions;
 //import com.squareup.picasso.Picasso;
 import com.zk.library.Base.BaseApplication;
+import com.zk.library.Utils.RouterUtils;
 
 import org.cs.tec.library.Bus.RxBus;
 
@@ -1247,12 +1248,12 @@ public class ChatItemController {
                                 break;
                             default:
                         }
-                        intent.putExtra(BaseApplication.Companion.getCONV_TYPE(), mConv.getType());
-                        intent.putExtra(BaseApplication.Companion.getTARGET_ID(), targetId);
-                        intent.putExtra(BaseApplication.Companion.getTARGET_APP_KEY(), mConv.getTargetAppKey());
-                        intent.putExtra("msgCount", mMsgList.size());
-                        intent.putIntegerArrayListExtra(BaseApplication.Companion.getMsgIDs(), getImgMsgIDList());
-                        intent.putExtra("fromChatActivity", true);
+                        intent.putExtra(RouterUtils.Chat_Module.Chat_CONV_TYPE, mConv.getType());
+                        intent.putExtra(RouterUtils.Chat_Module.Chat_TARGET_ID, targetId);
+                        intent.putExtra(RouterUtils.Chat_Module.Chat_App_Key, mConv.getTargetAppKey());
+                        intent.putExtra(RouterUtils.Chat_Module.Chat_MsgCount, mMsgList.size());
+                        intent.putIntegerArrayListExtra(RouterUtils.Chat_Module.Chat_MsgId, getImgMsgIDList());
+                        intent.putExtra(RouterUtils.Chat_Module.Chat_FromChatActivity, true);
                         intent.setClass(mContext, BrowserViewPagerActivity.class);
                         mContext.startActivity(intent);
                     }

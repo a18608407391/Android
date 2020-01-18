@@ -8,6 +8,7 @@ import cn.jpush.im.android.api.model.Conversation
 import cn.jpush.im.android.api.event.NotificationClickEvent
 import com.cstec.administrator.chart_module.Activity.ChatActivity
 import com.zk.library.Base.BaseApplication
+import com.zk.library.Utils.RouterUtils
 
 
 class NotificationClickEventReceiver(private val mContext: Context) {
@@ -34,13 +35,13 @@ class NotificationClickEventReceiver(private val mContext: Context) {
             val notificationIntent = Intent(mContext, ChatActivity::class.java)
             if (type == ConversationType.single) {
                 conv = JMessageClient.getSingleConversation(targetId, appKey)
-                notificationIntent.putExtra(BaseApplication.TARGET_ID, targetId)
-                notificationIntent.putExtra(BaseApplication.TARGET_APP_KEY, appKey)
+                notificationIntent.putExtra(RouterUtils.Chat_Module.Chat_TARGET_ID, targetId)
+                notificationIntent.putExtra(RouterUtils.Chat_Module.Chat_App_Key, appKey)
             } else {
                 conv = JMessageClient.getGroupConversation(java.lang.Long.parseLong(targetId))
-                notificationIntent.putExtra(BaseApplication.GROUP_ID, java.lang.Long.parseLong(targetId))
+                notificationIntent.putExtra(RouterUtils.Chat_Module.Chat_GROUP_ID, java.lang.Long.parseLong(targetId))
             }
-            notificationIntent.putExtra(BaseApplication.CONV_TITLE, conv.title)
+            notificationIntent.putExtra(RouterUtils.Chat_Module.Chat_CONV_TITLE, conv.title)
             conv.resetUnreadCount()
             //        notificationIntent.setAction(Intent.ACTION_MAIN);
             notificationIntent.putExtra("fromGroup", false)

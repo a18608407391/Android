@@ -10,6 +10,7 @@
     </data>
 
     <com.cstec.administrator.chart_module.View.ChatView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/chat_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -47,7 +48,6 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/jmui_return_btn"
                         android:orientation="horizontal">
-
                         <TextView
                             android:id="@+id/jmui_title"
                             android:layout_width="wrap_content"
@@ -56,7 +56,6 @@
                             android:singleLine="true"
                             android:textColor="#FFFFFF"
                             android:textSize="18sp"/>
-
                         <TextView
                             android:id="@+id/jmui_group_num_tv"
                             android:layout_width="wrap_content"
@@ -65,7 +64,6 @@
                             android:textColor="#FFFFFF"
                             android:textSize="20sp"/>
                     </LinearLayout>
-
                     <ImageButton
                         android:id="@+id/jmui_right_btn"
                         android:layout_width="@dimen/title_bar_height"
@@ -74,11 +72,9 @@
                         android:background="@drawable/jmui_back_btn_bg"
                         android:src="@drawable/jmui_chat_detail"/>
                 </RelativeLayout>
-
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <com.cstec.administrator.chart_module.View.ChatUtils.DropDownListView
                         android:id="@+id/lv_chat"
                         android:layout_width="match_parent"
@@ -93,7 +89,6 @@
                         android:scrollingCache="false"
                         android:smoothScrollbar="true"
                         android:transcriptMode="normal"/>
-
                     <Button
                         android:id="@+id/jmui_at_me_btn"
                         android:layout_width="wrap_content"
@@ -107,8 +102,6 @@
                         android:visibility="gone"/>
                 </FrameLayout>
             </LinearLayout>
-
-
         </com.cstec.administrator.chart_module.View.XhsEmoticonsKeyBoard>
     </com.cstec.administrator.chart_module.View.ChatView>
 </layout>

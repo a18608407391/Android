@@ -117,12 +117,11 @@ open class BaseApplication : Application() {
         val DELETE_MODE = "deleteMode"
         val RESULT_CODE_ME_INFO = 20
         var forwardMsg: List<Message> = ArrayList()
-        val DRAFT = "draft"
-        val CONV_TYPE = "conversationType" //value使用 ConversationType
+//        val CONV_TYPE = "conversationType" //value使用 ConversationType
         val ROOM_ID = "roomId"
-        val GROUP_ID = "groupId"
         val POSITION = "position"
-        val MsgIDs = "msgIDs"
+
+
         val MSG_JSON = "msg_json"
         val MSG_LIST_JSON = "msg_list_json"
         val NAME = "name"
@@ -131,7 +130,6 @@ open class BaseApplication : Application() {
         val SEARCH_AT_MEMBER_USERNAME = "search_at_member_username"
         val SEARCH_AT_APPKEY = "search_at_appkey"
 
-        val MEMBERS_COUNT = "membersCount"
         var isAtMe: Map<Long, Boolean> = HashMap()
         var isAtall: Map<Long, Boolean> = HashMap()
         //        var forwardMsg: List<Message> = ArrayList()
@@ -140,12 +138,9 @@ open class BaseApplication : Application() {
         var FILE_DIR = "sdcard/JChatDemo/recvFiles/"
         var VIDEO_DIR = "sdcarVIDEOd/JChatDemo/sendFiles/"
         var THUMP_PICTURE_DIR: String? = null
-        val TARGET_ID = "targetId"
         val ATUSER = "atuser"
-        val TARGET_APP_KEY = "targetAppKey"
         var maxImgCount: Int = 0               //允许选择图片最大数
         val GROUP_NAME = "groupName"
-        val CONV_TITLE = "conv_title"
     }
 
     fun getScreenWidths(): Int {

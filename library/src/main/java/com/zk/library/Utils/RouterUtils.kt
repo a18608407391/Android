@@ -22,6 +22,27 @@ class RouterUtils() {
         }
     }
 
+    class Chat_Module() {
+        companion object {
+            const val Chat_AC = "/chat/room"
+            const val Chat_TARGET_ID = "/chat/targetId"
+            const val Chat_App_Key = "/chat/appkey"
+            const val Chat_DRAFT = "/chat/draft"
+            const val Chat_GROUP_ID = "/chat/groupId"
+            const val Chat_AtAllId = "/chat/atallId"
+            const val Chat_AtId = "/chat/atId"
+            const val Chat_CONV_TITLE = "/chat/conv_title"
+            const val Chat_FromGroup = "/chat/from_group"
+            const val Chat_MEMBERS_COUNT = "/chat/member_count"
+            const val Chat_MsgCount = "/chat/msg_count"
+            const val Chat_MsgId = "/chat/msg_id"
+            const val Chat_FromChatActivity = "/chat/fromchatactivity"
+            const val Chat_CONV_TYPE = "/chat/conv_type"
+            const val Chat_Room_ID = "/chat/roomId"
+            const val Chat_Room_Name =  "/chat/roomName"
+        }
+    }
+
 
     class PrivateModuleConfig() {
         companion object {

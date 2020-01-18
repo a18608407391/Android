@@ -14,6 +14,7 @@ import com.amap.api.maps.model.animation.AlphaAnimation
 import com.amap.api.maps.model.animation.Animation
 import com.amap.api.maps.model.animation.AnimationSet
 import com.amap.api.maps.model.animation.ScaleAnimation
+import com.amap.api.navi.AMapNavi
 import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.geocoder.GeocodeResult
 import com.amap.api.services.geocoder.GeocodeSearch
@@ -374,7 +375,7 @@ class MapUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch.OnDistanc
     }
 
     fun setDriverRoute(startPoint: LatLonPoint, endPoint: LatLonPoint, passPointDatas: ArrayList<Location>) {
-
+        AMapNavi.getInstance(activity)
         CoroutineScope(uiContext).launch {
             activity.showProgressDialog("正在规划路径中......")
         }

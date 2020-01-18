@@ -46,7 +46,7 @@ public class XhsEmoticonsKeyBoard extends AutoHeightLayout implements View.OnCli
     protected RelativeLayout mRlInput;
     protected ImageView mBtnMultimedia;
     protected Button mBtnSend;
-    protected com.cstec.administrator.chart_module.View.ChatUtils.FuncLayout mLyKvml;
+    protected FuncLayout mLyKvml;
 
     protected EmoticonsFuncView mEmoticonsFuncView;
     protected EmoticonsIndicatorView mEmoticonsIndicatorView;
