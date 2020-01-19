@@ -40,6 +40,7 @@ class RouterUtils() {
             const val Chat_CONV_TYPE = "/chat/conv_type"
             const val Chat_Room_ID = "/chat/roomId"
             const val Chat_Room_Name =  "/chat/roomName"
+            const val Chat_GROUP_NAME = "/chat/groupName"
         }
     }
 

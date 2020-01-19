@@ -25,6 +25,9 @@ import org.cs.tec.library.http.NetworkUtil
 import java.util.concurrent.TimeUnit
 import android.content.Intent
 import cn.jpush.im.android.api.model.Message
+import cn.jpush.im.android.api.model.Conversation
+
+
 
 
 open class BaseApplication : Application() {
@@ -96,7 +99,7 @@ open class BaseApplication : Application() {
         val RESULT_CODE_AT_MEMBER = 31
         val RESULT_CODE_AT_ALL = 32
         val SEARCH_AT_MEMBER_CODE = 33
-
+        var delConversation: Conversation? = null
         val RESULT_BUTTON = 2
         val START_YEAR = 1900
         val END_YEAR = 2050
@@ -129,9 +132,9 @@ open class BaseApplication : Application() {
         val SEARCH_AT_MEMBER_NAME = "search_at_member_name"
         val SEARCH_AT_MEMBER_USERNAME = "search_at_member_username"
         val SEARCH_AT_APPKEY = "search_at_appkey"
-
-        var isAtMe: Map<Long, Boolean> = HashMap()
-        var isAtall: Map<Long, Boolean> = HashMap()
+        var ids: ArrayList<Message> = ArrayList()
+        var isAtMe: HashMap<Long, Boolean> = HashMap()
+        var isAtall: HashMap<Long, Boolean> = HashMap()
         //        var forwardMsg: List<Message> = ArrayList()
         var PICTURE_DIR = "sdcard/JChatDemo/pictures/"
         private val JCHAT_CONFIGS = "JChat_configs"
@@ -140,7 +143,6 @@ open class BaseApplication : Application() {
         var THUMP_PICTURE_DIR: String? = null
         val ATUSER = "atuser"
         var maxImgCount: Int = 0               //允许选择图片最大数
-        val GROUP_NAME = "groupName"
     }
 
     fun getScreenWidths(): Int {

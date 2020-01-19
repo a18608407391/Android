@@ -1,12 +1,20 @@
 package com.cstec.administrator.chart_module.ViewModel
 
+import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
 import android.os.Handler
+import android.support.v4.content.ContextCompat
 import cn.jpush.im.android.api.model.GroupInfo
 import cn.jpush.im.android.api.model.UserInfo
 import com.cstec.administrator.chart_module.Activity.ChatRoomActivity
 import com.cstec.administrator.chart_module.View.ChatUtils.DropDownListView
 import com.cstec.administrator.chart_module.View.ChatUtils.SimpleCommonUtils
-import com.cstec.administrator.chart_module.View.XhsEmoticonsKeyBoard
 import com.zk.library.Base.BaseViewModel
 import kotlinx.android.synthetic.main.activity_chart_room.*
 import com.cstec.administrator.chart_module.Adapter.ChattingListAdapter
@@ -16,36 +24,92 @@ import cn.jpush.im.android.api.model.Conversation
 import android.text.TextUtils
 import android.view.View
 import com.cstec.administrator.chart_module.R
-import com.cstec.administrator.chart_module.View.ChatView
 import java.lang.ref.WeakReference
 import cn.jpush.im.api.BasicCallback
 import cn.jpush.im.android.api.enums.ConversationType
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Window
+import android.view.inputmethod.InputMethodManager
+import android.widget.AbsListView
+import android.widget.AbsListView.OnScrollListener.*
+import android.widget.Toast
+import cn.jiguang.ab.e
+import cn.jpush.im.android.api.ChatRoomManager
+import cn.jpush.im.android.api.callback.GetUserInfoListCallback
+import cn.jpush.im.android.api.content.EventNotificationContent
 import cn.jpush.im.android.api.content.ImageContent
 import cn.jpush.im.android.api.content.TextContent
+import cn.jpush.im.android.api.enums.ContentType
+import cn.jpush.im.android.api.enums.MessageDirect
+import cn.jpush.im.android.api.event.*
 import cn.jpush.im.android.api.model.Message
 import cn.jpush.im.android.api.options.MessageSendingOptions
 import com.cstec.administrator.chart_module.Activity.ChooseAtMemberActivity
+import com.cstec.administrator.chart_module.Activity.pickImage.PickImageActivity
 import com.cstec.administrator.chart_module.Data.EmoticonEntity
+import com.cstec.administrator.chart_module.Even.ImageEvent
 import com.cstec.administrator.chart_module.Inteface.EmoticonClickListener
 import com.cstec.administrator.chart_module.Model.Constants
-import com.cstec.administrator.chart_module.Utils.CommonUtils
-import com.cstec.administrator.chart_module.Utils.ToastUtil
+import com.cstec.administrator.chart_module.Utils.*
+import com.cstec.administrator.chart_module.View.*
 import com.cstec.administrator.chart_module.View.ChatUtils.FuncLayout
 import com.cstec.administrator.chart_module.View.Emoji.EmojiBean
-import com.cstec.administrator.chart_module.View.SimpleAppsGridView
-import com.zk.library.binding.command.ViewAdapter.edittext.ViewAdapter.addTextChangedListener
+import com.zk.library.Base.BaseApplication
+import com.zk.library.Utils.RouterUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import org.cs.tec.library.Base.Utils.uiContext
+import org.json.JSONObject
 import java.io.File
 
 
 class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     override fun OnFuncPop(height: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        scrollToBottom()
     }
 
     override fun OnFuncClose() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        JMessageClient.exitConversation()
+        ekBar.reset()
+    }
+
+    override fun onResume() {
+        if (mIsSingle) {
+            if (null != activity.mTargetId) {
+                JMessageClient.enterSingleConversation(activity.mTargetId, activity.mTargetAppKey)
+            }
+        } else if (!isChatRoom) {
+            if (activity.mGroupId != 0L) {
+                BaseApplication.isAtMe
+                BaseApplication.isAtMe[activity.mGroupId] = false
+                BaseApplication.isAtall[activity.mGroupId] = false
+                JMessageClient.enterGroupConversation(activity.mGroupId)
+            }
+        }
+
+        //历史消息中删除后返回到聊天界面刷新界面
+        if (BaseApplication.ids != null && BaseApplication.ids.size > 0) {
+            BaseApplication.ids.forEach {
+                mChatAdapter?.removeMessage(it)
+            }
+        }
+        if (mChatAdapter != null)
+            mChatAdapter?.notifyDataSetChanged();
+        //发送名片返回聊天界面刷新信息
+        if (SharePreferenceManager.getIsOpen()) {
+            if (!isChatRoom) {
+                initData()
+            }
+            SharePreferenceManager.setIsOpen(false)
+        }
+        super.onResume()
+
     }
 
     var mMyInfo: UserInfo? = null
@@ -68,6 +132,9 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     lateinit var lvChat: DropDownListView
     lateinit var mChatView: ChatView
     lateinit var activity: ChatRoomActivity
+
+    var mWindow: Window? = null
+    var mImm: InputMethodManager? = null
     lateinit var mUIHandler: UIHandler
     fun inject(chatRoomActivity: ChatRoomActivity) {
         this.activity = chatRoomActivity
@@ -75,6 +142,8 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         this.lvChat = chatRoomActivity.lv_chat
         this.mChatView = chatRoomActivity.chat_view
         this.mChatView.setListeners(chatRoomActivity)
+        this.mWindow = chatRoomActivity.window;
+        this.mImm = chatRoomActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         mUIHandler = UIHandler(chatRoomActivity)
         initView()
         initData()
@@ -217,6 +286,64 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         }
     }
 
+    fun dismissSoftInput() {
+        if (mShowSoftInput) {
+            if (mImm != null) {
+                mImm?.hideSoftInputFromWindow(ekBar.etChat.windowToken, 0)
+                mShowSoftInput = false
+            }
+            try {
+                Thread.sleep(200)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun returnBtn() {
+        mConv?.resetUnreadCount()
+        dismissSoftInput()
+        if (mChatAdapter != null) {
+            mChatAdapter?.stopMediaPlayer()
+        }
+        JMessageClient.exitConversation()
+        //发送保存为草稿事件到会话列表
+        //TODO
+//        EventBus.getDefault().post(new Event.Builder().setType(EventType.draft)
+//                .setConversation(mConv)
+//                .setDraft(ekBar.getEtChat().getText().toString())
+//                .build());
+        BaseApplication.delConversation = null
+        if (mConv?.allMessage == null || mConv?.allMessage!!.size == 0) {
+            if (mIsSingle) {
+                JMessageClient.deleteSingleConversation(activity.mTargetId)
+            } else {
+                JMessageClient.deleteGroupConversation(activity.mGroupId)
+            }
+            BaseApplication.delConversation = mConv;
+        }
+        if (isChatRoom) {
+            ChatRoomManager.leaveChatRoom(activity.mTargetId?.toLong()!!, object : BasicCallback() {
+                override fun gotResult(p0: Int, p1: String?) {
+                    finish()
+                    onBackPressed()
+                }
+            });
+        } else {
+            finish()
+            super.onBackPressed()
+        }
+    }
+
+    fun startChatRoomActivity(chatRoomId: Long) {
+//TODO
+
+    }
+
+    fun startChatDetailActivity(mTargetId: String?, mTargetAppKey: String?, mGroupId: Long) {
+        //TODO
+    }
+
     var emoticonClickListener = object : EmoticonClickListener<Any> {
         override fun onEmoticonClick(o: Any?, actionType: Int, isDelBtn: Boolean) {
             if (isDelBtn) {
@@ -268,11 +395,141 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         mChatAdapter?.setSendMsgs(msg)
         mChatView?.setToBottom()
     }
+
     fun scrollToBottom() {
         lvChat.requestLayout()
         lvChat.post { lvChat.setSelection(lvChat.bottom) }
     }
 
+
+    fun onEvent(event: MessageEvent) {
+        var message = event.message
+        if (message.contentType == ContentType.eventNotification) {
+            var groupInfo = message.targetInfo as GroupInfo
+            var groupId = groupInfo.groupID
+            var type = (message
+                    .content as EventNotificationContent).eventNotificationType
+            if (groupId == activity.mGroupId) {
+                when (type) {
+                    EventNotificationContent.EventNotificationType.group_member_added -> {
+                        var userNames = (message.content as EventNotificationContent).userNames;
+                        refreshGroupNum()
+                        if (userNames.contains(mMyInfo?.nickname) || userNames.contains(mMyInfo?.userName)) {
+                            CoroutineScope(uiContext).launch {
+                                mChatView.showRightBtn()
+                            }
+                        }
+
+                    }
+                    EventNotificationContent.EventNotificationType.group_member_removed -> {
+                        var userNames = (message.getContent() as EventNotificationContent).userNames;
+                        var operator = (message.getContent() as EventNotificationContent).operatorUserInfo;
+                        //群主删除了当前用户，则隐藏聊天详情按钮
+                        if ((userNames.contains(mMyInfo!!.nickname) || userNames.contains(mMyInfo?.userName)) && operator.userID != mMyInfo?.userID) {
+                            CoroutineScope(uiContext).launch {
+                                mChatView.dismissRightBtn();
+                                var groupInfo = mConv?.getTargetInfo() as GroupInfo
+                                if (TextUtils.isEmpty(groupInfo.groupName)) {
+                                    mChatView.setChatTitle(R.string.group)
+                                } else {
+                                    mChatView.setChatTitle(groupInfo.groupName)
+                                }
+                                mChatView.dismissGroupNum()
+                            }
+                        } else {
+                            refreshGroupNum()
+                        }
+                    }
+                    EventNotificationContent.EventNotificationType.group_member_exit -> {
+                        var content = message.content as EventNotificationContent;
+                        if (content.userNames.contains(JMessageClient.getMyInfo().userName)) {
+                            mChatAdapter?.notifyDataSetChanged()
+                        } else {
+                            refreshGroupNum()
+                        }
+                    }
+                }
+            }
+        }
+        CoroutineScope(uiContext).launch {
+            if (message.targetType === ConversationType.single) {
+                var userInfo = message.targetInfo as UserInfo
+                var targetId = userInfo.userName
+                var appKey = userInfo.appKey
+                if (mIsSingle && targetId == activity.mTargetId && appKey == activity.mTargetAppKey) {
+                    val lastMsg = mChatAdapter?.lastMsg
+                    if (lastMsg == null || message.id !== lastMsg.id) {
+                        mChatAdapter?.addMsgToList(message)
+                    } else {
+                        mChatAdapter?.notifyDataSetChanged()
+                    }
+                }
+            } else {
+                val groupId = (message.targetInfo as GroupInfo).groupID
+                if (groupId == activity.mGroupId) {
+                    val lastMsg = mChatAdapter?.lastMsg
+                    if (lastMsg == null || message.id !== lastMsg.id) {
+                        mChatAdapter?.addMsgToList(message)
+                    } else {
+                        mChatAdapter?.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
+    }
+
+
+    fun onEventMainThread(event: MessageRetractEvent) {
+        val retractedMessage = event.retractedMessage
+        mChatAdapter?.delMsgRetract(retractedMessage)
+    }
+
+    fun onEvent(event: OfflineMessageEvent) {
+        var conv = event.conversation;
+        if (conv.type == ConversationType.single) {
+            var userInfo = conv.targetInfo as UserInfo
+            var targetId = userInfo?.userName
+            var appKey = userInfo?.appKey
+            if (mIsSingle && targetId.equals(activity.mTargetId) && appKey.equals(activity.mTargetAppKey)) {
+                var singleOfflineMsgList = event.offlineMessageList;
+                if (singleOfflineMsgList != null && singleOfflineMsgList.size > 0) {
+                    mChatView.setToBottom()
+                    mChatAdapter?.addMsgListToList(singleOfflineMsgList)
+                }
+            }
+        } else {
+            var groupId = (conv.targetInfo as GroupInfo).groupID;
+            if (groupId == activity.mGroupId) {
+                var offlineMessageList = event.offlineMessageList;
+                if (offlineMessageList != null && offlineMessageList.size > 0) {
+                    mChatView.setToBottom();
+                    mChatAdapter!!.addMsgListToList(offlineMessageList);
+                }
+            }
+        }
+    }
+
+
+    fun refreshGroupNum() {
+        var conv = JMessageClient.getGroupConversation(activity.mGroupId)
+        var groupInfo = conv.targetInfo as GroupInfo
+        if (!TextUtils.isEmpty(groupInfo.groupName)) {
+            var handleMessage = mUIHandler.obtainMessage()
+            handleMessage.what = REFRESH_GROUP_NAME
+            var bundle = Bundle()
+            bundle.putString(RouterUtils.Chat_Module.Chat_GROUP_NAME, groupInfo.groupName)
+            bundle.putInt(RouterUtils.Chat_Module.Chat_MEMBERS_COUNT, groupInfo.groupMembers.size)
+            handleMessage.data = bundle;
+            handleMessage.sendToTarget()
+        } else {
+            var handleMessage = mUIHandler.obtainMessage();
+            handleMessage.what = REFRESH_GROUP_NUM
+            var bundle = Bundle()
+            bundle.putInt(RouterUtils.Chat_Module.Chat_MEMBERS_COUNT, groupInfo.groupMembers.size)
+            handleMessage.data = bundle;
+            handleMessage.sendToTarget()
+        }
+    }
 
     fun initView() {
         initListView()
@@ -339,13 +596,409 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     }
 
     private fun initListView() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        lvChat.setAdapter(mChatAdapter);
+        lvChat.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+            }
+
+            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
+                when (scrollState) {
+                    SCROLL_STATE_FLING -> {
+                    }
+                    SCROLL_STATE_IDLE -> {
+                    }
+                    SCROLL_STATE_TOUCH_SCROLL -> {
+                        ekBar.reset()
+                    }
+
+                }
+            }
+        });
     }
 
     var longClickListener = object : ChattingListAdapter.ContentLongClickListener() {
         override fun onContentLongClick(position: Int, view: View?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            if (isChatRoom) {
+                return;
+            }
+            var msg = mChatAdapter?.getMessage(position);
+
+            if (msg == null) {
+                return;
+            }
+            //如果是文本消息
+            if ((msg.getContentType() == ContentType.text) && (msg?.content as TextContent).getStringExtra("businessCard") == null) {
+                //接收方
+                if (msg.getDirect() == MessageDirect.receive) {
+                    var location = intArrayOf(2)
+                    view?.getLocationOnScreen(location);
+                    var OldListY = location[1]
+                    var OldListX = location[0]
+                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                            .addItem(TipItem("复制"))
+                            .addItem(TipItem("转发"))
+                            .addItem(TipItem("删除"))
+                            .setOnItemClickListener(object : TipView.OnItemClickListener {
+                                override fun onItemClick(name: String?, position: Int) {
+                                    if (position == 0) {
+                                        if (msg.getContentType() == ContentType.text) {
+                                            var content = (msg.getContent() as TextContent).text;
+                                            if (Build.VERSION.SDK_INT > 11) {
+                                                var clipboard = activity
+                                                        .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                                var clip = ClipData.newPlainText("Simple text", content);
+                                                clipboard.primaryClip = clip;
+                                            } else {
+                                                var clip = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                                if (clip.hasText()) {
+                                                    clip.getText();
+                                                }
+                                            }
+//                                            Toast.makeText(ChatActivity.this, "已复制", Toast.LENGTH_SHORT).show();
+                                        } else {
+//                                            Toast.makeText(ChatActivity.this, "只支持复制文字", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else if (position == 1) {
+//                                        var intent = Intent(activity, ForwardMsgActivity.class);
+//                                        JGApplication.forwardMsg.clear();
+//                                        JGApplication.forwardMsg.add(msg);
+//                                        startActivity(intent);
+                                    } else {
+                                        //删除
+                                        mConv?.deleteMessage(msg.getId())
+                                        mChatAdapter?.removeMessage(msg)
+                                    }
+                                }
+
+                                override fun dismiss() {
+
+                                }
+                            })
+                            .create();
+                    //发送方
+                } else {
+                    var location = intArrayOf(2)
+                    view?.getLocationOnScreen(location)
+                    var OldListY = location[1]
+                    var OldListX = location[0]
+                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                            .addItem(TipItem("复制"))
+                            .addItem(TipItem("转发"))
+                            .addItem(TipItem("撤回"))
+                            .addItem(TipItem("删除"))
+                            .setOnItemClickListener(object : TipView.OnItemClickListener {
+                                override fun onItemClick(name: String?, position: Int) {
+                                    if (position == 0) {
+                                        if (msg.getContentType() == ContentType.text) {
+                                            var content = (msg.getContent() as TextContent).getText();
+                                            if (Build.VERSION.SDK_INT > 11) {
+                                                var clipboard = activity
+                                                        .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                                var clip = ClipData.newPlainText("Simple text", content);
+                                                clipboard.setPrimaryClip(clip);
+                                            } else {
+                                                var clip = activity
+                                                        .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                                if (clip.hasText()) {
+                                                    clip.getText();
+                                                }
+                                            }
+                                            Toast.makeText(activity, "已复制", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(activity, "只支持复制文字", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else if (position == 1) {
+                                        //转发
+                                        if (msg.getContentType() == ContentType.text || msg.getContentType() == ContentType.image ||
+                                                (msg.getContentType() == ContentType.file && (msg.getContent()).getStringExtra("video") != null)) {
+//                                            Intent intent = new Intent(ChatActivity.this, ForwardMsgActivity.class);
+//                                            JGApplication.forwardMsg.clear();
+//                                            JGApplication.forwardMsg.add(msg);
+//                                            startActivity(intent);
+                                        } else {
+                                            Toast.makeText(activity, "只支持转发文本,图片,小视频", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else if (position == 2) {
+                                        //撤回
+                                        mConv?.retractMessage(msg, object : BasicCallback() {
+                                            override fun gotResult(p0: Int, p1: String?) {
+                                                if (p0 == 855001) {
+                                                    Toast.makeText(activity, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                } else if (p0 == 0) {
+                                                    mChatAdapter?.delMsgRetract(msg)
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        //删除
+                                        mConv?.deleteMessage(msg.getId())
+                                        mChatAdapter?.removeMessage(msg)
+                                    }
+                                }
+
+                                override fun dismiss() {
+                                }
+                            })
+                            .create();
+                }
+                //除了文本消息类型之外的消息类型
+            } else {
+                //接收方
+                if (msg.getDirect() == MessageDirect.receive) {
+                    var location = intArrayOf(2)
+                    view?.getLocationOnScreen(location)
+                    var OldListY = location[1]
+                    var OldListX = location[0]
+                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                            .addItem(TipItem("转发"))
+                            .addItem(TipItem("删除"))
+                            .setOnItemClickListener(object : TipView.OnItemClickListener {
+                                override fun onItemClick(name: String?, position: Int) {
+                                    if (position == 1) {
+                                        //删除
+                                        mConv?.deleteMessage(msg.getId())
+                                        mChatAdapter?.removeMessage(msg)
+                                    } else {
+//                                        Intent intent = new Intent(ChatActivity.this, ForwardMsgActivity.class);
+//                                        JGApplication.forwardMsg.clear();
+//                                        JGApplication.forwardMsg.add(msg);
+//                                        startActivity(intent);
+                                    }
+                                }
+
+                                override fun dismiss() {
+                                }
+                            })
+                            .create();
+                    //发送方
+                } else {
+                    var location = intArrayOf(2)
+                    view?.getLocationOnScreen(location);
+                    var OldListY = location[1];
+                    var OldListX = location[0];
+                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                            .addItem(TipItem("转发"))
+                            .addItem(TipItem("撤回"))
+                            .addItem(TipItem("删除"))
+                            .setOnItemClickListener(object : TipView.OnItemClickListener {
+                                override fun onItemClick(name: String?, position: Int) {
+                                    if (position == 1) {
+                                        //撤回
+                                        mConv?.retractMessage(msg, object : BasicCallback() {
+                                            override fun gotResult(i: Int, s: String?) {
+                                                if (i == 855001) {
+                                                    Toast.makeText(activity, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                } else if (i == 0) {
+                                                    mChatAdapter?.delMsgRetract(msg)
+                                                }
+                                            }
+                                        });
+                                    } else if (position == 0) {
+//                                        Intent intent = new Intent(ChatActivity.this, ForwardMsgActivity.class);
+//                                        JGApplication.forwardMsg.clear();
+//                                        JGApplication.forwardMsg.add(msg);
+//                                        startActivity(intent);
+                                    } else {
+                                        //删除
+                                        mConv?.deleteMessage(msg.getId())
+                                        mChatAdapter?.removeMessage(msg)
+                                    }
+                                }
+
+                                override fun dismiss() {
+                                }
+                            })
+                            .create()
+                }
+            }
         }
+    }
+
+
+    fun onEvent(event: CommandNotificationEvent) {
+        if (event.type == CommandNotificationEvent.Type.single) {
+            var msg = event.msg
+            CoroutineScope(uiContext).launch {
+                var obj = JSONObject(msg)
+                var jsonContent = obj.getJSONObject("content");
+                var messageString = jsonContent.getString("message")
+                if (TextUtils.isEmpty(messageString)) {
+                    mChatView.setTitle(mConv?.title)
+                } else {
+                    mChatView.setTitle(messageString)
+                }
+            }
+        }
+    }
+
+
+    fun onEventMainThread(event: ChatRoomMessageEvent) {
+        var messages = event.messages
+        mChatAdapter?.addMsgListToList(messages)
+    }
+
+    fun onEventMainThread(event: ChatRoomNotificationEvent) {
+        try {
+            var constructor = EventNotificationContent::class.java.getDeclaredConstructor()
+            constructor.isAccessible = true;
+            var messages = ArrayList<Message>()
+            when (event.getType()) {
+                ChatRoomNotificationEvent.Type.add_chatroom_admin -> {
+                }
+                ChatRoomNotificationEvent.Type.del_chatroom_admin -> {
+                    event.getTargetUserInfoList(object : GetUserInfoListCallback() {
+                        override fun gotResult(i: Int, s: String?, list: MutableList<UserInfo>?) {
+                            if (i == 0) {
+                                list?.forEach {
+                                    try {
+                                        var content = constructor as EventNotificationContent
+                                        var field = content.javaClass.superclass.getDeclaredField("contentType")
+                                        field.isAccessible = true;
+                                        field.set(content, ContentType.eventNotification);
+                                        var user = ""
+                                        var result = ""
+                                        if (it.userID == JMessageClient.getMyInfo().userID) {
+                                            user = "你"
+                                        } else {
+                                            if (TextUtils.isEmpty(it.nickname)) {
+                                                user = it.userName
+                                            } else {
+                                                user = it.nickname
+                                            }
+                                        }
+                                        if (event.type == ChatRoomNotificationEvent.Type.add_chatroom_admin) {
+                                            result = "被设置成管理员"
+                                        } else {
+                                            result = "被取消管理员"
+                                        }
+                                        content.setStringExtra("msg", user + result);
+                                        if (mConv != null) {
+                                            messages.add(mConv?.createSendMessage(content)!!);
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                                if (messages.size > 0) {
+                                    mChatAdapter?.addMsgListToList(messages)
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+    fun onEventMainThread(event: MessageReceiptStatusChangeEvent) {
+        var messageReceiptMetas = event.messageReceiptMetas
+        for (meta in messageReceiptMetas) {
+            var serverMsgId = meta.serverMsgId
+            var unReceiptCnt = meta.unReceiptCnt
+            mChatAdapter?.setUpdateReceiptCount(serverMsgId, unReceiptCnt)
+        }
+    }
+
+    fun onEventMainThread(event: ImageEvent) {
+        var intent: Intent? = null
+        when (event.flag) {
+            BaseApplication.IMAGE_MESSAGE -> {
+                var from = PickImageActivity.FROM_LOCAL;
+                var requestCode = RequestCode.PICK_IMAGE;
+                PickImageActivity.start(activity, requestCode, from, tempFile(), true, 9,
+                        true, false, 0, 0);
+            }
+            BaseApplication.TAKE_PHOTO_MESSAGE -> {
+//                if ((ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.CAMERA)
+//                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO)
+//                                != PackageManager.PERMISSION_GRANTED)) {
+//                    Toast.makeText(this, "请在应用管理中打开“相机,读写存储,录音”访问权限！", Toast.LENGTH_LONG).show();
+//                } else {
+//                    intent = Intent(activity, CameraActivity.class);
+//                    activity.startActivityForResult(intent, RequestCode.TAKE_PHOTO);
+//                }
+            }
+            BaseApplication.TAKE_LOCATION -> {
+//                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    Toast.makeText(this, "请在应用管理中打开“位置”访问权限！", Toast.LENGTH_LONG).show();
+//                } else {
+//                    intent = new Intent (mContext, MapPickerActivity.class);
+//                    intent.putExtra(JGApplication.CONV_TYPE, mConv.getType());
+//                    intent.putExtra(JGApplication.TARGET_ID, mTargetId);
+//                    intent.putExtra(JGApplication.TARGET_APP_KEY, mTargetAppKey);
+//                    intent.putExtra("sendLocation", true);
+//                    startActivityForResult(intent, JGApplication.REQUEST_CODE_SEND_LOCATION);
+//                }
+            }
+            BaseApplication.FILE_MESSAGE -> {
+                if (ContextCompat.checkSelfPermission(activity,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(activity, "请在应用管理中打开“读写存储”访问权限！", Toast.LENGTH_LONG).show();
+
+                } else {
+//                    intent = new Intent (mContext, SendFileActivity.class);
+//                    intent.putExtra(JGApplication.TARGET_ID, mTargetId);
+//                    intent.putExtra(JGApplication.TARGET_APP_KEY, mTargetAppKey);
+//                    intent.putExtra(JGApplication.CONV_TYPE, mConv.getType());
+//                    startActivityForResult(intent, JGApplication.REQUEST_CODE_SEND_FILE);
+                }
+            }
+            BaseApplication.BUSINESS_CARD -> {
+//                intent =  Intent (activity, FriendListActivity.class);
+//                intent.putExtra(JGApplication.CONV_TYPE, mConv.getType());
+//                intent.putExtra(JGApplication.TARGET_ID, mTargetId);
+//                intent.putExtra(JGApplication.TARGET_APP_KEY, mTargetAppKey);;
+//                activity.startActivityForResult(intent, JGApplication.REQUEST_CODE_FRIEND_LIST);
+            }
+            BaseApplication.TACK_VIDEO -> {
+            }
+            BaseApplication.TACK_VOICE -> {
+            }
+        }
+    }
+
+    fun tempFile(): String {
+        var filename = StringUtil.get32UUID() + ".jpg"
+        return StorageUtil.getWritePath(filename, StorageType.TYPE_TEMP)
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            RequestCode.PICK_IMAGE -> {
+                onPickImageActivityResult(requestCode, data);
+            }
+        }
+    }
+
+    private fun onPickImageActivityResult(requestCode: Int, data: Intent?) {
+        if (data == null) {
+            return;
+        }
+        var local = data.getBooleanExtra(Extras.EXTRA_FROM_LOCAL, false);
+        if (local) {
+            // 本地相册
+            sendImageAfterSelfImagePicker(data);
+        }
+    }
+
+    private fun sendImageAfterSelfImagePicker(data: Intent) {
+        SendImageHelper.sendImageAfterSelfImagePicker(activity, data, SendImageHelper.Callback { file, isOrig ->
+            //所有图片都在这里拿到
+            ImageContent.createImageContentAsync(file, object : ImageContent.CreateImageContentCallback() {
+                override fun gotResult(responseCode: Int, responseMessage: String, imageContent: ImageContent) {
+                    if (responseCode == 0) {
+                        val msg = mConv?.createSendMessage(imageContent)
+                        handleSendMsg(msg!!)
+                    }
+                }
+            })
+        })
     }
 
 
@@ -364,8 +1017,60 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
 
             override fun handleMessage(msg: android.os.Message?) {
                 super.handleMessage(msg)
+                var activity = mActivity.get()
+                if (activity != null) {
+                    when (msg?.what) {
+                        REFRESH_LAST_PAGE -> {
+                            activity.mViewModel?.mChatAdapter?.dropDownToRefresh();
+                            activity.mViewModel?.mChatView!!.listView.onDropDownComplete();
+                            if (activity.mViewModel?.mChatAdapter?.isHasLastPage!!) {
+                                if (Build.VERSION.SDK_INT >= 21) {
+                                    activity.mViewModel!!.mChatView.listView
+                                            .setSelectionFromTop(activity.mViewModel!!.mChatAdapter!!.offset,
+                                                    activity.mViewModel!!.mChatView.listView.headerHeight)
+                                } else {
+                                    activity.mViewModel!!.mChatView.getListView().setSelection(activity.mViewModel!!.mChatAdapter
+                                    !!.offset)
+                                }
+                                activity.mViewModel!!.mChatAdapter!!.refreshStartPosition();
+                            } else {
+                                activity.mViewModel!!.mChatView.listView.setSelection(0);
+                            }
+                            //显示上一页的消息数18条
+                            activity.mViewModel!!.mChatView.getListView()
+                                    .setOffset(activity.mViewModel!!.mChatAdapter?.offset!!)
+                        }
+                        REFRESH_GROUP_NAME -> {
+                            if (activity.mViewModel?.mConv != null) {
+                                var num = msg.data.getInt(RouterUtils.Chat_Module.Chat_MEMBERS_COUNT)
+                                var groupName = msg.data.getString(RouterUtils.Chat_Module.Chat_GROUP_NAME)
+                                activity.mViewModel?.mChatView!!.setChatTitle(groupName, num)
+                            }
+                        }
+                        REFRESH_GROUP_NUM -> {
+                            val num = msg.data.getInt(RouterUtils.Chat_Module.Chat_MEMBERS_COUNT)
+                            activity.mViewModel?.mChatView!!.setChatTitle(R.string.group, num)
+                        }
+                        REFRESH_CHAT_TITLE -> {
+                            if (activity.mViewModel?.mGroupInfo != null) {
+                                //检查自己是否在群组中
+                                var info = activity.mViewModel?.mGroupInfo!!.getGroupMemberInfo(activity.mViewModel!!.mMyInfo?.userName,
+                                        activity.mViewModel?.mMyInfo?.appKey)
+                                if (!TextUtils.isEmpty(activity.mViewModel?.mGroupInfo!!.groupName)) {
+                                    if (info != null) {
+                                        activity.mViewModel!!.mChatView.setChatTitle(activity.mTitle,
+                                                activity.mViewModel!!.mGroupInfo!!.groupMembers.size)
+                                        activity.mViewModel?.mChatView?.showRightBtn()
+                                    } else {
+                                        activity.mViewModel?.mChatView!!.setChatTitle(activity.mTitle)
+                                        activity.mViewModel?.mChatView!!.dismissRightBtn()
+                                    }
+                                }
+                            }
+                        }
 
-
+                    }
+                }
             }
         }
 
