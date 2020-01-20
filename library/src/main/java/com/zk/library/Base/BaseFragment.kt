@@ -22,7 +22,7 @@ import org.cs.tec.library.status.StatusLayoutManager
 import java.lang.reflect.ParameterizedType
 
 
-abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel> : RxFragment(), IBaseActivity {
+abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel> : RxFragment(), IBaseFragment {
 
     var binding: V? = null
     public var viewModel: VM? = null
