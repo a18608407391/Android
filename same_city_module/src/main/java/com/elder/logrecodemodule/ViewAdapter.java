@@ -117,6 +117,13 @@ public class ViewAdapter {
 
     @BindingAdapter("setNumberImage")
     public static void setNumberImage(TextView tv, int position) {
+        if (tv.getTag() == null) {
+            tv.setTag(position);
+        } else {
+            if ((int) tv.getTag() != position) {
+                tv.setTag(position);
+            }
+        }
         if (position == 0) {
             tv.setCompoundDrawablesWithIntrinsicBounds(tv.getContext().getResources().getDrawable(R.drawable.number_one),
                     null, null, null);

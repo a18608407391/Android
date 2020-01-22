@@ -222,29 +222,44 @@ public class ViewAdapter {
 
     @BindingAdapter(value = {"initExpand"})
     public static void initExpand(ExpandableTextView text, String simple) {
-        ViewGroup.LayoutParams params = text.getLayoutParams();
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        text.setLayoutParams(params);
+        Log.e("result", "当前布局的高度" + text.getHeight() + "当前的text" + simple + text.getMeasuredHeight());
+
         if (simple == null) {
+            Log.e("result", "当前流程" + "simplen=ull");
             if (text.getTag() != null) {
+                Log.e("result", "当前流程" + "simplen=ull" + "tag!=null");
                 text.setTag(null);
             } else {
+                Log.e("result", "当前流程" + "simplen=ull" + "tag==null");
             }
-            text.setCollapsed(true);
-            text.change();
             return;
         } else {
             if (text.getTag() == null) {
                 text.setTag(simple);
             } else if (text.getTag() != null) {
                 if (text.getTag() != simple) {
-                    text.setTag(simple);
-                    text.setCollapsed(true);
-                    text.change();
+                    text.mStateTv.setCompoundDrawablePadding(0);
+                    if (!text.isCollapsed()) {
+                        text.mTv.setText("");
+                        Log.e("result", "当前流程" + "simplen!=null" + "tag!=null" + "展开了" + text.mStateTv.getHeight());
+                        text.setCollapsed(true);
+                        text.change();
+                        ViewGroup.LayoutParams params = text.getLayoutParams();
+                        ViewGroup.LayoutParams tparams =text.mTv.getLayoutParams();
+                        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        tparams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        text.setLayoutParams(params);
+                        text.mTv.setLayoutParams(tparams);
+                    }
                 }
             }
         }
+        text.mTv.setText("");
         text.setText(simple);
+        Log.e("result", "设置完文字以后的高度" + text.mTv.getHeight());
+        if (text.mCollapsedHeight != -1) {
+            text.mCollapsedHeight = text.mTv.getHeight();
+        }
     }
 
     @BindingAdapter(value = {"initGrid1Image", "initGrid1Listener"})

@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.databinding.ObservableField
 import android.provider.Settings
+import android.support.annotation.NonNull
 import android.view.View
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
@@ -109,12 +110,55 @@ class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack 
                         setting.startActivity(intent)
                     }
                     "oppo" -> {
-                        setting.startActivity(Intent(Settings.ACTION_SETTINGS))
+                        try {
+                            showActivity("com.coloros.phonemanager")
+                        } catch (e1: Exception) {
+                            try {
+                                showActivity("com.oppo.safe")
+                            } catch (e2: Exception) {
+                                try {
+                                    showActivity("com.coloros.oppoguardelf")
+                                } catch (e3: Exception) {
+                                    showActivity("com.coloros.safecenter")
+                                }
+
+                            }
+                        }
                     }
                     "huawei" -> {
-                        setting.startActivity(Intent(Settings.ACTION_SETTINGS))
+                        try {
+                            showActivity("com.huawei.systemmanager",
+                                    "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity")
+                        } catch (e: Exception) {
+                            showActivity("com.huawei.systemmanager",
+                                    "com.huawei.systemmanager.optimize.bootstart.BootStartActivity")
+                        }
+
                     }
-//                    com.android.settings----com.android.settings.applications.ManageApplicationsActivity
+                    "honor" -> {
+                        try {
+                            showActivity("com.huawei.systemmanager",
+                                    "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity")
+                        } catch (e: Exception) {
+                            showActivity("com.huawei.systemmanager",
+                                    "com.huawei.systemmanager.optimize.bootstart.BootStartActivity")
+                        }
+                    }//                    com.android.settings----com.android.settings.applications.ManageApplicationsActivity
+                    "meizu"->{
+                        showActivity("com.meizu.safe")
+                    }
+                    "samsung"->{
+                        try {
+                            showActivity("com.samsung.android.sm_cn")
+                        } catch (e: Exception) {
+                            showActivity("com.samsung.android.sm")
+                        }
+                    }
+                    "letv"->{
+                        showActivity("com.letv.android.letvsafe",
+                                "com.letv.android.letvsafe.AutobootManageActivity");
+                    }
+
                 }
             }
             R.id.start_self_request -> {
@@ -124,5 +168,20 @@ class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack 
                 OSUtil.ignoreBatteryOptimization(setting)
             }
         }
+    }
+
+    private fun showActivity(@NonNull packageName: String) {
+        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+        context.startActivity(intent)
+    }
+
+    /**
+     * 跳转到指定应用的指定页面
+     */
+    private fun showActivity(@NonNull packageName: String, @NonNull activityDir: String) {
+        val intent = Intent()
+        intent.component = ComponentName(packageName, activityDir)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
     }
 }

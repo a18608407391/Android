@@ -269,7 +269,6 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(), LocationSo
         mViewModel?.inject(this)
     }
 
-
     fun getDrverFragment(): DriverFragment {
         return mViewModel?.mFragments!![0] as DriverFragment
     }

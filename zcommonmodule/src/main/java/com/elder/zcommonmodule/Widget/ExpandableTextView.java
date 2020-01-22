@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -42,15 +43,15 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private static final int STATE_TV_GRAVITY_CENTER = 1;
     private static final int STATE_TV_GRAVITY_RIGHT = 2;
 
-    protected TextView mTv;
+    public TextView mTv;
 
-    protected TextView mStateTv; // TextView to expand/collapse
+    public TextView mStateTv; // TextView to expand/collapse
 
     private boolean mRelayout;
 
     private boolean mCollapsed = true; // Show short version as default.
 
-    private int mCollapsedHeight;
+    public int mCollapsedHeight;
 
     private int mTextHeightWithMaxLines;
 
@@ -86,6 +87,9 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     /* For saving collapsed status when used in ListView */
     private SparseBooleanArray mCollapsedStatus;
     private int mPosition;
+
+
+
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -126,6 +130,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
 
     public void change() {
         if (mStateTv.getVisibility() != View.VISIBLE) {
+
             return;
         }
 

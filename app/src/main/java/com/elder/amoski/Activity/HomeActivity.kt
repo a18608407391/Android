@@ -31,7 +31,6 @@ import com.elder.zcommonmodule.Utils.DialogUtils
 import android.content.ClipData
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
-import com.cstec.administrator.social.Fragment.SocialFragment
 import com.elder.zcommonmodule.*
 import com.elder.zcommonmodule.Even.RequestErrorEven
 import com.elder.zcommonmodule.Utils.Utils
@@ -52,6 +51,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         Log.e("result", "HomeCreated")
         Utils.setStatusBar(this, false, false)
 //        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
+//        val fragmentManagerImpl = fragmentManager as FragmentManagerImpl
         return R.layout.activity_home
     }
 
