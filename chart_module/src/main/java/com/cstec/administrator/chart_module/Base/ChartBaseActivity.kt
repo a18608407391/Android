@@ -49,9 +49,15 @@ abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : Base
         mDensityDpi = dm.densityDpi
         mWidth = dm.widthPixels
         mHeight = dm.heightPixels
-        mRatio = Math.min(mWidth as Float / 720, mHeight as Float / 1280)
-        mAvatarSize = (50 * mDensity) as Int
+        mRatio = Math.min(mWidth * 1F / 720, mHeight * 1F / 1280)
+        mAvatarSize = (50 * mDensity).toInt()
+
+    }
+
+    override fun initParam() {
+        super.initParam()
         mHelper = SwipeBackActivityHelper(this)
+        mHelper.onActivityCreate()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -132,7 +138,7 @@ abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : Base
 
     override fun onDestroy() {
         super.onDestroy()
-        JMessageClient.unRegisterEventReceiver(this);
+        JMessageClient.unRegisterEventReceiver(this)
         if (chat_dialog != null) {
             chat_dialog!!.dismiss()
         }

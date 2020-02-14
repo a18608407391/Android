@@ -2,8 +2,10 @@ apply from: "../module.gradle"
 
 dependencies {
     api project(':zcommonmodule')
+    implementation 'org.greenrobot:eventbus:3.0.0'
     kapt rootProject.ext.dependencies["arouter-compiler"]
-
+    api files('libs/picasso-2.5.2.jar')
+    api files('libs/universal-image-loader-1.9.5.jar')
 }
 
 android {

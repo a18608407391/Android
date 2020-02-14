@@ -17,4 +17,5 @@
     <string name="cancle_focus_warm">是否取消关注？</string>
     <string name="my_like">我的点赞</string>
     <string name="get_http_location">正在获取定位信息中......</string>
+
 </resources>

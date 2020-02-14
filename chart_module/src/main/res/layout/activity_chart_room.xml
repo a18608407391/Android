@@ -13,9 +13,14 @@
         android:id="@+id/chat_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
 
         <com.cstec.administrator.chart_module.View.XhsEmoticonsKeyBoard
             android:id="@+id/ek_bar"
@@ -32,14 +37,15 @@
                     android:id="@+id/jmui_menu_title_bar"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/title_bar_height"
+                    android:elevation="5dp"
                     android:background="@color/jmui_jpush_blue">
 
                     <ImageButton
                         android:id="@+id/jmui_return_btn"
                         android:layout_width="@dimen/title_bar_height"
                         android:layout_height="match_parent"
-                        android:background="@drawable/jmui_back_btn_bg"
-                        android:src="@drawable/back"/>
+                        android:background="@color/white"
+                        android:src="@drawable/arrow_black"/>
 
 
                     <LinearLayout
@@ -54,7 +60,7 @@
                             android:layout_height="wrap_content"
                             android:maxWidth="190dp"
                             android:singleLine="true"
-                            android:textColor="#FFFFFF"
+                            android:textColor="#000000"
                             android:textSize="18sp"/>
                         <TextView
                             android:id="@+id/jmui_group_num_tv"
@@ -68,6 +74,7 @@
                         android:id="@+id/jmui_right_btn"
                         android:layout_width="@dimen/title_bar_height"
                         android:layout_height="match_parent"
+                        android:visibility="gone"
                         android:layout_alignParentRight="true"
                         android:background="@drawable/jmui_back_btn_bg"
                         android:src="@drawable/jmui_chat_detail"/>
@@ -79,7 +86,7 @@
                         android:id="@+id/lv_chat"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="#E8EDF3"
+                        android:background="#FFFFFF"
                         android:cacheColorHint="#00000000"
                         android:divider="@null"
                         android:fadingEdge="none"

@@ -23,8 +23,6 @@ import android.view.animation.LinearInterpolator;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 import com.cstec.administrator.chart_module.Activity.BrowserViewPagerActivity;
 import com.cstec.administrator.chart_module.Adapter.ChattingListAdapter;
 import com.cstec.administrator.chart_module.Utils.BitmapDecoder;
@@ -32,13 +30,13 @@ import com.cstec.administrator.chart_module.Utils.FileUtils;
 import com.cstec.administrator.chart_module.Utils.ToastUtil;
 import com.cstec.administrator.chart_module.View.ChatUtils.FileHelper;
 import com.cstec.administrator.chart_module.View.ChatUtils.HandleResponseCode;
+import com.cstec.administrator.chart_module.View.ChatUtils.IdHelper;
 import com.cstec.administrator.chart_module.View.ChatUtils.SimpleCommonUtils;
-//import com.nostra13.universalimageloader.core.DisplayImageOptions;
-//import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso;
 import com.zk.library.Base.BaseApplication;
 import com.zk.library.Utils.RouterUtils;
 
-import org.cs.tec.library.Bus.RxBus;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -352,15 +350,15 @@ public class ChatItemController {
                 public void onComplete(int status, String desc, File file) {
                     if (status == 0) {
                         ImageView imageView = setPictureScale(jiguang, msg, file.getPath(), holder.picture);
-                        Glide.with(mContext).load(file).into(imageView);
-//                        Picasso.with(mContext).load(file).into(imageView);
+//                        Glide.with(mContext).load(file).into(imageView);
+                        Picasso.with(mContext).load(file).into(imageView);
                     }
                 }
             });
         } else {
             ImageView imageView = setPictureScale(jiguang, msg, path, holder.picture);
-            Glide.with(mContext).load(path).into(imageView);
-//            Picasso.with(mContext).load(new File(path)).into(imageView);
+//            Glide.with(mContext).load(path).into(imageView);
+            Picasso.with(mContext).load(new File(path)).into(imageView);
         }
 
         // 接收图片
@@ -667,8 +665,8 @@ public class ChatItemController {
                 try {
                     File file = new File(path);
                     if (file.exists() && file.isFile()) {
-                        Glide.with(mContext).load(file).into(holder.picture);
-//                        Picasso.with(mContext).load(file).into(holder.picture);
+//                        Glide.with(mContext).load(file).into(holder.picture);
+                        Picasso.with(mContext).load(file).into(holder.picture);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -797,7 +795,8 @@ public class ChatItemController {
                         thumbPath = dir + "/" + msg.getTargetType() + "_" + ((ChatRoomInfo) msg.getTargetInfo()).getRoomID() + "_" + msg.getId();
                         break;
                     default:
-                        Glide.with(mContext).load(R.drawable.video_not_found).into(holder.picture);
+                        Picasso.with(mContext).load(R.drawable.video_not_found).into(holder.picture);
+//                        Glide.with(mContext).load(R.drawable.video_not_found).into(holder.picture);
                         return;
                 }
             } else {
@@ -805,11 +804,11 @@ public class ChatItemController {
             }
             String path = BitmapDecoder.extractThumbnail(videoPath, thumbPath);
             setPictureScale(null, msg, path, holder.picture);
-            Glide.with(mContext).load(path).into(holder.picture);
-//            Picasso.with(mContext).load(new File(path)).into(holder.picture);
+//            Glide.with(mContext).load(path).into(holder.picture);
+            Picasso.with(mContext).load(new File(path)).into(holder.picture);
         } else {
-            Glide.with(mContext).load(R.drawable.video_not_found).into(holder.picture);
-//            Picasso.with(mContext).load(R.drawable.video_not_found).into(holder.picture);
+//            Glide.with(mContext).load(R.drawable.video_not_found).into(holder.picture);
+            Picasso.with(mContext).load(R.drawable.video_not_found).into(holder.picture);
         }
 
 //        if (videoPath != null && new File(videoPath).exists()) {
@@ -1294,7 +1293,7 @@ public class ChatItemController {
                         }
                     } else {
 //                        RxBus.Companion.getDefault().postSticky(msg);
-//                         EventBus.getDefault().postSticky(msg);
+                         EventBus.getDefault().postSticky(msg);
 //                        Intent intent = new Intent(mContext, DownLoadActivity.class);
 //                        mContext.startActivity(intent);
                     }

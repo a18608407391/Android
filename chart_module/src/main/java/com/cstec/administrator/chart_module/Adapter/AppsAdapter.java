@@ -13,7 +13,7 @@ import com.cstec.administrator.chart_module.Model.AppBean;
 import com.cstec.administrator.chart_module.R;
 import com.zk.library.Base.BaseApplication;
 
-import org.cs.tec.library.Bus.RxBus;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -68,26 +68,26 @@ public class AppsAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     if (appBean.getFuncName().equals("图片")) {
-                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getIMAGE_MESSAGE()));
-//                        EventBus.getDefault().post();
+//                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getIMAGE_MESSAGE()));
+                        EventBus.getDefault().post(new ImageEvent(BaseApplication.Companion.getIMAGE_MESSAGE()));
                     } else if (appBean.getFuncName().equals("拍摄")) {
-                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTAKE_PHOTO_MESSAGE()));
-//                        EventBus.getDefault().post(new ImageEvent(JGApplication.TAKE_PHOTO_MESSAGE));
+//                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTAKE_PHOTO_MESSAGE()));
+                        EventBus.getDefault().post(new ImageEvent(BaseApplication.Companion.getTAKE_PHOTO_MESSAGE()));
                     }else if (appBean.getFuncName().equals("位置")) {
-                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTAKE_LOCATION()));
-//                        EventBus.getDefault().post(new ImageEvent(JGApplication.TAKE_LOCATION));
+//                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTAKE_LOCATION()));
+                        EventBus.getDefault().post(new ImageEvent(BaseApplication.Companion.getTAKE_LOCATION()));
                     }else if (appBean.getFuncName().equals("文件")) {
-                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getFILE_MESSAGE()));
-//                        EventBus.getDefault().post(new ImageEvent(JGApplication.FILE_MESSAGE));
+//                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getFILE_MESSAGE()));
+                        EventBus.getDefault().post(new ImageEvent(BaseApplication.Companion.getFILE_MESSAGE()));
                     }else if (appBean.getFuncName().equals("视频")) {
-                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTACK_VIDEO()));
-//                        EventBus.getDefault().post(new ImageEvent(JGApplication.TACK_VIDEO));
+//                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTACK_VIDEO()));
+                        EventBus.getDefault().post(new ImageEvent(BaseApplication.Companion.getTACK_VIDEO()));
                     }else if (appBean.getFuncName().equals("语音")) {
-                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTACK_VOICE()));
-//                        EventBus.getDefault().post(new ImageEvent(JGApplication.TACK_VOICE));
+//                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getTACK_VOICE()));
+                        EventBus.getDefault().post(new ImageEvent(BaseApplication.Companion.getTACK_VOICE()));
                     }else if (appBean.getFuncName().equals("名片")) {
-                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getBUSINESS_CARD()));
-//                        EventBus.getDefault().post(new ImageEvent(JGApplication.BUSINESS_CARD));
+//                        RxBus.Companion.getDefault().post(new ImageEvent(BaseApplication.Companion.getBUSINESS_CARD()));
+                        EventBus.getDefault().post(new ImageEvent(BaseApplication.Companion.getBUSINESS_CARD()));
                     }
                 }
             });

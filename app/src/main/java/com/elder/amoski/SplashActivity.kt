@@ -49,7 +49,6 @@ import com.elder.zcommonmodule.Service.SERVICE_AUTO_BOOT_COMPLETED
 import com.liulishuo.filedownloader.BaseDownloadTask
 import com.liulishuo.filedownloader.FileDownloadSampleListener
 import com.liulishuo.filedownloader.FileDownloader
-import com.zk.library.Base.AppManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

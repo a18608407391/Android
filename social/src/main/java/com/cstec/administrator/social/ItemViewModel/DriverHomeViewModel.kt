@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
@@ -81,9 +82,11 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
     }
 
     override fun ResultCanalierSuccess(it: String) {
+        Log.e("result","骑士首页" +it)
         if (it.length < 10) {
             return
         }
+
         var entity = Gson().fromJson<CanalierHomeEntity>(it, CanalierHomeEntity::class.java)
         this.entity = entity
         if (activity?.id == PreferenceUtils.getString(context, USERID)) {
@@ -272,6 +275,18 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
         }
 
         when (view.id) {
+            R.id.msg_click -> {
+                if (entity?.Member?.tel == null){
+                    Toast.makeText(context, "未绑定手机号",Toast.LENGTH_SHORT).show()
+                    return
+                }
+                ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
+                        .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, entity?.Member?.name)
+                        .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, entity?.Member?.tel)
+                        .withString(RouterUtils.Chat_Module.Chat_App_Key, "35e2033d379dabfde25d9321")
+                        .withString(RouterUtils.Chat_Module.Chat_DRAFT, "")
+                        .navigation()
+            }
             R.id.home_focus_click -> {
                 HttpRequest.instance.DynamicFocusResult = this
                 if (follow.get()!!) {

@@ -24,5 +24,11 @@
                 <action android:name="cn.jiguang.user.service.action"/>
             </intent-filter>
         </service>
+
+        <activity android:name=".Activity.MsgActivity"></activity>
+        <activity android:name=".Activity.ChatRoomActivity"></activity>
+        <activity android:name=".Activity.ActiveNotifyListActivity"></activity>
+        <activity android:name=".Activity.SystemNotifyListActivity"></activity>
+        <activity android:name=".Activity.pickImage.PickImageActivity"></activity>
     </application>
 </manifest>

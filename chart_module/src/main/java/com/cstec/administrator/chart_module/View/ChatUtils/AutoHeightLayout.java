@@ -1,12 +1,15 @@
 package com.cstec.administrator.chart_module.View.ChatUtils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.cstec.administrator.chart_module.R;
 
@@ -27,16 +30,16 @@ public abstract class AutoHeightLayout extends SoftKeyboardSizeWatchLayout imple
         addOnResizeListener(this);
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         int childSum = getChildCount();
-        int id = child.getId();
         if (childSum > 1) {
             throw new IllegalStateException("can host only one direct child");
         }
-
+        super.addView(child, index, params);
         if (childSum == 0) {
-            if (id < 0) {
+            if (child.getId() < 0) {
                 child.setId(ID_CHILD);
             }
             LayoutParams paramsChild = (LayoutParams) child.getLayoutParams();
@@ -47,7 +50,6 @@ public abstract class AutoHeightLayout extends SoftKeyboardSizeWatchLayout imple
             paramsChild.addRule(ABOVE, ID_CHILD);
             child.setLayoutParams(paramsChild);
         }
-            super.addView(child, index, params);
     }
 
     @Override
@@ -65,7 +67,7 @@ public abstract class AutoHeightLayout extends SoftKeyboardSizeWatchLayout imple
 
     public void updateMaxParentHeight(int maxParentHeight) {
         this.mMaxParentHeight = maxParentHeight;
-        if(maxParentHeightChangeListener != null){
+        if (maxParentHeightChangeListener != null) {
             maxParentHeightChangeListener.onMaxParentHeightChange(maxParentHeight);
         }
     }
@@ -79,7 +81,7 @@ public abstract class AutoHeightLayout extends SoftKeyboardSizeWatchLayout imple
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if(mConfigurationChangedFlag){
+        if (mConfigurationChangedFlag) {
             mConfigurationChangedFlag = false;
             Rect r = new Rect();
             ((Activity) mContext).getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
@@ -109,7 +111,8 @@ public abstract class AutoHeightLayout extends SoftKeyboardSizeWatchLayout imple
     }
 
     @Override
-    public void OnSoftClose() { }
+    public void OnSoftClose() {
+    }
 
     public abstract void onSoftKeyboardHeightChanged(int height);
 

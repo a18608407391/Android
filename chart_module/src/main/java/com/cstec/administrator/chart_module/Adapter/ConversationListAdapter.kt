@@ -38,6 +38,7 @@ import cn.jpush.im.android.api.model.Conversation
 import cn.jpush.im.android.api.model.GroupInfo
 import cn.jpush.im.android.api.model.Message
 import cn.jpush.im.android.api.model.UserInfo
+import com.cstec.administrator.chart_module.Activity.MsgActivity
 import com.cstec.administrator.chart_module.R
 import com.cstec.administrator.chart_module.View.SwipeLayoutConv
 import com.zk.library.Base.BaseApplication
@@ -49,7 +50,7 @@ import org.cs.tec.library.Base.Utils.uiContext
  * Created by ${chenyn} on 2017/3/30.
  */
 
-class ConversationListAdapter(private val mContext: Activity, private val mDatas: MutableList<Conversation>?, private val mConversationListView: ConversationListView) : BaseAdapter() {
+class ConversationListAdapter(private val mContext: Activity, private val mDatas: MutableList<Conversation>?, private val mConversationListView: MsgActivity) : BaseAdapter() {
     private val mDraftMap = HashMap<String, String>()
     private val mUIHandler = UIHandler(this)
     private val mArray = SparseBooleanArray()

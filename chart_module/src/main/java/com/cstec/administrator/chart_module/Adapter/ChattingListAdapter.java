@@ -3,7 +3,6 @@ package com.cstec.administrator.chart_module.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.TextUtils;
@@ -22,7 +21,6 @@ import com.cstec.administrator.chart_module.ChatItemController;
 import com.cstec.administrator.chart_module.R;
 import com.cstec.administrator.chart_module.View.ChatUtils.DialogCreator;
 import com.cstec.administrator.chart_module.View.ChatUtils.HandleResponseCode;
-import com.zk.library.Base.BaseApplication;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +30,6 @@ import java.util.Queue;
 
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback;
-import cn.jpush.im.android.api.callback.GetReceiptDetailsCallback;
 import cn.jpush.im.android.api.callback.ProgressUpdateCallback;
 import cn.jpush.im.android.api.content.FileContent;
 import cn.jpush.im.android.api.content.TextContent;

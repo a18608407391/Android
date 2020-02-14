@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.Toast
+import cn.jpush.im.android.api.JMessageClient
+import cn.jpush.im.api.BasicCallback
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.facade.callback.NavCallback
@@ -92,7 +94,6 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
         PreferenceUtils.putBoolean(context, RE_LOGIN, false)
         PreferenceUtils.putString(context, REAL_CODE, home.findMemberView?.identityCard)
         insertUserInfo(home.findMemberView!!)
-
         viewModel?.Staggereditems!!.clear()
         viewModel?.cityPartyitems!!.clear()
         viewModel?.cityPartyitems!!.clear()
@@ -109,7 +110,16 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
             }
         }
         log_swipe.isRefreshing = false
-
+        JMessageClient.login(home.findMemberView?.loginname, "0123456789", object : BasicCallback() {
+            override fun gotResult(responseCode: Int, responseMessage: String?) {
+                if (responseCode == 0) {
+                    var myInfo = JMessageClient.getMyInfo()
+                    Log.e("result", "IM 登录成功" + Gson().toJson(myInfo))
+                } else {
+                    Log.e("result", "IM 登录失败" + responseMessage)
+                }
+            }
+        })
     }
 
     override fun ResultHomeError(it: Throwable) {
@@ -162,7 +172,6 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
     var CurrentClickTime = 0L
     override fun initData() {
         super.initData()
-
         viewModel?.inject(this)
         if (this.isAdded) {
             local_rg.setOnCheckedChangeListener(this)

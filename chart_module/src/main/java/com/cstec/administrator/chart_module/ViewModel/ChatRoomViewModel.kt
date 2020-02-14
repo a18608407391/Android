@@ -16,7 +16,6 @@ import com.cstec.administrator.chart_module.Activity.ChatRoomActivity
 import com.cstec.administrator.chart_module.View.ChatUtils.DropDownListView
 import com.cstec.administrator.chart_module.View.ChatUtils.SimpleCommonUtils
 import com.zk.library.Base.BaseViewModel
-import kotlinx.android.synthetic.main.activity_chart_room.*
 import com.cstec.administrator.chart_module.Adapter.ChattingListAdapter
 import cn.jpush.im.android.api.callback.GetGroupInfoCallback
 import cn.jpush.im.android.api.JMessageClient
@@ -29,12 +28,12 @@ import cn.jpush.im.api.BasicCallback
 import cn.jpush.im.android.api.enums.ConversationType
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.DisplayMetrics
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.AbsListView
 import android.widget.AbsListView.OnScrollListener.*
 import android.widget.Toast
-import cn.jiguang.ab.e
 import cn.jpush.im.android.api.ChatRoomManager
 import cn.jpush.im.android.api.callback.GetUserInfoListCallback
 import cn.jpush.im.android.api.content.EventNotificationContent
@@ -48,6 +47,8 @@ import cn.jpush.im.android.api.options.MessageSendingOptions
 import com.cstec.administrator.chart_module.Activity.ChooseAtMemberActivity
 import com.cstec.administrator.chart_module.Activity.pickImage.PickImageActivity
 import com.cstec.administrator.chart_module.Data.EmoticonEntity
+import com.cstec.administrator.chart_module.Even.Event
+import com.cstec.administrator.chart_module.Even.EventType
 import com.cstec.administrator.chart_module.Even.ImageEvent
 import com.cstec.administrator.chart_module.Inteface.EmoticonClickListener
 import com.cstec.administrator.chart_module.Model.Constants
@@ -55,11 +56,15 @@ import com.cstec.administrator.chart_module.Utils.*
 import com.cstec.administrator.chart_module.View.*
 import com.cstec.administrator.chart_module.View.ChatUtils.FuncLayout
 import com.cstec.administrator.chart_module.View.Emoji.EmojiBean
+import com.tencent.smtt.sdk.TbsLogReport
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.RouterUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.uiContext
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONObject
 import java.io.File
 
@@ -132,15 +137,33 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     lateinit var lvChat: DropDownListView
     lateinit var mChatView: ChatView
     lateinit var activity: ChatRoomActivity
-
+    protected var mWidth: Int = 0
+    protected var mHeight: Int = 0
+    protected var mDensity: Float = 0.toFloat()
+    protected var mDensityDpi: Int = 0
     var mWindow: Window? = null
     var mImm: InputMethodManager? = null
+    protected var mRatio: Float = 0.toFloat()
+    protected var mAvatarSize: Int = 0
     lateinit var mUIHandler: UIHandler
     fun inject(chatRoomActivity: ChatRoomActivity) {
         this.activity = chatRoomActivity
-        this.ekBar = chatRoomActivity.ek_bar
-        this.lvChat = chatRoomActivity.lv_chat
-        this.mChatView = chatRoomActivity.chat_view
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
+        this.mChatView = chatRoomActivity.findViewById(R.id.chat_view)
+        var dm = DisplayMetrics()
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mDensity = dm.density;
+        mDensityDpi = dm.densityDpi;
+        mWidth = dm.widthPixels;
+        mHeight = dm.heightPixels;
+        mRatio = Math.min(mWidth / 720, mHeight / 1280).toFloat()
+        mAvatarSize = ((50 * mDensity).toInt())
+        this.mChatView.initModule(mDensity, mDensityDpi)
+        this.activity = chatRoomActivity
+        this.ekBar = chatRoomActivity.findViewById(R.id.ek_bar)
+        this.lvChat = chatRoomActivity.findViewById(R.id.lv_chat)
         this.mChatView.setListeners(chatRoomActivity)
         this.mWindow = chatRoomActivity.window;
         this.mImm = chatRoomActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -309,10 +332,10 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         JMessageClient.exitConversation()
         //发送保存为草稿事件到会话列表
         //TODO
-//        EventBus.getDefault().post(new Event.Builder().setType(EventType.draft)
-//                .setConversation(mConv)
-//                .setDraft(ekBar.getEtChat().getText().toString())
-//                .build());
+        EventBus.getDefault().post(Event.Builder().setType(EventType.draft)
+                .setConversation(mConv)
+                .setDraft(ekBar.getEtChat().getText().toString())
+                .build());
         BaseApplication.delConversation = null
         if (mConv?.allMessage == null || mConv?.allMessage!!.size == 0) {
             if (mIsSingle) {
@@ -402,111 +425,11 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     }
 
 
-    fun onEvent(event: MessageEvent) {
-        var message = event.message
-        if (message.contentType == ContentType.eventNotification) {
-            var groupInfo = message.targetInfo as GroupInfo
-            var groupId = groupInfo.groupID
-            var type = (message
-                    .content as EventNotificationContent).eventNotificationType
-            if (groupId == activity.mGroupId) {
-                when (type) {
-                    EventNotificationContent.EventNotificationType.group_member_added -> {
-                        var userNames = (message.content as EventNotificationContent).userNames;
-                        refreshGroupNum()
-                        if (userNames.contains(mMyInfo?.nickname) || userNames.contains(mMyInfo?.userName)) {
-                            CoroutineScope(uiContext).launch {
-                                mChatView.showRightBtn()
-                            }
-                        }
-
-                    }
-                    EventNotificationContent.EventNotificationType.group_member_removed -> {
-                        var userNames = (message.getContent() as EventNotificationContent).userNames;
-                        var operator = (message.getContent() as EventNotificationContent).operatorUserInfo;
-                        //群主删除了当前用户，则隐藏聊天详情按钮
-                        if ((userNames.contains(mMyInfo!!.nickname) || userNames.contains(mMyInfo?.userName)) && operator.userID != mMyInfo?.userID) {
-                            CoroutineScope(uiContext).launch {
-                                mChatView.dismissRightBtn();
-                                var groupInfo = mConv?.getTargetInfo() as GroupInfo
-                                if (TextUtils.isEmpty(groupInfo.groupName)) {
-                                    mChatView.setChatTitle(R.string.group)
-                                } else {
-                                    mChatView.setChatTitle(groupInfo.groupName)
-                                }
-                                mChatView.dismissGroupNum()
-                            }
-                        } else {
-                            refreshGroupNum()
-                        }
-                    }
-                    EventNotificationContent.EventNotificationType.group_member_exit -> {
-                        var content = message.content as EventNotificationContent;
-                        if (content.userNames.contains(JMessageClient.getMyInfo().userName)) {
-                            mChatAdapter?.notifyDataSetChanged()
-                        } else {
-                            refreshGroupNum()
-                        }
-                    }
-                }
-            }
-        }
-        CoroutineScope(uiContext).launch {
-            if (message.targetType === ConversationType.single) {
-                var userInfo = message.targetInfo as UserInfo
-                var targetId = userInfo.userName
-                var appKey = userInfo.appKey
-                if (mIsSingle && targetId == activity.mTargetId && appKey == activity.mTargetAppKey) {
-                    val lastMsg = mChatAdapter?.lastMsg
-                    if (lastMsg == null || message.id !== lastMsg.id) {
-                        mChatAdapter?.addMsgToList(message)
-                    } else {
-                        mChatAdapter?.notifyDataSetChanged()
-                    }
-                }
-            } else {
-                val groupId = (message.targetInfo as GroupInfo).groupID
-                if (groupId == activity.mGroupId) {
-                    val lastMsg = mChatAdapter?.lastMsg
-                    if (lastMsg == null || message.id !== lastMsg.id) {
-                        mChatAdapter?.addMsgToList(message)
-                    } else {
-                        mChatAdapter?.notifyDataSetChanged()
-                    }
-                }
-            }
-        }
-    }
+    override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+        super.onDestroy()
 
 
-    fun onEventMainThread(event: MessageRetractEvent) {
-        val retractedMessage = event.retractedMessage
-        mChatAdapter?.delMsgRetract(retractedMessage)
-    }
-
-    fun onEvent(event: OfflineMessageEvent) {
-        var conv = event.conversation;
-        if (conv.type == ConversationType.single) {
-            var userInfo = conv.targetInfo as UserInfo
-            var targetId = userInfo?.userName
-            var appKey = userInfo?.appKey
-            if (mIsSingle && targetId.equals(activity.mTargetId) && appKey.equals(activity.mTargetAppKey)) {
-                var singleOfflineMsgList = event.offlineMessageList;
-                if (singleOfflineMsgList != null && singleOfflineMsgList.size > 0) {
-                    mChatView.setToBottom()
-                    mChatAdapter?.addMsgListToList(singleOfflineMsgList)
-                }
-            }
-        } else {
-            var groupId = (conv.targetInfo as GroupInfo).groupID;
-            if (groupId == activity.mGroupId) {
-                var offlineMessageList = event.offlineMessageList;
-                if (offlineMessageList != null && offlineMessageList.size > 0) {
-                    mChatView.setToBottom();
-                    mChatAdapter!!.addMsgListToList(offlineMessageList);
-                }
-            }
-        }
     }
 
 
@@ -815,29 +738,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     }
 
 
-    fun onEvent(event: CommandNotificationEvent) {
-        if (event.type == CommandNotificationEvent.Type.single) {
-            var msg = event.msg
-            CoroutineScope(uiContext).launch {
-                var obj = JSONObject(msg)
-                var jsonContent = obj.getJSONObject("content");
-                var messageString = jsonContent.getString("message")
-                if (TextUtils.isEmpty(messageString)) {
-                    mChatView.setTitle(mConv?.title)
-                } else {
-                    mChatView.setTitle(messageString)
-                }
-            }
-        }
-    }
-
-
-    fun onEventMainThread(event: ChatRoomMessageEvent) {
-        var messages = event.messages
-        mChatAdapter?.addMsgListToList(messages)
-    }
-
-    fun onEventMainThread(event: ChatRoomNotificationEvent) {
+    open fun onEventMainThread(event: ChatRoomNotificationEvent) {
         try {
             var constructor = EventNotificationContent::class.java.getDeclaredConstructor()
             constructor.isAccessible = true;
@@ -893,34 +794,65 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     }
 
 
-    fun onEventMainThread(event: MessageReceiptStatusChangeEvent) {
-        var messageReceiptMetas = event.messageReceiptMetas
-        for (meta in messageReceiptMetas) {
-            var serverMsgId = meta.serverMsgId
-            var unReceiptCnt = meta.unReceiptCnt
-            mChatAdapter?.setUpdateReceiptCount(serverMsgId, unReceiptCnt)
+    fun tempFile(): String {
+        var filename = StringUtil.get32UUID() + ".jpg"
+        return StorageUtil.getWritePath(filename, StorageType.TYPE_TEMP)
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            RequestCode.PICK_IMAGE -> {
+                onPickImageActivityResult(requestCode, data);
+            }
         }
     }
 
-    fun onEventMainThread(event: ImageEvent) {
+    private fun onPickImageActivityResult(requestCode: Int, data: Intent?) {
+        if (data == null) {
+            return;
+        }
+        var local = data.getBooleanExtra(Extras.EXTRA_FROM_LOCAL, false);
+        if (local) {
+            // 本地相册
+            sendImageAfterSelfImagePicker(data);
+        }
+    }
+
+    private fun sendImageAfterSelfImagePicker(data: Intent) {
+        SendImageHelper.sendImageAfterSelfImagePicker(activity, data, SendImageHelper.Callback { file, isOrig ->
+            //所有图片都在这里拿到
+            ImageContent.createImageContentAsync(file, object : ImageContent.CreateImageContentCallback() {
+                override fun gotResult(responseCode: Int, responseMessage: String, imageContent: ImageContent) {
+                    if (responseCode == 0) {
+                        val msg = mConv?.createSendMessage(imageContent)
+                        handleSendMsg(msg!!)
+                    }
+                }
+            })
+        })
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    open fun onEventMainThread(event: ImageEvent) {
         var intent: Intent? = null
         when (event.flag) {
             BaseApplication.IMAGE_MESSAGE -> {
                 var from = PickImageActivity.FROM_LOCAL;
                 var requestCode = RequestCode.PICK_IMAGE;
-                PickImageActivity.start(activity, requestCode, from, tempFile(), true, 9,
+                PickImageActivity.start(activity, requestCode, from, tempFile()!!, true, 9,
                         true, false, 0, 0);
             }
             BaseApplication.TAKE_PHOTO_MESSAGE -> {
-//                if ((ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.CAMERA)
-//                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.RECORD_AUDIO)
-//                                != PackageManager.PERMISSION_GRANTED)) {
-//                    Toast.makeText(this, "请在应用管理中打开“相机,读写存储,录音”访问权限！", Toast.LENGTH_LONG).show();
-//                } else {
-//                    intent = Intent(activity, CameraActivity.class);
-//                    activity.startActivityForResult(intent, RequestCode.TAKE_PHOTO);
-//                }
+                if ((ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO)
+                                != PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(activity, "请在应用管理中打开“相机,读写存储,录音”访问权限！", Toast.LENGTH_LONG).show();
+                } else {
+//                    var intent = Intent(this, CameraActivity::class.java)
+//                            startActivityForResult (intent, RequestCode.TAKE_PHOTO);
+                }
             }
             BaseApplication.TAKE_LOCATION -> {
 //                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -962,45 +894,6 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
             }
         }
     }
-
-    fun tempFile(): String {
-        var filename = StringUtil.get32UUID() + ".jpg"
-        return StorageUtil.getWritePath(filename, StorageType.TYPE_TEMP)
-    }
-
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            RequestCode.PICK_IMAGE -> {
-                onPickImageActivityResult(requestCode, data);
-            }
-        }
-    }
-
-    private fun onPickImageActivityResult(requestCode: Int, data: Intent?) {
-        if (data == null) {
-            return;
-        }
-        var local = data.getBooleanExtra(Extras.EXTRA_FROM_LOCAL, false);
-        if (local) {
-            // 本地相册
-            sendImageAfterSelfImagePicker(data);
-        }
-    }
-
-    private fun sendImageAfterSelfImagePicker(data: Intent) {
-        SendImageHelper.sendImageAfterSelfImagePicker(activity, data, SendImageHelper.Callback { file, isOrig ->
-            //所有图片都在这里拿到
-            ImageContent.createImageContentAsync(file, object : ImageContent.CreateImageContentCallback() {
-                override fun gotResult(responseCode: Int, responseMessage: String, imageContent: ImageContent) {
-                    if (responseCode == 0) {
-                        val msg = mConv?.createSendMessage(imageContent)
-                        handleSendMsg(msg!!)
-                    }
-                }
-            })
-        })
-    }
-
 
     companion object {
         private val REFRESH_LAST_PAGE = 0x1023

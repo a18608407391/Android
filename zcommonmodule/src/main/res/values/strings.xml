@@ -14,6 +14,7 @@
     <string name="cancle">取消</string>
     <string name="choice_birthday">选择出生年月日</string>
     <string name="male">男</string>
+    <string name="atmse">\@我的</string>
     <string name="remale">女</string>
     <string name="choice_gender">选择性别</string>
     <string name="choice_city">选择城市</string>

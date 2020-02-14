@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="jmui_jpush_blue">#2DD0CF</color>
+    <color name="jmui_jpush_blue">#FFFFFF</color>
     <color name="titlebar_text_color">#fff</color>
     <color name="item_click_bg_color">#E9EDED</color>
     <color name="white">#FFFFFF</color>
