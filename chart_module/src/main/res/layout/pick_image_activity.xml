@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_64"
+        android:elevation="@dimen/d_05"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/toolbar_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_16"
+            android:src="@drawable/black_back" />
+
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_weight="1"
+            android:textColor="@color/black_12"
+            android:textSize="@dimen/s_16" />
+
+        <ImageView
+            android:id="@+id/right_img"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!--<android.support.design.widget.AppBarLayout-->
+    <!--android:id="@+id/app_bar_layout"-->
+    <!--android:layout_width="match_parent"-->
+
+    <!--android:layout_height="wrap_content"-->
+    <!--android:theme="@style/AppTheme.AppBarOverlay"-->
+    <!--app:elevation="5dp">-->
+
+    <!--<android.support.v7.widget.Toolbar-->
+    <!--android:id="@+id/toolbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="@dimen/d_44"-->
+    <!--android:background="@color/white"-->
+    <!--app:titleTextAppearance="@style/Toolbar.TitleText">-->
+    <!--</android.support.v7.widget.Toolbar>-->
+
+
+<!--</android.support.design.widget.AppBarLayout>-->
+
+    </LinearLayout>

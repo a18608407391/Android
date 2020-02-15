@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical"></LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_64"
+        android:elevation="@dimen/d_05"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/toolbar_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_16"
+            android:src="@drawable/black_back" />
+
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_20"
+            android:layout_weight="1"
+            android:textColor="@color/black_12"
+            android:textSize="@dimen/s_16" />
+
+        <ImageView
+            android:id="@+id/right_img"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/picker_bottombar"
+        android:layout_below="@id/app_bar_layout">
+
+        <FrameLayout
+            android:id="@+id/picker_album_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
+
+        <FrameLayout
+            android:id="@+id/picker_photos_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/picker_bottombar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#e6e6e6"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/picker_bottombar_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/picker_preview_btn_selector"
+            android:enabled="false"
+            android:gravity="center"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip"
+            android:text="@string/picker_image_preview"
+            android:textColor="@color/color_picker_preview_selector"
+            android:textSize="14.0sp"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/picker_bottombar_select"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/blue_btn_selector"
+            android:enabled="false"
+            android:gravity="center"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip"
+            android:text="@string/btn_send"
+            android:textColor="@drawable/blue_text_selector"
+            android:textSize="14.0sp"
+            android:visibility="visible"/>
+    </RelativeLayout>
+
+</RelativeLayout>

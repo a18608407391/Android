@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="msg_model"
+            type="com.cstec.administrator.chart_module.ViewModel.MsgViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"></LinearLayout>
+
+        <include
+            layout="@layout/base_tab_layout"
+            app:data="@{msg_model.component}" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_15"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/get_like_click"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/d_15"
+                android:drawableTop="@drawable/like_msg"
+                android:gravity="center"
+                android:onClick="@{msg_model::onClick}"
+                android:text="收到的赞"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_14" />
+
+            <TextView
+                android:id="@+id/command_click"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/d_15"
+                android:drawableTop="@drawable/command_msg"
+                android:gravity="center"
+                android:text="评论"
+                android:onClick="@{msg_model::onClick}"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_14" />
+
+            <TextView
+                android:id="@+id/at_click"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="@dimen/d_15"
+                android:drawableTop="@drawable/at_msg"
+                android:gravity="center"
+                android:text="@string/atmse"
+                android:onClick="@{msg_model::onClick}"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_14" />
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/null_conversation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:text="暂无会话"
+                android:textColor="#999999"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_64"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:id="@+id/sys_click"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_63"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+
+                        <ImageView
+                            android:layout_width="@dimen/d_45"
+                            android:layout_height="@dimen/d_45"
+                            android:src="@drawable/system_notify_icon" />
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/d_15"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="系统通知"
+                                android:textColor="@color/black_12"
+                                android:textSize="@dimen/s_15" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/d_05"
+                                android:singleLine="true"
+                                android:text="从零开始也完全没问题！"
+                                android:textColor="#A4A4A4"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|right"
+                            android:orientation="vertical">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="3小时前"
+                                android:textColor="#A4A4A4"
+                                android:textSize="@dimen/s_10" />
+
+
+                            <RelativeLayout
+                                android:layout_width="@dimen/d_16"
+                                android:layout_height="@dimen/d_16"
+                                android:layout_marginTop="@dimen/d_05"
+                                android:background="@drawable/red_circle">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:text="5"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/s_12" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_01"
+                        android:background="@color/FivepercentBlackColor"></View>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/active_click"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_64"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_63"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+
+                        <ImageView
+                            android:layout_width="@dimen/d_45"
+                            android:layout_height="@dimen/d_45"
+                            android:src="@drawable/active_notify_icon" />
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/d_15"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="活动通知"
+                                android:textColor="@color/black_12"
+                                android:textSize="@dimen/s_15" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/d_05"
+                                android:singleLine="true"
+                                android:text="阳城国际汽车文化艺术节！"
+                                android:textColor="#A4A4A4"
+                                android:textSize="@dimen/s_12" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|right"
+                            android:orientation="vertical">
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="3小时前"
+                                android:textColor="#A4A4A4"
+                                android:textSize="@dimen/s_10" />
+
+
+                            <RelativeLayout
+                                android:layout_width="@dimen/d_16"
+                                android:layout_height="@dimen/d_16"
+                                android:layout_marginTop="@dimen/d_05"
+                                android:background="@drawable/red_circle">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:text="5"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/s_12" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_01"
+                        android:background="@color/FivepercentBlackColor"></View>
+
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/conv_list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="0dp"
+                    android:divider="@drawable/main_list_divider_line"
+                    android:dividerHeight="0.3dp"
+                    android:headerDividersEnabled="false" />
+            </LinearLayout>
+
+
+        </FrameLayout>
+
+    </LinearLayout>
+</layout>
