@@ -24,7 +24,10 @@ class RouterUtils() {
 
     class Chat_Module() {
         companion object {
+            const val SysNotify_AC = "/chat/systemnotify"
+            const val ActiveNotify_AC = "/chat/activenotify"
             const val Chat_AC = "/chat/room"
+            const val MSG_AC = "/chat/msglist"
             const val Chat_TARGET_ID = "/chat/targetId"
             const val Chat_App_Key = "/chat/appkey"
             const val Chat_DRAFT = "/chat/draft"
@@ -58,7 +61,8 @@ class RouterUtils() {
             const val ADD_CARS = "/add/cars"
             const val Edit_CARS = "/Edit/cars"
             const val BOND_CARS = "/bond/cars"
-
+            const val Atme_AC = "/private/atme"
+            const val COMMAND_AC = "/private/command"
             const val MY_ACTIVE_WEB_AC = "/private/my_active_web"
             const val MY_ACTIVE_WEB_TYPE = "/private/my_active_web_type"
             const val MY_ACTIVE_WEB_ID = "/private/my_active_web_id"

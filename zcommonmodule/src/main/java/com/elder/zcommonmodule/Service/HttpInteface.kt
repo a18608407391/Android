@@ -8,6 +8,38 @@ import com.elder.zcommonmodule.Service.Error.ApiException
 
 class HttpInteface {
 
+
+    interface queryCommandMeList {
+        fun CommandSuccess(it: String)
+        fun CommandError(ex: Throwable)
+    }
+
+    interface queryAtmeList {
+        fun AtmeListSuccess(it: String)
+        fun AtmeListError(ex: Throwable)
+    }
+
+
+    interface querySystemNotifyList {
+        fun SystemNotifyListSuccess(response: String)
+        fun SystemNotifyListError(ex: Throwable)
+    }
+
+    interface queryActiveNotifyList {
+        fun ActiveNotifyListSuccess(response: String)
+        fun ActiveNotifyListError(ex: Throwable)
+    }
+
+    interface deleteSystemNotifyList {
+        fun SystemNotifyDeleteListSuccess(response: String)
+        fun SystemNotifyDeleteListError(ex: Throwable)
+    }
+
+    interface deleteActiveNotifyList {
+        fun ActiveNotifyListDeleteSuccess(response: String)
+        fun ActiveNotifyListDeleteError(ex: Throwable)
+    }
+
     interface LoginResult {
         fun LoginSuccess(response: BaseResponse)
         fun LoginError(error: Throwable)

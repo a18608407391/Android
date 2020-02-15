@@ -30,5 +30,8 @@
         <activity android:name=".Activity.ActiveNotifyListActivity"></activity>
         <activity android:name=".Activity.SystemNotifyListActivity"></activity>
         <activity android:name=".Activity.pickImage.PickImageActivity"></activity>
+        <activity android:name=".Activity.pickImage.PickerAlbumActivity"></activity>
+        <activity android:name=".Activity.pickImage.PickerAlbumPreviewActivity"></activity>
+
     </application>
 </manifest>

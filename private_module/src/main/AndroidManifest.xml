@@ -65,5 +65,7 @@
 
         <activity android:name=".Activity.PhotoAddWaterMarkerActivity"></activity>
         <activity android:name=".Activity.Picture.ShareEditPictureActivity"></activity>
+        <activity android:name=".Activity.NewVession.AtmeActivity"></activity>
+        <activity android:name=".Activity.NewVession.CommandActivity"></activity>
     </application>
 </manifest>

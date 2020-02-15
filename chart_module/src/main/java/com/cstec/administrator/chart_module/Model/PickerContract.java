@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.cstec.administrator.chart_module.Utils.Extras;
-
+import com.cstec.administrator.chart_module.Activity.pickImage.PhotoInfo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

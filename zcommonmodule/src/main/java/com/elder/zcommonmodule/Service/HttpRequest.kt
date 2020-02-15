@@ -50,7 +50,7 @@ class HttpRequest {
     var privateGetFocusList: HttpInteface.PrivateFocusList? = null
     var privateLikeList: HttpInteface.PrivateLikeList? = null
     var privateRestoreList: HttpInteface.PrivateRestoreList? = null
-    var deleteSocialResult  :HttpInteface.deleteSocialResult ? = null
+    var deleteSocialResult: HttpInteface.deleteSocialResult? = null
     var homeResult: HttpInteface.HomeResult? = null
 
 
@@ -371,7 +371,7 @@ class HttpRequest {
     fun postReleaseDynamics(map: HashMap<String, Any>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         NetWorkManager.instance.getOkHttpRetrofit()?.create(SocialService::class.java)?.releaseDynamics(token, NetWorkManager.instance.getBaseRequestBodyAny(map)!!)?.map(ServerResponseError())?.doOnError {
-            Log.e("result","错误出现位置2" + it.message)
+            Log.e("result", "错误出现位置2" + it.message)
             resultReleaseDynamics?.ResultReleaseDynamicsError(ExceptionEngine.handleException(it))
         }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
             override fun onComplete() {
@@ -385,7 +385,7 @@ class HttpRequest {
             }
 
             override fun onError(e: Throwable) {
-                Log.e("result","错误出现位置1" + e.message)
+                Log.e("result", "错误出现位置1" + e.message)
                 resultReleaseDynamics?.ResultReleaseDynamicsError(e)
             }
         })
@@ -504,7 +504,7 @@ class HttpRequest {
     fun getDynamicsList(map: HashMap<String, String>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         NetWorkManager.instance.getOkHttpRetrofit()?.create(SocialService::class.java)?.getDynamicList(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
-            Log.e("result","请求回来了吗2")
+            Log.e("result", "请求回来了吗2")
             DynamicListResult?.ResultSDListError(ExceptionEngine.handleException(it))
         }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
             override fun onComplete() {
@@ -514,12 +514,12 @@ class HttpRequest {
             }
 
             override fun onNext(t: String) {
-                Log.e("result","请求回来了吗")
+                Log.e("result", "请求回来了吗")
                 DynamicListResult?.ResultSDListSuccess(t)
             }
 
             override fun onError(e: Throwable) {
-                Log.e("result","请求回来了吗1")
+                Log.e("result", "请求回来了吗1")
                 DynamicListResult?.ResultSDListError(e)
             }
         })
@@ -815,6 +815,143 @@ class HttpRequest {
 
             override fun onError(e: Throwable) {
                 deleteSocialResult?.deleteSocialError(e)
+            }
+        })
+    }
+
+
+    var getSystemNotify: HttpInteface.querySystemNotifyList? = null
+    var getActiveNotify: HttpInteface.queryActiveNotifyList? = null
+    var deleteSystemNotify: HttpInteface.deleteSystemNotifyList? = null
+    var deleteActiveNotify: HttpInteface.deleteActiveNotifyList? = null
+
+    fun querySystemNotify(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.QuerySystemNotify(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            getSystemNotify?.SystemNotifyListError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                getSystemNotify?.SystemNotifyListSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                getSystemNotify?.SystemNotifyListError(e)
+            }
+        })
+    }
+
+    fun queryActiveNotify(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.QueryActiveNotify(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            getActiveNotify?.ActiveNotifyListError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                getActiveNotify?.ActiveNotifyListSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                getActiveNotify?.ActiveNotifyListError(e)
+            }
+        })
+    }
+
+    fun deleteActiveNotifyRequest(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.deleteActiveNotify(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            deleteActiveNotify?.ActiveNotifyListDeleteError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                deleteActiveNotify?.ActiveNotifyListDeleteSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                deleteActiveNotify?.ActiveNotifyListDeleteError(e)
+            }
+        })
+    }
+
+
+    fun deleteSystemNotifyRequest(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.deleteSystemNotify(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            deleteSystemNotify?.SystemNotifyDeleteListError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                deleteSystemNotify?.SystemNotifyDeleteListSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                deleteSystemNotify?.SystemNotifyDeleteListError(e)
+            }
+        })
+    }
+
+
+    var getatmelistResult: HttpInteface.queryAtmeList? = null
+    var getcommandmelistResult: HttpInteface.queryCommandMeList? = null
+
+    fun queryAtMeListRequest(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.queryAtMeList(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            getatmelistResult?.AtmeListError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                getatmelistResult?.AtmeListSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                getatmelistResult?.AtmeListError(e)
+            }
+        })
+    }
+
+    fun queryCommandMeListRequest(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.queryCommandMeList(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            getcommandmelistResult?.CommandError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                getcommandmelistResult?.CommandSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                getcommandmelistResult?.CommandError(e)
             }
         })
     }

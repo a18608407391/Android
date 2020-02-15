@@ -3,6 +3,7 @@ package com.cstec.administrator.chart_module.Utils;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -144,8 +145,14 @@ public class AttachmentStore {
         if (!f.getParentFile().exists()) {// 如果不存在上级文件夹
             f.getParentFile().mkdirs();
         }
+        if(f==null){
+            Log.e("result","路径有问题");
+        }
         try {
             boolean newFile = f.createNewFile();
+            if(newFile){
+                Log.e("result","文件创建成功");
+            }
             return f;
         } catch (IOException e) {
             if (f != null && f.exists()) {

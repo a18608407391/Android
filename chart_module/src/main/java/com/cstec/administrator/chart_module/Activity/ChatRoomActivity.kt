@@ -222,10 +222,7 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
         }
     }
 
-    open fun onEventMainThread(event: MessageRetractEvent) {
-        val retractedMessage = event.retractedMessage
-        mViewModel?.mChatAdapter?.delMsgRetract(retractedMessage)
-    }
+
 
 
     open fun onEvent(event: OfflineMessageEvent) {
@@ -269,7 +266,10 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
         }
     }
 
-
+    open fun onEventMainThread(event: MessageRetractEvent) {
+        val retractedMessage = event.retractedMessage
+        mViewModel?.mChatAdapter?.delMsgRetract(retractedMessage)
+    }
     open fun onEventMainThread(event: ChatRoomMessageEvent) {
         var messages = event.messages
         mViewModel?.mChatAdapter?.addMsgListToList(messages)

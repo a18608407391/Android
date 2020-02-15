@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.cstec.administrator.chart_module.Model.PhotoInfo;
+import com.cstec.administrator.chart_module.Activity.pickImage.PhotoInfo;
 import com.cstec.administrator.chart_module.Model.PickerContract;
 import com.cstec.administrator.chart_module.R;
 
@@ -62,6 +63,8 @@ public class SendImageHelper {
 
         List<PhotoInfo> photos = PickerContract.getPhotos(data);
         if (photos == null) {
+            Log.e("result", "SendImageHelper");
+
             Toast.makeText(context, R.string.picker_image_error, Toast.LENGTH_LONG).show();
             return;
         }
@@ -117,14 +120,19 @@ public class SendImageHelper {
 
                 return new File(origMD5Path);
             } else {
+                Log.e("result", "图片路径" + photoPath);
+
                 File imageFile = new File(photoPath);
                 String mimeType = FileUtils.getExtensionName(photoPath);
-
+                Log.e("result", "mimeType" + mimeType);
                 imageFile = ImageUtil.getScaledImageFileWithMD5(imageFile, mimeType);
+
+
                 if (imageFile == null) {
                     new Handler(context.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.e("result", "SendImageHelper");
                             Toast.makeText(context, R.string.picker_image_error, Toast.LENGTH_LONG).show();
                         }
                     });

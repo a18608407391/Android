@@ -38,13 +38,19 @@ import cn.jpush.im.android.api.model.Conversation
 import cn.jpush.im.android.api.model.GroupInfo
 import cn.jpush.im.android.api.model.Message
 import cn.jpush.im.android.api.model.UserInfo
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.cstec.administrator.chart_module.Activity.MsgActivity
+import com.cstec.administrator.chart_module.Activity.pickImage.BitmapUtil
 import com.cstec.administrator.chart_module.R
 import com.cstec.administrator.chart_module.View.SwipeLayoutConv
 import com.zk.library.Base.BaseApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.uiContext
+import org.cs.tec.library.Utils.ConvertUtils
 
 /**
  * Created by ${chenyn} on 2017/3/30.
@@ -209,6 +215,7 @@ class ConversationListAdapter(private val mContext: Activity, private val mDatas
             convertView = LayoutInflater.from(mContext).inflate(R.layout.item_conv_list, null)
         }
         var headIcon = ViewHolder.get(convertView, R.id.msg_item_head_icon) as ImageView
+
         val convName = ViewHolder.get(convertView, R.id.conv_item_name) as TextView
         val content = ViewHolder.get(convertView, R.id.msg_item_content) as TextView
         val datetime = ViewHolder.get(convertView, R.id.msg_item_date) as TextView
@@ -288,13 +295,11 @@ class ConversationListAdapter(private val mContext: Activity, private val mDatas
                     } else {
                         mAtAll.put(position, true)
                     }
-
                 }
                 var gid: Long = 0
                 if (convItem.type == ConversationType.group) {
                     gid = java.lang.Long.parseLong(convItem.targetId)
                 }
-
                 if (mAtAll.get(position) && BaseApplication.isAtall.get(gid) != null && BaseApplication.isAtall.get(gid)!!) {
                     contentStr = "[@所有人] $contentStr"
                     val builder = SpannableStringBuilder(contentStr)
@@ -386,14 +391,20 @@ class ConversationListAdapter(private val mContext: Activity, private val mDatas
                 mUserInfo!!.getAvatarBitmap(object : GetAvatarBitmapCallback() {
                     override fun gotResult(status: Int, desc: String, bitmap: Bitmap) {
                         if (status == 0) {
-                            headIcon.setImageBitmap(bitmap)
+                            if(bitmap!=null){
+                                var crop = CircleCrop()
+                                var options = RequestOptions().transform(crop).placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.dp2px(47.33F), ConvertUtils.dp2px(47.33F))
+                                Glide.with(headIcon.context).asBitmap().load(bitmap).apply(options).into(headIcon)
+                            }else{
+                                headIcon.setImageResource(R.drawable.default_avatar)
+                            }
                         } else {
-                            headIcon.setImageResource(R.drawable.jmui_head_icon)
+                            headIcon.setImageResource(R.drawable.default_avatar)
                         }
                     }
                 })
             } else {
-                headIcon.setImageResource(R.drawable.jmui_head_icon)
+                headIcon.setImageResource(R.drawable.default_avatar)
             }
         } else if (convItem.type == ConversationType.group) {
             mGroupInfo = convItem.targetInfo as GroupInfo
@@ -558,7 +569,11 @@ class ConversationListAdapter(private val mContext: Activity, private val mDatas
     }
 
     fun getDraft(convId: String): String {
-        return mDraftMap[convId]!!
+        if (mDraftMap[convId] == null) {
+            return ""
+        } else {
+            return mDraftMap[convId]!!
+        }
     }
 
     fun includeAtMsg(conv: Conversation): Boolean {

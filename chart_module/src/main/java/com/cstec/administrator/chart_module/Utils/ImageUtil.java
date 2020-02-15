@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.cstec.administrator.chart_module.R;
 
@@ -282,13 +283,15 @@ public class ImageUtil {
         String filePath = imageFile.getPath();
 
         if (!isInvalidPictureFile(mimeType)) {
+            Log.e("result","isInvalidPictureFile");
             return null;
         }
 
         String tempFilePath = getTempFilePath(FileUtils.getExtensionName(filePath));
-
+        Log.e("result","tempFilePath" +tempFilePath);
         File tempImageFile = AttachmentStore.create(tempFilePath);
         if (tempImageFile == null) {
+            Log.e("result","tempImageFile  ==null");
             return null;
         }
 
@@ -300,6 +303,7 @@ public class ImageUtil {
         if (ImageUtil.scaleImage(imageFile, tempImageFile, maxWidth, compressFormat, quality)) {
             return tempImageFile;
         } else {
+            Log.e("result","tempImageFile is null");
             return null;
         }
     }

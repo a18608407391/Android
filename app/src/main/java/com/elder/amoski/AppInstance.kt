@@ -19,6 +19,7 @@ import org.cs.tec.library.Bus.RxSubscriptions
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import cn.jpush.im.android.api.JMessageClient
 import com.cstec.administrator.chart_module.Receiver.NotificationClickEventReceiver
+import com.cstec.administrator.chart_module.Utils.StorageUtil
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection
 import com.liulishuo.filedownloader.FileDownloader
 
@@ -105,6 +106,7 @@ class AppInstance : BaseApplication() {
         }
         RxSubscriptions.add(postEven)
         JMessageClient.init(getApplicationContext(), true);
+        StorageUtil.init(context, null)
         JMessageClient.setDebugMode(true);
         JMessageClient.setNotificationFlag(JMessageClient.FLAG_NOTIFY_WITH_SOUND or JMessageClient.FLAG_NOTIFY_WITH_LED or JMessageClient.FLAG_NOTIFY_WITH_VIBRATE)
         //注册Notification点击的接收器

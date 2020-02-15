@@ -45,29 +45,29 @@ class UserInfoViewModel : BaseViewModel() {
     fun onClick(view: View) {
         when (view.id) {
             R.id.likes -> {
-                if(loc==null){
-                    Toast.makeText(context, getString(R.string.get_http_location),Toast.LENGTH_SHORT).show()
+                if (loc == null) {
+                    Toast.makeText(context, getString(R.string.get_http_location), Toast.LENGTH_SHORT).show()
                     return
                 }
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_LIKE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc).navigation(userInfoFragment.activity, PRIVATE_DATA_RETURN)
             }
             R.id.foucs -> {
-                if(loc==null){
-                    Toast.makeText(context, getString(R.string.get_http_location),Toast.LENGTH_SHORT).show()
+                if (loc == null) {
+                    Toast.makeText(context, getString(R.string.get_http_location), Toast.LENGTH_SHORT).show()
                     return
                 }
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FOCUS_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc).navigation(userInfoFragment.activity, PRIVATE_DATA_RETURN)
             }
             R.id.fans -> {
-                if(loc==null){
-                    Toast.makeText(context, getString(R.string.get_http_location),Toast.LENGTH_SHORT).show()
+                if (loc == null) {
+                    Toast.makeText(context, getString(R.string.get_http_location), Toast.LENGTH_SHORT).show()
                     return
                 }
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FANS_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc).navigation(userInfoFragment.activity, PRIVATE_DATA_RETURN)
             }
             R.id.dynamics -> {
-                if(loc==null){
-                    Toast.makeText(context, getString(R.string.get_http_location),Toast.LENGTH_SHORT).show()
+                if (loc == null) {
+                    Toast.makeText(context, getString(R.string.get_http_location), Toast.LENGTH_SHORT).show()
                     return
                 }
                 ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
@@ -93,7 +93,7 @@ class UserInfoViewModel : BaseViewModel() {
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING).withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 1).navigation()
             }
             R.id.notify_icon -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.NOTIFYCATION).navigation()
+                ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc).navigation()
             }
             R.id.vertical_linear1 -> {
                 ARouter.getInstance().build(RouterUtils.LogRecodeConfig.LogListActivity).withInt(RouterUtils.LogRecodeConfig.LOG_LIST_ENTITY, 3).navigation()

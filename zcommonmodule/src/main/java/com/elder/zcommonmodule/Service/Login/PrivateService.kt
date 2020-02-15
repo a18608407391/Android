@@ -58,4 +58,36 @@ interface PrivateService {
     fun QueryRanking(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>
 
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/unifiedInfo/getSystemInfoList")
+    fun QuerySystemNotify(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/unifiedInfo/getActivityInfoList")
+    fun QueryActiveNotify(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/unifiedInfo/deleteActivityInfoList")
+    fun deleteActiveNotify(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/unifiedInfo/deleteSystemInfoList")
+    fun deleteSystemNotify(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/unifiedInfo/getCallMeList")
+    fun queryAtMeList(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("/AmoskiActivity/unifiedInfo/queryCommentMeList")
+    fun queryCommandMeList(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+
 }

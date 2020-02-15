@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 
@@ -41,6 +42,7 @@ public class StorageUtil {
 	 */
 	private static String getWritePath(Context context, String fileName, StorageType fileType, boolean tip) {
 		String path = ExternalStorage.getInstance().getWritePath(fileName, fileType);
+		Log.e("result","StorageUtil-" + path);
 		if (TextUtils.isEmpty(path)) {
 			return null;
 		}
