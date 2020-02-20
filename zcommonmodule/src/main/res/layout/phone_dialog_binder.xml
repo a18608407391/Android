@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_20"
+        android:text="绑定手机"
+        android:textColor="@color/black_12"
+        android:textSize="@dimen/s_26" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_5"
+        android:text="登录及找回密码的途径"
+        android:textColor="#A4A4A4"
+        android:textSize="@dimen/s_20" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_50"
+        android:layout_marginLeft="@dimen/d_30"
+        android:layout_marginRight="@dimen/d_30"
+        android:layout_marginTop="@dimen/d_40">
+
+        <EditText
+            android:id="@+id/phone_number_et"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:hint="请输入手机号"
+            android:inputType="number"
+            android:maxLength="11" />
+
+        <ImageView
+            android:id="@+id/clear_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_error_icon" />
+
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_01"
+        android:layout_marginLeft="@dimen/d_31"
+        android:layout_marginRight="@dimen/d_29"
+        android:background="@color/FivepercentBlackColor"></View>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_50"
+        android:layout_marginLeft="@dimen/d_31"
+        android:layout_marginRight="@dimen/d_29">
+
+        <EditText
+            android:id="@+id/verifyCode_number_et"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:hint="验证码"
+            android:inputType="number"
+            android:maxLength="6"
+            android:phoneNumber="true" />
+
+        <TextView
+            android:id="@+id/send_varifycode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="获取验证码"
+            android:textColor="#FD9A1E" />
+
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_01"
+        android:layout_marginLeft="@dimen/d_30"
+        android:layout_marginRight="@dimen/d_30"
+        android:background="@color/FivepercentBlackColor"></View>
+
+
+    <TextView
+        android:id="@+id/binder_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_40"
+        android:background="@drawable/login_btn_shape_nomal"
+        android:gravity="center"
+        android:text="绑定并登录"
+        android:textColor="@color/white"
+        android:textSize="@dimen/s_15" />
+
+
+</LinearLayout>

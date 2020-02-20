@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <import type="com.elder.zcommonmodule.ConfigKt"></import>
+
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.DoubleClickListener"></variable>
+
+        <variable
+            name="command_data_item_entity"
+            type="com.elder.zcommonmodule.Entity.CommandData"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/d_15">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                android:onClick="@{()->listener.onImgClick(command_data_item_entity)}"
+                app:addcar_local="@{command_data_item_entity.MEMBER_ID_HEAD_IMG_FILE}" />
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:onClick="@{()->listener.onItemClick(command_data_item_entity)}"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@{command_data_item_entity.MEMBER_ID_NAME}"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_15" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="  评论了:  "
+                        android:textColor="#A4A4A4"
+                        android:textSize="@dimen/s_12" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:text="@{command_data_item_entity.PUBLISH_CONTENT}"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_15" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_05"
+                    android:text="@{command_data_item_entity.COMMENT_CONTENT}"
+                    android:textColor="@color/black_12"
+                    android:textSize="@dimen/s_14" />
+            </LinearLayout>
+
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                android:scaleType="centerCrop"
+                android:visibility="@{command_data_item_entity.IMAGES==null?View.GONE:View.VISIBLE}"
+                app:localsocialImageLoad="@{ConfigKt.Base_URL + command_data_item_entity.IMAGES.PROJECT_URL+command_data_item_entity.IMAGES.FILE_PATH_URL+command_data_item_entity.IMAGES.FILE_PATH}" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_77"
+            android:layout_marginTop="@dimen/d_25"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{command_data_item_entity.TIME}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_10" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_01"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@color/FivepercentBlackColor"></View>
+    </LinearLayout>
+</layout>
