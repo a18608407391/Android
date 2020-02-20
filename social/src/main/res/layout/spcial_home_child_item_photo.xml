@@ -63,9 +63,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_15"
                 android:layout_marginTop="@dimen/d_05"
+                android:onClick="@{()->model.deleteClick(photo_item_model)}"
                 android:text="@string/delete"
                 android:textColor="@color/black"
-                android:onClick="@{()->model.deleteClick(photo_item_model)}"
                 android:textSize="@dimen/s_12"
                 android:visibility="@{photo_item_model.followed==2?View.VISIBLE:View.GONE}" />
         </LinearLayout>
@@ -75,11 +75,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/d_15"
             android:layout_marginRight="@dimen/d_15"
-            android:layout_marginTop="@dimen/d_10"
-            app:initExpand="@{photo_item_model.publishContent}"
+            android:layout_marginTop="@dimen/d_15"
             android:textColor="#121212"
             app:contentTextSize="@dimen/s_15"
             app:expandCollapseTextColor="@color/theme_color"
+            app:initExpand="@{photo_item_model.publishContent}"
             app:maxCollapsedLines="3" />
 
 
@@ -87,10 +87,9 @@
             android:id="@+id/grid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/d_10"
+            android:layout_marginTop="@dimen/d_05"
             android:layout_marginLeft="@dimen/d_10"
             android:layout_marginRight="@dimen/d_10"
-            android:layout_marginTop="@dimen/d_10"
             app:initGridImage="@{photo_item_model.dynamicImageList}"
             app:initGridListener="@{model.bindingCommand}"></com.elder.zcommonmodule.NineGridSimpleLayout>
 
@@ -98,7 +97,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:minHeight="@dimen/d_40"
             android:orientation="vertical">
 
             <com.elder.zcommonmodule.Widget.RichEditText.RichTextView
@@ -106,23 +104,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_15"
                 android:layout_marginRight="@dimen/d_15"
+                android:background="@color/grasd"
                 android:ellipsize="end"
                 android:maxLines="3"
+                android:layout_marginTop="@dimen/d_05"
+                android:layout_marginBottom="@dimen/d_05"
                 android:textColor="#121212"
-                android:background="@color/grasd"
                 android:textSize="16sp"
-                app:spanClick="@{model.spanclick}"
-                app:initRichText="@{photo_item_model.parentDynamin}" />
+                app:initRichText="@{photo_item_model.parentDynamin}"
+                app:spanClick="@{model.spanclick}" />
 
             <com.elder.zcommonmodule.NineGridSimpleLayout
                 android:id="@+id/grid1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/d_10"
-                android:background="@color/grasd"
                 android:layout_marginLeft="@dimen/d_10"
                 android:layout_marginRight="@dimen/d_10"
-                android:layout_marginTop="@dimen/d_10"
+                android:background="@color/grasd"
                 app:initGrid1Image="@{photo_item_model.parentDynamin.dynamicImageList}"
                 app:initGrid1Listener="@{model.bindingCommand}"></com.elder.zcommonmodule.NineGridSimpleLayout>
         </LinearLayout>
@@ -174,8 +172,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/d_05"
-            android:visibility="@{photo_item_model.releaseAddress.isEmpty?View.GONE:View.VISIBLE}"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="@{photo_item_model.releaseAddress.isEmpty?View.GONE:View.VISIBLE}">
 
             <TextView
                 android:layout_width="0dp"

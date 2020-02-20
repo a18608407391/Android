@@ -14,7 +14,7 @@
     <color name="default_cursor_color">#8db4eb</color>
     <color name="gray">#808080</color>
     <color name="me_split_line_color">#d0d0d0</color>
-    <color name="chat_text_color">#0B1816</color>
+    <color name="chat_text_color">#FFFFFF</color>
     <color name="line_press">#57D9D9</color>
     <color name="line_normal">#2DD0CF</color>
     <color name="button_press">#99E4E4</color>

@@ -18,6 +18,7 @@ import com.elder.zcommonmodule.Entity.CommentDetailBean;
 import com.cstec.administrator.social.Entity.ReplyDetailBean;
 import com.cstec.administrator.social.R;
 import com.elder.zcommonmodule.LocalUtilsKt;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class CommentExpandAdapter extends BaseExpandableListAdapter {
     private List<ReplyDetailBean> replyBeanList;
     private Context context;
     private int pageIndex = 1;
-
+    long CurrentClickTime = 0;
 
     public void setLoadData(List<CommentDetailBean> commentBeanList) {
 
@@ -166,6 +167,11 @@ public class CommentExpandAdapter extends BaseExpandableListAdapter {
         groupHolder.iv_like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (System.currentTimeMillis() - CurrentClickTime < 1000) {
+                    return;
+                } else {
+                    CurrentClickTime = System.currentTimeMillis();
+                }
                 CommentDetailBean t = commentBeanList.get(groupPosition);
                 if (t.isLike == 1) {
                     t.isLike = 0;
@@ -174,7 +180,6 @@ public class CommentExpandAdapter extends BaseExpandableListAdapter {
                     t.isLike = 1;
 //                    groupHolder.iv_like.setImageResource(R.drawable.like_default);
                 }
-
                 commentBeanList.set(groupPosition, t);
                 if (groupNet != null) {
                     groupNet.sendGroupNetWork(t);

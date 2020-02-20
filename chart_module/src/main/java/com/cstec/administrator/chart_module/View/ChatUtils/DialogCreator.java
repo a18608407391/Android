@@ -109,6 +109,7 @@ public class DialogCreator {
             tv_top.setText("取消置顶");
         }
 
+
         deleteLl.setOnClickListener(listener);
         top.setOnClickListener(listener);
         dialog.setCancelable(true);
@@ -128,6 +129,7 @@ public class DialogCreator {
                 .getViewID(context, "jmui_top_conv_ll"));
         TextView text = (TextView) v.findViewById(IdHelper.getViewID(context, "tv_conv_top"));
         text.setText("转发");
+        top.setVisibility(View.GONE);
 
         TextView textView = (TextView) v.findViewById(IdHelper.getViewID(context, "tv_dialogText"));
         textView.setText("保存到手机");

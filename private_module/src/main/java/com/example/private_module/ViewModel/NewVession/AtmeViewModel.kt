@@ -5,9 +5,10 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Component.TitleComponent
-import com.elder.zcommonmodule.Entity.AtmeData
-import com.elder.zcommonmodule.Entity.FansEntity
+import com.elder.zcommonmodule.Entity.*
+import com.elder.zcommonmodule.Inteface.DoubleClickListener
 import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
@@ -17,6 +18,7 @@ import com.example.private_module.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_myfans.*
 import kotlinx.android.synthetic.main.atme_activity.*
 import kotlinx.coroutines.CoroutineScope
@@ -30,17 +32,67 @@ import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, HttpInteface.queryAtmeList, SimpleClickListener, TitleComponent.titleComponentCallBack {
+class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, HttpInteface.queryAtmeList, TitleComponent.titleComponentCallBack, HttpInteface.SocialDynamicsList, DoubleClickListener {
+    override fun onItemClick(entity: Any) {
+        if (System.currentTimeMillis() - cur < 1000) {
+            return
+        } else {
+            cur = System.currentTimeMillis()
+        }
+
+        atmeActivity.showProgressDialog("加载中......")
+        var data = entity as AtmeData
+        HttpRequest.instance.DynamicListResult = this
+        var map = HashMap<String, String>()
+        map["id"] = data.DYNAMIC_ID.toString()
+        map["pageSize"] = "1"
+        map["length"] = "1"
+        map["type"] = "5"
+        map["yAxis"] = atmeActivity.location!!.longitude.toString()
+        map["xAxis"] = atmeActivity.location!!.latitude.toString()
+        HttpRequest.instance.getDynamicsList(map)
+    }
+
+    override fun onImgClick(entity: Any) {
+        if (System.currentTimeMillis() - cur < 1000) {
+            return
+        } else {
+            cur = System.currentTimeMillis()
+        }
+        var entity = entity as AtmeData
+        Log.e("result", "当前数据" + Gson().toJson(entity))
+        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.MEMBER_ID)
+                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location)
+                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+    }
+
+    override fun ResultSDListSuccess(it: String) {
+        atmeActivity.dismissProgressDialog()
+        var dyna = Gson().fromJson<DynamicsCategoryEntity>(it, DynamicsCategoryEntity::class.java)
+        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 6).navigation()
+    }
+
+    override fun ResultSDListError(ex: Throwable) {
+        atmeActivity.dismissProgressDialog()
+    }
+
     override fun onComponentClick(view: View) {
-        finish()
+        returnBack()
     }
 
     override fun onComponentFinish(view: View) {
     }
 
-    override fun onSimpleClick(entity: Any) {
-
+    fun returnBack() {
+        if (!destroyList!!.contains("MsgActivity")) {
+            ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location).navigation()
+        } else {
+            finish()
+        }
     }
+
+    var cur = 0L
 
     override fun AtmeListSuccess(it: String) {
         Log.e("result", it)
@@ -48,6 +100,8 @@ class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, Htt
             return
         } else {
             var itemse = Gson().fromJson<ArrayList<AtmeData>>(it, object : TypeToken<ArrayList<AtmeData>>() {}.type)
+            Log.e("result","数据长度"+itemse.size.toString())
+
             itemse.forEach {
                 items.add(it)
             }
@@ -68,7 +122,7 @@ class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, Htt
         }
     }
 
-    var listener: SimpleClickListener = this
+    var listener: DoubleClickListener = this
     var titleComponent = TitleComponent()
 
     var adapter = BindingRecyclerViewAdapter<AtmeData>()
@@ -107,5 +161,6 @@ class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, Htt
         titleComponent.rightIcon.set(context.getDrawable(R.drawable.read_all))
         titleComponent.rightText.set("")
         titleComponent.callback = this
+        initDatas()
     }
 }

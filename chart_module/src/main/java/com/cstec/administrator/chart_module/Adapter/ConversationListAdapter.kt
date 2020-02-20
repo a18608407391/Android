@@ -8,6 +8,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +46,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.cstec.administrator.chart_module.Activity.MsgActivity
 import com.cstec.administrator.chart_module.Activity.pickImage.BitmapUtil
 import com.cstec.administrator.chart_module.R
+import com.cstec.administrator.chart_module.Utils.CircleTransform
 import com.cstec.administrator.chart_module.View.SwipeLayoutConv
+import com.elder.zcommonmodule.getImageUrl
+import com.squareup.picasso.Picasso
 import com.zk.library.Base.BaseApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -342,7 +346,8 @@ class ConversationListAdapter(private val mContext: Activity, private val mDatas
                                     if (lastMsg.status == MessageStatus.send_fail) {
                                         content.setText(contentStr)
                                     } else {
-                                        content.setText("[已读]$contentStr")
+                                        content.setText(contentStr)
+//                                        content.setText("[已读]$contentStr")
                                     }
                                 } else {
                                     content.setText(contentStr)
@@ -352,11 +357,13 @@ class ConversationListAdapter(private val mContext: Activity, private val mDatas
                                         lastMsg.direct == MessageDirect.send &&
                                         lastMsg.contentType != ContentType.prompt &&
                                         (lastMsg.targetInfo as UserInfo).userName != JMessageClient.getMyInfo().userName) {
-                                    contentStr = "[未读]$contentStr"
-                                    val builder = SpannableStringBuilder(contentStr)
-                                    builder.setSpan(ForegroundColorSpan(mContext.resources.getColor(R.color.line_normal)),
-                                            0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                                    content.setText(builder)
+
+//                                    contentStr = "[未读]$contentStr"  取消未读
+
+//                                    val builder = SpannableStringBuilder(contentStr)
+//                                    builder.setSpan(ForegroundColorSpan(mContext.resources.getColor(R.color.line_normal)),
+//                                            0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                    content.setText(contentStr)
                                 } else {
                                     content.setText(contentStr)
                                 }
@@ -388,21 +395,30 @@ class ConversationListAdapter(private val mContext: Activity, private val mDatas
             convName.setText(convItem.title)
             mUserInfo = convItem.targetInfo as UserInfo
             if (mUserInfo != null) {
-                mUserInfo!!.getAvatarBitmap(object : GetAvatarBitmapCallback() {
-                    override fun gotResult(status: Int, desc: String, bitmap: Bitmap) {
-                        if (status == 0) {
-                            if(bitmap!=null){
-                                var crop = CircleCrop()
-                                var options = RequestOptions().transform(crop).placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.dp2px(47.33F), ConvertUtils.dp2px(47.33F))
-                                Glide.with(headIcon.context).asBitmap().load(bitmap).apply(options).into(headIcon)
-                            }else{
-                                headIcon.setImageResource(R.drawable.default_avatar)
-                            }
-                        } else {
-                            headIcon.setImageResource(R.drawable.default_avatar)
-                        }
-                    }
-                })
+                if (mUserInfo!!.avatar != null) {
+                    Log.e("result","当前聊天室图片链接" + getImageUrl(mUserInfo!!.getAvatar()))
+                    Picasso.with(mContext).load(getImageUrl(mUserInfo!!.getAvatar())).transform(CircleTransform(mContext)).resize(ConvertUtils.dp2px(47.33f), ConvertUtils.dp2px(47.33f)).centerCrop().placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).into(headIcon)
+//                    var crop = CircleCrop()
+//                    var options = RequestOptions().transform(crop).placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.dp2px(47.33F), ConvertUtils.dp2px(47.33F))
+//                    Glide.with(headIcon.context).asBitmap().load(getImageUrl(mUserInfo!!.avatar)).apply(options).into(headIcon)
+                } else {
+                    headIcon.setImageResource(R.drawable.default_avatar)
+                }
+//                mUserInfo!!.getAvatarBitmap(object : GetAvatarBitmapCallback() {
+//                    override fun gotResult(status: Int, desc: String, bitmap: Bitmap) {
+//                        if (status == 0) {
+//                            if (bitmap != null) {
+//                                var crop = CircleCrop()
+//                                var options = RequestOptions().transform(crop).placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.dp2px(47.33F), ConvertUtils.dp2px(47.33F))
+//                                Glide.with(headIcon.context).asBitmap().load(bitmap).apply(options).into(headIcon)
+//                            } else {
+//                                headIcon.setImageResource(R.drawable.default_avatar)
+//                            }
+//                        } else {
+//                            headIcon.setImageResource(R.drawable.default_avatar)
+//                        }
+//                    }
+//                })
             } else {
                 headIcon.setImageResource(R.drawable.default_avatar)
             }

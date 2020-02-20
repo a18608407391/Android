@@ -98,10 +98,10 @@
         <item name="android:itemTextAppearance">?android:attr/actionMenuTextAppearance</item>
     </style>
 
-    <!--<style name="round_check_box_style" parent="@android:style/Widget.CompoundButton.CheckBox">-->
-    <!--<item name="android:background">@drawable/round_check_box_bg</item>-->
-    <!--<item name="android:button">@null</item>-->
-    <!--</style>-->
+    <style name="round_check_box_style" parent="@android:style/Widget.CompoundButton.CheckBox">
+    <item name="android:background">@drawable/round_check_box_bg</item>
+    <item name="android:button">@null</item>
+    </style>
 
     <!--<style name="default_input_style_with_bg">-->
     <!--<item name="android:padding">5dp</item>-->
@@ -156,10 +156,10 @@
     <!--<item name="android:paddingBottom">@dimen/custom_dialog_padding_vertical</item>-->
     <!--</style>-->
 
-    <!--<style name="default_check_box_style" parent="@android:style/Widget.CompoundButton.CheckBox">-->
-    <!--<item name="android:background">@drawable/default_check_box_style</item>-->
-    <!--<item name="android:button">@null</item>-->
-    <!--</style>-->
+    <style name="default_check_box_style" parent="@android:style/Widget.CompoundButton.CheckBox">
+    <item name="android:background">@drawable/default_check_box_style</item>
+    <item name="android:button">@null</item>
+    </style>
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">16sp</item>
@@ -369,7 +369,7 @@
         <item name="android:layout_height">@dimen/item_head_icon_size</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:src">@drawable/jmui_head_icon</item>
+        <item name="android:src">@drawable/default_avatar</item>
         <item name="android:scaleType">fitXY</item>
     </style>
 
@@ -378,7 +378,7 @@
         <item name="android:layout_height">@dimen/item_head_icon_size</item>
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_marginRight">8dp</item>
-        <item name="android:src">@drawable/jmui_head_icon</item>
+        <item name="android:src">@drawable/default_avatar</item>
         <item name="android:scaleType">fitXY</item>
     </style>
 

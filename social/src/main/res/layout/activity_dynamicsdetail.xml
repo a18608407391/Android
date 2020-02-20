@@ -215,7 +215,7 @@
                         android:drawablePadding="@dimen/d_05"
                         android:gravity="center"
                         android:onClick="@{dynamics_detail_model::onClick}"
-                        android:text="@{dynamics_detail_model.field.fabulousCount}" />
+                        android:text="@{dynamics_detail_model.likeCount}" />
 
                 </LinearLayout>
 

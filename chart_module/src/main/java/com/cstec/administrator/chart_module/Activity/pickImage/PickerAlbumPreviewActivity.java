@@ -92,7 +92,7 @@ public class PickerAlbumPreviewActivity extends UIView implements OnClickListene
         super.onCreate(savedInstanceState);
         StatusbarUtils.setRootViewFitsSystemWindows(this, false);
         StatusbarUtils.setTranslucentStatus(this);
-        StatusbarUtils.setStatusBarMode(this, true, 0x000000);
+        StatusbarUtils.setStatusBarMode(this, false, 0x000000);
         setContentView(R.layout.picker_image_preview_activity);
 
         setToolBar("相机胶卷");
@@ -311,7 +311,7 @@ public class PickerAlbumPreviewActivity extends UIView implements OnClickListene
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.picker_image_preview_photos_select) {
+        if (v.getId() == R.id.right_img) {
             if (photoLists == null || currentPosition >= photoLists.size())
                 return;
 

@@ -78,11 +78,15 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
     }
 
     override fun onTabSelected(p0: TabLayout.Tab?) {
-        LoadChildData(p0!!.position)
+        if (activity.onCreate) {
+            LoadChildData(p0!!.position)
+        } else {
+            activity.onCreate = true
+        }
     }
 
     override fun ResultCanalierSuccess(it: String) {
-        Log.e("result","骑士首页" +it)
+        Log.e("result", "骑士首页" + it)
         if (it.length < 10) {
             return
         }
@@ -276,16 +280,22 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
 
         when (view.id) {
             R.id.msg_click -> {
-                if (entity?.Member?.tel == null){
-                    Toast.makeText(context, "未绑定手机号",Toast.LENGTH_SHORT).show()
+                if (entity?.Member?.tel.isNullOrEmpty()) {
+                    Toast.makeText(context, "未绑定手机号", Toast.LENGTH_SHORT).show()
                     return
                 }
-                ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
-                        .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, entity?.Member?.name)
-                        .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, entity?.Member?.tel)
-                        .withString(RouterUtils.Chat_Module.Chat_App_Key, "35e2033d379dabfde25d9321")
-                        .withString(RouterUtils.Chat_Module.Chat_DRAFT, "")
-                        .navigation()
+                if (activity.navigationType == 10) {
+                    finish()
+                } else {
+                    ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
+                            .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, entity?.Member?.name)
+                            .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, entity?.Member?.tel)
+                            .withString(RouterUtils.Chat_Module.Chat_App_Key, "35e2033d379dabfde25d9321")
+                            .withString(RouterUtils.Chat_Module.Chat_DRAFT, "")
+                            .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                            .navigation()
+                }
+
             }
             R.id.home_focus_click -> {
                 HttpRequest.instance.DynamicFocusResult = this
@@ -322,84 +332,7 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
                 }
             }
             R.id.canalier_back -> {
-                if (activity.navigationType == 1) {
-                    if (!destroyList!!.contains("SearchActivity")) {
-                        finish()
-                    } else {
-                        ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SEARCH_MEMBER).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-                    }
-                } else if (activity.navigationType == 3) {
-                    if (!destroyList!!.contains("DynamicsDetailActivity")) {
-                        finish()
-                    } else {
-                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-                    }
-                } else if (activity.navigationType == 0) {
-                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(activity, object : NavCallback() {
-                        override fun onArrival(postcard: Postcard?) {
-                            finish()
-                        }
-                    })
-                    RxBus.default?.post(entity!!)
-                } else if (activity.navigationType == 2) {
-                    if (!destroyList!!.contains("MyDynamicsActivity")) {
-                        finish()
-                    } else {
-                        ARouter.getInstance().build(RouterUtils.SocialConfig.MY_DYNAMIC_AC).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-                    }
-                } else if (activity.navigationType == 4) {
-                    if (!destroyList!!.contains("GetLikeActivity")) {
-                        finish()
-                    } else {
-                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-                    }
-                } else if (activity.navigationType == 5) {
-                    if (!destroyList!!.contains("MyFansActivity")) {
-                        finish()
-                    } else {
-                        ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FANS_AC).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-                    }
-                } else if (activity.navigationType == 6) {
-                    if (!destroyList!!.contains("MyFocusActivity")) {
-                        finish()
-                    } else {
-                        ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FOCUS_AC).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-                    }
-                } else if (activity.navigationType == 7) {
-                    if (!destroyList!!.contains("FocusListActivity")) {
-                        finish()
-                    } else {
-                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_FOCUS_LIST).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-                    }
-                }
+                activity.doback()
             }
         }
     }

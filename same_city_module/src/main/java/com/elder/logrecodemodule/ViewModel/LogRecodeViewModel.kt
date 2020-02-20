@@ -1,6 +1,7 @@
 package com.elder.logrecodemodule.ViewModel
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.databinding.ObservableArrayList
@@ -38,6 +39,8 @@ import com.elder.zcommonmodule.Widget.CityPicker.CityPicker
 import com.elder.zcommonmodule.Widget.CityPicker.adapter.OnPickListener
 import com.elder.zcommonmodule.Widget.CityPicker.model.City
 import com.elder.zcommonmodule.Widget.CityPicker.model.LocatedCity
+import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinder
+import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinderDialogFragment
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.PreferenceUtils
@@ -55,7 +58,12 @@ import org.cs.tec.library.binding.command.BindingConsumer
 import java.util.*
 
 
-class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListener, SwipeRefreshLayout.OnRefreshListener, DistrictSearch.OnDistrictSearchListener, RankingClickListener, GeocodeSearch.OnGeocodeSearchListener {
+class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListener, SwipeRefreshLayout.OnRefreshListener, DistrictSearch.OnDistrictSearchListener, RankingClickListener, GeocodeSearch.OnGeocodeSearchListener, TelephoneBinderDialogFragment.DismissListener {
+    override fun onDismiss() {
+        //弹出窗消失了
+        mapFragment.loadDatas(location!!)
+    }
+
     override fun onRegeocodeSearched(p0: RegeocodeResult?, p1: Int) {
 
         Log.e("result", "这里执行了onRegeocodeSearched")
@@ -344,6 +352,19 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
                 }
             }
             R.id.toLocation -> {
+
+
+//                var tele = TelephoneBinder.from(this@LogRecodeFragment)
+//                var fr = tele.show()
+
+//                fr.onDismiss(object : DialogInterface {
+//                    override fun dismiss() {
+////                        loadDatas(viewModel?.location!!)
+//                    }
+//                    override fun cancel() {
+//                    }
+//                })
+
                 if (city == null) {
                     initCity()
                 }

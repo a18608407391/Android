@@ -31,6 +31,10 @@ class AtmeActivity : BaseActivity<AtmeActivityBinding, AtmeViewModel>() {
         return BR.atme_viewmodel
     }
 
+    override fun doPressBack() {
+        super.doPressBack()
+        mViewModel?.returnBack()
+    }
     override fun initContentView(savedInstanceState: Bundle?): Int {
         StatusbarUtils.setRootViewFitsSystemWindows(this, true)
         StatusbarUtils.setTranslucentStatus(this)

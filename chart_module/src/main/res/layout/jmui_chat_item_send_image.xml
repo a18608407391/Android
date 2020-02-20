@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="3dp"
             android:layout_toLeftOf="@id/jmui_avatar_iv"
-            android:background="@drawable/jmui_msg_send_bg"
+            android:background="@drawable/jmui_msg_img_send_bg"
             android:maxWidth="200.0dip">
 
             <ImageView
@@ -48,7 +48,6 @@
         </FrameLayout>
 
         <TextView
-            android:text="未读消息"
             android:layout_centerVertical="true"
             android:id="@+id/text_receipt"
             android:layout_marginRight="7dp"

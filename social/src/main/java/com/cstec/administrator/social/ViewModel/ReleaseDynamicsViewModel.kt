@@ -82,7 +82,16 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
             publicStr.set("仅自己可见")
         }
     }
+
     override fun ResultReleaseDynamicsSuccess(it: String) {
+        if (it == "系统繁忙") {
+            Toast.makeText(context, "系统繁忙", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Log.e("result", "ResultReleaseDynamicsSuccess" + it)
+
+
         activity.dismissProgressDialog()
         RxBus.default?.post("ResultReleaseDynamicsSuccess")
         Toast.makeText(context, getString(R.string.send_dynamics_success), Toast.LENGTH_SHORT).show()
@@ -125,9 +134,18 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
         map["saveAlbum"] = saveAlbum.toString()
         map["dynamicImageList"] = list
         var str = ""
-        activity.et.realUserList.forEach {
-            str += it.user_id + ","
+
+//        activity.et.realUserList.forEach {
+//            str += it.user_id + ","
+//        }
+        activity.et.realUserList.forEachIndexed { index, userModel ->
+            if (activity.et.realUserList.size - 1 == index) {
+                str += userModel.user_id
+            } else {
+                str += userModel.user_id + ","
+            }
         }
+
         map["mentionList"] = str
         Log.e("result", "发布动态" + Gson().toJson(map))
         HttpRequest.instance.postReleaseDynamics(map)
@@ -235,7 +253,7 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
                     }
                 }
 
-                Log.e("result","发布图片")
+                Log.e("result", "发布图片")
                 HttpRequest.instance.postMuiltyPhoto(mult.build())
             } else {
                 sendNoPhoto(ArrayList())
@@ -293,10 +311,10 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
     lateinit var activity: ReleaseDynamicsActivity
     fun inject(releaseDynamicsActivity: ReleaseDynamicsActivity) {
         this.activity = releaseDynamicsActivity
-        Log.e("result","当前的动态"+Gson().toJson(this.activity.entity))
+        Log.e("result", "当前的动态" + Gson().toJson(this.activity.entity))
         if (this.activity.entity != null) {
             if (activity.entity?.parentDynamin != null) {
-                Log.e("result","含父级动态" + activity.entity?.parentDynamin!!.publishContent)
+                Log.e("result", "含父级动态" + activity.entity?.parentDynamin!!.publishContent)
                 transTitle.set(activity?.entity!!.parentDynamin?.memberName + " 发布的动态")
                 transDesc.set(activity.entity?.parentDynamin!!.publishContent)
                 if (!activity.entity?.parentDynamin!!.dynamicImageList.isNullOrEmpty()) {
@@ -304,7 +322,7 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
                     transImage.set(Base_URL + img.projectUrl + img.filePathUrl + img.filePath)
                 }
             } else {
-                Log.e("result","不含父级动态" + activity.entity!!.publishContent)
+                Log.e("result", "不含父级动态" + activity.entity!!.publishContent)
                 transTitle.set(activity.entity?.memberName + " 发布的动态")
                 transDesc.set(activity.entity?.publishContent)
                 if (!activity.entity?.dynamicImageList.isNullOrEmpty()) {

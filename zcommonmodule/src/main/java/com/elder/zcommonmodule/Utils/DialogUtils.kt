@@ -153,8 +153,13 @@ class DialogUtils() {
             // 图片处于可裁剪状态
             intent.putExtra("crop", "true")
             // aspectX aspectY 是宽高的比例
-            intent.putExtra("aspectX", width)
-            intent.putExtra("aspectY", hight)
+            if (Build.MODEL.contains("HUAWEI")) {
+                intent.putExtra("aspectX", 9998)
+                intent.putExtra("aspectY", 9999)
+            } else {
+                intent.putExtra("aspectX", width)
+                intent.putExtra("aspectY", hight)
+            }
             // 是否之处缩放
             intent.putExtra("scale", true)
             intent.putExtra("outputX", width)
@@ -442,7 +447,7 @@ class DialogUtils() {
                             intent.action = Intent.ACTION_GET_CONTENT
                             activity.startActivityForResult(intent, PICK_IMAGE_ACTIVITY_REQUEST_CODE)
                         } else {
-                            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_PHOTO).withInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT,type).navigation(activity, SOCIAL_SELECT_PHOTOS)
+                            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_PHOTO).withInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT, type).navigation(activity, SOCIAL_SELECT_PHOTOS)
                         }
                         dialog.dismiss()
                     }
@@ -497,9 +502,9 @@ class DialogUtils() {
 
         @SuppressLint("SetTextI18n")
         fun createBigPicShow(activity: FragmentActivity, s: ObservableArrayList<String>, position: Int): AlertDialog {
-           var list   = ArrayList<String>()
+            var list = ArrayList<String>()
             s.forEach {
-                if(!it.isNullOrEmpty()){
+                if (!it.isNullOrEmpty()) {
                     list.add(it)
                 }
             }
@@ -615,7 +620,7 @@ class DialogUtils() {
 
         var lisentner: IconUriCallBack? = null
 
-        var selectType :opitionCallBack? = null
+        var selectType: opitionCallBack? = null
 
         interface opitionCallBack {
             fun getType(type: Int)

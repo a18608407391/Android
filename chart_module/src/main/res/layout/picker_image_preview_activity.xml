@@ -7,96 +7,107 @@
     android:background="@color/black"
     android:orientation="vertical">
 
-    <com.cstec.administrator.chart_module.Activity.pickImage.ViewPagerFixed
-        android:id="@+id/picker_image_preview_viewpager"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-
-    <LinearLayout
-        android:id="@+id/picker_image_preview_operator_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:background="#e6e6e6"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/picker_image_preview_orignal_image"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="10dp"
-            android:background="@null"
-            android:src="@drawable/picker_orignal_normal" />
-
-        <TextView
-            android:id="@+id/picker_image_preview_orignal_image_tip"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="7dp"
-            android:gravity="center_vertical"
-            android:text="@string/picker_image_preview_original"
-            android:textColor="#999999"
-            android:textSize="14sp" />
-
-        <View
-            android:id="@+id/holder"
-            android:layout_width="0.0dip"
-            android:layout_height="fill_parent"
-            android:layout_weight="1.0" />
-
-        <TextView
-            android:id="@+id/picker_image_preview_send"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="10dip"
-            android:background="@drawable/blue_btn_selector"
-            android:enabled="true"
-            android:gravity="center_vertical"
-            android:paddingLeft="8dip"
-            android:paddingRight="8dip"
-            android:text="@string/btn_send"
-            android:textColor="@drawable/blue_text_selector"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/black"
         android:fitsSystemWindows="true"
         android:orientation="vertical"></LinearLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_64"
-        android:elevation="@dimen/d_05"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/toolbar_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/d_16"
-            android:src="@drawable/black_back" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_64"
+            android:layout_marginTop="@dimen/d_10"
+            android:elevation="@dimen/d_05"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/toolbar_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_16"
+                android:src="@drawable/arrow_white" />
 
 
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/d_20"
-            android:layout_weight="1"
-            android:textColor="@color/black_12"
-            android:textSize="@dimen/s_16" />
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_20"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_16" />
 
-        <ImageView
-            android:id="@+id/right_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/picker_preview_unselected"/>
+            <ImageView
+                android:id="@+id/right_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/d_15"
+                android:src="@drawable/picker_preview_unselected" />
+        </LinearLayout>
+
+
+        <com.cstec.administrator.chart_module.Activity.pickImage.ViewPagerFixed
+            android:id="@+id/picker_image_preview_viewpager"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/picker_image_preview_operator_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:background="#e6e6e6"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/picker_image_preview_orignal_image"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:background="@null"
+                android:src="@drawable/picker_orignal_normal" />
+
+            <TextView
+                android:id="@+id/picker_image_preview_orignal_image_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="7dp"
+                android:gravity="center_vertical"
+                android:text="@string/picker_image_preview_original"
+                android:textColor="#999999"
+                android:textSize="14sp" />
+
+            <View
+                android:id="@+id/holder"
+                android:layout_width="0.0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.0" />
+
+            <TextView
+                android:id="@+id/picker_image_preview_send"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dip"
+                android:background="@drawable/blue_btn_selector"
+                android:enabled="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip"
+                android:text="@string/btn_send"
+                android:textColor="@drawable/blue_text_selector"
+                android:textSize="14sp" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </FrameLayout>

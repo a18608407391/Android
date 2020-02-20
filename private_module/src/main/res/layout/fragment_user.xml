@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="user_fr_viewModel"
             type="com.example.private_module.ViewModel.UserInfoViewModel"></variable>
@@ -53,13 +55,32 @@
                                 android:onClick="@{user_fr_viewModel::onClick}"
                                 android:src="@drawable/setting_icon" />
 
-                            <ImageView
-                                android:id="@+id/notify_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/d_20"
-                                android:onClick="@{user_fr_viewModel::onClick}"
-                                android:src="@drawable/warm_icon" />
+
+                            <RelativeLayout
+                                android:layout_width="@dimen/d_35"
+                                android:layout_height="@dimen/d_35"
+                                android:layout_marginLeft="@dimen/d_20">
+
+
+                                <ImageView
+                                    android:id="@+id/notify_icon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:onClick="@{user_fr_viewModel::onClick}"
+                                    android:src="@drawable/warm_icon" />
+
+                                <TextView
+                                    android:layout_width="@dimen/d_12"
+                                    android:layout_height="@dimen/d_12"
+                                    android:layout_alignParentRight="true"
+                                    android:background="@drawable/red_circle"
+                                    android:gravity="center"
+                                    android:visibility="@{user_fr_viewModel.msgCount==0?View.GONE:View.VISIBLE}"
+                                    android:text="@{user_fr_viewModel.msgCount.toString()}"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/s_08" />
+                            </RelativeLayout>
 
 
                         </LinearLayout>
@@ -129,11 +150,11 @@
 
                     <LinearLayout
                         android:id="@+id/dynamics"
-                        android:onClick="@{user_fr_viewModel::onClick}"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
+                        android:onClick="@{user_fr_viewModel::onClick}"
                         android:orientation="vertical">
 
                         <TextView
@@ -156,11 +177,11 @@
 
 
                     <LinearLayout
+                        android:id="@+id/foucs"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:id="@+id/foucs"
                         android:onClick="@{user_fr_viewModel::onClick}"
                         android:orientation="vertical">
 
@@ -183,11 +204,11 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/fans"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:id="@+id/fans"
                         android:onClick="@{user_fr_viewModel::onClick}"
                         android:orientation="vertical">
 
@@ -210,11 +231,11 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/likes"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:id="@+id/likes"
                         android:onClick="@{user_fr_viewModel::onClick}"
                         android:orientation="vertical">
 

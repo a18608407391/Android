@@ -116,9 +116,8 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                         } else if (gender.get() == "女") {
                             map["memberSex"] = "2"
                         }
-                        Log.e("result","上传用户数据" + Gson().toJson(map))
                         var body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), Gson().toJson(map))
-                        var request = Request.Builder().addHeader("content-type", "application/json; charset=UTF-8").addHeader("appToken", token).post(body).url(Base_URL + "AmoskiActivity/userCenterManage/updateUserInfo").build()
+                        var request = Request.Builder().addHeader("content-type", "application/json; charset=UTF-8").addHeader("appToken", token).post(body).url(Base_URL + "AmoskiActivity/userCenterManage/updateUserInfo1").build()
                         var call = client.newCall(request)
                         var response = call.execute()
                         it.onNext(response)
@@ -168,10 +167,9 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
             } else if (gender.get() == "女") {
                 map["memberSex"] = "2"
             }
-            Log.e("result","上传用户数据1" + Gson().toJson(map))
 
             var body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), Gson().toJson(map))
-            var request = Request.Builder().addHeader("content-type", "application/json; charset=UTF-8").addHeader("appToken", token).post(body).url(Base_URL + "AmoskiActivity/userCenterManage/updateUserInfo").build()
+            var request = Request.Builder().addHeader("content-type", "application/json; charset=UTF-8").addHeader("appToken", token).post(body).url(Base_URL + "AmoskiActivity/userCenterManage/updateUserInfo1").build()
             var call = client.newCall(request)
             var response = call.execute()
             it.onNext(response)
@@ -179,7 +177,6 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
             return@map it.body()?.string()
         }.observeOn(AndroidSchedulers.mainThread()).subscribe {
             var json = Gson().fromJson<BaseResponse>(it, BaseResponse::class.java)
-            Log.e("result", "sss生生世世是" + it)
             if (json.code == 0) {
                 saveAndReturn(it!!)
             } else {
@@ -192,7 +189,6 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
     fun saveAndReturn(it: String) {
 
         userInfoActivity.userInfo!!.data!!.name = nickname.get()
-        Log.e("result","返回前用户头像"+avatars.get())
         userInfoActivity.userInfo!!.data!!.headImgUrl = avatars.get()
         userInfoActivity.userInfo!!.data!!.yearOfBirth = birthday.get()
         userInfoActivity.userInfo!!.data!!.synopsis = content.get()
@@ -217,7 +213,6 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
     fun inject(userInfoActivity: UserInfoActivity) {
         this.userInfoActivity = userInfoActivity
         if (userInfoActivity.userInfo == null) {
-            Log.e("result", "数据传递错误")
         }
         component.title.set(getString(R.string.privateInfo))
         component.setCallBack(this)

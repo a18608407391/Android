@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="system_notify_model"
             type="com.cstec.administrator.chart_module.ViewModel.SystemNotifyViewModel"></variable>
@@ -17,6 +19,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
 
@@ -41,6 +44,14 @@
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 app:onLoadMoreCommand="@{system_notify_model.scrollerBinding}"></android.support.v7.widget.RecyclerView>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_40"
+                android:text="暂无新消息"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_16"
+                android:visibility="@{system_notify_model.items.isEmpty?View.VISIBLE:View.GONE}" />
         </LinearLayout>
 
     </com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>

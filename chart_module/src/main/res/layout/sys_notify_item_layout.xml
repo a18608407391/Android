@@ -1,17 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
+        <import type="android.view.View"></import>
+
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.SimpleClickListener"></variable>
+
         <variable
             name="sys_notify_item_model"
-            type="com.cstec.administrator.chart_module.Data.SystemNotifyData"></variable>
+            type="com.elder.zcommonmodule.Entity.SystemNotifyData"></variable>
     </data>
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-    </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:text="@{sys_notify_item_model.time}"
+            android:textColor="#A4A4A4"
+            android:textSize="@dimen/s_12" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:onClick="@{()->listener.onSimpleClick(sys_notify_item_model)}"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                android:src="@mipmap/ic_launcher_round" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_10"
+                android:layout_weight="1"
+                android:background="@drawable/corner_gray_bg"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_15"
+                    android:text="@{sys_notify_item_model.msgContent}"
+                    android:textColor="@color/black_12"
+                    android:textSize="@dimen/s_14" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:text="快来看看吧>>"
+                    android:textColor="@color/theme_color"
+                    android:textSize="@dimen/s_15" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/d_15"
+                    app:setChatPicLoad="@{sys_notify_item_model.msgImg}" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </layout>

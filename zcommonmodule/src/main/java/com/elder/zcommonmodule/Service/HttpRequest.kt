@@ -43,6 +43,7 @@ class HttpRequest {
     var SearchRoadBook: HttpInteface.SearchRoadBook? = null
     var downLoadRoad: HttpInteface.DownLoadRoodBook? = null
     var myRoadBook: HttpInteface.getMyRoadBook? = null
+    var getMsgCount: HttpInteface.getMsgNotifyCount? = null
 
     //个人跳转后数据
     var socialGetdynamicList: HttpInteface.SocialMyDynamicList? = null
@@ -335,6 +336,8 @@ class HttpRequest {
 
 
     var DynamicLikeResult: HttpInteface.SocialDynamicsLike? = null
+
+    var CommentLikeResult: HttpInteface.SocialCommentLike? = null
     var DynamicCommentResult: HttpInteface.SocialDynamicsComment? = null
     var DynamicCommentListResult: HttpInteface.SocialDynamicsCommentList? = null
     var DynamicFocusResult: HttpInteface.SocialDynamicsFocus? = null
@@ -411,6 +414,28 @@ class HttpRequest {
             }
         })
     }
+
+    fun getCommentDynamicsLike(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(SocialService::class.java)?.commentLike(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            CommentLikeResult?.ResultCommentLikeError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                CommentLikeResult?.ResultCommentLikeSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                CommentLikeResult?.ResultCommentLikeError(e)
+            }
+        })
+    }
+
 
 
     fun getDynamicsCommonList(map: HashMap<String, String>) {
@@ -952,6 +977,28 @@ class HttpRequest {
 
             override fun onError(e: Throwable) {
                 getcommandmelistResult?.CommandError(e)
+            }
+        })
+    }
+
+
+    fun getMsgNotifyCount(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.getMsgCount(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            getMsgCount?.getNotifyCountError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                getMsgCount?.getNotifyCountSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                getMsgCount?.getNotifyCountError(e)
             }
         })
     }

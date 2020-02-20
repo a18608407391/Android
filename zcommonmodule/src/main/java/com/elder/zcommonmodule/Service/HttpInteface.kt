@@ -9,6 +9,13 @@ import com.elder.zcommonmodule.Service.Error.ApiException
 class HttpInteface {
 
 
+    interface getMsgNotifyCount {
+
+        fun getNotifyCountSuccess(it: String)
+        fun getNotifyCountError(ex: Throwable)
+
+    }
+
     interface queryCommandMeList {
         fun CommandSuccess(it: String)
         fun CommandError(ex: Throwable)
@@ -136,7 +143,10 @@ class HttpInteface {
         fun ResultLikeSuccess(it: String)
         fun ResultLikeError(ex: Throwable)
     }
-
+    interface SocialCommentLike {
+        fun ResultCommentLikeSuccess(it: String)
+        fun ResultCommentLikeError(ex: Throwable)
+    }
 
     interface SocialDynamicsFocus {
         fun ResultFocusSuccess(it: String)

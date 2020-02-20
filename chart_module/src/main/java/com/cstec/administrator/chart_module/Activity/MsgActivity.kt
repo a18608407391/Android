@@ -1,6 +1,7 @@
 package com.cstec.administrator.chart_module.Activity
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
@@ -28,16 +29,20 @@ import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.uiContext
 import org.greenrobot.eventbus.EventBus
 import cn.jpush.im.android.api.event.MessageReceiptStatusChangeEvent
+import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Entity.Location
+import com.elder.zcommonmodule.MSG_RETURN_REFRESH_REQUEST
+import com.elder.zcommonmodule.MSG_RETURN_REQUEST
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 
 
 @Route(path = RouterUtils.Chat_Module.MSG_AC)
 class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
-
 
 
     @Autowired(name = RouterUtils.SocialConfig.SOCIAL_LOCATION)
@@ -75,6 +80,15 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
     }
 
 
+    override fun doPressBack() {
+        super.doPressBack()
+        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+            override fun onArrival(postcard: Postcard?) {
+                finish()
+            }
+        })
+    }
+
     override fun onResume() {
         super.onResume()
         mViewModel?.initReceiver()
@@ -108,6 +122,20 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
         conv_list_view!!.adapter = adapter
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            MSG_RETURN_REQUEST -> {
+                if (resultCode == MSG_RETURN_REQUEST) {
+                    setResult(MSG_RETURN_REQUEST)
+                    finish()
+                }
+            }
+            MSG_RETURN_REFRESH_REQUEST -> {
+                mViewModel?.initNet()
+            }
+        }
+    }
 
     fun setListener(onClickListener: View.OnClickListener) {
         mSearch!!.setOnClickListener(onClickListener)

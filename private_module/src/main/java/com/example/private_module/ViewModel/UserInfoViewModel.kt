@@ -11,6 +11,7 @@ import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Entity.UserInfo
 import com.elder.zcommonmodule.Even.ActivityResultEven
 import com.elder.zcommonmodule.GET_USERINFO
+import com.elder.zcommonmodule.MSG_RETURN_REQUEST
 import com.elder.zcommonmodule.PRIVATE_DATA_RETURN
 import com.elder.zcommonmodule.getImageUrl
 import com.example.private_module.BR
@@ -34,6 +35,8 @@ import java.io.Serializable
 
 class UserInfoViewModel : BaseViewModel() {
 
+
+    var msgCount = ObservableField(0)
     var fr_avatar = ObservableField<String>("")
     var name = ObservableField<String>("爱摩老司机")
     var dynamicsStr = ObservableField<String>("0")
@@ -93,7 +96,7 @@ class UserInfoViewModel : BaseViewModel() {
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING).withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 1).navigation()
             }
             R.id.notify_icon -> {
-                ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc).navigation()
+                ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc).navigation(userInfoFragment.activity, MSG_RETURN_REQUEST)
             }
             R.id.vertical_linear1 -> {
                 ARouter.getInstance().build(RouterUtils.LogRecodeConfig.LogListActivity).withInt(RouterUtils.LogRecodeConfig.LOG_LIST_ENTITY, 3).navigation()
@@ -174,7 +177,7 @@ class UserInfoViewModel : BaseViewModel() {
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MemberAuth).navigation()
             }
             4 -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).navigation()
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION,loc!!).navigation()
             }
         }
     }

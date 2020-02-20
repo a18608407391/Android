@@ -14,10 +14,13 @@ import com.elder.zcommonmodule.DataBases.insertDriverInfo
 import com.elder.zcommonmodule.DataBases.insertUserInfo
 import com.elder.zcommonmodule.Entity.DriverInfo
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
+import com.elder.zcommonmodule.Entity.MsgCountData
 import com.elder.zcommonmodule.Http.BaseObserver
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.example.private_module.BR
 import com.elder.zcommonmodule.Entity.UserInfo
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Widget.CustomChart.AxisRenderer
 import com.elder.zcommonmodule.Widget.CustomChart.LineSet
 import com.example.private_module.Entitiy.PrivateEntity
@@ -33,6 +36,8 @@ import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.fragment_user.*
 import com.google.gson.Gson
+import com.zk.library.Bus.DataEven
+import com.zk.library.Bus.ServiceEven
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils.PrivateModuleConfig.Companion.USER_INFO
 import io.reactivex.Observable
@@ -46,6 +51,8 @@ import okhttp3.*
 import org.cs.tec.library.Base.Utils.getArray
 import org.cs.tec.library.Base.Utils.getColor
 import org.cs.tec.library.Base.Utils.uiContext
+import org.cs.tec.library.Bus.RxBus
+import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.binding.command.BindingCommand
@@ -59,7 +66,22 @@ import kotlin.random.Random
 
 
 @Route(path = RouterUtils.FragmentPath.MYSELFPAGE)
-class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>() {
+class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(), HttpInteface.getMsgNotifyCount {
+    override fun getNotifyCountSuccess(it: String) {
+        var data = Gson().fromJson<MsgCountData>(it, MsgCountData::class.java)
+        var even = ServiceEven()
+        even.type = "MsgCount"
+        count = data.callMeCount + data.commentCount + data.fabulousCount + data.lastSystemCount
+        RxBus.default?.post(even)
+
+    }
+
+    var count = 0
+
+    override fun getNotifyCountError(ex: Throwable) {
+
+    }
+
     var userInfo: UserInfo? = null
     override fun initContentView(): Int {
         return R.layout.fragment_user
@@ -72,11 +94,8 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>() 
     var lableList = ArrayList<String>()
     fun getUserInfo(flag: Boolean) {
         if (userInfo == null) {
-            Log.e("result", "用户数据JSON" + PreferenceUtils.getString(context, USER_INFO))
             userInfo = Gson().fromJson(PreferenceUtils.getString(context, USER_INFO), UserInfo::class.java)
         }
-        viewModel?.fr_avatar?.set(getImageUrl(userInfo?.data?.headImgFile))
-        viewModel?.name?.set(userInfo?.data?.name)
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         Observable.create(ObservableOnSubscribe<Response> {
             var client = OkHttpClient.Builder().readTimeout(30, TimeUnit.SECONDS).build()
@@ -96,7 +115,6 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>() 
                 super.onNext(it)
                 var data = Gson().fromJson<BaseResponse>(it, BaseResponse::class.java)
                 var code = Gson().fromJson<PrivateEntity>(Gson().toJson(data.data), PrivateEntity::class.java)
-                Log.e("result", "用户" + it)
                 if (data.code == 0) {
                     //骑行数据
                     var max = code.queryUserDisCountRidingInfo?.ridingData!![0].maxDis
@@ -146,60 +164,20 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>() 
                         }
                     }
 
+                    viewModel?.fr_avatar?.set(getImageUrl(userInfo?.data?.headImgFile))
+                    viewModel?.name?.set(userInfo?.data?.name)
                     viewModel?.dynamicsStr!!.set(code.PersonalCenterDatil?.DynamicCount.toString())
                     viewModel?.like!!.set(code.PersonalCenterDatil?.FabulousCount.toString())
                     viewModel?.fans!!.set(code.PersonalCenterDatil?.FansCount.toString())
                     viewModel?.focus!!.set(code.PersonalCenterDatil?.FollowCount.toString())
+                    initNet()
                 }
             }
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-
-                Log.e("result", "错误" + e.message)
             }
         })
-
-
-//        Observable.create(ObservableOnSubscribe<Response> {
-//            var client = OkHttpClient.Builder().readTimeout(30, TimeUnit.SECONDS).build()
-//            var map = HashMap<String, String>()
-//            var body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), Gson().toJson(map))
-//            var request = Request.Builder().addHeader("content-type", "application/json; charset=UTF-8").addHeader("appToken", token).post(body).url(Base_URL + "AmoskiActivity/userCenterManage/queryUserInfo").build()
-//            var call = client.newCall(request)
-//            var response = call.execute()
-//            it.onNext(response)
-//        }).subscribeOn(Schedulers.io()).map(Function<Response, String> {
-//            return@Function it.body()?.string()
-//        }).observeOn(AndroidSchedulers.mainThread()).subscribe(object : BaseObserver<String>(activity) {
-//            override fun onNext(t: String) {
-//                super.onNext(t)
-////                Log.e("result", "用户接口" + t)
-//                userInfo = Gson().fromJson<UserInfo>(t, UserInfo::class.java)
-//                if (userInfo != null && userInfo?.code == 0) {
-//                    PreferenceUtils.putString(context, USERID, userInfo?.data?.id)
-//                    insertUserInfo(userInfo!!.data!!)
-
-//
-//                } else {
-//                    if (userInfo?.code == 10009) {
-//                        PreferenceUtils.putString(context, USER_TOKEN, null)
-//                    }
-//                    Toast.makeText(context, userInfo?.msg, Toast.LENGTH_SHORT).show()
-//                    ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation()
-//                    activty?.finish()
-//                }
-//            }
-//
-//            override fun onError(e: Throwable) {
-//                super.onError(e)
-//                Log.e("result", "用户" + e.message)
-//            }
-//
-//            override fun onComplete() {
-//                super.onComplete()
-//            }
-//        })
     }
 
     var twl: Array<String>? = null
@@ -212,7 +190,20 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>() 
     override fun initData() {
         super.initData()
         setchart()
+        RxSubscriptions.add(RxBus.default?.toObservable(DataEven::class.java)!!.subscribe {
+            var m = it.value + count
+            CoroutineScope(uiContext).launch {
+                viewModel?.msgCount!!.set(m)
+            }
+        })
+
         viewModel?.inject(this)
+    }
+
+
+    fun initNet() {
+        HttpRequest.instance.getMsgCount = this
+        HttpRequest.instance.getMsgNotifyCount(HashMap())
     }
 
     fun setchart() {
@@ -233,11 +224,8 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>() 
         userInfo = info
         insertUserInfo(userInfo?.data!!)
         PreferenceUtils.putString(context, USER_INFO, Gson().toJson(userInfo))
-//        \Activity\userHeaderPicoriginalImg\2019Y\12M\29D\8020191229161750219.jpg
-//        \Activity\userHeaderPicoriginalImg\2019Y\12M\29D\8020191229164009587.jpg
-        Log.e("result", "用户头像" + userInfo?.data?.headImgFile)
         CoroutineScope(uiContext).launch {
-            viewModel?.fr_avatar?.set(userInfo?.data?.headImgFile)
+            viewModel?.fr_avatar?.set(getImageUrl(userInfo?.data?.headImgFile))
             viewModel?.name?.set(userInfo?.data?.name)
         }
     }

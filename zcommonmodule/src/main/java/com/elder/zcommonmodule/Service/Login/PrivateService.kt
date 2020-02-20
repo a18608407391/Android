@@ -48,7 +48,7 @@ interface PrivateService {
 //    POST /SameCity/sameCityData
 
     @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
-    @POST("AmoskiActivity/SameCity/sameCityData")
+    @POST("AmoskiActivity/SameCity/sameCityData1")
     fun Home(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>
 
@@ -75,7 +75,7 @@ interface PrivateService {
     ): Observable<BaseResponse>
 
     @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
-    @POST("AmoskiActivity/unifiedInfo/deleteSystemInfoList")
+    @POST("AmoskiActivity/unifiedInfo/deleteUserMessageList")
     fun deleteSystemNotify(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>
 
@@ -85,9 +85,12 @@ interface PrivateService {
     ): Observable<BaseResponse>
 
     @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
-    @POST("/AmoskiActivity/unifiedInfo/queryCommentMeList")
+    @POST("/AmoskiActivity/DynamicManage/queryCommentMeList")
     fun queryCommandMeList(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>
 
-
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("/AmoskiActivity/unifiedInfo/getUnifiedInfoCount")
+    fun getMsgCount(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
 }

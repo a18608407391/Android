@@ -24,13 +24,15 @@ class CommandActivity : BaseActivity<CommandActivityBinding, CommandViewModel>()
     @JvmField
     var location: Location? = null
 
-
-
     override fun initVariableId(): Int {
         return BR.command_model
     }
 
 
+    override fun doPressBack() {
+        super.doPressBack()
+        mViewModel?.returnBack()
+    }
 
     override fun initContentView(savedInstanceState: Bundle?): Int {
         StatusbarUtils.setRootViewFitsSystemWindows(this, true)

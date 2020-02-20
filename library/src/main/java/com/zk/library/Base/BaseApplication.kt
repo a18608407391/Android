@@ -119,11 +119,10 @@ open class BaseApplication : Application() {
         val ON_GROUP_EVENT = 3004
         val DELETE_MODE = "deleteMode"
         val RESULT_CODE_ME_INFO = 20
-        var forwardMsg: List<Message> = ArrayList()
+        var forwardMsg: ArrayList<Message> = ArrayList()
 //        val CONV_TYPE = "conversationType" //value使用 ConversationType
         val ROOM_ID = "roomId"
         val POSITION = "position"
-
 
         val MSG_JSON = "msg_json"
         val MSG_LIST_JSON = "msg_list_json"

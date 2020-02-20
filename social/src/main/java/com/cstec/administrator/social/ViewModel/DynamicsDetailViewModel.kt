@@ -24,6 +24,7 @@ import android.text.TextUtils
 import android.view.View
 import com.cstec.administrator.social.R
 import android.support.design.widget.BottomSheetBehavior
+import android.util.Log
 import android.widget.*
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
@@ -35,8 +36,11 @@ import com.elder.zcommonmodule.Entity.*
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
+import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.USERID
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
@@ -54,20 +58,29 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                 .navigation()
     }
 
+
     override fun sendGroupNetWork(bean: CommentDetailBean?) {
         //一级评论点赞
+
         var map = HashMap<String, String>()
+        Log.e("retrofitBack","当前dynamicId" + detialBean.id!!)
+        Log.e("retrofitBack","当前commentId" + bean!!.id.toString())
         map["dynamicId"] = detialBean.id!!
         map["commentId"] = bean!!.id.toString()
-        HttpRequest.instance.getDynamicsLike(map)
+        HttpRequest.instance.getCommentDynamicsLike(map)
     }
 
     override fun sendNetWork(bean: CommentDetailBean?) {
         // 二级评论点赞  不做區分
+        if (System.currentTimeMillis() - CurrentClickTime < 1000) {
+            return
+        } else {
+            CurrentClickTime = System.currentTimeMillis()
+        }
         var map = HashMap<String, String>()
         map["dynamicId"] = detialBean.id!!
         map["commentId"] = bean!!.id.toString()
-        HttpRequest.instance.getDynamicsLike(map)
+        HttpRequest.instance.getCommentDynamicsLike(map)
     }
 
 
@@ -164,6 +177,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
     var memberName = ObservableField<String>()
     var focus = ObservableField(0)
     var like = ObservableField(0)
+    var likeCount = ObservableField<String>("0")
     var collection = ObservableField(0)
     var collectionCount = ObservableField<String>()
     var commentCount = ObservableField<String>("0")
@@ -211,6 +225,46 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
             } else {
                 finish()
             }
+        } else if (dynamicsDetailActivity.navigationType == 5) {
+            if (destroyList!!.contains("CommandActivity")) {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
+        } else if (dynamicsDetailActivity.navigationType == 6) {
+            if (destroyList!!.contains("AtmeActivity")) {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.Atme_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
+        } else if (dynamicsDetailActivity.navigationType == 7) {
+            if (destroyList!!.contains("SystemNotifyListActivity")) {
+                ARouter.getInstance().build(RouterUtils.Chat_Module.SysNotify_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
+        }else if (dynamicsDetailActivity.navigationType == 8) {
+            if (destroyList!!.contains("MyRestoreActivity")) {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
         } else {
             ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(dynamicsDetailActivity, object : NavCallback() {
                 override fun onArrival(postcard: Postcard?) {
@@ -221,7 +275,13 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
     }
 
     fun onClick(view: View) {
+        if (System.currentTimeMillis() - CurrentClickTime < 1000) {
+            return
+        } else {
+            CurrentClickTime = System.currentTimeMillis()
+        }
         when (view.id) {
+
             R.id.collection_click -> {
                 var count = Integer.valueOf(detialBean.collectionCount)
                 if (detialBean?.hasCollection == 0) {
@@ -235,18 +295,13 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                 }
                 detialBean.collectionCount = count.toString()
                 collectionCount.set(count.toString())
-                field.set(detialBean)
 
+                field.set(detialBean)
                 var map = java.util.HashMap<String, String>()
                 map["dynamicId"] = field.get()!!.id!!
                 HttpRequest.instance.getDynamicsCollection(map)
             }
             R.id.like_click -> {
-                if (System.currentTimeMillis() - CurrentClickTime < 1000) {
-                    return
-                } else {
-                    CurrentClickTime = System.currentTimeMillis()
-                }
                 if (detialBean.dynamicSpotFabulousList == null) {
                     detialBean.dynamicSpotFabulousList = ArrayList()
                 }
@@ -270,16 +325,12 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                 initLinear(dynamicsDetailActivity.social_linear, detialBean)
                 detialBean.fabulousCount = count.toString()
                 field.set(detialBean)
+                likeCount.set(detialBean.fabulousCount)
                 var map = java.util.HashMap<String, String>()
                 map["dynamicId"] = field.get()!!.id!!
                 HttpRequest.instance.getDynamicsLike(map)
             }
             R.id.focus_click -> {
-                if (System.currentTimeMillis() - CurrentClickTime < 1000) {
-                    return
-                } else {
-                    CurrentClickTime = System.currentTimeMillis()
-                }
                 if (detialBean.followed == 0) {
                     focus.set(1)
                 }
@@ -291,11 +342,6 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                 HttpRequest.instance.getDynamicsFocus(map)
             }
             R.id.share_click -> {
-                if (System.currentTimeMillis() - CurrentClickTime < 1000) {
-                    return
-                } else {
-                    CurrentClickTime = System.currentTimeMillis()
-                }
                 if (dynamicsDetailActivity.location == null) {
                     Toast.makeText(context, "获取定位信息异常，请重试!", Toast.LENGTH_SHORT).show()
                     return
@@ -352,25 +398,22 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
         user = queryUserInfo(id)[0]
         initEx()
         initLinear(dynamicsDetailActivity.social_linear, dynamicsDetailActivity.detail)
+        likeCount.set(dynamicsDetailActivity.detail?.fabulousCount)
         field.set(dynamicsDetailActivity.detail)
-
+        this.detialBean = dynamicsDetailActivity.detail!!
+        if (detialBean.memberId == PreferenceUtils.getString(context, USERID)) {
+            avatar.set(user?.data?.headImgFile)
+            memberName.set(user!!.data?.name)
+        } else {
+            avatar.set(detialBean.memberImageUrl)
+            memberName.set(detialBean.memberName)
+        }
         commentText.set("全部评论(" + dynamicsDetailActivity.detail?.commentCount + ")")
-        RxSubscriptions.add(RxBus.default?.toObservableSticky(DynamicsCategoryEntity.Dynamics::class.java)?.subscribe {
-            this.detialBean = it
-            if (detialBean.memberId == PreferenceUtils.getString(context, USERID)) {
-                avatar.set(user?.data?.headImgFile)
-                memberName.set(user!!.data?.name)
-            } else {
-                avatar.set(detialBean.memberImageUrl)
-                memberName.set(detialBean.memberName)
-            }
-
-            var map = HashMap<String, String>()
-            map["length"] = page.toString()
-            map["pageSize"] = pageSize.toString()
-            map["dynamicId"] = it.id.toString()
-            HttpRequest.instance.getDynamicsCommonList(map)
-        })
+        var map = HashMap<String, String>()
+        map["length"] = page.toString()
+        map["pageSize"] = pageSize.toString()
+        map["dynamicId"] = dynamicsDetailActivity.detail?.id.toString()
+        HttpRequest.instance.getDynamicsCommonList(map)
 
         RxSubscriptions.add(RxBus.default?.toObservable(CanalierHomeEntity::class.java)!!.subscribe {
             if (it.followed == 0) {
@@ -398,7 +441,6 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                     .withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dynamicsDetailActivity.detail).navigation()
         }
         social_linear?.invalidate()
-
     }
 
     var getChildList = false

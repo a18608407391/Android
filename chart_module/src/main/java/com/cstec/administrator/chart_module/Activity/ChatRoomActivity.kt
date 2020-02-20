@@ -30,6 +30,7 @@ import com.cstec.administrator.chart_module.View.ChatUtils.EmoticonsKeyboardUtil
 import com.cstec.administrator.chart_module.Adapter.ChattingListAdapter
 import com.cstec.administrator.chart_module.Even.ImageEvent
 import com.cstec.administrator.chart_module.Utils.RequestCode
+import com.elder.zcommonmodule.Entity.Location
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.coroutines.CoroutineScope
@@ -89,6 +90,10 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
     @JvmField
     var chatRoomId: Long = 0
 
+
+    @Autowired(name = RouterUtils.SocialConfig.SOCIAL_LOCATION)
+    @JvmField
+    var location: Location ?  = null
     override fun onClick(v: View?) {
         when (v?.getId()) {
             R.id.jmui_return_btn -> mViewModel?.returnBtn()
@@ -132,6 +137,11 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
     }
 
 
+    override fun doPressBack() {
+        super.doPressBack()
+        mViewModel?.returnBtn()
+    }
+
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         if (EmoticonsKeyboardUtils.isFullScreen(this)) {
             var isConsum = mViewModel?.ekBar!!.dispatchKeyEventInFullScreen(event)
@@ -163,7 +173,6 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
                                 mViewModel?.mChatView?.showRightBtn()
                             }
                         }
-
                     }
                     EventNotificationContent.EventNotificationType.group_member_removed -> {
                         var userNames = (message.getContent() as EventNotificationContent).userNames;
@@ -223,8 +232,6 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
     }
 
 
-
-
     open fun onEvent(event: OfflineMessageEvent) {
         var conv = event.conversation;
         if (conv.type == ConversationType.single) {
@@ -270,6 +277,7 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
         val retractedMessage = event.retractedMessage
         mViewModel?.mChatAdapter?.delMsgRetract(retractedMessage)
     }
+
     open fun onEventMainThread(event: ChatRoomMessageEvent) {
         var messages = event.messages
         mViewModel?.mChatAdapter?.addMsgListToList(messages)
@@ -283,8 +291,6 @@ class ChatRoomActivity : ChartBaseActivity<ActivityChartRoomBinding, ChatRoomVie
             mViewModel?.mChatAdapter?.setUpdateReceiptCount(serverMsgId, unReceiptCnt)
         }
     }
-
-
 
 
 }

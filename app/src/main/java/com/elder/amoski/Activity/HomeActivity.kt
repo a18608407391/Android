@@ -83,6 +83,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
             }
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initData() {
         super.initData()
@@ -114,8 +115,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         when (requestCode) {
             GET_USERINFO -> {
                 if (data != null) {
-                 var info =    data?.extras!!["userInfo"] as UserInfo
-                    var fr =    mViewModel?.myself as UserInfoFragment
+                    var info = data?.extras!!["userInfo"] as UserInfo
+                    var fr = mViewModel?.myself as UserInfoFragment
                     fr.callback(info)
 //                    var even = ActivityResultEven(requestCode, )
 //                    RxBus.default?.post(even)
@@ -137,13 +138,21 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
                 }
             }
             SOCIAL_DETAIL_RETURN -> {
-                if(data!=null){
+                if (data != null) {
                     mViewModel?.social!!.initResult(data)
                 }
             }
-            PRIVATE_DATA_RETURN->{
-                var fr =    mViewModel?.myself as UserInfoFragment
+            PRIVATE_DATA_RETURN -> {
+                var fr = mViewModel?.myself as UserInfoFragment
                 fr.getUserInfo(false)
+            }
+            MSG_RETURN_REQUEST -> {
+                if (resultCode == MSG_RETURN_REQUEST) {
+                    main_bottom_bg.check(R.id.main_left)
+                }else{
+                    var fr = mViewModel?.myself as UserInfoFragment
+                    fr.getUserInfo(false)
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

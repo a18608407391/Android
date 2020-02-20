@@ -28,11 +28,13 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.elder.zcommonmodule.ConfigKt;
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity;
+import com.elder.zcommonmodule.Entity.DynamicsSimple;
 import com.elder.zcommonmodule.Entity.LikesEntity;
 import com.elder.zcommonmodule.Entity.SocialPhotoEntity;
 import com.elder.zcommonmodule.LocalUtilsKt;
 import com.elder.zcommonmodule.PictureInfo;
 import com.example.private_module.Bean.PhotoEntitiy;
+import com.google.gson.Gson;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.tencent.smtt.export.external.interfaces.ClientCertRequest;
 import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
@@ -55,10 +57,18 @@ public class ViewAdapter {
 
     @BindingAdapter(value = "localImageLoad")
     public static void setLocalImage(ImageView img, String path) {
+        Log.e("result", "当前URL" + path);
         RequestOptions options = new RequestOptions().error(R.drawable.picture_logo).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(200, 200);
         Glide.with(img).asBitmap().load(path).apply(options).into(img);
     }
 
+
+    @BindingAdapter(value = "localsocialImageLoad")
+    public static void setLocalSocialImage(ImageView img, String path) {
+        Log.e("result", "当前URL" + path);
+        RequestOptions options = new RequestOptions().error(R.drawable.ic_album_default).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(200, 200);
+        Glide.with(img).asBitmap().load(path).apply(options).into(img);
+    }
 
     @BindingAdapter(value = "localEntityImageLoad")
     public static void setLocalEntityImage(ImageView img, DynamicsCategoryEntity.Dynamics path) {
@@ -76,16 +86,23 @@ public class ViewAdapter {
 //        }
 
 
-        if (path != null && path.getDynamicImageList() != null && !path.getDynamicImageList().isEmpty()) {
+        Log.e("result", "当前收藏数据" + new Gson().toJson(path));
+
+        if (path != null && path.getDynamicImageList() != null && path.getDynamicImageList().size() != 0) {
+            img.setVisibility(View.VISIBLE);
             SocialPhotoEntity photo = path.getDynamicImageList().get(0);
             url = ConfigKt.Base_URL + photo.getProjectUrl() + photo.getFilePathUrl() + photo.getFilePath();
+        } else if (path!=null&&path.getParentDynamin() != null && path.getParentDynamin().getDynamicImageList().size() != 0) {
+            img.setVisibility(View.VISIBLE);
+            DynamicsSimple photo = path.getParentDynamin();
+            SocialPhotoEntity eb = photo.getDynamicImageList().get(0);
+            url = ConfigKt.Base_URL + eb.getProjectUrl() + eb.getFilePathUrl() + eb.getFilePath();
         } else {
             img.setVisibility(View.GONE);
         }
         RequestOptions options = new RequestOptions().error(R.drawable.road_book_ex_icon).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(200, 200);
         Glide.with(img).asBitmap().load(url).apply(options).into(img);
     }
-
 
     @BindingAdapter(value = "HttpImageLoad")
     public static void setHttpImage(ImageView img, String path) {
@@ -154,7 +171,7 @@ public class ViewAdapter {
         if (path != null && !path.isEmpty()) {
             if (path.startsWith("/Activity")) {
                 path = LocalUtilsKt.getImageUrl(path);
-            }else if(path.startsWith("/home")){
+            } else if (path.startsWith("/home")) {
                 path = LocalUtilsKt.getImageUrl(path);
             }
         }
@@ -168,7 +185,7 @@ public class ViewAdapter {
         if (path != null && !path.isEmpty()) {
             if (path.startsWith("/Activity")) {
                 path = LocalUtilsKt.getImageUrl(path);
-            }else if(path.startsWith("/home")){
+            } else if (path.startsWith("/home")) {
                 path = LocalUtilsKt.getImageUrl(path);
             }
         }
@@ -294,7 +311,6 @@ public class ViewAdapter {
         webView.setWebViewClient(new com.tencent.smtt.sdk.WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webView, String s) {
-                Log.e("result", s);
                 if (command != null) {
                     command.execute(s);
                 }
@@ -303,25 +319,21 @@ public class ViewAdapter {
 
             @Override
             public void onReceivedClientCertRequest(WebView webView, ClientCertRequest clientCertRequest) {
-                Log.e("result", "onReceivedClientCertRequest");
                 super.onReceivedClientCertRequest(webView, clientCertRequest);
             }
 
             @Override
             public void onReceivedLoginRequest(WebView webView, String s, String s1, String s2) {
-                Log.e("result", "onReceivedLoginRequest");
                 super.onReceivedLoginRequest(webView, s, s1, s2);
             }
 
             @Override
             public void onReceivedError(WebView webView, int i, String s, String s1) {
-                Log.e("result", "onReceivedError");
                 super.onReceivedError(webView, i, s, s1);
             }
 
             @Override
             public void onReceivedHttpAuthRequest(WebView webView, HttpAuthHandler httpAuthHandler, String s, String s1) {
-                Log.e("result", "onReceivedHttpAuthRequest");
                 super.onReceivedHttpAuthRequest(webView, httpAuthHandler, s, s1);
             }
 

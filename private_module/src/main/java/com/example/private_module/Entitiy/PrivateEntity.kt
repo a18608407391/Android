@@ -10,7 +10,7 @@ import java.io.Serializable
 class PrivateEntity : Serializable {
 
     var queryUserDisCountRidingInfo: RidingInfo? = null
-
+    var countInfo = 0
     var PersonalCenterDatil: PrivateCountData? = null
 
 

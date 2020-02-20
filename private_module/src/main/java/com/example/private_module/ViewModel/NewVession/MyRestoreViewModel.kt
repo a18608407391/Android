@@ -11,6 +11,7 @@ import com.elder.zcommonmodule.Component.TitleComponent
 import com.elder.zcommonmodule.Entity.CollectionEntity
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity
 import com.elder.zcommonmodule.Entity.RestoreEntity
+import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.example.private_module.Activity.NewVession.MyRestoreActivity
@@ -32,7 +33,12 @@ import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, TitleComponent.titleComponentCallBack, SwipeRefreshLayout.OnRefreshListener {
+class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, TitleComponent.titleComponentCallBack, SwipeRefreshLayout.OnRefreshListener, SimpleClickListener {
+    override fun onSimpleClick(entity: Any) {
+        var c = entity as CollectionEntity.Collection
+        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+    }
+
     override fun onRefresh() {
         pageSize = 1
         lenth = 20
@@ -83,10 +89,11 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
         initDatas()
     }
 
+    var listener: SimpleClickListener = this
     var titleComponent = TitleComponent()
     var adapter = BindingRecyclerViewAdapter<CollectionEntity.Collection>()
     var items = ObservableArrayList<CollectionEntity.Collection>()
-    var itemBinding = ItemBinding.of<CollectionEntity.Collection>(BR.restore_item_entity, R.layout.restore_items_layout)
+    var itemBinding = ItemBinding.of<CollectionEntity.Collection>(BR.restore_item_entity, R.layout.restore_items_layout).bindExtra(BR.listener, listener)
 
 
     var pageSize = 1

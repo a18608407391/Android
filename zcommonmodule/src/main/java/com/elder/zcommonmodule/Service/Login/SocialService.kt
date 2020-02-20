@@ -48,6 +48,12 @@ interface SocialService {
     //点赞
 
     @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("/AmoskiActivity/DynamicManage/commentFabulous")
+    fun commentLike(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
     @POST("AmoskiActivity/DynamicManage/dynamicFabulous")
     fun Like(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>

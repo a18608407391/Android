@@ -1,5 +1,6 @@
 package com.cstec.administrator.social.ViewModel
 
+import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
@@ -11,6 +12,7 @@ import com.cstec.administrator.social.Activity.GetLikeActivity
 import com.cstec.administrator.social.BR
 import com.cstec.administrator.social.R
 import com.elder.zcommonmodule.Component.TitleComponent
+import com.elder.zcommonmodule.Entity.CommandData
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity
 import com.elder.zcommonmodule.Entity.LikesEntity
 import com.elder.zcommonmodule.Inteface.DoubleClickListener
@@ -24,44 +26,63 @@ import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 
 
-class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleComponent.titleComponentCallBack, DoubleClickListener, SwipeRefreshLayout.OnRefreshListener {
+class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleComponent.titleComponentCallBack, DoubleClickListener, SwipeRefreshLayout.OnRefreshListener, HttpInteface.SocialDynamicsList {
+    override fun ResultSDListSuccess(it: String) {
+        activity.dismissProgressDialog()
+        var dyna = Gson().fromJson<DynamicsCategoryEntity>(it, DynamicsCategoryEntity::class.java)
+        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
+    }
+
+    override fun ResultSDListError(ex: Throwable) {
+        activity.dismissProgressDialog()
+    }
+
     override fun onRefresh() {
         initData()
     }
 
+    var cur = 0L
+
     override fun onItemClick(entity: Any) {
-//        var entity = entity as LikesEntity.LikeBean
-//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL)
-//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, entity)
-//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
+        if (System.currentTimeMillis() - cur < 1000) {
+            return
+        } else {
+            cur = System.currentTimeMillis()
+        }
+        var entity = entity as LikesEntity.LikeBean
+        if (entity.releaseDynamicParent != null) {
+            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL)
+                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, entity.releaseDynamicParent)
+                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
+        } else {
+            Log.e("result", "动态id" + entity.dynamicId)
+
+            activity.showProgressDialog("加载中......")
+            HttpRequest.instance.DynamicListResult = this
+            var map = HashMap<String, String>()
+            map["id"] = entity.dynamicId.toString()
+            map["pageSize"] = "1"
+            map["length"] = "1"
+            map["type"] = "5"
+            map["yAxis"] = activity.location!!.longitude.toString()
+            map["xAxis"] = activity.location!!.latitude.toString()
+            HttpRequest.instance.getDynamicsList(map)
+        }
     }
 
     override fun onImgClick(entity: Any) {
-//        var entity = entity as LikesEntity.LikeBean
-//        Log.e("result", "当前数据" + Gson().toJson(entity))
-//        Log.e("result", "当前数据1" + entity.memberId)
-//        Log.e("result", "当前数据2" + Gson().toJson(activity.location))
-//
-//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
-//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 4).navigation()
+        var entity = entity as LikesEntity.LikeBean
+        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
+                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 4).navigation()
     }
 
     override fun onComponentClick(view: View) {
-        if (destroyList!!.contains("DriverHomeActivity")) {
-            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                    .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, activity.id)
-                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation(activity, object : NavCallback() {
-                        override fun onArrival(postcard: Postcard?) {
-                            finish()
-                        }
-                    })
-        } else {
-            finish()
-        }
+
+        activity.doback()
     }
 
     override fun onComponentFinish(view: View) {
@@ -111,6 +132,6 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
 
     var items = ObservableArrayList<LikesEntity.LikeBean>()
 
-    var itembinding = ItemBinding.of<LikesEntity.LikeBean>(BR.getlike_model, R.layout.getlike_child_layout).bindExtra(BR.listener,listener)
+    var itembinding = ItemBinding.of<LikesEntity.LikeBean>(BR.getlike_model, R.layout.getlike_child_layout).bindExtra(BR.listener, listener)
 
 }

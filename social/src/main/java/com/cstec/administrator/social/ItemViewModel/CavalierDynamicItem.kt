@@ -31,16 +31,17 @@ import org.cs.tec.library.binding.command.BindingConsumer
 
 class CavalierDynamicItem : CavalierItemModel, DynamicClickListener, HttpInteface.SocialDynamicsList, HttpInteface.deleteSocialResult {
     override fun deleteSocialSuccess(it: String) {
-        if(deleteItem!=null){
+        if (deleteItem != null) {
             items.remove(deleteItem)
             adapter.initDatas(items)
         }
-        Toast.makeText(context, getString(R.string.social_delete_success),Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, getString(R.string.social_delete_success), Toast.LENGTH_SHORT).show()
     }
 
     override fun deleteSocialError(it: Throwable) {
-        Toast.makeText(context, getString(R.string.social_delete_fail),Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, getString(R.string.social_delete_fail), Toast.LENGTH_SHORT).show()
     }
+
     override fun deleteClick(view: DynamicsCategoryEntity.Dynamics) {
         var dialog = DialogUtils.createNomalDialog(viewModel.activity, getString(R.string.delete_social), getString(R.string.cancle), getString(R.string.confirm))
         dialog.setOnBtnClickL(OnBtnClickL {
@@ -82,10 +83,16 @@ class CavalierDynamicItem : CavalierItemModel, DynamicClickListener, HttpIntefac
         if (pageSize == 1) {
             items.clear()
         }
+
         var entity = Gson().fromJson<DynamicsCategoryEntity>(it, DynamicsCategoryEntity::class.java)
+        if (entity.data!!.size == 0) {
+            return
+        }
         entity.data?.forEach {
             items.add(it)
         }
+
+        Log.e("result", entity.data!!.size.toString() + "当前数据条数" + items.size)
         adapter.initDatas(items)
     }
 
@@ -188,7 +195,7 @@ class CavalierDynamicItem : CavalierItemModel, DynamicClickListener, HttpIntefac
     }
 
     fun init() {
-        HttpRequest.instance.DynamicListResult = this
+
         var map = HashMap<String, String>()
         map["pageSize"] = pageSize.toString()
         map["length"] = length.toString()
@@ -207,20 +214,26 @@ class CavalierDynamicItem : CavalierItemModel, DynamicClickListener, HttpIntefac
 
     constructor(model: DriverHomeViewModel) {
         this.viewModel = model
+        HttpRequest.instance.DynamicListResult = this
         adapter = GridHomeRecycleViewAdapter(context, items, this@CavalierDynamicItem)
 
     }
 
     var listener: DynamicClickListener = this
-    var curLoad = 0
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             Log.e("result", "加载更多" + t)
-            if (t > curLoad) {
+            if (t <length*pageSize) {
+                return
+            }else{
                 pageSize++
                 init()
-                curLoad = t
             }
+//            if (t > curLoad) {
+//                pageSize++
+//                init()
+//                curLoad = t
+//            }
         }
     })
 

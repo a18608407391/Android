@@ -5,9 +5,11 @@ import android.databinding.ViewDataBinding
 import android.graphics.Color
 import android.os.Bundle
 import com.alibaba.android.arouter.facade.Postcard
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
+import com.elder.zcommonmodule.Entity.Location
 import com.example.private_module.BR
 import com.example.private_module.R
 import com.example.private_module.ViewModel.NewVession.MyRestoreViewModel
@@ -31,7 +33,9 @@ class MyRestoreActivity  :BaseActivity<ActivityMyRestoreBinding,MyRestoreViewMod
         StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
         return R.layout.activity_my_restore
     }
-
+    @Autowired(name = RouterUtils.SocialConfig.SOCIAL_LOCATION)
+    @JvmField
+    var location: Location? = null
 
     override fun initViewModel(): MyRestoreViewModel? {
         return ViewModelProviders.of(this)[MyRestoreViewModel::class.java]

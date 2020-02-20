@@ -22,6 +22,7 @@ import com.cstec.administrator.chart_module.Receiver.NotificationClickEventRecei
 import com.cstec.administrator.chart_module.Utils.StorageUtil
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection
 import com.liulishuo.filedownloader.FileDownloader
+import com.zk.library.Bus.DataEven
 
 
 class AppInstance : BaseApplication() {
@@ -43,6 +44,7 @@ class AppInstance : BaseApplication() {
             ARouter.openLog()
             //开启调试模式
             ARouter.openDebug()
+            ARouter.printStackTrace()
         }
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setFontAttrId(R.attr.fontPath)
@@ -100,8 +102,12 @@ class AppInstance : BaseApplication() {
                     Log.e("result", "HomeStop")
                     context.startService(Intent(context, LowLocationService::class.java).setAction("stop"))
                 }
-
-
+                "MsgCount" -> {
+                    var count = JMessageClient.getAllUnReadMsgCount()
+                    var data = DataEven()
+                    data.value = count
+                    RxBus.default?.post(data)
+                }
             }
         }
         RxSubscriptions.add(postEven)

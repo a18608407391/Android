@@ -63,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/up_arrow"
                 android:gravity="center"
+                android:onClick="@{log_recode_model::onClick}"
                 android:text="年"
                 android:textColor="@color/line_color"
                 android:textSize="@dimen/s_16" />

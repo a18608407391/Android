@@ -171,7 +171,6 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
         } else {
             CurrentClickTime = System.currentTimeMillis()
         }
-        RxBus.default?.postSticky(view)
         ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(SOCIAL_DETAIL_ENTITY, view).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName)).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation()
     }
 

@@ -23,23 +23,22 @@ import com.cstec.administrator.chart_module.View.ChatUtils.DialogCreator
 import com.zk.library.Base.BaseApplication
 import com.alibaba.android.arouter.launcher.ARouter
 import com.zk.library.Utils.RouterUtils
-import com.autonavi.base.amap.mapcore.maploader.NetworkState.getActiveNetworkInfo
-import android.content.Context.CONNECTIVITY_SERVICE
-import android.support.v4.content.ContextCompat.getSystemService
 import android.net.ConnectivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
-import android.graphics.Bitmap
+import android.databinding.ObservableField
 import android.util.Log
-import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback
 import cn.jpush.im.android.api.event.*
-import cn.jpush.im.api.BasicCallback
+import com.alibaba.android.arouter.facade.Postcard
+import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.elder.zcommonmodule.Entity.MsgCountData
 import com.cstec.administrator.chart_module.Even.Event
 import com.cstec.administrator.chart_module.Even.EventType
-import com.cstec.administrator.chart_module.View.ChatUtils.FileHelper
-import com.cstec.administrator.chart_module.View.SharePreferenceManager
-import com.elder.zcommonmodule.PRIVATE_DATA_RETURN
+import com.elder.zcommonmodule.MSG_RETURN_REFRESH_REQUEST
+import com.elder.zcommonmodule.MSG_RETURN_REQUEST
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.zk.library.Utils.PreferenceUtils
 import kotlinx.coroutines.CoroutineScope
@@ -51,11 +50,49 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
-class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, TitleComponent.titleComponentCallBack {
+class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, TitleComponent.titleComponentCallBack, HttpInteface.getMsgNotifyCount {
+    override fun getNotifyCountSuccess(it: String) {
+        if (it.isNullOrEmpty()) {
+            return
+        }
+        var data = Gson().fromJson<MsgCountData>(it, MsgCountData::class.java)
+        likeCount.set(data.fabulousCount)
+        commandCount.set(data.commentCount)
+        atMeCount.set(data.callMeCount)
+        SystemCount.set(data.lastSystemCount)
+        SystemStr.set(data.lastSystem?.msg_title)
+        SystemTime.set(data.lastSystem?.time)
+    }
+
+
+    var likeCount = ObservableField(0)
+
+    var commandCount = ObservableField(0)
+
+    var atMeCount = ObservableField(0)
+
+    var SystemCount = ObservableField(0)
+
+    var ActiveCount = ObservableField(0)
+
+    var SystemStr = ObservableField("")
+
+    var SystemTime = ObservableField("")
+
+
+    override fun getNotifyCountError(ex: Throwable) {
+        Log.e("result", "getNotifyCountError" + ex.message)
+    }
+
     override fun onComponentClick(view: View) {
-
+        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(activity, object : NavCallback() {
+            override fun onArrival(postcard: Postcard?) {
+                finish()
+            }
+        })
     }
 
     override fun onComponentFinish(view: View) {
@@ -87,7 +124,7 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
                         } else {
                             JMessageClient.deleteSingleConversation((conv.targetInfo as UserInfo).userName)
                         }
-                        mDatas.removeAt(position - 3)
+                        mDatas.removeAt(position)
                         if (mDatas.size > 0) {
                             activity.setNullConversation(true)
                         } else {
@@ -102,11 +139,11 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
             }
             mDialog = DialogCreator.createDelConversationDialog(activity, listener, TextUtils.isEmpty(conv.extra))
             mDialog?.show()
-            mDialog?.getWindow()?.setLayout((0.8 * mWidth) as Int, WindowManager.LayoutParams.WRAP_CONTENT)
+            mDialog?.getWindow()?.setLayout((0.8 * mWidth).toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
         }
         return true
     }
-
+//15111323908
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (position >= 0) {
@@ -174,23 +211,29 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
         when (v?.id) {
             R.id.sys_click -> {
                 //跳转到系统通知界面
-                ARouter.getInstance().build(RouterUtils.Chat_Module.SysNotify_AC).navigation()
+                ARouter.getInstance().build(RouterUtils.Chat_Module.SysNotify_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REQUEST)
             }
             R.id.active_click -> {
                 //跳转到活动列表界面
                 ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).navigation()
             }
             R.id.at_click -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.Atme_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation()
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.Atme_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REFRESH_REQUEST)
             }
             R.id.command_click -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation()
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REFRESH_REQUEST)
             }
             R.id.get_like_click -> {
                 var id = PreferenceUtils.getString(context, USERID)
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation()
+                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REFRESH_REQUEST)
             }
         }
+    }
+
+
+    fun initNet() {
+        HttpRequest.instance.getMsgCount = this
+        HttpRequest.instance.getMsgNotifyCount(HashMap())
     }
 
 
@@ -214,6 +257,7 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
         component.rightText.set("")
         component.callback = this
         initConvListAdapter()
+        initNet()
     }
 
 
@@ -262,12 +306,15 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
         delFeedBack.clear()
         var i = 0
         var groupConv = ArrayList<Conversation>()
-        mDatas = JMessageClient.getConversationList() as ArrayList<Conversation>
+        if (JMessageClient.getConversationList() == null) {
+            mDatas = ArrayList()
+        } else {
+            mDatas = JMessageClient.getConversationList() as ArrayList<Conversation>
+        }
         mDatas.forEach {
             if (it.type == ConversationType.group) {
                 groupConv.add(it)
             }
-            Log.e("result", "会话信息" + Gson().toJson(it))
         }
         if (mDatas != null && mDatas.size > 0) {
             activity.setNullConversation(true)

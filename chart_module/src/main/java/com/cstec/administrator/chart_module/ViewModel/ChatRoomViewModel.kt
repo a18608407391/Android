@@ -29,12 +29,14 @@ import cn.jpush.im.android.api.enums.ConversationType
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.AbsListView
 import android.widget.AbsListView.OnScrollListener.*
 import android.widget.Toast
 import cn.jpush.im.android.api.ChatRoomManager
+import cn.jpush.im.android.api.callback.GetUserInfoCallback
 import cn.jpush.im.android.api.callback.GetUserInfoListCallback
 import cn.jpush.im.android.api.content.EventNotificationContent
 import cn.jpush.im.android.api.content.ImageContent
@@ -56,6 +58,7 @@ import com.cstec.administrator.chart_module.Utils.*
 import com.cstec.administrator.chart_module.View.*
 import com.cstec.administrator.chart_module.View.ChatUtils.FuncLayout
 import com.cstec.administrator.chart_module.View.Emoji.EmojiBean
+import com.google.gson.Gson
 import com.tencent.smtt.sdk.TbsLogReport
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.RouterUtils
@@ -182,8 +185,21 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
             mConv = JMessageClient.getSingleConversation(activity.mTargetId, activity.mTargetAppKey)
             if (mConv == null) {
                 mConv = Conversation.createSingleConversation(activity.mTargetId, activity.mTargetAppKey)
+            } else {
+                JMessageClient.getUserInfo(mConv!!.targetId, "35e2033d379dabfde25d9321", object : GetUserInfoCallback() {
+                    override fun gotResult(p0: Int, p1: String?, p2: UserInfo?) {
+                        if (p0 == 0) {
+//                              mConv?.targetInfo = p2
+                        }
+                    }
+                })
+                Log.e("result", "会话信息" + Gson().toJson(mConv))
             }
-            mChatAdapter = ChattingListAdapter(activity, mConv, longClickListener)
+            if (mConv == null) {
+                finish()
+            } else {
+                mChatAdapter = ChattingListAdapter(activity, mConv, longClickListener)
+            }
         } else {
             //群聊
             mIsSingle = false
@@ -331,7 +347,6 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         }
         JMessageClient.exitConversation()
         //发送保存为草稿事件到会话列表
-        //TODO
         EventBus.getDefault().post(Event.Builder().setType(EventType.draft)
                 .setConversation(mConv)
                 .setDraft(ekBar.getEtChat().getText().toString())
@@ -553,13 +568,13 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
             if ((msg.getContentType() == ContentType.text) && (msg?.content as TextContent).getStringExtra("businessCard") == null) {
                 //接收方
                 if (msg.getDirect() == MessageDirect.receive) {
-                    var location = intArrayOf(2)
-                    view?.getLocationOnScreen(location);
+                    var location = IntArray(2)
+                    view?.getLocationOnScreen(location)
                     var OldListY = location[1]
                     var OldListX = location[0]
                     TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
                             .addItem(TipItem("复制"))
-                            .addItem(TipItem("转发"))
+//                            .addItem(TipItem("转发"))
                             .addItem(TipItem("删除"))
                             .setOnItemClickListener(object : TipView.OnItemClickListener {
                                 override fun onItemClick(name: String?, position: Int) {
@@ -600,13 +615,14 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                             .create();
                     //发送方
                 } else {
-                    var location = intArrayOf(2)
+                    var location = IntArray(2)
+
                     view?.getLocationOnScreen(location)
-                    var OldListY = location[1]
-                    var OldListX = location[0]
+                    var OldListY = location.get(1)
+                    var OldListX = location.get(0)
                     TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
                             .addItem(TipItem("复制"))
-                            .addItem(TipItem("转发"))
+//                            .addItem(TipItem("转发"))
                             .addItem(TipItem("撤回"))
                             .addItem(TipItem("删除"))
                             .setOnItemClickListener(object : TipView.OnItemClickListener {
@@ -641,7 +657,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                                         } else {
                                             Toast.makeText(activity, "只支持转发文本,图片,小视频", Toast.LENGTH_SHORT).show();
                                         }
-                                    } else if (position == 2) {
+                                    } else if (position == 1) {
                                         //撤回
                                         mConv?.retractMessage(msg, object : BasicCallback() {
                                             override fun gotResult(p0: Int, p1: String?) {
@@ -668,16 +684,16 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
             } else {
                 //接收方
                 if (msg.getDirect() == MessageDirect.receive) {
-                    var location = intArrayOf(2)
+                    var location = IntArray(2)
                     view?.getLocationOnScreen(location)
                     var OldListY = location[1]
                     var OldListX = location[0]
                     TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
-                            .addItem(TipItem("转发"))
+//                            .addItem(TipItem("转发"))
                             .addItem(TipItem("删除"))
                             .setOnItemClickListener(object : TipView.OnItemClickListener {
                                 override fun onItemClick(name: String?, position: Int) {
-                                    if (position == 1) {
+                                    if (position == 0) {
                                         //删除
                                         mConv?.deleteMessage(msg.getId())
                                         mChatAdapter?.removeMessage(msg)
@@ -695,17 +711,17 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                             .create();
                     //发送方
                 } else {
-                    var location = intArrayOf(2)
+                    var location = IntArray(2)
                     view?.getLocationOnScreen(location);
                     var OldListY = location[1];
                     var OldListX = location[0];
                     TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
-                            .addItem(TipItem("转发"))
+//                            .addItem(TipItem("转发"))
                             .addItem(TipItem("撤回"))
                             .addItem(TipItem("删除"))
                             .setOnItemClickListener(object : TipView.OnItemClickListener {
                                 override fun onItemClick(name: String?, position: Int) {
-                                    if (position == 1) {
+                                    if (position == 0) {
                                         //撤回
                                         mConv?.retractMessage(msg, object : BasicCallback() {
                                             override fun gotResult(i: Int, s: String?) {

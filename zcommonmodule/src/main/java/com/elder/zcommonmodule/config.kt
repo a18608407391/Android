@@ -16,10 +16,11 @@ import com.elder.zcommonmodule.DataBases.queryDriverStatus
 import com.zk.library.Utils.PreferenceUtils
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.USERID
-const val Base_URL = "http://ly532915135.vicp.cc/"
-//const val Base_URL = "http://yomoy.com.cn/"
-//const val Base_URL = "http://192.168.5.243/"
+//const val Base_URL = "http://ly532915135.vicp.cc/"
+const val Base_URL = "http://yomoy.com.cn/"
+//const val Base_URL = "http://192.168.5.242/"
 //const val Base_URL = "http://192.168.5.155/"
+//const val Base_URL = "http://192.168.5.178/"
 //
 const val USER_PHONE = "user_phone"
 const val USER_PASS = "user_pass"
@@ -41,6 +42,8 @@ const val HISTORY_TABLE = "history_table"
 const val TEAM_CODE = "team_code"
 const val TEAM_ID = "team_id"
 
+const val MSG_RETURN_REQUEST = 125
+const val MSG_RETURN_REFRESH_REQUEST = 12
 var ROOT_PATH = Environment.getExternalStorageDirectory().absolutePath
 var GRADE_IMG = ROOT_PATH + File.separator + "Amoski/camera" + File.separator
 const val REAL_PATH = "real_path"

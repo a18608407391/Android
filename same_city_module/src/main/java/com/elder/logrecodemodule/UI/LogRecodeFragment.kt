@@ -2,6 +2,7 @@ package com.elder.logrecodemodule.UI
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.DialogInterface
 import android.graphics.Color
 import android.support.design.widget.AppBarLayout
 import android.support.v7.widget.LinearSnapHelper
@@ -33,6 +34,7 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.Utils.Utils
+import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinder
 import com.google.gson.Gson
 import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.PreferenceUtils
@@ -88,12 +90,14 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
         base.data = home.findMemberView
         base.msg = "成功"
         PreferenceUtils.putString(context, USER_INFO, Gson().toJson(base))
-        PreferenceUtils.putString(context, USER_PHONE, home.findMemberView?.loginname)
+        PreferenceUtils.putString(context, USER_PHONE, home.findMemberView?.tel)
         PreferenceUtils.putString(context, REAL_NAME, home.findMemberView?.realName)
         PreferenceUtils.putString(context, USERID, home.findMemberView?.id)
         PreferenceUtils.putBoolean(context, RE_LOGIN, false)
         PreferenceUtils.putString(context, REAL_CODE, home.findMemberView?.identityCard)
         insertUserInfo(home.findMemberView!!)
+
+
         viewModel?.Staggereditems!!.clear()
         viewModel?.cityPartyitems!!.clear()
         viewModel?.cityPartyitems!!.clear()
@@ -110,16 +114,30 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
             }
         }
         log_swipe.isRefreshing = false
-        JMessageClient.login(home.findMemberView?.loginname, "0123456789", object : BasicCallback() {
-            override fun gotResult(responseCode: Int, responseMessage: String?) {
-                if (responseCode == 0) {
-                    var myInfo = JMessageClient.getMyInfo()
-                    Log.e("result", "IM 登录成功" + Gson().toJson(myInfo))
-                } else {
-                    Log.e("result", "IM 登录失败" + responseMessage)
+        if (home.findMemberView?.tel.isNullOrEmpty()) {
+            var tele = TelephoneBinder.from(this@LogRecodeFragment)
+            var fr = tele.show()
+             fr.functionDismiss = viewModel
+//            fr.onDismiss(object : DialogInterface {
+//                override fun dismiss() {
+//
+//                }
+//                override fun cancel() {
+//                }
+//            })
+        } else {
+            JMessageClient.login(home.findMemberView?.tel, "0123456789", object : BasicCallback() {
+                override fun gotResult(responseCode: Int, responseMessage: String?) {
+                    if (responseCode == 0) {
+                        var myInfo = JMessageClient.getMyInfo()
+                        Log.e("result", "IM 登录成功" + Gson().toJson(myInfo))
+                    } else {
+                        Log.e("result", "IM 登录失败" + responseMessage)
+                    }
                 }
-            }
-        })
+            })
+        }
+
     }
 
     override fun ResultHomeError(it: Throwable) {

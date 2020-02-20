@@ -80,7 +80,16 @@ class DriverHomeActivity : BaseActivity<ActivityDriverhomeBinding, DriverHomeVie
     @JvmField
     var navigationType: Int = 0
 
+    @Autowired(name = RouterUtils.Chat_Module.Chat_TARGET_ID)
+    @JvmField
+    var targetId: String? = null
 
+
+    @Autowired(name = RouterUtils.Chat_Module.Chat_CONV_TITLE)
+    @JvmField
+    var title: String? = null
+
+    var onCreate = false
     override fun initVariableId(): Int {
         return BR.driver_home_model
     }
@@ -96,7 +105,10 @@ class DriverHomeActivity : BaseActivity<ActivityDriverhomeBinding, DriverHomeVie
 
     override fun doPressBack() {
         super.doPressBack()
+        doback()
+    }
 
+    fun doback() {
         if (navigationType == 1) {
             if (!mViewModel?.destroyList!!.contains("SearchActivity")) {
                 finish()
@@ -179,6 +191,58 @@ class DriverHomeActivity : BaseActivity<ActivityDriverhomeBinding, DriverHomeVie
                     }
                 })
             }
+        } else if (navigationType == 8) {
+            if (!mViewModel?.destroyList!!.contains("AtmeActivity")) {
+                finish()
+            } else {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.Atme_AC).navigation(this, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            }
+        } else if (navigationType == 9) {
+            if (!mViewModel?.destroyList!!.contains("CommandActivity")) {
+                finish()
+            } else {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).navigation(this, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            }
+        } else if (navigationType == 10) {
+            if (!mViewModel?.destroyList!!.contains("ChatRoomActivity")) {
+                finish()
+            } else {
+                if (targetId == null) {
+                    //代表的当前是别人
+                    ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
+                            .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, mViewModel?.entity?.Member?.name)
+                            .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, mViewModel?.entity?.Member?.tel)
+                            .withString(RouterUtils.Chat_Module.Chat_App_Key, "35e2033d379dabfde25d9321")
+                            .withString(RouterUtils.Chat_Module.Chat_DRAFT, "")
+                            .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                            .navigation(this, object : NavCallback() {
+                                override fun onArrival(postcard: Postcard?) {
+                                    finish()
+                                }
+                            })
+                } else {
+                    //代表是自己的头像界面
+                    ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
+                            .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, title)
+                            .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, targetId)
+                            .withString(RouterUtils.Chat_Module.Chat_App_Key, "35e2033d379dabfde25d9321")
+                            .withString(RouterUtils.Chat_Module.Chat_DRAFT, "")
+                            .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                            .navigation(this, object : NavCallback() {
+                                override fun onArrival(postcard: Postcard?) {
+                                    finish()
+                                }
+                            })
+                }
+            }
         }
     }
 
@@ -239,7 +303,6 @@ class DriverHomeActivity : BaseActivity<ActivityDriverhomeBinding, DriverHomeVie
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         Observable.create(ObservableOnSubscribe<Response> {
             var client = OkHttpClient.Builder().readTimeout(5, TimeUnit.SECONDS).build()
-            Log.e("result", "文件长度" + file.length())
             var body = RequestBody.create(MediaType.parse("image/jpg"), file)
             var part = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("files", file.name, body).build()
             var request = Request.Builder().addHeader("appToken", token).url(Base_URL + "AmoskiActivity/SameCity/saveBackgroundImages").post(part).build()

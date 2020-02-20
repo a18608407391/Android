@@ -84,6 +84,7 @@ class GridHomeRecycleViewAdapter : RecyclerView.Adapter<GridHomeRecycleViewAdapt
     }
 
     fun initDatas(items: ObservableArrayList<DynamicsCategoryEntity.Dynamics>) {
+        Log.e("result","当前数据条数" + items.size)
         this.data = items
         notifyDataSetChanged()
     }

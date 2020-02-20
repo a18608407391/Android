@@ -50,7 +50,7 @@ class CavalierRankingViewModel : BaseViewModel(), RankingClickListener, HttpInte
 
     var distanceSum = ObservableField<String>()
 
-    var title  =ObservableField<String>()
+    var title = ObservableField<String>()
     override fun ResultRankingSuccess(it: String) {
         if (it.length < 10) {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -106,10 +106,10 @@ class CavalierRankingViewModel : BaseViewModel(), RankingClickListener, HttpInte
         cavalierRankingActivity.rg_ranking.setOnCheckedChangeListener(this)
         HttpRequest.instance.RankingResut = this
         if (cavalier.side == "local") {
-            title.set("本地"+getString(R.string.week_ranking))
+            title.set("本地" + getString(R.string.week_ranking))
             initData(1, "200")
         } else if (cavalier.side == "whole") {
-            title.set("全国"+getString(R.string.week_ranking))
+            title.set("全国" + getString(R.string.week_ranking))
             initData(1, "")
         }
     }
@@ -154,13 +154,9 @@ class CavalierRankingViewModel : BaseViewModel(), RankingClickListener, HttpInte
                         .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
             }
             R.id.ranking_arrow -> {
-                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(cavalier, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
+                cavalier.returnBack()
             }
-            R.id.myself_click->{
+            R.id.myself_click -> {
                 var loc = Location(cavalier.location!!.latitude, cavalier.location!!.longitude, System.currentTimeMillis().toString(), cavalier.location!!.speed, cavalier.location!!.latitude, cavalier.location!!.bearing, cavalier.location!!.aoiName, cavalier.location!!.poiName)
                 ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
                         .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, PreferenceUtils.getString(context, USERID))

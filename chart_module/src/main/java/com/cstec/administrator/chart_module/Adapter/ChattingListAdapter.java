@@ -3,10 +3,14 @@ package com.cstec.administrator.chart_module.Adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +21,35 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.Postcard;
+import com.alibaba.android.arouter.facade.callback.NavCallback;
+import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
+import com.cstec.administrator.chart_module.Activity.ChatRoomActivity;
 import com.cstec.administrator.chart_module.ChatItemController;
 import com.cstec.administrator.chart_module.R;
+import com.cstec.administrator.chart_module.Utils.CircleTransform;
 import com.cstec.administrator.chart_module.View.ChatUtils.DialogCreator;
 import com.cstec.administrator.chart_module.View.ChatUtils.HandleResponseCode;
+import com.elder.zcommonmodule.ConfigKt;
+import com.elder.zcommonmodule.LocalUtilsKt;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+import com.zk.library.Base.AppManager;
+import com.zk.library.Utils.PreferenceUtils;
+import com.zk.library.Utils.RouterUtils;
+
+import org.cs.tec.library.Utils.ConvertUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback;
@@ -99,7 +122,11 @@ public class ChattingListAdapter extends BaseAdapter {
         mWidth = dm.widthPixels;
         mInflater = LayoutInflater.from(mContext);
         this.mConv = conv;
-        this.mMsgList = mConv.getMessagesFromNewest(0, mOffset);
+        if (mConv != null && mConv.getMessagesFromNewest(0, mOffset) != null) {
+            this.mMsgList = mConv.getMessagesFromNewest(0, mOffset);
+        } else {
+            context.finish();
+        }
         reverse(mMsgList);
         mLongClickListener = longClickListener;
         this.mController = new ChatItemController(this, mActivity, conv, mMsgList, dm.density,
@@ -555,18 +582,31 @@ public class ChattingListAdapter extends BaseAdapter {
         //显示头像
         if (holder.headIcon != null) {
             if (userInfo != null && !TextUtils.isEmpty(userInfo.getAvatar())) {
-                userInfo.getAvatarBitmap(new GetAvatarBitmapCallback() {
-                    @Override
-                    public void gotResult(int status, String desc, Bitmap bitmap) {
-                        if (status == 0) {
-                            holder.headIcon.setImageBitmap(bitmap);
-                        } else {
-                            holder.headIcon.setImageResource(R.drawable.jmui_head_icon);
-                        }
-                    }
-                });
+
+//                if (mUserInfo != null) {
+//                    if (mUserInfo!!.avatar != null) {
+
+                Picasso.with(mContext).load(LocalUtilsKt.getImageUrl(userInfo.getAvatar())).transform(new CircleTransform(mContext)).resize(ConvertUtils.Companion.dp2px(47.33F), ConvertUtils.Companion.dp2px(47.33F)).centerCrop().placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).into(holder.headIcon);
+//                CircleCrop crop = new CircleCrop();
+//                RequestOptions options = new RequestOptions().transform(crop).placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(47.33F), ConvertUtils.Companion.dp2px(47.33F));
+
+
+//                Glide.with(holder.headIcon.getContext()).asBitmap().load(LocalUtilsKt.getImageUrl(userInfo.getAvatar())).apply(options).into(holder.headIcon);
+//                    } else {
+//                        headIcon.setImageResource(R.drawable.default_avatar)
+//                    }
+//                userInfo.getAvatarBitmap(new GetAvatarBitmapCallback() {
+//                    @Override
+//                    public void gotResult(int status, String desc, Bitmap bitmap) {
+//                        if (status == 0) {
+//                            holder.headIcon.setImageBitmap(bitmap);
+//                        } else {
+//                            holder.headIcon.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(),R.drawable.default_avatar));
+//                        }
+//                    }
+//                });
             } else {
-                holder.headIcon.setImageResource(R.drawable.jmui_head_icon);
+                holder.headIcon.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_avatar));
             }
 
             // 点击头像跳转到个人信息界面
@@ -574,6 +614,63 @@ public class ChattingListAdapter extends BaseAdapter {
 
                 @Override
                 public void onClick(View arg0) {
+//                    build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                            .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
+//                            .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+//                            .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 4)
+                    String ee = userInfo.getExtra("memberId");
+                    int t = Float.valueOf(ee).intValue();
+                    Log.e("result", new Gson().toJson(userInfo) + "memberId" + ee);
+//                    Stack<Activity> activityStack = AppManager.Companion.getActivityStack();
+//                    for (int i1 = 0; i1 < activityStack.size(); i1++) {
+//                        if (activityStack.get(i1).getClass().getSimpleName().equalsIgnoreCase("DriverHomeActivity")) {
+//                            activityStack.get(i1).finish();
+//                        }
+//                    }
+
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+                    if (userInfo.getUserName() == PreferenceUtils.getString(mContext, ConfigKt.USER_PHONE)) {
+                        //代表点击的是自己的头像
+                        ChatRoomActivity activity = (ChatRoomActivity) mContext;
+                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t + "")
+                                .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, userInfo.getUserName())
+                                .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, userInfo.getNickname())
+                                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 10)
+                                .withFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT).navigation();
+                    } else {
+                        ChatRoomActivity activity = (ChatRoomActivity) mContext;
+                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t + "")
+                                .withFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+                                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 10).navigation(activity, new NavCallback() {
+                            @Override
+                            public void onArrival(Postcard postcard) {
+
+                            }
+
+                            @Override
+                            public void onFound(Postcard postcard) {
+                                super.onFound(postcard);
+                            }
+
+                            @Override
+                            public void onLost(Postcard postcard) {
+                                super.onLost(postcard);
+                            }
+
+                            @Override
+                            public void onInterrupt(Postcard postcard) {
+                                super.onInterrupt(postcard);
+                            }
+                        });
+                    }
+//                        }
+//                    }, 1500);
+
+
 //                    Intent intent = new Intent();
 //                    if (msg.getDirect() == MessageDirect.send) {
 //                        intent.putExtra(BaseApplication.Companion.getTARGET_ID(), JMessageClient.getMyInfo().getUserName());
@@ -651,12 +748,12 @@ public class ChattingListAdapter extends BaseAdapter {
             holder.text_receipt.setVisibility(View.GONE);
         }
         if (msg.getDirect() == MessageDirect.send && !msg.getContentType().equals(ContentType.prompt)
-                && msg.getContentType() != ContentType.custom  && !isChatRoom && msg.getContentType() != ContentType.video) {
+                && msg.getContentType() != ContentType.custom && !isChatRoom && msg.getContentType() != ContentType.video) {
             if (msg.getUnreceiptCnt() == 0) {
                 if (msg.getTargetType() == ConversationType.group) {
                     holder.text_receipt.setText("全部已读");
                 } else if (!((UserInfo) msg.getTargetInfo()).getUserName().equals(JMessageClient.getMyInfo().getUserName())) {
-                    holder.text_receipt.setText("已读");
+//                    holder.text_receipt.setText("已读");
                 }
                 holder.text_receipt.setTextColor(mContext.getResources().getColor(R.color.message_already_receipt));
             } else {
@@ -690,7 +787,7 @@ public class ChattingListAdapter extends BaseAdapter {
                         }
                     });
                 } else if (!((UserInfo) msg.getTargetInfo()).getUserName().equals(JMessageClient.getMyInfo().getUserName())) {
-                    holder.text_receipt.setText("未读");
+//                    holder.text_receipt.setText("未读");
                 }
             }
         }

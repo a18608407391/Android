@@ -44,7 +44,6 @@ public class ViewAdapter {
         webView.setWebViewClient(new com.tencent.smtt.sdk.WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webView, String s) {
-                Log.e("result", s);
                 if (command != null) {
                     command.execute(s);
                 }
@@ -52,23 +51,19 @@ public class ViewAdapter {
             }
             @Override
             public void onReceivedClientCertRequest(WebView webView, ClientCertRequest clientCertRequest) {
-                Log.e("result", "onReceivedClientCertRequest");
                 super.onReceivedClientCertRequest(webView, clientCertRequest);
             }
             @Override
             public void onReceivedLoginRequest(WebView webView, String s, String s1, String s2) {
-                Log.e("result", "onReceivedLoginRequest");
                 super.onReceivedLoginRequest(webView, s, s1, s2);
             }
 
             @Override
             public void onReceivedError(WebView webView, int i, String s, String s1) {
-                Log.e("result", "onReceivedError");
                 super.onReceivedError(webView, i, s, s1);
             }
             @Override
             public void onReceivedHttpAuthRequest(WebView webView, HttpAuthHandler httpAuthHandler, String s, String s1) {
-                Log.e("result", "onReceivedHttpAuthRequest");
                 super.onReceivedHttpAuthRequest(webView, httpAuthHandler, s, s1);
             }
             @Override

@@ -62,17 +62,34 @@ class GetLikeActivity : BaseActivity<ActivityReceivelikeBinding, GetLikeViewMode
 
     override fun doPressBack() {
         super.doPressBack()
-        if (mViewModel?.destroyList!!.contains("DriverHomeActivity")) {
-            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
-                    .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id)
-                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation(this, object : NavCallback() {
-                        override fun onArrival(postcard: Postcard?) {
-                            finish()
-                        }
-                    })
-        } else {
-            finish()
+        doback()
+    }
+
+    fun doback() {
+        if (type == 1) {
+            if (mViewModel?.destroyList!!.contains("DriverHomeActivity")) {
+                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id)
+                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation(this, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            } else {
+                finish()
+            }
+        } else if (type == 8) {
+            if (mViewModel?.destroyList!!.contains("DriverHomeActivity")) {
+                ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC)
+                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(this, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            } else {
+                finish()
+            }
         }
     }
 }

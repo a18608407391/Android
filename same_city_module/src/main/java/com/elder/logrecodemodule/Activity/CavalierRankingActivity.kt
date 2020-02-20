@@ -28,6 +28,11 @@ class CavalierRankingActivity : BaseActivity<ActivityCavalierRankingBinding, Cav
     var side: String? = null
 
 
+    @Autowired(name = RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID)
+    @JvmField
+    var navigation = 0
+
+
     override fun initVariableId(): Int {
         return BR.cavalier_ranking_model
     }
@@ -46,12 +51,30 @@ class CavalierRankingActivity : BaseActivity<ActivityCavalierRankingBinding, Cav
         mViewModel?.inject(this)
     }
 
+    fun returnBack() {
+        if (navigation == 1) {
+            if (!mViewModel?.destroyList!!.contains("SystemNotifyListActivity")) {
+                finish()
+            } else {
+                ARouter.getInstance().build(RouterUtils.Chat_Module.SysNotify_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(this, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            }
+        } else {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    finish()
+                }
+            })
+        }
+    }
+
+
     override fun doPressBack() {
         super.doPressBack()
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
-            override fun onArrival(postcard: Postcard?) {
-                finish()
-            }
-        })
+        returnBack()
+
     }
 }

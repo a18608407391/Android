@@ -109,10 +109,11 @@
                                         android:layout_height="@dimen/d_27"
                                         android:background="@drawable/local_and_city_select"
                                         android:gravity="center"
-                                        android:text="消息"
                                         android:onClick="@{driver_home_model::onClick}"
+                                        android:text="消息"
                                         android:textColor="@color/white"
-                                        android:textSize="@dimen/s_12" />
+                                        android:textSize="@dimen/s_12"
+                                        android:visibility="@{driver_home_model.self==2?View.GONE:View.VISIBLE}" />
 
                                     <TextView
                                         android:id="@+id/home_focus_click"
@@ -168,8 +169,8 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textColor="#A4A4A4"
                                     android:text="@{driver_home_model.des}"
+                                    android:textColor="#A4A4A4"
                                     android:textSize="@dimen/s_12" />
 
                                 <View
@@ -177,8 +178,8 @@
                                     android:layout_height="1dp"
                                     android:layout_marginLeft="@dimen/d_02"
                                     android:layout_marginRight="@dimen/d_02"
-                                    android:visibility="gone"
-                                    android:background="#A4A4A4"></View>
+                                    android:background="#A4A4A4"
+                                    android:visibility="gone"></View>
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -196,9 +197,9 @@
                                 android:orientation="horizontal">
 
                                 <LinearLayout
+                                    android:id="@+id/focus_home_click"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:id="@+id/focus_home_click"
                                     android:onClick="@{driver_home_model::onClick}"
                                     android:orientation="horizontal">
 
@@ -221,10 +222,10 @@
                                 </LinearLayout>
 
                                 <LinearLayout
+                                    android:id="@+id/fans_home_click"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/d_20"
-                                    android:id="@+id/fans_home_click"
                                     android:onClick="@{driver_home_model::onClick}"
                                     android:orientation="horizontal">
 
@@ -247,10 +248,10 @@
 
                                 <LinearLayout
                                     android:id="@+id/like_click"
-                                    android:onClick="@{driver_home_model::onClick}"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/d_20"
+                                    android:onClick="@{driver_home_model::onClick}"
                                     android:orientation="horizontal">
 
                                     <TextView

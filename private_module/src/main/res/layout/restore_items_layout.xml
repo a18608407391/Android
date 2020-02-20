@@ -5,6 +5,10 @@
     <data>
 
         <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.SimpleClickListener"></variable>
+
+        <variable
             name="restore_item_entity"
             type="com.elder.zcommonmodule.Entity.CollectionEntity.Collection"></variable>
     </data>
@@ -13,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/d_15"
+        android:onClick="@{()->listener.onSimpleClick(restore_item_entity)}"
         android:orientation="vertical"
         android:paddingTop="@dimen/d_15">
 
@@ -22,19 +27,19 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-
             <ImageView
                 android:layout_width="@dimen/d_80"
                 android:layout_height="@dimen/d_80"
                 android:layout_marginLeft="@dimen/d_15"
+                android:scaleType="centerCrop"
                 app:localEntityImageLoad="@{restore_item_entity.releaseDynamicParent}" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_15"
-                android:maxHeight="@dimen/d_80"
                 android:gravity="center_vertical"
+                android:maxHeight="@dimen/d_80"
                 android:text="@{restore_item_entity.releaseDynamicParent.publishContent}"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_15" />
@@ -46,15 +51,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d_10"
             android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_10"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{restore_item_entity.memberName}"
                 android:textColor="#A4A4A4"
                 android:textSize="@dimen/s_12" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

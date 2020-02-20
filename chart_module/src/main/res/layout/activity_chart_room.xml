@@ -44,6 +44,7 @@
                         android:id="@+id/jmui_return_btn"
                         android:layout_width="@dimen/title_bar_height"
                         android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/d_10"
                         android:background="@color/white"
                         android:src="@drawable/arrow_black"/>
 
@@ -59,6 +60,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:maxWidth="190dp"
+                            android:layout_marginTop="@dimen/d_10"
                             android:singleLine="true"
                             android:textColor="#000000"
                             android:textSize="18sp"/>
