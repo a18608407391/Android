@@ -65,7 +65,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         BaseApplication.getInstance().curActivity = 1
         var key = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         var clip = key.primaryClip
-        if (clip != null && clip.itemCount > 0) {
+        if (clip != null && clip.itemCount > 0 && clip.getItemAt(0).text != null) {
             var tv = clip.getItemAt(0).text.toString()
             if (!tv.isNullOrEmpty() && tv.contains("Amoski:HDID=")) {
                 var number = tv.split("=")[1]
@@ -149,7 +149,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
             MSG_RETURN_REQUEST -> {
                 if (resultCode == MSG_RETURN_REQUEST) {
                     main_bottom_bg.check(R.id.main_left)
-                }else{
+                } else {
                     var fr = mViewModel?.myself as UserInfoFragment
                     fr.getUserInfo(false)
                 }

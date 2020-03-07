@@ -4,8 +4,10 @@ import android.arch.lifecycle.ViewModelProviders
 import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.view.View
+import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.blogin.BR
 import com.elder.blogin.R
@@ -25,6 +27,7 @@ class WebActivity : BaseActivity<ActivityWebBinding, WebViewModel>() {
     @Autowired(name = RouterUtils.LoginModuleKey.TYPE_CLASS)
     @JvmField
     var type: Int = 0
+
     override fun initVariableId(): Int {
         return BR.web_model
     }
@@ -53,12 +56,18 @@ class WebActivity : BaseActivity<ActivityWebBinding, WebViewModel>() {
 
     override fun doPressBack() {
         super.doPressBack()
-        if(type==0){
-            ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation()
-        }else{
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+        if (type == 0) {
+            finish()
+        } else if (type == 2) {
+            finish()
+        } else {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this,object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    finish()
+                }
+            })
         }
-        finish()
+
     }
 
     override fun onDestroy() {

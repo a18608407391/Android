@@ -181,8 +181,11 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
                 status?.curModel = 1
                 startNavigation()
             } else if (it == "NavigationFinish") {
+                Log.e("result","执行了123213213")
                 status.navigationType = 0
                 status.passPointDatas.clear()
+
+//                mapActivity.mViewModel?.selectTab(mapActivity?.mViewModel?.currentPosition!!)
             } else if (it == "fastTeam") {
                 mapActivity.mViewModel?.selectTab(1)
             }
@@ -242,7 +245,7 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
 
     var TeamStatus: SoketTeamStatus? = null
     fun GoTeam() {
-        if (mapActivity.getTeamFragment()?.viewModel?.minaConnectedDispose == null|| mapActivity.getTeamFragment()?.viewModel?.minaConnectedDispose!!.isDisposed) {
+        if (mapActivity.getTeamFragment()?.viewModel?.minaConnectedDispose == null || mapActivity.getTeamFragment()?.viewModel?.minaConnectedDispose!!.isDisposed) {
             mapActivity.getTeamFragment()?.viewModel?.setMina()
         }
         if (TeamStatus == null || TeamStatus?.teamStatus == TeamNomal) {
@@ -294,7 +297,8 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
     fun changeMap_Point_btn() {
         if (mapActivity.mViewModel?.currentPosition == 1) {
 //            mapActivity.mViewModel?.changerFragment(0)
-            mapActivity.getTeamFragment()?.viewModel?.backToDriver()
+             mapActivity?.mViewModel?.selectTab(0)
+//            mapActivity.getTeamFragment()?.viewModel?.backToDriver()
             backStatus = true
         }
 
@@ -318,7 +322,7 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
             status.navigationStartPoint = status.locationLat[status.locationLat.size - 1]
         }
         mapActivity.mAmap.clear()
-        mapActivity.getMapPointFragment().viewModel?.mapPointController!!.startMaker =  mapActivity.mapUtils?.createMaker(Location(status.navigationStartPoint!!.latitude,status.navigationStartPoint!!.longitude))
+        mapActivity.getMapPointFragment().viewModel?.mapPointController!!.startMaker = mapActivity.mapUtils?.createMaker(Location(status.navigationStartPoint!!.latitude, status.navigationStartPoint!!.longitude))
 //        mapActivity.getMapPointFragment().viewModel?.mapPointController!!.startMaker = mapActivity.mapUtils?.createAnimationMarker(false, LatLonPoint(status.navigationStartPoint!!.latitude, status.navigationStartPoint!!.longitude))
         mapActivity.getMapPointFragment().viewModel?.mapPointController!!.screenMaker = mapActivity.mapUtils?.createScreenMarker()
         //添加可移动marker
@@ -448,7 +452,7 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
             }
             R.id.team_btn -> {
                 if (mapActivity.mViewModel?.currentPosition == 1) {
-                    mapActivity.getTeamFragment().viewModel?.backToDriver()
+                    mapActivity?.mViewModel?.selectTab(0)
                 } else {
                     GoTeam()
                 }
@@ -555,7 +559,6 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
             }
         }
         status?.NavigationEndAoiName = mapActivity.getMapPointFragment().viewModel?.finalyText!!.get()
-        status.startDriver.set(Drivering)
         //开启导航
         var wayPoint = ArrayList<LatLng>()
         status.passPointDatas.forEach {
@@ -801,7 +804,6 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
             }
         }
         list.add(LatLng(e.latitude, e.longitude))
-        status.startDriver.set(Drivering)
         linearBg.set(Color.WHITE)
         if (status.locationLat.isEmpty()) {
             status.locationLat.add(s)

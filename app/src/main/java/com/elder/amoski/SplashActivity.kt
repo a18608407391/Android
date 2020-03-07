@@ -230,7 +230,6 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                                 }
                             })
                         } else {
-                            PreferenceUtils.putBoolean(context, APP_CREATE, true)
                             ARouter.getInstance().build(RouterUtils.ActivityPath.GUIDE).navigation(this, object : NavCallback() {
                                 override fun onArrival(postcard: Postcard?) {
                                     finish()

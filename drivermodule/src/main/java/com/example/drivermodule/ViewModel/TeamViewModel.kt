@@ -381,7 +381,7 @@ class TeamViewModel : BaseViewModel() {
         var corners = CircleCrop()
         var options = RequestOptions().transform(corners).error(R.drawable.team_first).override(ConvertUtils.dp2px(48F), ConvertUtils.dp2px(48F))
         var listener = CustomListener(img, position, view, it, maker)
-        Glide.with(mapActivity).load(url).apply(options).into(listener)
+        Glide.with(context).load(url).apply(options).into(listener)
     }
 
 

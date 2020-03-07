@@ -47,14 +47,10 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
         when (checkedId) {
             R.id.same_city -> {
-                var fr = mFragments[0] as LogRecodeFragment
-                if (fr.curOffset > -ConvertUtils.dp2px(122F)) {
-                    Utils.setStatusTextColor(false, homeActivity)
-                } else {
-                    Utils.setStatusTextColor(true, homeActivity)
-                }
-
 //                StatusbarUtils.setStatusBarMode(homeActivity, false, 0x000000)
+
+
+                Log.e("result", "设置ChangeFragmentsame_city")
                 changerFragment(0)
                 lastChecked = checkedId
             }
@@ -133,8 +129,9 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
     fun inject(homeActivity: HomeActivity) {
         this.homeActivity = homeActivity
         lastChecked = R.id.same_city
-        changerFragment(0)
 
+        changerFragment(0)
+        Log.e("result", "重新启动了")
         Utils.setStatusTextColor(false, homeActivity)
         RxSubscriptions.add(RxBus.default?.toObservable(BooleanEven::class.java)?.subscribe {
             bottomVisible.set(it.flag)
@@ -152,6 +149,11 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
                 logmodule = ARouter.getInstance().build(RouterUtils.LogRecodeConfig.LogRecodeFR).navigation() as LogRecodeFragment
                 mFragments.add(logmodule!!)
                 tans?.add(R.id.rootlayout, logmodule!!)
+                if (logmodule!!.curOffset > -ConvertUtils.dp2px(122F)) {
+                    Utils.setStatusTextColor(false, homeActivity)
+                } else {
+                    Utils.setStatusTextColor(true, homeActivity)
+                }
             }
             bottomBg.set(context.getDrawable(R.drawable.home_bottom_bg))
             if (type == 2) {
@@ -206,14 +208,17 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
         mFragments!!.forEach {
             tans!!.hide(it)
         }
-        if (position == 1) {
+
+
+        Log.e("result", "CurPosition" + position)
+        if (position == 0) {
+            tans!!.show(logmodule!!)
+        } else if (position == 1) {
             tans!!.show(party!!)
         } else if (position == 2) {
             tans!!.show(social!!)
         } else if (position == 3) {
             tans!!.show(myself!!)
-        } else {
-            tans!!.show(mFragments!![position])
         }
         tans!!.commitAllowingStateLoss()
     }

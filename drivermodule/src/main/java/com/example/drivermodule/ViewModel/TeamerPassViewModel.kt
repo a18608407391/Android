@@ -49,7 +49,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 flag = false
             }
         }
-        if (datas==null) {
+        if (datas == null) {
             Toast.makeText(context, getString(R.string.select_null), Toast.LENGTH_SHORT).show()
             return
         } else {
@@ -68,7 +68,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 so.body?.userIds = datas?.memberId!!.get()
                 var pos = ServiceEven()
                 pos.type = "sendData"
-                pos.gson  = Gson().toJson(so) + "\\r\\n"
+                pos.gson = Gson().toJson(so) + "\\r\\n"
                 RxBus.default?.post(pos)
                 var intent = Intent()
                 teamerPassActivity.info?.redisData?.teamer = Integer.valueOf(datas!!.memberId.get()!!)
@@ -94,6 +94,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         }
         invalidate()
     }
+
     fun invalidate() {
         component.title.set(getString(R.string.pass_timer))
         component.rightText.set(getString(R.string.finish))
@@ -102,7 +103,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         var id = PreferenceUtils.getString(context, USERID)
         if (teamerPassActivity.info != null) {
             items.clear()
-            teamerPassActivity.info?.redisData?.dtoList?.forEach {
+            teamerPassActivity.info?.redisData?.dtoList?.forEachIndexed { index, it ->
                 if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                     it.teamRoleColor = "2D3138"
                 }
@@ -112,7 +113,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 } else {
                     name = it.memberName
                 }
-                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)))
+                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)), index)
                 if (it.memberId.toString() != id) {
                     da.select.set(false)
                     da.isTeamer.set(false)

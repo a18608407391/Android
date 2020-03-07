@@ -86,7 +86,7 @@ class TeamDeleteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         if (deleteActivity.info != null) {
             items.clear()
             deleteList.clear()
-            deleteActivity.info?.redisData?.dtoList?.forEach {
+            deleteActivity.info?.redisData?.dtoList?.forEachIndexed { index, it ->
                 if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                     it.teamRoleColor = "2D3138"
                 }
@@ -96,7 +96,7 @@ class TeamDeleteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 } else {
                     name = it.memberName
                 }
-                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)))
+                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)),index)
                 if (it.memberId.toString() != id) {
                     da.isTeamer.set(false)
                 } else {

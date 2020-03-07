@@ -1,11 +1,13 @@
 package com.elder.zcommonmodule.Utils.Dialog;
 
 
-
 import org.cs.tec.library.Base.Utils.UtilsKt;
+
 import android.content.Context;
 import android.graphics.Color;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -16,65 +18,112 @@ import com.elder.zcommonmodule.R;
 
 
 public abstract class BaseAlertDialog<T extends BaseAlertDialog<T>> extends BaseDialog {
-    /** container */
+    /**
+     * container
+     */
     protected LinearLayout ll_container;
     //title
-    /** title */
+    /**
+     * title
+     */
     protected TextView tv_title;
-    /** title content(标题) */
+    /**
+     * title content(标题)
+     */
     protected String title;
-    /** title textcolor(标题颜色) */
+    /**
+     * title textcolor(标题颜色)
+     */
     protected int titleTextColor;
-    /** title textsize(标题字体大小,单位sp) */
+    /**
+     * title textsize(标题字体大小,单位sp)
+     */
     protected float titleTextSize_SP;
-    /** enable title show(是否显示标题) */
+    /**
+     * enable title show(是否显示标题)
+     */
     protected boolean isTitleShow = true;
 
     //content
-    /** content */
+    /**
+     * content
+     */
     public TextView tv_content;
-    /** content text */
+    /**
+     * content text
+     */
     protected String content;
-    /** show gravity of content(正文内容显示位置) */
+    /**
+     * show gravity of content(正文内容显示位置)
+     */
     protected int contentGravity = Gravity.CENTER_VERTICAL;
-    /** content textcolor(正文字体颜色) */
+    /**
+     * content textcolor(正文字体颜色)
+     */
     protected int contentTextColor;
-    /** content textsize(正文字体大小) */
+    /**
+     * content textsize(正文字体大小)
+     */
     protected float contentTextSize_SP;
 
+    protected SpannableStringBuilder builder;
     //btns
-    /** num of btns, [1,3] */
+    /**
+     * num of btns, [1,3]
+     */
     protected int btnNum = 2;
-    /** btn container */
+    /**
+     * btn container
+     */
     protected LinearLayout ll_btns;
-    /** btns */
+    /**
+     * btns
+     */
     protected TextView tv_btn_left;
     protected TextView tv_btn_right;
     protected TextView tv_btn_middle;
-    /** btn text(按钮内容) */
+    /**
+     * btn text(按钮内容)
+     */
     protected String btnLeftText = UtilsKt.getContext().getString(R.string.cancle);
-    protected String btnRightText =UtilsKt.getContext().getString(R.string.confirm);
+    protected String btnRightText = UtilsKt.getContext().getString(R.string.confirm);
     protected String btnMiddleText = "继续";
-    /** btn textcolor(按钮字体颜色) */
+    /**
+     * btn textcolor(按钮字体颜色)
+     */
     protected int leftBtnTextColor;
     protected int rightBtnTextColor;
     protected int middleBtnTextColor;
-    /** btn textsize(按钮字体大小) */
+    /**
+     * btn textsize(按钮字体大小)
+     */
     protected float leftBtnTextSize_SP = 15f;
     protected float rightBtnTextSize_SP = 15f;
     protected float middleBtnTextSize_SP = 15f;
-    /** btn press color(按钮点击颜色) */
+    /**
+     * btn press color(按钮点击颜色)
+     */
     protected int btnPressColor = Color.parseColor("#E3E3E3");// #85D3EF,#ffcccccc,#E3E3E3
-    /** left btn click listener(左按钮接口) */
+    /**
+     * left btn click listener(左按钮接口)
+     */
     protected OnBtnClickL onBtnLeftClickL;
-    /** right btn click listener(右按钮接口) */
+    /**
+     * right btn click listener(右按钮接口)
+     */
     protected OnBtnClickL onBtnRightClickL;
-    /** middle btn click listener(右按钮接口) */
+    /**
+     * middle btn click listener(右按钮接口)
+     */
     protected OnBtnClickL onBtnMiddleClickL;
 
-    /** corner radius,dp(圆角程度,单位dp) */
+    /**
+     * corner radius,dp(圆角程度,单位dp)
+     */
     protected float cornerRadius_DP = 3;
-    /** background color(背景颜色) */
+    /**
+     * background color(背景颜色)
+     */
     protected int bgColor = Color.parseColor("#ffffff");
 
     /**
@@ -96,7 +145,7 @@ public abstract class BaseAlertDialog<T extends BaseAlertDialog<T>> extends Base
 
         /** content */
         tv_content = new TextView(context);
-     this.setCancelable(false);
+        this.setCancelable(false);
         /**btns*/
         ll_btns = new LinearLayout(context);
         ll_btns.setOrientation(LinearLayout.HORIZONTAL);
@@ -122,7 +171,12 @@ public abstract class BaseAlertDialog<T extends BaseAlertDialog<T>> extends Base
 
         /** content */
         tv_content.setGravity(contentGravity);
-        tv_content.setText(content);
+        if (content == null && builder != null) {
+            tv_content.setMovementMethod(LinkMovementMethod.getInstance());
+            tv_content.setText(builder);
+        } else {
+            tv_content.setText(content);
+        }
         tv_content.setTextColor(contentTextColor);
         tv_content.setTextSize(TypedValue.COMPLEX_UNIT_SP, contentTextSize_SP);
         tv_content.setLineSpacing(0, 1.3f);
@@ -181,49 +235,70 @@ public abstract class BaseAlertDialog<T extends BaseAlertDialog<T>> extends Base
         });
     }
 
-    /** set title text(设置标题内容) @return MaterialDialog */
+    /**
+     * set title text(设置标题内容) @return MaterialDialog
+     */
     public T title(String title) {
         this.title = title;
         return (T) this;
     }
 
-    /** set title textcolor(设置标题字体颜色) */
+    /**
+     * set title textcolor(设置标题字体颜色)
+     */
     public T titleTextColor(int titleTextColor) {
         this.titleTextColor = titleTextColor;
         return (T) this;
     }
 
-    /** set title textsize(设置标题字体大小) */
+    /**
+     * set title textsize(设置标题字体大小)
+     */
     public T titleTextSize(float titleTextSize_SP) {
         this.titleTextSize_SP = titleTextSize_SP;
         return (T) this;
     }
 
-    /** enable title show(设置标题是否显示) */
+    /**
+     * enable title show(设置标题是否显示)
+     */
     public T isTitleShow(boolean isTitleShow) {
         this.isTitleShow = isTitleShow;
         return (T) this;
     }
 
-    /** set content text(设置正文内容) */
+    /**
+     * set content text(设置正文内容)
+     */
     public T content(String content) {
         this.content = content;
         return (T) this;
     }
 
-    /** set content gravity(设置正文内容,显示位置) */
+    public T content(SpannableStringBuilder content) {
+        this.builder = content;
+        return (T) this;
+    }
+
+    /**
+     * set content gravity(设置正文内容,显示位置)
+     */
     public T contentGravity(int contentGravity) {
         this.contentGravity = contentGravity;
         return (T) this;
     }
 
-    /** set content textcolor(设置正文字体颜色) */
+    /**
+     * set content textcolor(设置正文字体颜色)
+     */
     public T contentTextColor(int contentTextColor) {
         this.contentTextColor = contentTextColor;
         return (T) this;
     }
 
-    /** set content textsize(设置正文字体大小,单位sp) */
+    /**
+     * set content textsize(设置正文字体大小,单位sp)
+     */
     public T contentTextSize(float contentTextSize_SP) {
         this.contentTextSize_SP = contentTextSize_SP;
         return (T) this;
@@ -319,19 +394,25 @@ public abstract class BaseAlertDialog<T extends BaseAlertDialog<T>> extends Base
         return (T) this;
     }
 
-    /** set btn press color(设置按钮点击颜色) */
+    /**
+     * set btn press color(设置按钮点击颜色)
+     */
     public T btnPressColor(int btnPressColor) {
         this.btnPressColor = btnPressColor;
         return (T) this;
     }
 
-    /** set corner radius (设置圆角程度) */
+    /**
+     * set corner radius (设置圆角程度)
+     */
     public T cornerRadius(float cornerRadius_DP) {
         this.cornerRadius_DP = cornerRadius_DP;
         return (T) this;
     }
 
-    /** set backgroud color(设置背景色) */
+    /**
+     * set backgroud color(设置背景色)
+     */
     public T bgColor(int bgColor) {
         this.bgColor = bgColor;
         return (T) this;

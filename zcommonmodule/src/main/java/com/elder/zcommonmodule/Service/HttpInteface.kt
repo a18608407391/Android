@@ -10,10 +10,8 @@ class HttpInteface {
 
 
     interface getMsgNotifyCount {
-
         fun getNotifyCountSuccess(it: String)
         fun getNotifyCountError(ex: Throwable)
-
     }
 
     interface queryCommandMeList {
@@ -143,6 +141,7 @@ class HttpInteface {
         fun ResultLikeSuccess(it: String)
         fun ResultLikeError(ex: Throwable)
     }
+
     interface SocialCommentLike {
         fun ResultCommentLikeSuccess(it: String)
         fun ResultCommentLikeError(ex: Throwable)
@@ -224,5 +223,10 @@ class HttpInteface {
     interface deleteSocialResult {
         fun deleteSocialSuccess(it: String)
         fun deleteSocialError(it: Throwable)
+    }
+
+    interface PartyHome {
+        fun getPartyHomeSuccess(it: String)
+        fun getPartyHomeError(it: Throwable)
     }
 }

@@ -192,7 +192,6 @@ public class ChattingListAdapter extends BaseAdapter {
             List<Message> msgList = mConv.getMessagesFromNewest(mMsgList.size(), PAGE_MESSAGE_COUNT);
             if (msgList != null) {
                 for (Message msg : msgList) {
-                    // TODO:2019/04/23 这里是否效率低下，每次都需要移动整个list
                     mMsgList.add(0, msg);
                 }
                 if (msgList.size() > 0) {

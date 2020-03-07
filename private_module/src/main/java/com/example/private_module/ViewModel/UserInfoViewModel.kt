@@ -131,6 +131,7 @@ class UserInfoViewModel : BaseViewModel() {
         var pos = ServiceEven()
         pos.type = "HomeStart"
         RxBus.default?.post(pos)
+        items.clear()
         titleArray.forEachIndexed { index, s ->
             var entity = IconEntity()
             entity.title = s
@@ -177,7 +178,7 @@ class UserInfoViewModel : BaseViewModel() {
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MemberAuth).navigation()
             }
             4 -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION,loc!!).navigation()
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc!!).navigation()
             }
         }
     }

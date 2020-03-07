@@ -330,4 +330,6 @@
     <string name="focus_return">回粉</string>
     <string name="focused">已关注</string>
     <string name="like_exa">赞了你：</string>
+    <string name="rmb">￥</string>
+    <string name="check_card">次打卡</string>
 </resources>

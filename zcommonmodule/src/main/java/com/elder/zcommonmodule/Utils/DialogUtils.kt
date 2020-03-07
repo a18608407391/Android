@@ -26,6 +26,7 @@ import android.support.v4.app.FragmentActivity
 import android.support.v4.content.FileProvider
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
+import android.text.SpannableStringBuilder
 import android.widget.*
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
@@ -224,7 +225,6 @@ class DialogUtils() {
             window.addContentView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             window.setWindowAnimations(R.style.PopupAnimation)
             return year
-
         }
 
 
@@ -337,6 +337,50 @@ class DialogUtils() {
             params.height = WindowManager.LayoutParams.WRAP_CONTENT
             params.width = WindowManager.LayoutParams.MATCH_PARENT
             window.attributes = params
+            window.setGravity(Gravity.BOTTOM)
+            window.addContentView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            window.setWindowAnimations(R.style.PopupAnimation)
+            return year
+        }
+
+
+        fun showProviceDialog(activity: FragmentActivity, provice: BindingCommand<String>, title: String): WheelView<String>? {
+            var buidler = AlertDialog.Builder(activity, R.style.PopupAnimation)
+            var alertDialog = buidler.create()
+            alertDialog!!.setCanceledOnTouchOutside(true)
+            alertDialog!!.show()
+            val mInflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            var view = mInflater.inflate(R.layout.gender_dialog, null)
+            var window = alertDialog!!.window
+            var year = view.findViewById<WheelView<String>>(R.id.gender_view)
+            var s1 = ArrayList<CityEntity>(1)
+            var s2 = ArrayList<List<CityEntity>>()
+            ParseHelper.initTwoLevelCityList(activity, s1, s2)
+            var list = ArrayList<String>()
+            s1.forEach {
+                list.add(it.name)
+            }
+            year.data = list
+            year.textSize = 48F
+            year.isShowDivider = true
+            year.setLineSpacing(30F, true)
+            year.dividerType = WheelView.DIVIDER_TYPE_WRAP
+            year.dividerColor = Color.parseColor("#62B297")
+            year.setDividerPaddingForWrap(15F, true)
+            view.findViewById<TextView>(R.id.pickerView_cancle).setOnClickListener {
+                alertDialog.dismiss()
+            }
+            view.findViewById<TextView>(R.id.pickerView_ok).setOnClickListener {
+                provice.execute(year.selectedItemData)
+                alertDialog.dismiss()
+            }
+            view.findViewById<TextView>(R.id.gener_title).text = title
+            window.decorView.setPadding(0, 0, 0, 0)
+            var params = window.attributes
+            params.height = WindowManager.LayoutParams.WRAP_CONTENT
+            params.width = WindowManager.LayoutParams.MATCH_PARENT
+            window.attributes = params
+            window.setBackgroundDrawable(context.getDrawable(R.color.colorWhite))
             window.setGravity(Gravity.BOTTOM)
             window.addContentView(view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             window.setWindowAnimations(R.style.PopupAnimation)
@@ -575,8 +619,6 @@ class DialogUtils() {
             override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
                 container.removeView(`object` as View)
             }
-
-
         }
 
 
@@ -612,7 +654,18 @@ class DialogUtils() {
             return dialog
         }
 
+        fun createNomalTwoBuilderDialog(activity: Activity, content: SpannableStringBuilder, vararg array: String): NormalDialog {
+            var dialog = NormalDialog(activity).style(STYLE_TWO).content(content).btnText(*array)
+            return dialog
+        }
+
         fun createNomalStyleOneDialog(activity: Activity, content: String, array: String): NormalDialog {
+            var dialog = NormalDialog(activity).style(STYLE_ONE).content(content).btnText(array)
+            dialog.btnNum(1)
+            return dialog
+        }
+
+        fun createNomalStyleOneBuilderDialog(activity: Activity, content: SpannableStringBuilder, array: String): NormalDialog {
             var dialog = NormalDialog(activity).style(STYLE_ONE).content(content).btnText(array)
             dialog.btnNum(1)
             return dialog

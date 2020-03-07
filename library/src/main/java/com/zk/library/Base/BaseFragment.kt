@@ -59,13 +59,23 @@ abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel> : RxFragmen
 
     }
 
-   open fun initMap(savedInstanceState: Bundle?) {
+    open fun initMap(savedInstanceState: Bundle?) {
 
     }
 
 
     open fun initViewStub() {
 
+    }
+
+    fun showProgressDialog(msg: String) {
+        var d = activity as BaseActivity<ViewDataBinding, BaseViewModel>
+        d.showProgressDialog(msg)
+    }
+
+    fun dismissProgressDialog() {
+        var d = activity as BaseActivity<ViewDataBinding, BaseViewModel>
+        d.dismissProgressDialog()
     }
 
 //    private fun initStatusLayout() {
@@ -104,10 +114,10 @@ abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel> : RxFragmen
             dismissDialog()
         })
         viewModel!!.getUC().getStartActivityEven().observe(this, Observer {
-            if(it!=null){
-              var t =   it[BUNDLE]
-                if(t!=null){
-                    startActivity(it[CLASS] as Class<*>,t as Bundle)
+            if (it != null) {
+                var t = it[BUNDLE]
+                if (t != null) {
+                    startActivity(it[CLASS] as Class<*>, t as Bundle)
                 }
             }
 

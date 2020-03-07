@@ -346,7 +346,7 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
 
         if (activity.first_road_tab.selectedTabPosition == 0) {
             //HOME
-            Log.e("result",p0?.snippet + "当前值")
+            Log.e("result", p0?.snippet + "当前值")
 
             var index = Integer.valueOf(p0?.snippet)
             selectTab(index + 1)
@@ -443,6 +443,9 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
 
     var currentRoadList: ArrayList<RoadDetailEntity>? = null
     fun createMarker(data: ArrayList<RoadDetailEntity>) {
+        if (activity.isFinishing) {
+            return
+        }
         if (!makerList.isEmpty()) {
             makerList.forEach {
                 it.remove()
@@ -462,6 +465,9 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
                 .width(18f).zIndex(0f).color(getColor(R.color.line_color)))
         var list = ArrayList<LatLng>()
         var b = LatLngBounds.builder()
+        if (activity.isFinishing) {
+            return
+        }
         data.forEachIndexed { index, roadDetailItem ->
             var inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             var view = inflater.inflate(R.layout.roadbook_popuwindow_custom, null)
@@ -472,7 +478,7 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
             tv1.text = roadDetailItem.pointList!!.size.toString()
             var corner = RoundedCorners(ConvertUtils.dp2px(5F))
             var opition = RequestOptions().transform(corner).error(R.drawable.road_windown_img).override(ConvertUtils.dp2px(32F), ConvertUtils.dp2px(32F))
-            Glide.with(img).load(getRoadImgUrl(roadDetailItem.pointList!![0].imgUrl)).apply(opition).into(object : SimpleTarget<Drawable>() {
+            Glide.with(context).load(getRoadImgUrl(roadDetailItem.pointList!![0].imgUrl)).apply(opition).into(object : SimpleTarget<Drawable>() {
                 override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                     super.onResourceReady(resource, transition)
                     img.setImageDrawable(resource)

@@ -119,13 +119,13 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
                 date.set(simple.format(d))
             }
             items.apply {
-                this?.add(PersonDatas(ObservableField("0"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.invite)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT)))
+                this?.add(PersonDatas(ObservableField("0"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.invite)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT), 0))
                 if (teamSettingActivity.info?.redisData?.teamer.toString() == id) {
-                    this?.add(PersonDatas(ObservableField("1"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.remove)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT)))
+                    this?.add(PersonDatas(ObservableField("1"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.remove)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT), 1))
                 }
             }
             teamName.set(teamSettingActivity.info?.redisData?.teamName)
-            teamSettingActivity?.info?.redisData?.dtoList?.forEach {
+            teamSettingActivity?.info?.redisData?.dtoList?.forEachIndexed { index, it ->
                 var name = ""
                 if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                     it.teamRoleColor = "2D3138"
@@ -138,10 +138,13 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
                 if (it.memberId.toString() == id) {
                     roleName.set(it.teamRoleName)
                     teamerName.set(it.memberName)
-                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(true), ObservableField(Color.parseColor("#" + it.teamRoleColor))))
+                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(true), ObservableField(Color.parseColor("#" + it.teamRoleColor)), index+2))
                 } else {
-                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor))))
+                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)), index+2))
                 }
+            }
+            items.sortBy {
+                it.position
             }
         }
     }
@@ -212,7 +215,7 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
             var files = file.get()
             if (files != null) {
                 var bitmap = BitmapFactory.decodeFile(files.path)
-                var newBitmap = ConvertUtils.compressByQuality(bitmap,32000,true)
+                var newBitmap = ConvertUtils.compressByQuality(bitmap, 32000, true)
                 var wx = WXWebpageObject()
                 wx.webpageUrl = "http://amoski.net/yomoy/index.html?platform=android&teamCode=" + teamSettingActivity.info?.redisData?.teamCode
                 var msg = WXMediaMessage(wx)

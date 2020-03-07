@@ -94,7 +94,6 @@ class NavigationActivity : BaseActivity<ActivityNavigationBinding, NavigationVie
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("result", "导航页面死掉了")
         anavi_view.onDestroy()
         //since 1.6.0 不再在naviview destroy的时候自动执行AMapNavi.stopNavi();请自行执行
         mViewModel?.mAMapNavi?.stopNavi()

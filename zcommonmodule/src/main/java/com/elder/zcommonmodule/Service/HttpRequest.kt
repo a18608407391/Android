@@ -11,6 +11,7 @@ import com.elder.zcommonmodule.Service.Error.ServerResponseError
 import com.elder.zcommonmodule.Service.Login.LoginService
 import com.elder.zcommonmodule.Service.Login.PrivateService
 import com.elder.zcommonmodule.Service.Login.SocialService
+import com.elder.zcommonmodule.Service.Party.PartyService
 import com.elder.zcommonmodule.Service.Team.RoadBookService
 import com.elder.zcommonmodule.Service.Team.TeamService
 import com.elder.zcommonmodule.USER_TOKEN
@@ -435,7 +436,6 @@ class HttpRequest {
             }
         })
     }
-
 
 
     fun getDynamicsCommonList(map: HashMap<String, String>) {
@@ -999,6 +999,28 @@ class HttpRequest {
 
             override fun onError(e: Throwable) {
                 getMsgCount?.getNotifyCountError(e)
+            }
+        })
+    }
+
+    var partyHome: HttpInteface.PartyHome? = null
+    fun getPartyHome(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyHome(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partyHome?.getPartyHomeError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partyHome?.getPartyHomeSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partyHome?.getPartyHomeError(e)
             }
         })
     }

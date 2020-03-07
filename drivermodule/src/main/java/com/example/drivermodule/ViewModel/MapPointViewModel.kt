@@ -289,7 +289,8 @@ class MapPointViewModel : BaseViewModel, RouteSearch.OnRouteSearchListener, Base
         pointAdapter.notifyDataSetChanged()
 
         if (mapActivity.getDrverFragment().viewModel?.backStatus!!) {
-            mapActivity.getDrverFragment().viewModel?.GoTeam()
+//            mapActivity.getDrverFragment().viewModel?.GoTeam()
+            mapActivity.mViewModel?.selectTab(1)
         }
     }
 
@@ -363,7 +364,6 @@ class MapPointViewModel : BaseViewModel, RouteSearch.OnRouteSearchListener, Base
 //                            mapActivity.getDrverFragment().viewModel!!.driverController?.movemaker?.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.finaly_point))
 
 
-
                             mapPointController?.finallyMarker = mapActivity?.mAmap!!.addMarker(MarkerOptions().position(AMapUtil.convertToLatLng(tip.latLonPoint)).anchor(0.5f, 0.5f)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.select_point)))
                             mapActivity?.mapUtils?.setDriverRoute(converLatPoint(mapPointController?.startMaker?.position!!), LatLonPoint(driverModel.status.navigationEndPoint!!.latitude, driverModel.status.navigationEndPoint!!.longitude), mapActivity.getDrverFragment().viewModel!!.status?.passPointDatas!!)
@@ -413,7 +413,6 @@ class MapPointViewModel : BaseViewModel, RouteSearch.OnRouteSearchListener, Base
             }
         }
     }
-
 
 
     fun onClick(view: View) {

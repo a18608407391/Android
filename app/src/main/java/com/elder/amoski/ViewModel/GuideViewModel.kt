@@ -6,10 +6,13 @@ import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.amoski.Activity.GuideActivity
+import com.elder.amoski.R
+import com.elder.zcommonmodule.Utils.DialogUtils
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_guide.*
 import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Base.Utils.getString
 
 
 class GuideViewModel : BaseViewModel() {

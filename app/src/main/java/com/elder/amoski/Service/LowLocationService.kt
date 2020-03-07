@@ -179,7 +179,7 @@ class LowLocationService : IntentService, AMapLocationListener {
         // 设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
         mLocationOption.locationMode = AMapLocationClientOption.AMapLocationMode.Hight_Accuracy;
         if (flag) {
-            mLocationOption.interval = 30000
+            mLocationOption.interval = 5000
         } else {
             mLocationOption.interval = 2000
         }

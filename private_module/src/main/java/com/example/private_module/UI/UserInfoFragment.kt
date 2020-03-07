@@ -48,21 +48,14 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.*
-import org.cs.tec.library.Base.Utils.getArray
-import org.cs.tec.library.Base.Utils.getColor
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
-import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
-import org.cs.tec.library.binding.command.BindingCommand
-import org.cs.tec.library.binding.command.BindingConsumer
-import org.cs.tec.library.http.NetworkUtil
 import java.text.DecimalFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-import kotlin.random.Random
 
 
 @Route(path = RouterUtils.FragmentPath.MYSELFPAGE)

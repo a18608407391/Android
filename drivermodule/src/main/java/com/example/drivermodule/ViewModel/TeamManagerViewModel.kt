@@ -73,6 +73,7 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         this.teamManagerActivity = teamManagerActivity
         dispose = RxBus.default?.toObservable(BasePacketReceive::class.java)?.subscribe {
             if (it.type == 1006) {
+                Log.e("result",it.body)
                 teamManagerActivity.info = Gson().fromJson<TeamPersonInfo>(it.body, TeamPersonInfo::class.java)
                 CoroutineScope(uiContext).launch {
                     invalidate()
@@ -91,8 +92,9 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         component.arrowVisible.set(false)
         component.setCallBack(this)
         currentItemPosition = 0
+        items.clear()
         HttpRequest.instance.setQueryRollInfoResult(this)
-        teamManagerActivity.info?.redisData?.dtoList?.forEach {
+        teamManagerActivity.info?.redisData?.dtoList?.forEachIndexed { index, it ->
             if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                 it.teamRoleColor = "2D3138"
             }
@@ -102,7 +104,7 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
             } else {
                 name = it.memberName
             }
-            items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor))))
+            items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)),index))
         }
     }
 

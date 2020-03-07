@@ -118,13 +118,6 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
             var tele = TelephoneBinder.from(this@LogRecodeFragment)
             var fr = tele.show()
              fr.functionDismiss = viewModel
-//            fr.onDismiss(object : DialogInterface {
-//                override fun dismiss() {
-//
-//                }
-//                override fun cancel() {
-//                }
-//            })
         } else {
             JMessageClient.login(home.findMemberView?.tel, "0123456789", object : BasicCallback() {
                 override fun gotResult(responseCode: Int, responseMessage: String?) {

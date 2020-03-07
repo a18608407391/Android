@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="party_detail_model"
+            type="com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel"></variable>
+    </data>
+
+
+    <!--<com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout -->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/sappbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsingTbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@color/white"
+                app:expandedTitleMarginEnd="@dimen/d_60"
+                app:expandedTitleMarginStart="@dimen/d_60"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+
+                <include layout="@layout/detail_top_part"></include>
+
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_100"
+                    app:contentInsetStart="0dp"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"></android.support.v7.widget.Toolbar>
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+            <!--<android.support.design.widget.TabLayout-->
+            <!--android:id="@+id/mTab"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="@dimen/d_42"-->
+            <!--android:layout_marginLeft="@dimen/d_5"-->
+            <!--android:elevation="@dimen/d_05"-->
+            <!--app:tabIndicatorColor="@color/black"-->
+            <!--app:tabIndicatorFullWidth="false"-->
+            <!--app:tabIndicatorHeight="0dp"-->
+            <!--app:tabMode="fixed"-->
+            <!--app:tabRippleColor="@color/trans"-->
+            <!--app:tabSelectedTextColor="@color/black"-->
+            <!--app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>-->
+
+        </android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.CoordinatorLayout>
+    <!--</com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>-->
+</layout>

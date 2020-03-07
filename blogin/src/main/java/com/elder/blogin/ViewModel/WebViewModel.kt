@@ -5,6 +5,8 @@ import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.alibaba.android.arouter.facade.Postcard
+import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.blogin.Activity.WebActivity
 import com.elder.blogin.R
@@ -46,7 +48,7 @@ class WebViewModel : BaseViewModel() {
     lateinit var webActivity: WebActivity
     fun inject(webActivity: WebActivity) {
         this.webActivity = webActivity
-        if (this.webActivity?.type == 0) {
+        if (this.webActivity?.type == 0 || this.webActivity?.type == 2) {
             loadWeb.set("http://122.114.91.150:8181/index.html")
             titleVisible.set(true)
         } else if (this.webActivity?.type == 1) {
@@ -91,13 +93,21 @@ class WebViewModel : BaseViewModel() {
     }
 
     fun onClick(view: View) {
-        if(webActivity.type==0){
-            ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation()
-        }else{
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+        if (webActivity.type == 0) {
+            finish()
+//            ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation()
+        } else if (webActivity.type == 2) {
+            finish()
+        } else {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(webActivity, object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    webActivity.finish()
+                }
+            })
         }
-        webActivity.finish()
+
     }
+
     var time = 0L
     var command = BindingCommand(object : BindingConsumer<String> {
         override fun call(t: String) {
@@ -121,7 +131,7 @@ class WebViewModel : BaseViewModel() {
                             FileSystem.unzipFile(file.path, Environment.getExternalStorageDirectory().getPath() + "/Amoski/Pic")
                         }
 
-                        Toast.makeText(context, "下载成功",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "下载成功", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onError(e: Throwable) {

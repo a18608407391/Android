@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="clock_active_item_data"
+            type="com.cstec.administrator.party_module.PartyHomeEntity.ClockActive"></variable>
+
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.ClockActiveClickListener"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="@dimen/d_154"
+            android:layout_height="@dimen/d_98"
+            android:layout_marginLeft="@dimen/d_15">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                app:LoadClockRoadImg="@{clock_active_item_data.FILE_NAME_URL}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/corner_clock_inner_bg"
+                android:gravity="center"
+                android:text="@{clock_active_item_data.MAN_COUNT + @string/check_card}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_10" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/d_05"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:text="@{clock_active_item_data.TITLE}"
+                android:textColor="@color/black_12" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_05"
+                android:text="@{clock_active_item_data.DISTANCE}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_12" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_05"
+                android:text="@{clock_active_item_data.ACTIVITY_START}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_12" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

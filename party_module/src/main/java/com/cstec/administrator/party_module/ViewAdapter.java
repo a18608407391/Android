@@ -1,82 +1,93 @@
 package com.cstec.administrator.party_module;
 
+import android.content.Context;
 import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Build;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+import com.elder.zcommonmodule.LocalUtilsKt;
 import com.tencent.smtt.export.external.interfaces.ClientCertRequest;
 import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 
+import org.cs.tec.library.Utils.ConvertUtils;
 import org.cs.tec.library.binding.command.BindingCommand;
+
+import java.util.ArrayList;
 
 public class ViewAdapter {
 
 
-
-    @BindingAdapter({"Logrenders", "LogwebCommands", "LoadingFinishs"})
-    public static void loadHtml(WebView webView, final String html, final BindingCommand<String> command, final BindingCommand<String> finish) {
-        WebSettings webSetting = webView.getSettings();
-        webSetting.setJavaScriptEnabled(true);//允许js调用
-        webSetting.setJavaScriptCanOpenWindowsAutomatically(true);//支持通过JS打开新窗口
-        webSetting.setAllowFileAccess(true);//在File域下，能够执行任意的JavaScript代码，同源策略跨域访问能够对私有目录文件进行访问等
-        webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);//控制页面的布局(使所有列的宽度不超过屏幕宽度)
-        webSetting.setSupportZoom(true);//支持页面缩放
-        webSetting.setBuiltInZoomControls(true);//进行控制缩放
-        webSetting.setAllowContentAccess(true);//是否允许在WebView中访问内容URL（Content Url），默认允许
-        webSetting.setUseWideViewPort(true);//设置缩放密度
-        webSetting.setSupportMultipleWindows(false);//设置WebView是否支持多窗口,如果为true需要实现onCreateWindow(WebView, boolean, boolean, Message)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //两者都可以
-            webSetting.setMixedContentMode(webSetting.getMixedContentMode());//设置安全的来源
+    @BindingAdapter({"setPartyLinearLayout", "setPartyChildClick"})
+    public static void setPartyLinearLayout(LinearLayout layout, final PartyHotRecommand datas, final BindingCommand<PartyHomeEntity.HotRecommend> command) {
+        layout.removeAllViews();
+        for (int i = 0; i < datas.getList().size(); i++) {
+            LayoutInflater inflater = (LayoutInflater) layout.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ViewDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.horizontal_hot_recommand_child, layout, false);
+            final int finalI = i;
+            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (command != null) {
+                        command.execute(datas.getList().get(finalI));
+                    }
+                }
+            });
+            binding.setVariable(BR.hot_recommand, datas.getList().get(i));
+            layout.addView(binding.getRoot());
         }
-        webSetting.setAppCacheEnabled(true);//设置应用缓存
-        webSetting.setDomStorageEnabled(true);//DOM存储API是否可用
-        webSetting.setGeolocationEnabled(true);//定位是否可用
-        webSetting.setLoadWithOverviewMode(true);//是否允许WebView度超出以概览的方式载入页面，
-        webSetting.setAppCacheMaxSize(Long.MAX_VALUE);//设置应用缓存内容的最大值
-        webSetting.setPluginState(WebSettings.PluginState.ON_DEMAND);//设置是否支持插件
-        webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE);//重写使用缓存的方式
+        layout.invalidate();
+    }
 
-        webSetting.setAllowUniversalAccessFromFileURLs(true);//是否允许运行在一个file schema URL环境下的JavaScript访问来自其他任何来源的内容
-        webSetting.setAllowFileAccessFromFileURLs(true);//是否允许运行在一个URL环境
-        webView.setWebViewClient(new com.tencent.smtt.sdk.WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView webView, String s) {
-                if (command != null) {
-                    command.execute(s);
-                }
-                return true;
-            }
-            @Override
-            public void onReceivedClientCertRequest(WebView webView, ClientCertRequest clientCertRequest) {
-                super.onReceivedClientCertRequest(webView, clientCertRequest);
-            }
-            @Override
-            public void onReceivedLoginRequest(WebView webView, String s, String s1, String s2) {
-                super.onReceivedLoginRequest(webView, s, s1, s2);
-            }
 
-            @Override
-            public void onReceivedError(WebView webView, int i, String s, String s1) {
-                super.onReceivedError(webView, i, s, s1);
-            }
-            @Override
-            public void onReceivedHttpAuthRequest(WebView webView, HttpAuthHandler httpAuthHandler, String s, String s1) {
-                super.onReceivedHttpAuthRequest(webView, httpAuthHandler, s, s1);
-            }
-            @Override
-            public void onPageFinished(WebView webView, String s) {
-                super.onPageFinished(webView, s);
-                if (finish != null
-                        ) {
-                    finish.execute(s);
-                }
+    @BindingAdapter("LoadRoadImg")
+    public static void LoadRoadImg(ImageView img, String url) {
+        String s = LocalUtilsKt.getRoadImgUrl(url);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(8));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(264), ConvertUtils.Companion.dp2px(168));
+        Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
+    }
 
-            }
-        });
-        webView.loadUrl(html);
+    @BindingAdapter("LoadClockRoadImg")
+    public static void LoadClockRoadImg(ImageView img, String url) {
+        String s = LocalUtilsKt.getRoadImgUrl(url);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(154), ConvertUtils.Companion.dp2px(98));
+        Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
+    }
 
+    @BindingAdapter("LoadMBRoadImg")
+    public static void LoadMBRoadImg(ImageView img, String url) {
+        String s = LocalUtilsKt.getRoadImgUrl(url);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(167), ConvertUtils.Companion.dp2px(143));
+        Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
+    }
+
+
+    @BindingAdapter(value = "setPartyAvatar")
+    public static void setPartyAvatar(ImageView img, String path) {
+        CircleCrop crop = new CircleCrop();
+        if (path != null && !path.isEmpty()) {
+            if (path.startsWith("/Activity")) {
+                path = LocalUtilsKt.getImageUrl(path);
+            } else if (path.startsWith("/home")) {
+                path = LocalUtilsKt.getImageUrl(path);
+            }
+        }
+        RequestOptions options = new RequestOptions().transform(crop).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(240F), ConvertUtils.Companion.dp2px(160F));
+        Glide.with(img).asBitmap().load(path).apply(options).into(img);
     }
 }

@@ -16,8 +16,8 @@ import com.elder.zcommonmodule.DataBases.queryDriverStatus
 import com.zk.library.Utils.PreferenceUtils
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.USERID
-//const val Base_URL = "http://ly532915135.vicp.cc/"
-const val Base_URL = "http://yomoy.com.cn/"
+const val Base_URL = "http://ly532915135.vicp.cc/"
+//const val Base_URL = "http://yomoy.com.cn/"
 //const val Base_URL = "http://192.168.5.242/"
 //const val Base_URL = "http://192.168.5.155/"
 //const val Base_URL = "http://192.168.5.178/"

@@ -1,4 +1,4 @@
-package com.cstec.administrator.social.ViewModel
+﻿package com.cstec.administrator.social.ViewModel
 
 import android.app.AlertDialog
 import android.databinding.ObservableArrayList
@@ -107,6 +107,17 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
 //       var resp =  Gson().fromJson<BaseResponse>(it,BaseResponse::class.java)
         Log.e("result", it)
         var list = Gson().fromJson<ArrayList<SocialPhotoEntity>>(it, object : TypeToken<ArrayList<SocialPhotoEntity>>() {}.type)
+        items.forEachIndexed { index, s ->
+            if (!s.isNullOrEmpty()) {
+                list.forEachIndexed { dex, t ->
+                    if (s.endsWith(t.fileNameUrl!!)) {
+                        var f = BitmapFactory.decodeFile(s)
+                        list[dex].singleHeight = f.height
+                        list[dex].singleWidth = f.width
+                    }
+                }
+            }
+        }
         sendNoPhoto(list)
     }
 

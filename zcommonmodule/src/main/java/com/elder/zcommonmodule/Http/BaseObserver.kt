@@ -14,11 +14,9 @@ open class BaseObserver<T> : Observer<T> {
     }
 
     override fun onComplete() {
-        Log.e("result","onComplete")
     }
 
     override fun onSubscribe(d: Disposable) {
-        Log.e("result","onSubscribe")
     }
 
     override fun onNext(t: T) {

@@ -14,14 +14,81 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <com.tencent.smtt.sdk.WebView
-            android:id="@+id/web_active1"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/d_20"
-            app:LoadingFinishs="@{party_main_model.LoadingFinishCommand}"
-            app:Logrenders="@{party_main_model.webUrl}"
-            app:LogwebCommands="@{party_main_model.roadCommand}"></com.tencent.smtt.sdk.WebView>
+            android:layout_height="@dimen/d_34"
+            android:layout_marginTop="@dimen/d_40"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/d_34"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_weight="1"
+                android:background="@drawable/corner_gray_bg">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/title_ev"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:drawablePadding="@dimen/d_03"
+                        android:drawableRight="@drawable/gray_down_arrow"
+                        android:onClick="@{party_main_model::onClick}"
+                        android:text="@{party_main_model.city}"
+                        android:textColor="#A4A4A4"
+                        android:textSize="@dimen/s_15" />
+
+                    <ImageView
+                        android:layout_width="@dimen/d_16"
+                        android:layout_height="@dimen/d_16"
+                        android:layout_marginLeft="@dimen/d_20"
+                        android:src="@drawable/search_icon" />
+
+                    <TextView
+                        android:id="@+id/search_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/d_10"
+                        android:onClick="@{party_main_model::onClick}"
+                        android:text="搜索目的地/产品名称"
+                        android:textColor="#A4A4A4" />
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+            <ImageView
+
+                android:id="@+id/notify_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_15"
+                android:onClick="@{party_main_model::onClick}"
+                android:src="@drawable/clock_icon" />
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_15"
+            app:adapter="@{party_main_model.adapter}"
+            app:itemBinding="@{party_main_model.itemBinding}"
+            app:items="@{party_main_model.items}"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:spanCount="2"></android.support.v7.widget.RecyclerView>
+
 
     </LinearLayout>
 </layout>

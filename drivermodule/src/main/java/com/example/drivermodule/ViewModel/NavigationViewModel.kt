@@ -222,7 +222,6 @@ class NavigationViewModel : BaseViewModel() {
             mAMapNavi.destroy()
             BaseApplication.getInstance().curActivity = 2
             if (AppManager.get()?.getActivity(MapActivity::class.java) != null) {
-                Log.e("result","MapActivity不为空")
                 RxBus.default?.post("NavigationFinish")
                 ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(navigationActivity,object :NavCallback(){
                     override fun onArrival(postcard: Postcard?) {
