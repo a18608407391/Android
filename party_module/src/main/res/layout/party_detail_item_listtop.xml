@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="party_detail_item_list"
+            type="com.cstec.administrator.party_module.PartyDetailEntity.PartyDetailRoadListItem" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_75"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/d_28">
+
+
+        <LinearLayout
+            android:layout_width="@dimen/d_30"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_27"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:text="01"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_22"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DAY"
+                android:textSize="@dimen/s_12"
+                android:textStyle="bold"></TextView>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_18"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/gray_stroke_circle"></ImageView>
+
+            <View
+                android:layout_width="@dimen/d_02"
+                android:layout_height="wrap_content"
+                android:background="@color/FivepercentBlackColor"></View>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_18"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="长沙"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_18"
+                android:textStyle="bold"></TextView>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"></ImageView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="张家界黄龙洞"
+                android:layout_marginLeft="@dimen/d_13"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_18"
+                android:textStyle="bold"></TextView>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

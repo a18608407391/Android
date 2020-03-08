@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/d_375"
+    android:layout_width="match_parent"
     android:layout_height="@dimen/d_432">
 
-    <ImageView
+    <com.elder.zcommonmodule.Widget.RatioImageView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_375" />
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_50">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d_15"
+            android:src="@drawable/arrow_black"></ImageView>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/d_15"
+            android:src="@drawable/three_point"></ImageView>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
         android:orientation="horizontal">
 
         <TextView
@@ -50,8 +69,8 @@
                     android:id="@+id/team_name"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/d_15"
-                    android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_gravity="bottom|right"
                     android:layout_marginRight="@dimen/d_05"
                     android:background="@drawable/little_tv_color_corner"

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -90,4 +91,18 @@ public class ViewAdapter {
         RequestOptions options = new RequestOptions().transform(crop).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(240F), ConvertUtils.Companion.dp2px(160F));
         Glide.with(img).asBitmap().load(path).apply(options).into(img);
     }
+
+
+    @BindingAdapter("setViewHeight")
+    public static void setViewHeight(LinearLayout view, PartyDetailEntity.PartyDetailRoadListItem detailRoadListItem) {
+        View view1 = view.findViewById(R.id.mesure);
+        view.measure(0, 0);
+        if (detailRoadListItem.getItemtype() == 0) {
+            view1.setMinimumHeight(view.getMeasuredHeight());
+        } else if (detailRoadListItem.getItemtype() == 1) {
+            view1.setMinimumHeight(view.getMeasuredHeight() - ConvertUtils.Companion.dp2px(15F));
+        }
+    }
+
+
 }

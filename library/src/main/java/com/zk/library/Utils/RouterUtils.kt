@@ -209,6 +209,7 @@ class RouterUtils() {
     class PartyConfig {
         companion object {
             const val PARTY_MAIN = "/party/main"
+            const val PARTY_DETAIL= "/party/detail"
         }
 
     }

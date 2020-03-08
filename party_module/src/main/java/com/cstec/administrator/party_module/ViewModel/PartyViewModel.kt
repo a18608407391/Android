@@ -4,6 +4,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.util.Log
 import android.view.View
+import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.location.AMapLocation
 import com.cstec.administrator.party_module.Adapter.PartyAdapter
 import com.cstec.administrator.party_module.BR
@@ -20,6 +21,7 @@ import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.collections.MergeObservableList
 import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
 import org.cs.tec.library.Bus.RxBus
@@ -128,6 +130,8 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
     override fun onTitleArrowClick(entity: Any) {
         //处理Arrow跳转
 
+        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).navigation()
+
     }
 
     var hotRecommendCommand = BindingCommand(object : BindingConsumer<PartyHomeEntity.HotRecommend> {
@@ -175,7 +179,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     var itemBinding = OnItemBindClass<Any>()
             .map(String::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.title, R.layout.base_item_title).bindExtra(BR.title_listener, titlelistener).bindExtra(BR.position,position)
+                itemBinding.set(BR.title, R.layout.base_item_title).bindExtra(BR.title_listener, titlelistener).bindExtra(BR.position, position)
             }
             .map(PartyHotRecommand::class.java) { itemBinding, position, item ->
                 itemBinding.set(BR.hot_recommend, R.layout.hot_recommend_item_layout).bindExtra(BR.model, this@PartyViewModel)

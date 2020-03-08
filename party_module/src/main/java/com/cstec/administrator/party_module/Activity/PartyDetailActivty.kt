@@ -2,13 +2,16 @@ package com.cstec.administrator.party_module.Activity
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyDetailBinding
 import com.zk.library.Base.BaseActivity
-import com.zk.library.Base.BaseViewModel
+import com.zk.library.Utils.RouterUtils
 
 
+@Route(path = RouterUtils.PartyConfig.PARTY_DETAIL)
 class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailViewModel>() {
     override fun initVariableId(): Int {
         return BR.party_detail_model

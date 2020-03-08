@@ -18,7 +18,7 @@ public class RatioImageView extends ImageView {
     /**
      * 宽高比例
      */
-    private float mRatio = 0f;
+    private float mRatio = 1f;
 
     public RatioImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
