@@ -41,6 +41,8 @@
     <color name="cp_colorPrimaryDark">#303F9F</color>
     <color name="cp_colorAccent">#3F51B5</color>
 
+    <color name="cp_gray">#F2F2F2</color>
+    <color name="cp_grayTv">#F2F2F2</color>
     <color name="cp_color_gray_light">#cdcdcd</color>
     <color name="cp_color_gray">#999999</color>
     <color name="cp_color_gray_deep">#666666</color>

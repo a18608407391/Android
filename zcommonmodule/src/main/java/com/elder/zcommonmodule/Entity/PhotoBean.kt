@@ -1,4 +1,4 @@
-package com.cstec.administrator.social.Entity
+package com.elder.zcommonmodule.Entity
 
 import java.io.Serializable
 

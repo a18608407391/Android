@@ -180,6 +180,12 @@ class HttpInteface {
         fun ResultPrivateLikeError(ex: Throwable)
     }
 
+
+    interface ExitLogin {
+        fun ExitLoginSuccess(it: String)
+        fun ExitLoginError(ex: Throwable)
+    }
+
     interface PrivateFansList {
         fun ResultPrivateFansSuccess(it: String)
         fun ResultPrivateFansError(ex: Throwable)
@@ -228,5 +234,25 @@ class HttpInteface {
     interface PartyHome {
         fun getPartyHomeSuccess(it: String)
         fun getPartyHomeError(it: Throwable)
+    }
+
+    interface PartyDetail {
+        fun getPartyDetailSuccess(it: String)
+        fun getPartyDetailError(it: Throwable)
+    }
+
+    interface PartyOrganization {
+        fun getPartyOrganizationSuccess(it: String)
+        fun getPartyOrganizationError(it: Throwable)
+    }
+
+    interface PartySign {
+        fun getPartySignSuccess(it: String)
+        fun getPartySignError(it: Throwable)
+    }
+
+    interface PartySearch {
+        fun getPartySearchSuccess(it: String)
+        fun getPartySearchError(it: Throwable)
     }
 }

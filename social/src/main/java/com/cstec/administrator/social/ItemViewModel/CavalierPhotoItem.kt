@@ -3,15 +3,14 @@ package com.cstec.administrator.social.ItemViewModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import com.cstec.administrator.social.Adapter.PhotoAdapter
-import com.cstec.administrator.social.Entity.PhotoEntitiy
+import com.elder.zcommonmodule.Entity.PhotoEntitiy
 import com.cstec.administrator.social.R
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import com.cstec.administrator.social.BR
-import com.cstec.administrator.social.Entity.PhotoBean
+import com.elder.zcommonmodule.Entity.PhotoBean
 import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Http.BaseObserver
 import com.elder.zcommonmodule.USER_TOKEN

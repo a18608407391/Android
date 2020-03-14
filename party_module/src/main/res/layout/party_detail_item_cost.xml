@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item_cost"
+            type="com.cstec.administrator.party_module.PartyDetailEntity.Cost"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:initStrText="@{item_cost.title}">
+
+            <com.elder.zcommonmodule.Widget.ExpandableTextView
+                android:id="@+id/party_ex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_24"
+                android:layout_marginRight="@dimen/d_24"
+                app:collapseText="@string/space"
+                app:contentTextSize="@dimen/d_15"
+                app:expandText="@string/space"
+                app:maxCollapsedLines="8" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/party_visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_60"
+                    android:background="@drawable/gradient_bg"
+                    android:gravity="center"
+                    android:text="展开更多"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_24"
+            android:text="费用不含："
+            android:textColor="@color/black_12"
+            android:textSize="@dimen/s_15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d_20"
+            android:layout_marginLeft="@dimen/d_24"
+            android:layout_marginRight="@dimen/d_24"
+            android:layout_marginTop="@dimen/d_10"
+            android:text="@{item_cost.noInclud}"
+            android:textColor="#A4A4A4"
+            android:textSize="@dimen/s_14" />
+
+    </LinearLayout>
+</layout>

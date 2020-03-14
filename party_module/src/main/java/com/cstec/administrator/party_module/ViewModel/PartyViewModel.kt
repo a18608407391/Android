@@ -56,13 +56,17 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
     })
 
     override fun getPartyHomeSuccess(it: String) {
+        partyFragment.dismissProgressDialog()
+        Log.e("result","活动数据成功" + it)
         if (it.isNullOrEmpty() || it == "系统繁忙") {
             return
         }
-        partyFragment.dismissProgressDialog()
+        Log.e("result","活动数据成功2222" )
         items.removeAll()
         var home = Gson().fromJson<PartyHomeEntity>(it, PartyHomeEntity::class.java)
+        Log.e("result","活动数据成功111" )
         var entity = PartyHotRecommand()
+        Log.e("result","活动数据成功1" )
         home.topActivityList!!.forEach {
             var item = it
             var start = item.ACTIVITY_START!!.split(" ")[0]
@@ -70,6 +74,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
             item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE / 1000 + "km"
             entity.list.add(item)
         }
+        Log.e("result","活动数据成功2" )
         var clock = ObservableArrayList<PartyHomeEntity.ClockActive>()
         var mobo = ObservableArrayList<PartyHomeEntity.MBRecommend>()
         var select = ObservableArrayList<PartyHomeEntity.WonderfulActive>()
@@ -84,22 +89,23 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
                 clock.add(item)
             }
         }
-        if (!home.motoActivityList.isNullOrEmpty()) {
-            home.motoActivityList!!.forEach {
-                var item = it
-                item.DISTANCE = "时长" + item.DAY + "天  里程" + item.DISTANCE + "km"
-                mobo.add(it)
-            }
-        }
-        if (!home.selectedActivityList.isNullOrEmpty()) {
-            home.selectedActivityList!!.forEach {
-                var item = it
-                var start = item.ACTIVITY_START!!.split(" ")[0]
-                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
-                item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE / 1000 + "km"
-                select.add(item)
-            }
-        }
+        Log.e("result","活动数据成功3" )
+//        if (!home.motoActivityList.isNullOrEmpty()) {
+//            home.motoActivityList!!.forEach {
+//                var item = it
+//                item.DISTANCE = "时长" + item.DAY + "天  里程" + item.DISTANCE + "km"
+//                mobo.add(it)
+//            }
+//        }
+//        if (!home.selectedActivityList.isNullOrEmpty()) {
+//            home.selectedActivityList!!.forEach {
+//                var item = it
+//                var start = item.ACTIVITY_START!!.split(" ")[0]
+//                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
+//                item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE / 1000 + "km"
+//                select.add(item)
+//            }
+//        }
         hot.set(entity)
         items.insertItem(ObservableField("热门推荐").get())
         items.insertItem(hot.get())

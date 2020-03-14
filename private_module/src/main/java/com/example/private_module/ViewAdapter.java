@@ -21,6 +21,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -70,29 +71,28 @@ public class ViewAdapter {
         Glide.with(img).asBitmap().load(path).apply(options).into(img);
     }
 
+
+    @BindingAdapter(value = "setRstoreImage")
+    public static void setRstoreImage(ImageView img, SocialPhotoEntity path) {
+        if (path != null) {
+            String url = ConfigKt.Base_URL + path.getProjectUrl() + path.getFilePathUrl() + path.getFilePath();
+            RequestOptions options = new RequestOptions().error(R.drawable.ic_album_default).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(200, 200);
+            Glide.with(img).asBitmap().load(url).apply(options).into(img);
+        } else {
+            RequestOptions options = new RequestOptions().error(R.drawable.ic_album_default).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(200, 200);
+            Glide.with(img).asBitmap().load("").apply(options).into(img);
+        }
+    }
+
     @BindingAdapter(value = "localEntityImageLoad")
     public static void setLocalEntityImage(ImageView img, DynamicsCategoryEntity.Dynamics path) {
         String url = "";
-//        if (path.getReleaseDynamicParent() != null) {
-//            if (!path.getReleaseDynamicParent().getDynamicImageList().isEmpty()) {
-//                SocialPhotoEntity photo = path.getReleaseDynamicParent().getDynamicImageList().get(0);
-//                url = ConfigKt.Base_URL + photo.getProjectUrl() + photo.getFilePathUrl() + photo.getFilePath();
-//            } else {
-//                img.setVisibility(View.GONE);
-//                return;
-//            }
-//        } else {
-//            return;
-//        }
-
-
         Log.e("result", "当前收藏数据" + new Gson().toJson(path));
-
         if (path != null && path.getDynamicImageList() != null && path.getDynamicImageList().size() != 0) {
             img.setVisibility(View.VISIBLE);
             SocialPhotoEntity photo = path.getDynamicImageList().get(0);
             url = ConfigKt.Base_URL + photo.getProjectUrl() + photo.getFilePathUrl() + photo.getFilePath();
-        } else if (path!=null&&path.getParentDynamin() != null && path.getParentDynamin().getDynamicImageList().size() != 0) {
+        } else if (path != null && path.getParentDynamin() != null && path.getParentDynamin().getDynamicImageList().size() != 0) {
             img.setVisibility(View.VISIBLE);
             DynamicsSimple photo = path.getParentDynamin();
             SocialPhotoEntity eb = photo.getDynamicImageList().get(0);
@@ -258,10 +258,6 @@ public class ViewAdapter {
         });
     }
 
-    //    @BindingAdapter(value = {"setCheced"})
-//    public static void setChecked(CheckBox box ,boolean flag){
-//        b
-//    }
     @BindingAdapter("PrivateParseTime")
     public static void ParseTime(TextView tv, String time) {
         try {
@@ -351,5 +347,30 @@ public class ViewAdapter {
         webView.loadUrl(html);
 
 //步骤3. 复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器， 而是在本WebView中显示
+    }
+
+
+    @BindingAdapter("LoadRoadImg")
+    public static void LoadRoadImg(ImageView img, String url) {
+        String s = LocalUtilsKt.getRoadImgUrl(url);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(8));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(264), ConvertUtils.Companion.dp2px(168));
+        Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
+    }
+
+    @BindingAdapter("LoadClockRoadImg")
+    public static void LoadClockRoadImg(ImageView img, String url) {
+        String s = LocalUtilsKt.getRoadImgUrl(url);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(154), ConvertUtils.Companion.dp2px(98));
+        Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
+    }
+
+    @BindingAdapter("LoadMBRoadImg")
+    public static void LoadMBRoadImg(ImageView img, String url) {
+        String s = LocalUtilsKt.getRoadImgUrl(url);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(167), ConvertUtils.Companion.dp2px(143));
+        Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
     }
 }

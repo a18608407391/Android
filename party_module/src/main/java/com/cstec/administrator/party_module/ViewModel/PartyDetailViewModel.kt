@@ -1,88 +1,92 @@
 package com.cstec.administrator.party_module.ViewModel
 
 import android.databinding.ObservableArrayList
-import android.databinding.ObservableField
+import android.util.Log
+import android.view.View
 import com.cstec.administrator.party_module.Activity.PartyDetailActivty
 import com.cstec.administrator.party_module.BR
-import com.cstec.administrator.party_module.PartyDetailAdapter
-import com.cstec.administrator.party_module.PartyDetailEntity
+import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItemModel
+import com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailIntroduceItemModel
+import com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailPhotoItemModel
 import com.cstec.administrator.party_module.R
 import com.elder.zcommonmodule.Inteface.TitleClickListener
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.zk.library.Base.BaseViewModel
-import me.tatarka.bindingcollectionadapter2.OnItemBind
-import me.tatarka.bindingcollectionadapter2.collections.MergeObservableList
-import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
+import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
+import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.binding.command.BindingCommand
+import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class PartyDetailViewModel : BaseViewModel(), TitleClickListener {
+class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.PartyDetail {
+    override fun getPartyDetailSuccess(it: String) {
+        Log.e("result", "活动详情数据" + it)
+    }
+
+    override fun getPartyDetailError(it: Throwable) {
+
+    }
+
     override fun onTitleArrowClick(entity: Any) {
 
     }
 
+    lateinit var partyDetailActivty: PartyDetailActivty
     fun inject(partyDetailActivty: PartyDetailActivty) {
-        var j = PartyDetailEntity.PartyDetailRoadListItem()
-        j.type = 0
+        this.partyDetailActivty = partyDetailActivty
+        var model = items[0] as PartyDetailIntroduceItemModel
+        model.initData()
+        initData()
+    }
 
-        var i = PartyDetailEntity.PartyDetailRoadListItem()
-        i.type = 1
+    private fun initData() {
+        HttpRequest.instance.partyDetail = this
+        var map = HashMap<String, String>()
+        map["id"] = partyDetailActivty.party_id!!
+        map["x"] = partyDetailActivty.location!!.longitude.toString()
+        map["y"] = partyDetailActivty.location!!.latitude.toString()
+        HttpRequest.instance.getPartyDetail(map)
+    }
 
-        var k = PartyDetailEntity.PartyDetailRoadListItem()
-        k.type = 1
-        k.itemtype = 1
+    var tabCommand = BindingCommand(object : BindingConsumer<Int> {
+        override fun call(t: Int) {
+            if (t == 0) {
+                var model = items[0] as PartyDetailIntroduceItemModel
+                model.initData()
+            } else {
 
-        list.add(j)
-        list.add(i)
-        list.add(k)
-        items.insertList(list)
+            }
+        }
+    })
+
+    fun onClick(view:View){
 
     }
 
-    var list = ObservableArrayList<PartyDetailEntity.PartyDetailRoadListItem>()
-
-    var part_One = ObservableField<PartyDetailEntity.PartyDetailPartOne>()        //第一部分数据
-
-    var selectTab = ObservableField<Int>()
-
-    var adapter = PartyDetailAdapter()
-
-    var items = MergeObservableList<Any>()
-
     var titlelistener: TitleClickListener = this
-    var itemBinding = OnItemBindClass<Any>()
-            .map(String::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.title, R.layout.base_item_title1).bindExtra(BR.title_listener, titlelistener).bindExtra(BR.position, position)
-            }
-            .map(PartyDetailEntity.PartyDetailPartOne::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.party_detail_item_top, R.layout.party_detail_item_top)
-            }
-            .map(Int::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.party_detail_item_tab, R.layout.party_detail_item_tab)
-            }
-            .map(String::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.party_detail_item_html, R.layout.party_detail_item_html)
-            }
-            .map(PartyDetailEntity.PartyDetailRoadListItem::class.java) { itemBinding, position, item ->
-                when (item.type) {
-                    0 -> {
-                        itemBinding.set(BR.party_detail_item_list, R.layout.party_detail_item_listtop)
-                    }
-                    1 -> {
-                        itemBinding.set(BR.party_detail_item_list, R.layout.party_detail_item_listcontenttop)
-                    }
-                    2 -> {
-                        itemBinding.set(BR.party_detail_item_list, R.layout.party_detail_item_listcontentbottom)
-                    }
-                }
-            }
 
-//            .map(PartyHomeEntity.ClockActive::class.java) { itemBinding, position, item ->
-//            }
-//            .map(PartyHomeEntity.HotDistination::class.java) { itemBinding, position, item -> }
-//
-//            .map(PartyHomeEntity.MBRecommend::class.java) { itemBinding, position, item ->
-//
-//            }.map(PartyHomeEntity.WonderfulActive::class.java) { itemBinding, position, item ->
-//
-//            }
 
+    var mTiltes = arrayOf("介绍", "相册")
+
+    var pagerTitle = BindingViewPagerAdapter.PageTitles<BasePartyItemModel> { position, item ->
+        mTiltes[position]
+    }
+
+    var adapter = BindingViewPagerAdapter<BasePartyItemModel>()
+
+    var items = ObservableArrayList<BasePartyItemModel>().apply {
+        this.add(PartyDetailIntroduceItemModel())
+        this.add(PartyDetailPhotoItemModel())
+    }
+    var itemBinding = ItemBinding.of<BasePartyItemModel> { itemBinding, position, item ->
+        when (position) {
+            0 -> {
+                itemBinding.set(BR.detail_introduce, R.layout.party_detail_part_introduce)
+            }
+            1 -> {
+                itemBinding.set(BR.detail_photo, R.layout.party_detail_part_photo)
+            }
+        }
+    }
 }

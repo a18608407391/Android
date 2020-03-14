@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="hori_data"
+            type="com.cstec.administrator.party_module.HoriTitleEntity"></variable>
+    </data>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@{hori_data.check?@drawable/green_circle_17dp:@drawable/gray_circle_17dp}"
+        android:text="@{hori_data.title}">
+
+    </TextView>
+</layout>

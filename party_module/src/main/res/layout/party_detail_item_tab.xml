@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="party_detail_item_tab"
-            type="Integer" />
+            type="com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <android.support.design.widget.TabLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/d_42"
+        android:layout_marginLeft="@dimen/d_5"
+        android:elevation="@dimen/d_05"
+        android:layout_marginTop="@dimen/d_10"
+        app:initPartyTab="@{party_detail_item_tab.tabCommand}"
+        app:tabIndicatorColor="@color/black"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="fixed"
+        app:tabRippleColor="@color/trans"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextColor="#33000000">
 
-    </android.support.constraint.ConstraintLayout>
+    </android.support.design.widget.TabLayout>
 </layout>

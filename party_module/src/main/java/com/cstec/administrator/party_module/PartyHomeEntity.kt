@@ -10,8 +10,13 @@ class PartyHomeEntity : Serializable {
     var topActivityList: ArrayList<HotRecommend>? = null
     var selectedActivityList: ArrayList<WonderfulActive>? = null
     var clockActivityList: ArrayList<ClockActive>? = null
+    var topCityList: ArrayList<TopCity>? = null
 
 
+    class TopCity {
+        var SUBORDINATE_CITY: String? = null
+        var N = 0
+    }
 
 
     class HotRecommend : Serializable {
@@ -21,7 +26,7 @@ class PartyHomeEntity : Serializable {
         var STATE = 0
         var DAILY_VISITS = 0
         var TOTAL_VISITS = 0
-        var TYPE = 0
+        var TYPE: String? = null
         var CREATE_DATA: String? = null
         var RECOMMEND_ORDER = 0
         var FILE_NAME_URL: String? = null
@@ -39,6 +44,7 @@ class PartyHomeEntity : Serializable {
         var CODE = 0
         var TITLE: String? = null
         var STATE = 0
+        var TYPE: String? = null
         var BIG_TYPE = 0
         var ACTIVITY_START: String? = null
         var ACTIVITY_STOP: String? = null
@@ -48,7 +54,7 @@ class PartyHomeEntity : Serializable {
         var DACT_Y_AXIS: Double = 0.0
         var SUBORDINATE_CITY: String? = null
         var SQRTVALUE: Long = 0
-        var MAN_COUNT :String ? = ""
+        var MAN_COUNT: String? = ""
     }
 
     class HotDistination {

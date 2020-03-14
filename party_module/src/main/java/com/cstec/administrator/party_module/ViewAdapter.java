@@ -4,24 +4,23 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
-import android.graphics.drawable.shapes.RoundRectShape;
-import android.os.Build;
+import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel;
 import com.elder.zcommonmodule.LocalUtilsKt;
-import com.tencent.smtt.export.external.interfaces.ClientCertRequest;
-import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
-import com.tencent.smtt.sdk.WebSettings;
-import com.tencent.smtt.sdk.WebView;
+import com.elder.zcommonmodule.Widget.ExpandableTextView;
 
 import org.cs.tec.library.Utils.ConvertUtils;
 import org.cs.tec.library.binding.command.BindingCommand;
@@ -105,4 +104,78 @@ public class ViewAdapter {
     }
 
 
+    @BindingAdapter("initStrText")
+    public static void initStrText(RelativeLayout layout, String value) {
+        final ExpandableTextView text = layout.findViewById(R.id.party_ex);
+        text.setText(value);
+        final TextView visible = layout.findViewById(R.id.party_visible);
+        visible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (text.isCollapsed()) {
+                    text.setCollapsed(false);
+                    visible.setBackground(visible.getContext().getDrawable(R.color.trans));
+                    visible.setText("收起");
+                } else {
+                    visible.setBackground(visible.getContext().getDrawable(R.drawable.gradient_bg));
+                    text.setCollapsed(true);
+                    visible.setText("展开更多");
+                }
+                text.change();
+            }
+        });
+//        textView.setText(value);
+//        textView.mStateTv.setVisibility(View.GONE);
+//        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
+//        params.height = textView.getMeasuredHeight() + ConvertUtils.Companion.dp2px(50F);
+//        textView.setLayoutParams(params);
+    }
+
+
+
+
+    @BindingAdapter({"initPartyTab"})
+    public static void initPartyTab(TabLayout tab, final BindingCommand<Integer> command) {
+        tab.addTab(tab.newTab().setText("介绍"));
+        tab.addTab(tab.newTab().setText("相册"));
+        tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (command != null) {
+                    command.execute(tab.getPosition());
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    @BindingAdapter({"initSubjectPartyHori","initSubjectPartyHoriCommand"})
+    public static void initSubjectPartyHori(LinearLayout layout, ArrayList<HoriTitleEntity> check, final BindingCommand command) {
+        layout.removeAllViews();
+        for (int i = 0; i < check.size(); i++) {
+            LayoutInflater inflater = (LayoutInflater) layout.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ViewDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.horizontal_subject_title_child, layout, false);
+            binding.setVariable(BR.hori_data, check.get(i));
+            final int finalI = i;
+            binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (command != null) {
+                        command.execute(finalI);
+                    }
+                }
+            });
+            layout.addView(binding.getRoot());
+        }
+        layout.invalidate();
+    }
 }

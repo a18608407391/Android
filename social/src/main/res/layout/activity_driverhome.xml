@@ -69,6 +69,7 @@
                                     android:layout_marginLeft="@dimen/d_15"
                                     app:socialAvatar="@{driver_home_model.avatar}" />
                             </LinearLayout>
+
                         </RelativeLayout>
 
                         <LinearLayout
@@ -278,7 +279,7 @@
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/d_100"
+                        android:layout_height="@dimen/d_60"
                         app:contentInsetStart="0dp"
                         app:layout_collapseMode="pin"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"

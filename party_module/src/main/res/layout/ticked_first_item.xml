@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <variable
+            name="check_one"
+            type="com.cstec.administrator.party_module.ViewModel.PartyCheckTicketViewModel.CheckOneEntity"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/d_100"
+        android:layout_height="@dimen/d_60"
+        android:background="@{check_one.check?@color/white:@color/cp_gray}">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="报名"
+                android:textColor="@{check_one.check?@color/colorAccent:@color/black_12}"
+                android:textSize="@dimen/s_15" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11-12"
+                android:textColor="@{check_one.check?@color/colorAccent:@color/cp_grayTv}"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+    </RelativeLayout>
+</layout>

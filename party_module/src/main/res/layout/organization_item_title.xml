@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="organization_model"
+            type="com.cstec.administrator.party_module.ViewModel.OrganizationListViewModel.Organization"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_28"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:text="@{organization_model.title}"
+            android:textColor="@color/black_12"
+            android:textSize="@dimen/s_15" />
+
+
+    </LinearLayout>
+</layout>

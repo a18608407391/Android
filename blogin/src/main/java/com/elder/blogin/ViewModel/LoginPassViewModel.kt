@@ -18,6 +18,8 @@ import com.elder.zcommonmodule.DataBases.queryUserInfo
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Http.BaseObserver
 import com.elder.zcommonmodule.Http.NetWorkManager
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Service.Login.LoginService
 import com.elder.zcommonmodule.Service.RetrofitClient
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
@@ -44,7 +46,8 @@ import org.cs.tec.library.binding.command.BindingConsumer
 import java.util.concurrent.TimeUnit
 
 
-class LoginPassViewModel : BaseViewModel() {
+class LoginPassViewModel : BaseViewModel(){
+
     var loginname = ObservableField<String>()
     var loginpass = ObservableField<String>()
     var passVisible = ObservableField<Boolean>(false)
@@ -65,11 +68,8 @@ class LoginPassViewModel : BaseViewModel() {
                 } else {
                     passVisible.set(true)
                     loginPassActivity.visible_pass.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-
                 }
             }
-
-
             R.id.login_btn -> {
                 if (TextUtils.isEmpty(loginname.get())) {
                     Toast.makeText(loginPassActivity, getString(R.string.loginnamenoEmpty), Toast.LENGTH_SHORT).show()
@@ -102,6 +102,8 @@ class LoginPassViewModel : BaseViewModel() {
                         PreferenceUtils.putString(context, USER_PHONE, loginname.get()!!)
                         PreferenceUtils.putString(context, USER_PASS, loginpass.get())
                         PreferenceUtils.putString(context, USER_TOKEN, it.data as String)
+                        Log.e("result", "当前的TokenByLogin" + it.data as String)
+//                        getUserInfo(it.data.toString())
                         PreferenceUtils.putBoolean(context, RE_LOGIN, false)
                         PreferenceUtils.putString(context, USERID, it.msg)
                         if (checkDriverStatus()) {
@@ -115,7 +117,6 @@ class LoginPassViewModel : BaseViewModel() {
                                             loginPassActivity.finish()
                                         }
                                     })
-//                                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING).withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 0).navigation()
                                 }, OnBtnClickL {
                                     dialog.dismiss()
                                     ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(loginPassActivity, object : NavCallback() {

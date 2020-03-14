@@ -10,12 +10,13 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/d_15"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingTop="@dimen/d_16">
-
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:paddingTop="@dimen/d_36">
 
         <TextView
             android:layout_width="wrap_content"
@@ -73,8 +74,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_68"
-            android:layout_marginTop="@dimen/d_20"
             android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
             android:background="#FAFAFA"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -112,7 +113,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-
                 android:orientation="vertical">
 
                 <TextView
@@ -197,8 +197,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
-            android:layout_marginTop="@dimen/d_20"
             android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -315,5 +315,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></ImageView>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_01"
+            android:layout_marginRight="@dimen/d_15"
+            android:background="@color/FivepercentBlackColor"></View>
     </LinearLayout>
 </layout>

@@ -58,6 +58,7 @@
                     android:id="@+id/mesure"
                     android:layout_width="@dimen/d_02"
                     android:layout_height="match_parent"
+                    android:visibility="@{party_detail_item_list.itemtype==2?View.GONE:View.VISIBLE}"
                     android:background="@color/FivepercentBlackColor" />
 
             </LinearLayout>

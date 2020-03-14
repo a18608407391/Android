@@ -43,7 +43,6 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
         pageSize = 1
         lenth = 20
         initDatas()
-
         CoroutineScope(uiContext).launch {
             delay(10000)
             restoreActivity.restore_swipe.isRefreshing = false
@@ -93,7 +92,25 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
     var titleComponent = TitleComponent()
     var adapter = BindingRecyclerViewAdapter<CollectionEntity.Collection>()
     var items = ObservableArrayList<CollectionEntity.Collection>()
-    var itemBinding = ItemBinding.of<CollectionEntity.Collection>(BR.restore_item_entity, R.layout.restore_items_layout).bindExtra(BR.listener, listener)
+    var itemBinding = ItemBinding.of<CollectionEntity.Collection> { itemBinding, position, item ->
+        when (item.BIG_TYPE) {
+            1 -> {
+                //打卡
+                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_clock_layout)
+            }
+            2 -> {
+                //主题
+                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_subject_layout)
+            }
+            3 -> {
+                //摩旅活动
+                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_active_layout)
+            }
+            0 -> {
+                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_layout).bindExtra(BR.listener, listener)
+            }
+        }
+    }
 
 
     var pageSize = 1
@@ -103,7 +120,9 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             Log.e("result", "加载更多" + t)
-            if (t > 1) {
+            if (t < lenth * pageSize) {
+                return
+            } else {
                 pageSize++
                 initDatas()
             }

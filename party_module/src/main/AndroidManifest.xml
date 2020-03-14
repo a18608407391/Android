@@ -1,10 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cstec.administrator.party_module" >
-
+    package="com.cstec.administrator.party_module">
 
 
     <application>
 
         <activity android:name=".Activity.PartyDetailActivty"></activity>
+        <activity android:name=".Activity.SubjectPartyActivity"></activity>
+        <activity android:name=".Activity.PartyMoboDetailActivity"></activity>
+        <activity android:name=".Activity.PartyClockDetailActivity"></activity>
+        <activity android:name=".Activity.SearchPartyActivity"></activity>
+        <activity android:name=".Activity.OrganizationListActivity"></activity>
+        <activity android:name=".Activity.EnrollListActivity"></activity>
     </application>
 </manifest>

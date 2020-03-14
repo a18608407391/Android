@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="party_clock_detail_model"
+            type="com.cstec.administrator.party_module.ViewModel.PartyClockDetailViewModel"></variable>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/sappbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsingTbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@color/white"
+                app:expandedTitleMarginEnd="@dimen/d_60"
+                app:expandedTitleMarginStart="@dimen/d_60"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <include layout="@layout/detail_top_part_clock"></include>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_50"
+                    app:contentInsetStart="0dp"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_50">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/d_15"
+                            android:src="@drawable/arrow_black"></ImageView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="活动详情"
+                            android:textColor="@color/black_12"
+                            android:textSize="@dimen/s_15" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/d_15"
+                            android:src="@drawable/three_point"></ImageView>
+                    </RelativeLayout>
+
+                </android.support.v7.widget.Toolbar>
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/nest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:descendantFocusability="blocksDescendants"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <include layout="@layout/party_detail_item_top_clock"></include>
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/mPartyDetailTabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_42"
+                    android:layout_marginLeft="@dimen/d_5"
+                    android:layout_marginTop="@dimen/d_10"
+                    android:elevation="@dimen/d_05"
+                    app:tabIndicatorColor="@color/black"
+                    app:tabIndicatorFullWidth="false"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabMode="fixed"
+                    app:tabRippleColor="@color/trans"
+                    app:tabSelectedTextColor="@color/black"
+                    app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/mPartyDetailViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_800"
+                    app:adapter="@{party_clock_detail_model.adapter}"
+                    app:itemBinding="@{party_clock_detail_model.itemBinding}"
+                    app:items="@{party_clock_detail_model.items}"
+                    app:pageTitles="@{party_clock_detail_model.pagerTitle}"></android.support.v4.view.ViewPager>
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

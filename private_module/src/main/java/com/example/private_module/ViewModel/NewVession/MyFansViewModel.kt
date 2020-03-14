@@ -196,7 +196,9 @@ class MyFansViewModel : BaseViewModel(), HttpInteface.PrivateFansList, TitleComp
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             Log.e("result", "加载更多" + t)
-            if (t > 1) {
+            if (t <lenth*pageSize) {
+                return
+            }else{
                 pageSize++
                 initDatas()
             }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="img_item"
+            type="com.elder.zcommonmodule.Entity.PhotoEntitiy"></variable>
+    </data>
+
+    <com.elder.zcommonmodule.Widget.RatioImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/photo_img"
+        android:layout_width="@dimen/d_90"
+        android:layout_height="@dimen/d_90"
+        android:layout_marginLeft="@dimen/d_01"
+        android:layout_marginRight="@dimen/d_01"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_avatar"
+        app:ratio="1"></com.elder.zcommonmodule.Widget.RatioImageView>
+</layout>

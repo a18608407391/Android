@@ -2,10 +2,9 @@ package com.cstec.administrator.social.Adapter
 
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.cstec.administrator.social.Entity.PhotoEntitiy
+import com.elder.zcommonmodule.Entity.PhotoEntitiy
 import com.cstec.administrator.social.ItemViewModel.CavalierPhotoItem
 import com.cstec.administrator.social.R
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter

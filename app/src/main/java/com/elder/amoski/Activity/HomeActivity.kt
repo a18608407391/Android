@@ -29,19 +29,32 @@ import com.zk.library.Bus.ServiceEven
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
 import android.content.ClipData
+import cn.jpush.im.android.api.JMessageClient
+import cn.jpush.im.android.api.event.LoginStateChangeEvent
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.elder.zcommonmodule.*
+import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Even.RequestErrorEven
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.Utils
 import com.example.private_module.UI.UserInfoFragment
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_home.*
 import org.cs.tec.library.Bus.RxSubscriptions
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 
 @Route(path = RouterUtils.ActivityPath.HOME)
-class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
+class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInteface.ExitLogin {
+    override fun ExitLoginSuccess(it: String) {
+        exitForce()
+    }
+
+    override fun ExitLoginError(ex: Throwable) {
+        Toast.makeText(context, "退出登录错误", Toast.LENGTH_SHORT).show()
+    }
 
     override fun initVariableId(): Int {
         return BR.HomeViewModel
@@ -87,6 +100,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initData() {
         super.initData()
+        JMessageClient.registerEventReceiver(this)
         var pos = ServiceEven()
         pos.type = "HomeStart"
         RxBus.default?.post(pos)
@@ -96,16 +110,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
         main_bottom_bg.setOnCheckedChangeListener(mViewModel)
         RxSubscriptions.add(RxBus.default?.toObservable(RequestErrorEven::class.java)?.subscribe {
             if (it.errorCode == 10009) {
-                RxBus.default?.post("ExiLogin")
-                PreferenceUtils.putBoolean(context, RE_LOGIN, true)
-                var pos = ServiceEven()
-                pos.type = "HomeStop"
-                RxBus.default?.post(pos)
-                ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
+                exitForce()
             }
         })
     }
@@ -175,5 +180,32 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>() {
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+    }
+
+    fun exit() {
+        HttpRequest.instance.exit = this
+        HttpRequest.instance.exitLogin(HashMap())
+    }
+
+    fun exitForce() {
+        RxBus.default?.post("ExiLogin")
+        PreferenceUtils.putBoolean(context, RE_LOGIN, true)
+        var pos = ServiceEven()
+        pos.type = "HomeStop"
+        RxBus.default?.post(pos)
+        ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
+            override fun onArrival(postcard: Postcard?) {
+                finish()
+            }
+        })
+    }
+
+    fun onEventMainThread(event: LoginStateChangeEvent) {
+        val reason = event.reason
+        when (reason) {
+            LoginStateChangeEvent.Reason.user_logout -> {
+                exit()
+            }
+        }
     }
 }

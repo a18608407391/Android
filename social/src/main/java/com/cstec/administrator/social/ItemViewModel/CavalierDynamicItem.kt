@@ -195,7 +195,6 @@ class CavalierDynamicItem : CavalierItemModel, DynamicClickListener, HttpIntefac
     }
 
     fun init() {
-
         var map = HashMap<String, String>()
         map["pageSize"] = pageSize.toString()
         map["length"] = length.toString()

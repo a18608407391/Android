@@ -16,7 +16,7 @@
 
         <variable
             name="item"
-            type="com.cstec.administrator.social.Entity.PhotoEntitiy"></variable>
+            type="com.elder.zcommonmodule.Entity.PhotoEntitiy"></variable>
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

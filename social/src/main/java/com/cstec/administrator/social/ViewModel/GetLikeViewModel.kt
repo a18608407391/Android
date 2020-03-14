@@ -24,6 +24,8 @@ import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.binding.command.BindingCommand
+import org.cs.tec.library.binding.command.BindingConsumer
 
 
 class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleComponent.titleComponentCallBack, DoubleClickListener, SwipeRefreshLayout.OnRefreshListener, HttpInteface.SocialDynamicsList {
@@ -89,7 +91,7 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
     }
 
     override fun GetLikeSuccess(it: String) {
-
+        activity.dismissProgressDialog()
         var entity = Gson().fromJson<LikesEntity>(it, LikesEntity::class.java)
 
         entity?.data!!.forEach {
@@ -98,7 +100,19 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
     }
 
     override fun getLikeError(it: Throwable) {
+        activity.dismissProgressDialog()
     }
+    var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
+        override fun call(t: Int) {
+            Log.e("result", "加载更多" + t)
+            if (t <length*pageSize) {
+                return
+            }else{
+                pageSize++
+                initData()
+            }
+        }
+    })
 
 
     var titleComponent = TitleComponent()

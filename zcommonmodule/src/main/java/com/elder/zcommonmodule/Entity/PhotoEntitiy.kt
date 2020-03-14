@@ -1,6 +1,7 @@
-package com.cstec.administrator.social.Entity
+package com.elder.zcommonmodule.Entity
 
 import android.databinding.ObservableField
+import com.elder.zcommonmodule.Entity.PhotoBean
 import org.cs.tec.library.binding.command.ViewAdapter.Banner.MultiItemEntity
 import java.io.Serializable
 

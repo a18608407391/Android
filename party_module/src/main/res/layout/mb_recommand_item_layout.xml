@@ -109,8 +109,6 @@
                 android:text="@{@string/rmb + mb_recommand.TICKET_PRICE}"
                 android:textColor="#F5222D"
                 android:textSize="@dimen/s_15" />
-
-
         </LinearLayout>
     </LinearLayout>
 </layout>

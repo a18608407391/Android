@@ -15,7 +15,12 @@
         <item>DEC</item>
     </string-array>
 
-
+    <string-array name="horititle">
+        <item>推荐</item>
+        <item>热门</item>
+        <item>活动里程</item>
+        <item>最新发布</item>
+    </string-array>
 
     <string-array name="team_roly_name">
         <item>骑士</item>

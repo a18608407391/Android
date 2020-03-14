@@ -33,6 +33,7 @@ class MyRestoreActivity  :BaseActivity<ActivityMyRestoreBinding,MyRestoreViewMod
         StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
         return R.layout.activity_my_restore
     }
+
     @Autowired(name = RouterUtils.SocialConfig.SOCIAL_LOCATION)
     @JvmField
     var location: Location? = null
@@ -40,6 +41,7 @@ class MyRestoreActivity  :BaseActivity<ActivityMyRestoreBinding,MyRestoreViewMod
     override fun initViewModel(): MyRestoreViewModel? {
         return ViewModelProviders.of(this)[MyRestoreViewModel::class.java]
     }
+
     override fun initData() {
         restore_swipe.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
         restore_swipe.setOnRefreshListener(mViewModel!!)

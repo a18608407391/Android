@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="subject_data"
+            type="com.cstec.administrator.party_module.SubjectEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="@dimen/d_154"
+            android:layout_height="@dimen/d_96"
+            android:layout_marginLeft="@dimen/d_15">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:LoadClockRoadImg="@{subject_data.FILE_NAME_URL}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_16"
+                android:layout_marginLeft="1.5dp"
+                android:background="@drawable/corner_active_inner_bg"
+                android:gravity="center"
+                android:text="@{subject_data.DAY + @string/day_name}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_10" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:singleLine="true"
+                android:text="@{subject_data.TITLE}"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_15" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="集市"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_10" />
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="舞蹈"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_10" />
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="篝火"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_10" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:text="@{subject_data.ACTIVITY_START}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_12" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:text="@{@string/rmb + subject_data.TICKET_PRICE}"
+                android:textColor="#F5222D"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

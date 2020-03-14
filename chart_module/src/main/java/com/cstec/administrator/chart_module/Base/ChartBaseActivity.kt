@@ -19,15 +19,46 @@ import android.widget.TextView
 import android.widget.ImageButton
 import android.widget.Button
 import android.view.WindowManager
+import android.widget.Toast
 import com.cstec.administrator.chart_module.View.ChatUtils.DialogCreator
 import cn.jpush.im.api.BasicCallback
 import com.cstec.administrator.chart_module.View.SharePreferenceManager
 import com.cstec.administrator.chart_module.View.ChatUtils.FileHelper
 import cn.jpush.im.android.api.event.LoginStateChangeEvent
+import com.alibaba.android.arouter.facade.Postcard
+import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.chart_module.R
+import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
+import com.elder.zcommonmodule.RE_LOGIN
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
+import com.google.gson.Gson
+import com.zk.library.Bus.ServiceEven
+import com.zk.library.Utils.PreferenceUtils
+import com.zk.library.Utils.RouterUtils
+import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Bus.RxBus
 
 
-abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : BaseActivity<V, VM>(), SwipeInteface {
+abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : BaseActivity<V, VM>(), SwipeInteface, HttpInteface.ExitLogin {
+    override fun ExitLoginSuccess(it: String) {
+        RxBus.default?.post("ExiLogin")
+        PreferenceUtils.putBoolean(context, RE_LOGIN, true)
+        var pos = ServiceEven()
+        pos.type = "HomeStop"
+        RxBus.default?.post(pos)
+        ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
+            override fun onArrival(postcard: Postcard?) {
+                finish()
+            }
+        })
+    }
+
+    override fun ExitLoginError(ex: Throwable) {
+        Toast.makeText(context, "退出登录错误", Toast.LENGTH_SHORT).show()
+    }
+
     protected var mWidth: Int = 0
     protected var mHeight: Int = 0
     protected var mDensity: Float = 0.toFloat()
@@ -51,7 +82,6 @@ abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : Base
         mHeight = dm.heightPixels
         mRatio = Math.min(mWidth * 1F / 720, mHeight * 1F / 1280)
         mAvatarSize = (50 * mDensity).toInt()
-
     }
 
     override fun initParam() {
@@ -91,6 +121,11 @@ abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : Base
         return super.onTouchEvent(event)
     }
 
+    fun exit() {
+        HttpRequest.instance.exit = this
+        HttpRequest.instance.exitLogin(HashMap())
+    }
+
     fun onEventMainThread(event: LoginStateChangeEvent) {
         val reason = event.reason
         val myInfo = event.myInfo
@@ -111,8 +146,8 @@ abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : Base
                 val listener = View.OnClickListener { v ->
                     when (v.id) {
                         R.id.jmui_cancel_btn -> {
-//                            val intent = Intent(this@BaseActivity, LoginActivity::class.java)
-//                            startActivity(intent)
+                            exit()
+
                         }
                         R.id.jmui_commit_btn -> JMessageClient.login(SharePreferenceManager.getCachedUsername(), SharePreferenceManager.getCachedPsw(), object : BasicCallback() {
                             override fun gotResult(responseCode: Int, responseMessage: String) {

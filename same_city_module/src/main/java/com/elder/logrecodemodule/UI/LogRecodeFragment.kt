@@ -43,6 +43,7 @@ import com.zk.library.Utils.RouterUtils.PrivateModuleConfig.Companion.USER_INFO
 import kotlinx.android.synthetic.main.fragment_logrecode.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
@@ -96,7 +97,6 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
         PreferenceUtils.putBoolean(context, RE_LOGIN, false)
         PreferenceUtils.putString(context, REAL_CODE, home.findMemberView?.identityCard)
         insertUserInfo(home.findMemberView!!)
-
 
         viewModel?.Staggereditems!!.clear()
         viewModel?.cityPartyitems!!.clear()

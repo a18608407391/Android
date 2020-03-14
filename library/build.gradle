@@ -70,12 +70,12 @@ dependencies {
     }
     api rootProject.ext.dependencies.glide
     annotationProcessor rootProject.ext.dependencies["glide-compiler"]
+    api rootProject.ext.dependencies["lifecycle-extensions"]
+    annotationProcessor rootProject.ext.dependencies["lifecycle-compiler"]
     api rootProject.ext.dependencies.bindingcollectionadapter
     api(rootProject.ext.dependencies["bindingcollectionadapter-recyclerview"]) {
         exclude group: 'com.android.support'
     }
-    api rootProject.ext.dependencies["lifecycle-extensions"]
-    annotationProcessor rootProject.ext.dependencies["lifecycle-compiler"]
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0'
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.0'
     api files('libs/tbs_sdk_thirdapp_v3.6.0.1371_43624_sharewithdownload_withoutGame_obfs_20181106_121046.jar')

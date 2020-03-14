@@ -5,17 +5,23 @@ import android.content.Intent
 import android.databinding.ObservableField
 import android.provider.Settings
 import android.support.annotation.NonNull
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Component.TitleComponent
+import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.zk.library.Bus.ServiceEven
 import com.elder.zcommonmodule.RE_LOGIN
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.USER_PHONE
 import com.elder.zcommonmodule.Utils.SettingUtils
 import com.example.private_module.Activity.SettingActivity
 import com.example.private_module.R
+import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.OSUtil
 import com.zk.library.Utils.PreferenceUtils
@@ -25,7 +31,27 @@ import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Bus.RxBus
 
 
-class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
+class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack, HttpInteface.ExitLogin {
+    override fun ExitLoginSuccess(it: String) {
+        setting.dismissProgressDialog()
+        RxBus.default?.post("ExiLogin")
+        PreferenceUtils.putBoolean(context, RE_LOGIN, true)
+//                context.startService(Intent(context, LowLocationService::class.java).setAction("stop"))
+        var pos = ServiceEven()
+        pos.type = "HomeStop"
+        RxBus.default?.post(pos)
+        ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(setting, object : NavCallback() {
+            override fun onArrival(postcard: Postcard?) {
+                setting.finish()
+            }
+        })
+    }
+
+    override fun ExitLoginError(ex: Throwable) {
+
+        Toast.makeText(context, "退出登录错误", Toast.LENGTH_SHORT).show()
+        setting.dismissProgressDialog()
+    }
 
 
     var visibleType = ObservableField<Int>(0)
@@ -70,19 +96,7 @@ class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack 
                 }
             }
             R.id.exit_login -> {
-                RxBus.default?.post("ExiLogin")
-                PreferenceUtils.putBoolean(context, RE_LOGIN, true)
-
-//                context.startService(Intent(context, LowLocationService::class.java).setAction("stop"))
-                var pos = ServiceEven()
-                pos.type = "HomeStop"
-                RxBus.default?.post(pos)
-
-                ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(setting, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        setting.finish()
-                    }
-                })
+                exit()
             }
             R.id.god_model_request -> {
                 val brand = android.os.Build.BRAND
@@ -121,7 +135,6 @@ class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack 
                                 } catch (e3: Exception) {
                                     showActivity("com.coloros.safecenter")
                                 }
-
                             }
                         }
                     }
@@ -144,21 +157,20 @@ class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack 
                                     "com.huawei.systemmanager.optimize.bootstart.BootStartActivity")
                         }
                     }//                    com.android.settings----com.android.settings.applications.ManageApplicationsActivity
-                    "meizu"->{
+                    "meizu" -> {
                         showActivity("com.meizu.safe")
                     }
-                    "samsung"->{
+                    "samsung" -> {
                         try {
                             showActivity("com.samsung.android.sm_cn")
                         } catch (e: Exception) {
                             showActivity("com.samsung.android.sm")
                         }
                     }
-                    "letv"->{
+                    "letv" -> {
                         showActivity("com.letv.android.letvsafe",
                                 "com.letv.android.letvsafe.AutobootManageActivity");
                     }
-
                 }
             }
             R.id.start_self_request -> {
@@ -183,5 +195,12 @@ class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack 
         intent.component = ComponentName(packageName, activityDir)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
+    }
+
+
+    fun exit() {
+        setting.showProgressDialog("正在退出登录中......")
+        HttpRequest.instance.exit = this
+        HttpRequest.instance.exitLogin(HashMap())
     }
 }

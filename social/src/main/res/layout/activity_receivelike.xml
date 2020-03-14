@@ -37,6 +37,7 @@
                 app:adapter="@{get_like_model.adapter}"
                 app:itemBinding="@{get_like_model.itembinding}"
                 app:items="@{get_like_model.items}"
+                app:onLoadMoreCommand="@{get_like_model.scrollerBinding}"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
 
         </LinearLayout>

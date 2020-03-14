@@ -22,5 +22,11 @@ interface LoginService {
     ): Observable<BaseResponse>
 
 
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/userCenterManage/exitLogin")
+    fun exitLogin(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+
 
 }
