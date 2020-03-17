@@ -12,6 +12,7 @@ import com.cstec.administrator.party_module.Fragment.PartyFragment
 import com.cstec.administrator.party_module.PartyHomeEntity
 import com.cstec.administrator.party_module.PartyHotRecommand
 import com.cstec.administrator.party_module.R
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Inteface.ClockActiveClickListener
 import com.elder.zcommonmodule.Inteface.MBCommandClickListener
 import com.elder.zcommonmodule.Inteface.TitleClickListener
@@ -57,16 +58,12 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     override fun getPartyHomeSuccess(it: String) {
         partyFragment.dismissProgressDialog()
-        Log.e("result","活动数据成功" + it)
         if (it.isNullOrEmpty() || it == "系统繁忙") {
             return
         }
-        Log.e("result","活动数据成功2222" )
         items.removeAll()
         var home = Gson().fromJson<PartyHomeEntity>(it, PartyHomeEntity::class.java)
-        Log.e("result","活动数据成功111" )
         var entity = PartyHotRecommand()
-        Log.e("result","活动数据成功1" )
         home.topActivityList!!.forEach {
             var item = it
             var start = item.ACTIVITY_START!!.split(" ")[0]
@@ -74,7 +71,6 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
             item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE / 1000 + "km"
             entity.list.add(item)
         }
-        Log.e("result","活动数据成功2" )
         var clock = ObservableArrayList<PartyHomeEntity.ClockActive>()
         var mobo = ObservableArrayList<PartyHomeEntity.MBRecommend>()
         var select = ObservableArrayList<PartyHomeEntity.WonderfulActive>()
@@ -89,23 +85,6 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
                 clock.add(item)
             }
         }
-        Log.e("result","活动数据成功3" )
-//        if (!home.motoActivityList.isNullOrEmpty()) {
-//            home.motoActivityList!!.forEach {
-//                var item = it
-//                item.DISTANCE = "时长" + item.DAY + "天  里程" + item.DISTANCE + "km"
-//                mobo.add(it)
-//            }
-//        }
-//        if (!home.selectedActivityList.isNullOrEmpty()) {
-//            home.selectedActivityList!!.forEach {
-//                var item = it
-//                var start = item.ACTIVITY_START!!.split(" ")[0]
-//                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
-//                item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE / 1000 + "km"
-//                select.add(item)
-//            }
-//        }
         hot.set(entity)
         items.insertItem(ObservableField("热门推荐").get())
         items.insertItem(hot.get())
@@ -119,7 +98,6 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     var hot = ObservableField<PartyHotRecommand>()
     override fun getPartyHomeError(it: Throwable) {
-        Log.e("result", "活动数据错误" + it.message)
         partyFragment.dismissProgressDialog()
     }
 
@@ -135,14 +113,29 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     override fun onTitleArrowClick(entity: Any) {
         //处理Arrow跳转
-
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).navigation()
-
+        var title = entity as String
+        var type = 0
+        if (title == "打卡活动") {
+            type = 2
+        } else if (title == "摩旅推荐") {
+            type = 1
+        } else if (title == "精彩活动") {
+            type = 0
+        }
+        ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY).withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
+                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
     }
 
     var hotRecommendCommand = BindingCommand(object : BindingConsumer<PartyHomeEntity.HotRecommend> {
         override fun call(t: PartyHomeEntity.HotRecommend) {
             //处理点击事件
+            if (t.ID == 0) {
+                return
+            }
+            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
+                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                            Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
         }
     })
     lateinit var partyFragment: PartyFragment
@@ -199,5 +192,4 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
             }.map(PartyHomeEntity.WonderfulActive::class.java) { itemBinding, position, item ->
                 itemBinding.set(BR.wonderful, R.layout.wonderful_item_layout).bindExtra(BR.wonderful_listener, wonderfulListener)
             }
-
 }

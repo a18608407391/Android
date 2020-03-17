@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="type_data"
+            type="String"></variable>
+    </data>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_10"
+        android:background="@drawable/gray_circle_12dp"
+        android:gravity="center"
+        android:text="@{type_data}"
+        android:textColor="#A4A4A4"
+        android:textSize="@dimen/s_12">
+
+    </TextView>
+</layout>

@@ -5,6 +5,7 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.design.widget.TabLayout;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +20,12 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel;
+import com.elder.zcommonmodule.ConfigKt;
 import com.elder.zcommonmodule.LocalUtilsKt;
+import com.elder.zcommonmodule.Utils.URLImageParser;
 import com.elder.zcommonmodule.Widget.ExpandableTextView;
+import com.zk.library.Base.BaseApplication;
+import com.zk.library.Utils.PreferenceUtils;
 
 import org.cs.tec.library.Utils.ConvertUtils;
 import org.cs.tec.library.binding.command.BindingCommand;
@@ -91,6 +96,14 @@ public class ViewAdapter {
         Glide.with(img).asBitmap().load(path).apply(options).into(img);
     }
 
+    @BindingAdapter(value = "PartyTopBg")
+    public static void PartyTopBg(ImageView img, String path) {
+        String url = "";
+        url = LocalUtilsKt.getImageUrl(path);
+        int width = BaseApplication.Companion.getInstance().getGetWidthPixels();
+        RequestOptions options = new RequestOptions().error(R.drawable.driver_home_top_bg).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(width, ConvertUtils.Companion.dp2px(375));
+        Glide.with(img).asBitmap().load(url).apply(options).into(img);
+    }
 
     @BindingAdapter("setViewHeight")
     public static void setViewHeight(LinearLayout view, PartyDetailEntity.PartyDetailRoadListItem detailRoadListItem) {
@@ -132,8 +145,6 @@ public class ViewAdapter {
     }
 
 
-
-
     @BindingAdapter({"initPartyTab"})
     public static void initPartyTab(TabLayout tab, final BindingCommand<Integer> command) {
         tab.addTab(tab.newTab().setText("介绍"));
@@ -158,7 +169,7 @@ public class ViewAdapter {
         });
     }
 
-    @BindingAdapter({"initSubjectPartyHori","initSubjectPartyHoriCommand"})
+    @BindingAdapter({"initSubjectPartyHori", "initSubjectPartyHoriCommand"})
     public static void initSubjectPartyHori(LinearLayout layout, ArrayList<HoriTitleEntity> check, final BindingCommand command) {
         layout.removeAllViews();
         for (int i = 0; i < check.size(); i++) {
@@ -175,6 +186,52 @@ public class ViewAdapter {
                 }
             });
             layout.addView(binding.getRoot());
+        }
+        layout.invalidate();
+    }
+
+    @BindingAdapter("setHoriType")
+    public static void setHoriType(LinearLayout linearLayout, ArrayList<String> title) {
+        linearLayout.removeAllViews();
+        for (int i = 0; i < title.size(); i++) {
+            LayoutInflater inflater = (LayoutInflater) linearLayout.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ViewDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.horizontal_type_title_child, linearLayout, false);
+            binding.setVariable(BR.type_data, title.get(i));
+            linearLayout.addView(binding.getRoot());
+        }
+        linearLayout.invalidate();
+    }
+
+    @BindingAdapter("PartyHtmlText")
+    public static void setHtmlText(TextView tv, String html) {
+        if (html == null) {
+            return;
+        }
+        if (html.contains(".jpg")) {
+            tv.setText(Html.fromHtml(html, new URLImageParser(tv), null));
+        } else {
+            tv.setText(Html.fromHtml(html));
+        }
+    }
+
+    @BindingAdapter("PartyMembers")
+    public static void PartyMembers(RelativeLayout layout, ArrayList<String> img) {
+        layout.removeAllViews();
+        for (int i = 0; i <= img.size(); i++) {
+            ImageView imgs = new ImageView(layout.getContext());
+            if (i == img.size()) {
+                imgs.setImageResource(R.drawable.party_more_head);
+            } else {
+                CircleCrop crop = new CircleCrop();
+                RequestOptions options = new RequestOptions().transform(crop).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(240F), ConvertUtils.Companion.dp2px(160F));
+                Glide.with(imgs).asBitmap().load(LocalUtilsKt.getImageUrl(img.get(i))).apply(options).into(imgs);
+            }
+            layout.addView(imgs);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imgs.getLayoutParams();
+            params.setMargins(ConvertUtils.Companion.dp2px(i * 30), 0, 0, 0);
+            params.height = ConvertUtils.Companion.dp2px(36);
+            params.width = ConvertUtils.Companion.dp2px(36);
+            imgs.setLayoutParams(params);
         }
         layout.invalidate();
     }

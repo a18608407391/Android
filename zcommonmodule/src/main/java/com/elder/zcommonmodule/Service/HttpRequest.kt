@@ -731,7 +731,6 @@ class HttpRequest {
 
     fun getHome(map: HashMap<String, String>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
-        Log.e("result", "当前的Token" + token)
         NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.Home(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
             homeResult?.ResultHomeError(ExceptionEngine.handleException(it))
         }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
@@ -1137,6 +1136,72 @@ class HttpRequest {
 
             override fun onError(e: Throwable) {
                 partySearch?.getPartySearchError(e)
+            }
+        })
+    }
+
+    var partySubject: HttpInteface.PartySuject_inf? = null
+    var partyMobo: HttpInteface.PartyMoto_inf? = null
+    var partyClock: HttpInteface.PartyClock_inf? = null
+    fun getPartySubject(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partySubject(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partySubject?.PartySubjectError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partySubject?.PartySubjectSucccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partySubject?.PartySubjectError(e)
+            }
+        })
+    }
+
+    fun getPartyMobo(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyMoto(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partyMobo?.PartyMotoError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partyMobo?.PartyMotoSucccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partyMobo?.PartyMotoError(e)
+            }
+        })
+    }
+
+    fun getPartyClock(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyClock(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partyClock?.PartyClockError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partyClock?.PartyClockSucccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partyClock?.PartyClockError(e)
             }
         })
     }

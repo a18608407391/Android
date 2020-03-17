@@ -19,10 +19,10 @@ class PartyDetailEntity : Serializable {
     var DESTINATION: String? = null
     var PATH_POINT: String? = null
     var ACTIVITY_INTENSITY = 0
-
     var EQUIPMENT_REQUIREMENTS = 0
-
     var DETAILS_ACTIVITIES: String? = null
+    var ACTIVITY_NOTICE: String? = null
+
     var DACT_Y_AXIS: Double = 0.0
     var DACT_X_AXIS: Double = 0.0
     var SUBORDINATE_CITY: String? = null
@@ -33,9 +33,9 @@ class PartyDetailEntity : Serializable {
     var ACTIVITY_START: String? = null
     var ACTIVITY_STOP: String? = null
     var ACTIVITY_END: String? = null
-    var DAY = 0
+    var DAY :String   = ""
     var TICKET_PRICE: String? = null
-    var TICKET_PRICE_DESCRIBE: String? = null
+    var TICKET_PRICE_DESCRIBE: ArrayList<Describe>? = null
     var NUMBER_LIMITATION: String? = null
     var SHOW_NUMBER: String? = null
     var SPONSOR_UNIT: String? = null
@@ -45,16 +45,24 @@ class PartyDetailEntity : Serializable {
     var RIDING_OFFICER_MEMBER_ID: String? = null
     var NAME: String? = null
     var HEAD_IMG_FILE: String? = null
+    var FILE_NAME_URL :String ? = null
     var LABEL: String? = null
     var X_AXIS: Double = 0.0
     var Y_AXIS: Double = 0.0
     var DISTANCE: String? = null
-    var MAN_COUNT = 0
+    var MAN_COUNT :String ? = null
     var SQRTVALUE = 0
     var SQRTVALUE1 = 0
     var SIGN_UP: ArrayList<SignUp>? = null
-    var SCHEDULE: SCHEDULES? = null
+    var SCHEDULE: ArrayList<SCHEDULES>? = null
+    var ACTIVITY_STATUS  = 0
 
+
+    class Describe {
+        var NAME_INVOICE: String? = null
+        var TICKET_PRICE: String? = null
+        var DESCRIBE: String? = null
+    }
 
     class SignUp {
         var HEAD_IMG_FILE: String? = null
@@ -77,6 +85,7 @@ class PartyDetailEntity : Serializable {
         var UPDATE_NAME: String? = null
         var UPDATE_DATE: String? = null
         var INTRODUCE: String? = null
+        var HISTORY :ArrayList<History> ? = null
         var ROUTE: ArrayList<PartyDetailRoadListItem>? = null
     }
 

@@ -42,7 +42,7 @@ class RouterUtils() {
             const val Chat_FromChatActivity = "/chat/fromchatactivity"
             const val Chat_CONV_TYPE = "/chat/conv_type"
             const val Chat_Room_ID = "/chat/roomId"
-            const val Chat_Room_Name =  "/chat/roomName"
+            const val Chat_Room_Name = "/chat/roomName"
             const val Chat_GROUP_NAME = "/chat/groupName"
         }
     }
@@ -209,10 +209,12 @@ class RouterUtils() {
     class PartyConfig {
         companion object {
             const val PARTY_MAIN = "/party/main"
-            const val PARTY_DETAIL= "/party/detail"
+            const val SUBJECT_PARTY = "/party/subject"
+            const val PARTY_DETAIL = "/party/detail"
             const val PARTY_ID = "/party/id"
             const val PARTY_CITY = "/party/city"
             const val PARTY_LOCATION = "/party/location"
+            const val Party_SELECT_TYPE = "/party/select_type"
         }
 
     }

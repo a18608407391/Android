@@ -11,13 +11,13 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:orientation="vertical">
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/d_15"
-            android:layout_weight="1"
             android:scrollbars="horizontal">
 
             <LinearLayout
@@ -30,7 +30,13 @@
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"
+            app:adapter="@{subject_item_model.adapter}"
+            android:layout_marginTop="@dimen/d_15"
+            app:itemBinding="@{subject_item_model.itemBinding}"
+            app:items="@{subject_item_model.items}"
+            app:onLoadMoreCommand="@{subject_item_model.scrollerBinding}"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 </layout>

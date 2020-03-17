@@ -37,4 +37,20 @@ interface PartyService {
     @POST("AmoskiActivity/appRidingGuideManage/searchActivityList")
     fun partySearch(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>
+
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/appRidingGuideManage/querySubjectActivityList")
+    fun partySubject(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/appRidingGuideManage/queryMotoActivityList")
+    fun partyMoto(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/appRidingGuideManage/queryClockActivityList")
+    fun partyClock(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
 }

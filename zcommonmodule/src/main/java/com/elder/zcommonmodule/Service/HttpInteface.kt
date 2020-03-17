@@ -255,4 +255,17 @@ class HttpInteface {
         fun getPartySearchSuccess(it: String)
         fun getPartySearchError(it: Throwable)
     }
+
+    interface PartySuject_inf {
+        fun PartySubjectSucccess(it: String)
+        fun PartySubjectError(it: Throwable)
+    }
+    interface PartyMoto_inf {
+        fun PartyMotoSucccess(it: String)
+        fun PartyMotoError(it: Throwable)
+    }
+    interface PartyClock_inf {
+        fun PartyClockSucccess(it: String)
+        fun PartyClockError(it: Throwable)
+    }
 }

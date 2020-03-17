@@ -9,4 +9,8 @@ class HoriTitleEntity : Serializable {
 
     var check = false
 
+    constructor(title:String,check:Boolean){
+        this.title = title
+        this.check = check
+    }
 }

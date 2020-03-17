@@ -11,8 +11,12 @@
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginLeft="@dimen/d_10"
+        android:padding="@dimen/d_05"
         android:background="@{hori_data.check?@drawable/green_circle_17dp:@drawable/gray_circle_17dp}"
+        android:textColor="@{hori_data.check?@color/white:@color/black_12}"
         android:text="@{hori_data.title}">
-
     </TextView>
+
 </layout>

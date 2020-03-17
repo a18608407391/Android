@@ -14,16 +14,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="大沙发沙发沙发沙发是" />
-
-
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:adapter="@{detail_introduce.adapter}"
+            android:nestedScrollingEnabled="true"
             app:itemBinding="@{detail_introduce.itemBinding}"
             app:items="@{detail_introduce.items}"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -15,7 +15,8 @@
         <com.elder.zcommonmodule.Widget.RatioImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY" />
+            android:scaleType="fitXY"
+            app:PartyTopBg="@{data.data.FILE_NAME_URL}" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -81,7 +82,7 @@
                         android:layout_width="@dimen/d_75"
                         android:layout_height="@dimen/d_75"
                         android:layout_centerHorizontal="true"
-                        android:src="@drawable/default_avatar" />
+                        app:setPartyAvatar="@{data.data.HEAD_IMG_FILE}" />
 
                     <TextView
                         android:id="@+id/team_name"
@@ -104,13 +105,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="阿诺"
+                    android:text="@{data.data.NAME}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_15" />
             </LinearLayout>
-
         </RelativeLayout>
-
-
     </RelativeLayout>
 </layout>

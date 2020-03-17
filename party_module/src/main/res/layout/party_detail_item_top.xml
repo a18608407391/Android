@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-            name="party_detail_item_top"
-            type="com.cstec.administrator.party_module.PartyDetailEntity.PartyDetailPartOne" />
+            name="data"
+            type="com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,63 +13,31 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/d_15"
         android:background="@color/white"
-        android:orientation="vertical"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:orientation="vertical"
         android:paddingTop="@dimen/d_36">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="英国一地8天轻奢深度游，经典线路"
+            android:text="@{data.data.TITLE}"
             android:textColor="@color/black_12"
             android:textSize="@dimen/s_18"></TextView>
 
-        <LinearLayout
+
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d_05"
-            android:orientation="horizontal">
+            android:scrollbars="none">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/d_24"
-                android:background="@drawable/round_gray"
-                android:gravity="center"
-                android:padding="@dimen/d_05"
-                android:text="8天7晚"
-                android:textSize="@dimen/s_12"></TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/d_24"
-                android:layout_marginLeft="@dimen/d_10"
-                android:background="@drawable/round_gray"
-                android:gravity="center"
-                android:padding="@dimen/d_05"
-                android:text="探险"
-                android:textSize="@dimen/s_12"></TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/d_24"
-                android:layout_marginLeft="@dimen/d_10"
-                android:background="@drawable/round_gray"
-                android:gravity="center"
-                android:padding="@dimen/d_05"
-                android:text="涉外"
-                android:textSize="@dimen/s_12"></TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/d_24"
-                android:layout_marginLeft="@dimen/d_10"
-                android:background="@drawable/round_gray"
-                android:gravity="center"
-                android:padding="@dimen/d_05"
-                android:text="精英团"
-                android:textSize="@dimen/s_12"></TextView>
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:orientation="horizontal"
+                app:setHoriType="@{data.typeData}"></LinearLayout>
+        </HorizontalScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,7 +58,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4"
+                    android:text="@{data.data.DAY}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>
@@ -118,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="13700"
+                    android:text="@{data.data.DISTANCE}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>
@@ -146,7 +114,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3600"
+                    android:text="@{data.data.TICKET_PRICE}"
                     android:textColor="#F5222D"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>
@@ -164,7 +132,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_100"
             android:layout_marginTop="@dimen/d_20"
-            android:scrollbars="none">
+            android:scrollbars="none"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -178,6 +147,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_44"
             android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
+            android:background="@drawable/path_point_bg"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -187,7 +158,7 @@
                 android:layout_marginLeft="@dimen/d_15"
                 android:drawableLeft="@drawable/white_location"
                 android:drawablePadding="@dimen/d_10"
-                android:text="长沙 - 武汉 - 郑州 - 石家庄"
+                android:text="@{data.data.PATH_POINT}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/s_14"></TextView>
 
@@ -212,35 +183,33 @@
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/default_avatar"></ImageView>
 
-
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/d_16"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/little_tv_color_corner"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/d_05"
+                    android:paddingRight="@dimen/d_05"
                     android:text="发起人"
                     android:textColor="@color/white"
                     android:textSize="@dimen/s_10"></TextView>
             </RelativeLayout>
 
 
-            <HorizontalScrollView
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
                 android:layout_marginRight="@dimen/d_10"
-                android:layout_weight="1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"></LinearLayout>
-            </HorizontalScrollView>
+                android:layout_weight="1"
+                app:PartyMembers="@{data.members}"></RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5652"
+                android:text="@{data.data.MAN_COUNT}"
                 android:textColor="#3FC5C9"
                 android:textSize="@dimen/s_12"
                 android:textStyle="bold"></TextView>
@@ -279,14 +248,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="集合地：长沙市 | 黑麋峰"
+                android:text="@{@string/resort + data.data.COLLECTION_PLACE }"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_14"
                 android:textStyle="bold"></TextView>
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></ImageView>
+                android:layout_height="wrap_content"
+                android:src="@drawable/navi_gray_icon"></ImageView>
         </LinearLayout>
 
         <View
@@ -306,14 +276,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="2019-8-24 20:00 至9-1"
+                android:text="@{data.restoreTime}"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_14"
                 android:textStyle="bold"></TextView>
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></ImageView>
+                android:layout_height="wrap_content"
+                android:src="@drawable/date_gray_icon"></ImageView>
         </LinearLayout>
 
         <View

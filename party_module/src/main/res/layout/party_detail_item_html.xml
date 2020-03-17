@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="party_detail_item_html"
-            type="String" />
+            type="com.cstec.administrator.party_module.PartyDetailEntity" />
     </data>
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ></TextView>
+        app:PartyHtmlText="@{party_detail_item_html.DETAILS_ACTIVITIES}"></TextView>
 </layout>

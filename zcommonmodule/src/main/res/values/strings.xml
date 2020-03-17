@@ -66,7 +66,7 @@
     <string name="verifyCodeError">验证码错误！</string>
     <string name="change_password">修改密码</string>
     <string name="set_new_password">设置新密码</string>
-
+    <string name="resort">集合地：</string>
 
 
     <string name="driver">骑行</string>

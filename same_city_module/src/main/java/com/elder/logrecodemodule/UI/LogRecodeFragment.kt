@@ -77,6 +77,9 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
 
     var home: HomeEntitiy.HomeBean? = null
     override fun ResultHomeSuccess(it: String) {
+        if (it.isNullOrEmpty() || it == "null") {
+            return
+        }
         if (dialogs != null) {
             dialogs!!.dismiss()
         }
@@ -97,7 +100,6 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
         PreferenceUtils.putBoolean(context, RE_LOGIN, false)
         PreferenceUtils.putString(context, REAL_CODE, home.findMemberView?.identityCard)
         insertUserInfo(home.findMemberView!!)
-
         viewModel?.Staggereditems!!.clear()
         viewModel?.cityPartyitems!!.clear()
         viewModel?.cityPartyitems!!.clear()
@@ -117,7 +119,7 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
         if (home.findMemberView?.tel.isNullOrEmpty()) {
             var tele = TelephoneBinder.from(this@LogRecodeFragment)
             var fr = tele.show()
-             fr.functionDismiss = viewModel
+            fr.functionDismiss = viewModel
         } else {
             JMessageClient.login(home.findMemberView?.tel, "0123456789", object : BasicCallback() {
                 override fun gotResult(responseCode: Int, responseMessage: String?) {
