@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_05"
                 android:gravity="center_horizontal"
-                android:text="07:00"
+                android:text="@{party_detail_item_list.START_TIME}"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_12"></TextView>
 
@@ -78,7 +78,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="骑摩托车"
+                        android:text="@{party_detail_item_list.PATH_POINT_NAME}"
                         android:textColor="@color/black_12"
                         android:textSize="@dimen/s_15"
                         android:textStyle="bold"></TextView>
@@ -87,7 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/d_10"
-                        android:text="时长约4小时30分钟"
+                        android:text="@{party_detail_item_list.TIME_REQUIRED}"
                         android:textColor="#A4A4A4"
                         android:textSize="@dimen/s_12"></TextView>
 
@@ -97,9 +97,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/d_85"
+                    android:layout_marginTop="@dimen/d_8"
+                    android:visibility="@{party_detail_item_list.IMAGE1.isEmpty?View.GONE:View.VISIBLE}"
                     android:orientation="horizontal">
-
-
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -117,11 +117,12 @@
                 </LinearLayout>
 
 
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/d_10"
-                    android:text="07:00左右长沙火车站(或11:00左右张家界火车站)集中，07:30左右乘车出发。"
+                    android:text="@{party_detail_item_list.ADDRESS}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_14"></TextView>
 

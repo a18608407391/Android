@@ -14,6 +14,9 @@ import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
 
 class PartyDetailIntroduceItemModel : BasePartyItemModel() {
 
+
+    var scrollEnable = ObservableField<Boolean>(true)
+
     var adapter = BindingRecyclerViewAdapter<Any>()
 
     var items = MergeObservableList<Any>()
@@ -45,32 +48,39 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
 
     fun initData() {
         var model = viewModel as PartyDetailViewModel
-        Log.e("result", "加载数据1")
-        var j = PartyDetailEntity.PartyDetailRoadListItem()
-        j.type = 0
-        var i = PartyDetailEntity.PartyDetailRoadListItem()
-        i.type = 1
-        var k = PartyDetailEntity.PartyDetailRoadListItem()
-        k.type = 1
-        k.itemtype = 1
-        var G = PartyDetailEntity.PartyDetailRoadListItem()
-        G.type = 1
-        G.itemtype = 2
-        list.add(j)
+        //数据是个坑
+        model.data.get()?.SCHEDULE!!.forEachIndexed { index, schedules ->
+            //添加起点
+            var j = PartyDetailEntity.PartyDetailRoadListItem()
+            j.type = 0
+            if (index < 10) {
+                j.DAY = "0" + (index + 1)
+            }else{
+                j.DAY = (index+1).toString()
+            }
+            j.PATH_POINT_NAME = schedules.PLACE_DEPARTURE
+            j.ADDRESS = schedules.DESTINATION
 
-        list.add(i)
-        list.add(k)
-        list.add(G)
-        list.add(G)
-        list.add(G)
-        list.add(G)
+            list.add(j)
+            schedules.HISTORY?.forEachIndexed { index1, partyDetailRoadListItem ->
+                var k = PartyDetailEntity.PartyDetailRoadListItem()
+                k.type = 1
+                if (index1 == schedules.HISTORY!!.size - 1) {
+                    k.itemtype = 2
+                } else {
+                    k.itemtype = 1
+                }
+                k.PATH_POINT_NAME = partyDetailRoadListItem.INTRODUCE
+                k.ADDRESS = partyDetailRoadListItem.INTRODUCE_TYPE
+                k.TIME_REQUIRED = partyDetailRoadListItem.ABOUT_TIME
+                k.IMAGE1 = partyDetailRoadListItem.IMAGES
+                k.START_TIME = partyDetailRoadListItem.START_TIME!!.split(":")[0] + ":" + partyDetailRoadListItem.START_TIME!!.split(":")[1]
+                list.add(k)
+            }
+        }
         var cost = PartyDetailEntity.Cost()
         items.insertItem("活动详情")
-        if(model.data.get()==null){
-        }else{
-            items.insertItem(model.data.get()!!)
-        }
-
+        items.insertItem(model.data.get()!!)
         items.insertItem("行程路线")
         items.insertList(list)
         items.insertItem("费用说明")

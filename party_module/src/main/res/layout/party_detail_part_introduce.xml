@@ -18,15 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:adapter="@{detail_introduce.adapter}"
-            android:nestedScrollingEnabled="true"
             app:itemBinding="@{detail_introduce.itemBinding}"
             app:items="@{detail_introduce.items}"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
-            app:spanCount="1">
-
-        </android.support.v7.widget.RecyclerView>
-
-
+            app:spanCount="1"></android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
 

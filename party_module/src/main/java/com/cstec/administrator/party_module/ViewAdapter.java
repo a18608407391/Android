@@ -5,6 +5,7 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.design.widget.TabLayout;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -234,5 +235,11 @@ public class ViewAdapter {
             imgs.setLayoutParams(params);
         }
         layout.invalidate();
+    }
+
+
+    @BindingAdapter("setNestScroller")
+    public static void setNestScroller(RecyclerView recyclerView, Boolean enable) {
+        recyclerView.setNestedScrollingEnabled(enable);
     }
 }

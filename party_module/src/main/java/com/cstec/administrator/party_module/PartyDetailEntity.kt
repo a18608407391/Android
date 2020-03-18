@@ -22,7 +22,6 @@ class PartyDetailEntity : Serializable {
     var EQUIPMENT_REQUIREMENTS = 0
     var DETAILS_ACTIVITIES: String? = null
     var ACTIVITY_NOTICE: String? = null
-
     var DACT_Y_AXIS: Double = 0.0
     var DACT_X_AXIS: Double = 0.0
     var SUBORDINATE_CITY: String? = null
@@ -33,7 +32,7 @@ class PartyDetailEntity : Serializable {
     var ACTIVITY_START: String? = null
     var ACTIVITY_STOP: String? = null
     var ACTIVITY_END: String? = null
-    var DAY :String   = ""
+    var DAY: String = ""
     var TICKET_PRICE: String? = null
     var TICKET_PRICE_DESCRIBE: ArrayList<Describe>? = null
     var NUMBER_LIMITATION: String? = null
@@ -45,17 +44,17 @@ class PartyDetailEntity : Serializable {
     var RIDING_OFFICER_MEMBER_ID: String? = null
     var NAME: String? = null
     var HEAD_IMG_FILE: String? = null
-    var FILE_NAME_URL :String ? = null
+    var FILE_NAME_URL: String? = null
     var LABEL: String? = null
     var X_AXIS: Double = 0.0
     var Y_AXIS: Double = 0.0
     var DISTANCE: String? = null
-    var MAN_COUNT :String ? = null
+    var MAN_COUNT: String? = null
     var SQRTVALUE = 0
     var SQRTVALUE1 = 0
     var SIGN_UP: ArrayList<SignUp>? = null
     var SCHEDULE: ArrayList<SCHEDULES>? = null
-    var ACTIVITY_STATUS  = 0
+    var ACTIVITY_STATUS = 0
 
 
     class Describe {
@@ -85,7 +84,7 @@ class PartyDetailEntity : Serializable {
         var UPDATE_NAME: String? = null
         var UPDATE_DATE: String? = null
         var INTRODUCE: String? = null
-        var HISTORY :ArrayList<History> ? = null
+        var HISTORY: ArrayList<History>? = null
         var ROUTE: ArrayList<PartyDetailRoadListItem>? = null
     }
 
@@ -94,6 +93,7 @@ class PartyDetailEntity : Serializable {
         //type = 0  其实部分  type =1 内容头接口部分  type =2 内容尾接口部分
         var type = 0
         var itemtype = 0
+        var DAY :String  = ""
         var ORDER_ID = 0
         var Y_AXIS: Double = 0.0
         var X_AXIS: Double = 0.0
@@ -103,8 +103,8 @@ class PartyDetailEntity : Serializable {
         var ADDRESS: String? = null
         var DESCRIBE: String? = null
         var ROUTE_IMAGES: ArrayList<FilePath>? = null
-
-
+        var START_TIME :String ? = null
+        var IMAGE1 :ArrayList<String> ? = null
     }
 
     class Cost {
@@ -117,7 +117,10 @@ class PartyDetailEntity : Serializable {
         var START_TIME: String? = null
         var STOP_TIME: String? = null
         var INTRODUCE: String? = null
+        var INTRODUCE_TYPE: String? = null
+        var ABOUT_TIME: String? = null
         var INSPECT_TICKET: String? = null
+        var IMAGES: ArrayList<String>? = null
     }
 
     class FilePath : Serializable {

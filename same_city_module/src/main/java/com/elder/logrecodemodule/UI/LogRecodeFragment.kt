@@ -132,11 +132,9 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
                 }
             })
         }
-
     }
 
     override fun ResultHomeError(it: Throwable) {
-
         if (dialogs != null) {
             dialogs!!.dismiss()
         }
@@ -145,7 +143,8 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
     var curOffset = 0
     override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
         curOffset = p1
-        if (p1 >= -ConvertUtils.dp2px(122F)) {
+//        Log.e("result", "offset" + ConvertUtils.px2dp(Math.abs(p1) * 1F))
+        if (p1 >= -ConvertUtils.dp2px(30F)) {
             Utils.setStatusTextColor(false, activity)
             viewModel?.VisField!!.set(false)
             log_swipe.isEnabled = p1 >= 0

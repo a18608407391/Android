@@ -49,7 +49,6 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
                 } else {
                     members.add(it.HEAD_IMG_FILE)
                 }
-
             }
         }
         restoreTime.set(entity.COLLECTION_TIME!!.split(" ")[0])
@@ -83,6 +82,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
 
     var tabCommand = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
+
             if (t == 0) {
 //                var model = items[0] as PartyDetailIntroduceItemModel
 //                model.initData()

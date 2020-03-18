@@ -17,8 +17,6 @@
     </style>
 
     <style name="Splash" parent="android:Theme.Black.NoTitleBar.Fullscreen">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="roomRatingBar" parent="@android:style/Widget.RatingBar">
