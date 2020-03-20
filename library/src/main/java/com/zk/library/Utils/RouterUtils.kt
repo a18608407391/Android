@@ -212,9 +212,13 @@ class RouterUtils() {
             const val SUBJECT_PARTY = "/party/subject"
             const val PARTY_DETAIL = "/party/detail"
             const val PARTY_ID = "/party/id"
+            const val PARTY_CODE = "/party/code"
             const val PARTY_CITY = "/party/city"
             const val PARTY_LOCATION = "/party/location"
             const val Party_SELECT_TYPE = "/party/select_type"
+            const val PARTY_CLOCK_DETAIL = "/party/clock_detail"
+            const val PARTY_SUBJECT_DETAIL = "/party/subject_detail"
+            const val SEARCH_PARTY = "/party/search"
         }
 
     }

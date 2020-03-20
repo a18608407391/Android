@@ -5,7 +5,7 @@
 
         <variable
             name="data"
-            type="com.cstec.administrator.party_module.ViewModel.PartyClockDetailViewModel"></variable>
+            type="com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel"></variable>
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,20 +16,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
-            app:PartyTopBg="@{data.data.FILE_NAME_URL}"
-            app:ratio="1" />
+            app:ratio="1"
+            app:PartyTopBg="@{data.data.FILE_NAME_URL}" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_50">
 
             <ImageView
-                android:id="@+id/detail_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/detail_arrow"
+                android:onClick="@{data::onClick}"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/d_15"
-                android:onClick="@{data::onClick}"
                 android:src="@drawable/arrow_black"></ImageView>
 
             <ImageView

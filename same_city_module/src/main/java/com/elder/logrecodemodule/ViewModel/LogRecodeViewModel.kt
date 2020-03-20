@@ -100,7 +100,6 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
                     replaceName = ""
                     return
                 }
-
                 search(city!!)
                 replaceCount++
             }
@@ -272,21 +271,16 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
         mapFragment.loadDatas(location!!)
         city?.setLocatedCity(LocatedCity(loc, provice, cityCode))
     }
-
     var week = ObservableField<String>()
     var tem = ObservableField<String>()
     var loacation = ObservableField<String>()
     var city: CityPicker? = null
-
-
     fun search(data: City) {
         var geocodeSearch = GeocodeSearch(mapFragment.context)
         geocodeSearch.setOnGeocodeSearchListener(this@LogRecodeViewModel)
         var geocodeQuery = GeocodeQuery(data!!.name, data.pinyin)
         geocodeSearch.getFromLocationNameAsyn(geocodeQuery)
     }
-
-
     fun initCity() {
         city = CityPicker.from(mapFragment).setLocatedCity(null).setOnPickListener(object : OnPickListener {
             override fun onPick(position: Int, data: City?) {
@@ -406,9 +400,7 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
 
 //                ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SAME_CITY_LOCATION_AC).navigation()
             }
-
         }
-
     }
 
 //    var entity = entity as DynamicsCategoryEntity.Dynamics
@@ -499,31 +491,16 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
             ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data).navigation(mapFragment.activity, REQUEST_LOAD_ROADBOOK)
         }
     }
-
     var onIngAdapter = BindingRecyclerViewAdapter<OningData>()
-
     var onIngitemBinding = ItemBinding.of<OningData>(BR.oningData, R.layout.log_roadbook_oning_layout).bindExtra(BR.log_road_model, this@LogRecodeViewModel)
-
     var onIngitems = ObservableArrayList<OningData>()
-
-
     var StaggeredAdapter = BindingRecyclerViewAdapter<HotData>()
-
     var StaggereditemBinding = ItemBinding.of<HotData>(BR.straggerdata, R.layout.stragger_layout).bindExtra(BR.log_road_model, this@LogRecodeViewModel)
-
     var Staggereditems = ObservableArrayList<HotData>()
-
-
     var PartyAdapter = BindingRecyclerViewAdapter<PartyEntity>()
-
     var PartyitemBinding = ItemBinding.of<PartyEntity>(BR.partyData, R.layout.same_city_partyitem_layout).bindExtra(BR.log_road_model, this@LogRecodeViewModel)
-
-    var Partyitems = ObservableArrayList<PartyEntity>().apply {
-
-    }
-
+    var Partyitems = ObservableArrayList<PartyEntity>().apply {}
     var cityPartyAdapter = BindingRecyclerViewAdapter<CountryMemberEntity>()
-
     var cityPartyitems = ObservableArrayList<CountryMemberEntity>().apply {
     }
     var listener: RankingClickListener = this

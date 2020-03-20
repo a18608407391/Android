@@ -1205,4 +1205,50 @@ class HttpRequest {
             }
         })
     }
+
+    var partyAlarm: HttpInteface.PartyAlbum_inf? = null
+
+    fun getPartyAlumb(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyAlbum(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partyAlarm?.PartyAlbumError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partyAlarm?.PartyAlbumSucccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partyAlarm?.PartyAlbumError(e)
+            }
+        })
+    }
+
+
+    var partyRanking: HttpInteface.PartyAlbum_inf? = null
+    fun getPartyRanking(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyRanking(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partyRanking?.PartyAlbumError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partyRanking?.PartyAlbumSucccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partyRanking?.PartyAlbumError(e)
+            }
+        })
+    }
 }

@@ -2,6 +2,7 @@ package com.cstec.administrator.party_module.ViewModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.support.design.widget.TabLayout
 import android.view.View
 import com.cstec.administrator.party_module.Activity.PartyDetailActivty
 import com.cstec.administrator.party_module.BR
@@ -21,7 +22,22 @@ import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.PartyDetail {
+class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.PartyDetail, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab> {
+    override fun onTabReselected(p0: TabLayout.Tab?) {
+    }
+
+    override fun onTabUnselected(p0: TabLayout.Tab?) {
+    }
+
+    override fun onTabSelected(p0: TabLayout.Tab?) {
+        var t = p0?.position
+        if (t == 0) {
+            initData()
+        } else if (t == 1) {
+            var model = items[1] as PartyDetailPhotoItemModel
+            model.initData(true)
+        }
+    }
 
     var data = ObservableField<PartyDetailEntity>()
 
@@ -33,7 +49,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
 
 
     override fun getPartyDetailSuccess(it: String) {
-        if(it.isNullOrEmpty()){
+        if (it.isNullOrEmpty()) {
             return
         }
         var entity = Gson().fromJson<PartyDetailEntity>(it, PartyDetailEntity::class.java)
@@ -68,7 +84,8 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
     lateinit var partyDetailActivty: PartyDetailActivty
     fun inject(partyDetailActivty: PartyDetailActivty) {
         this.partyDetailActivty = partyDetailActivty
-        initData()
+        items.add(PartyDetailIntroduceItemModel().ItemViewModel(this@PartyDetailViewModel))
+        items.add(PartyDetailPhotoItemModel().setPartyId(partyDetailActivty.code).ItemViewModel(this@PartyDetailViewModel))
     }
 
     private fun initData() {
@@ -82,18 +99,18 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
 
     var tabCommand = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-
-            if (t == 0) {
-//                var model = items[0] as PartyDetailIntroduceItemModel
-//                model.initData()
-            } else {
-
-            }
         }
     })
 
     fun onClick(view: View) {
-
+        when (view.id) {
+            R.id.detail_arrow -> {
+                finish()
+            }
+            R.id.arrow_party -> {
+                finish()
+            }
+        }
     }
 
     var titlelistener: TitleClickListener = this
@@ -107,8 +124,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
     var adapter = BindingViewPagerAdapter<BasePartyItemModel>()
 
     var items = ObservableArrayList<BasePartyItemModel>().apply {
-        this.add(PartyDetailIntroduceItemModel().ItemViewModel(this@PartyDetailViewModel))
-        this.add(PartyDetailPhotoItemModel().ItemViewModel(this@PartyDetailViewModel))
+
     }
     var itemBinding = ItemBinding.of<BasePartyItemModel> { itemBinding, position, item ->
         when (position) {

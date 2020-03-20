@@ -69,7 +69,7 @@ public class ViewAdapter {
     @BindingAdapter("LoadClockRoadImg")
     public static void LoadClockRoadImg(ImageView img, String url) {
         String s = LocalUtilsKt.getRoadImgUrl(url);
-        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(8));
         RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(154), ConvertUtils.Companion.dp2px(98));
         Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
     }
@@ -118,26 +118,32 @@ public class ViewAdapter {
     }
 
 
+    @BindingAdapter("initHtml")
+    public static void initHtml(TextView tv, String str) {
+        tv.setText(Html.fromHtml(str));
+    }
+
+
     @BindingAdapter("initStrText")
     public static void initStrText(RelativeLayout layout, String value) {
-        final ExpandableTextView text = layout.findViewById(R.id.party_ex);
-        text.setText(value);
-        final TextView visible = layout.findViewById(R.id.party_visible);
-        visible.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (text.isCollapsed()) {
-                    text.setCollapsed(false);
-                    visible.setBackground(visible.getContext().getDrawable(R.color.trans));
-                    visible.setText("收起");
-                } else {
-                    visible.setBackground(visible.getContext().getDrawable(R.drawable.gradient_bg));
-                    text.setCollapsed(true);
-                    visible.setText("展开更多");
-                }
-                text.change();
-            }
-        });
+//        final ExpandableTextView text = layout.findViewById(R.id.party_ex);
+//        text.setText(value);
+//        final TextView visible = layout.findViewById(R.id.party_visible);
+//        visible.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (text.isCollapsed()) {
+//                    text.setCollapsed(false);
+//                    visible.setBackground(visible.getContext().getDrawable(R.color.trans));
+//                    visible.setText("收起");
+//                } else {
+//                    visible.setBackground(visible.getContext().getDrawable(R.drawable.gradient_bg));
+//                    text.setCollapsed(true);
+//                    visible.setText("展开更多");
+//                }
+//                text.change();
+//            }
+//        });
 //        textView.setText(value);
 //        textView.mStateTv.setVisibility(View.GONE);
 //        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
@@ -203,6 +209,19 @@ public class ViewAdapter {
         linearLayout.invalidate();
     }
 
+    @BindingAdapter("setHoriLovelyData")
+    public static void setHoriLovelyData(LinearLayout linearLayout, ArrayList<String> title) {
+        linearLayout.removeAllViews();
+        for (int i = 0; i < title.size(); i++) {
+            LayoutInflater inflater = (LayoutInflater) linearLayout.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ViewDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.horizontal_type_title_child, linearLayout, false);
+            binding.setVariable(BR.type_data, title.get(i));
+            linearLayout.addView(binding.getRoot());
+        }
+        linearLayout.invalidate();
+    }
+
+
     @BindingAdapter("PartyHtmlText")
     public static void setHtmlText(TextView tv, String html) {
         if (html == null) {
@@ -241,5 +260,53 @@ public class ViewAdapter {
     @BindingAdapter("setNestScroller")
     public static void setNestScroller(RecyclerView recyclerView, Boolean enable) {
         recyclerView.setNestedScrollingEnabled(enable);
+    }
+
+    @BindingAdapter("LoadItemImge")
+    public static void LoadItemImge(ImageView img, String url) {
+        if (url == null || url.isEmpty()) {
+            img.setVisibility(View.GONE);
+        }
+        RequestOptions options = new RequestOptions().error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(240F), ConvertUtils.Companion.dp2px(160F));
+        Glide.with(img).asBitmap().load(url).apply(options).into(img);
+    }
+
+
+    @BindingAdapter("setNumberImage")
+    public static void setNumberImage(TextView tv, int position) {
+        if (tv.getTag() == null) {
+            tv.setTag(position);
+        } else {
+            if ((int) tv.getTag() != position) {
+                tv.setTag(position);
+            }
+        }
+        if (position == 0) {
+            tv.setCompoundDrawablesWithIntrinsicBounds(tv.getContext().getResources().getDrawable(R.drawable.number_one),
+                    null, null, null);
+            tv.setText("");
+        } else if (position == 1) {
+            tv.setCompoundDrawablesWithIntrinsicBounds(tv.getContext().getResources().getDrawable(R.drawable.number_two),
+                    null, null, null);
+            tv.setText("");
+        } else if (position == 2) {
+            tv.setCompoundDrawablesWithIntrinsicBounds(tv.getContext().getResources().getDrawable(R.drawable.number_three),
+                    null, null, null);
+            tv.setText("");
+        } else {
+            tv.setCompoundDrawablesWithIntrinsicBounds(null,
+                    null, null, null);
+            tv.setText("" + (position + 1));
+        }
+    }
+
+    @BindingAdapter("DistanceInit")
+    public static void DistanceInit(TextView view, String listener) {
+        if (listener == null || listener.isEmpty()) {
+            view.setText("0");
+            return;
+        }
+        Double d = Double.valueOf(listener);
+        view.setText(((d.intValue() / 1000)) + "");
     }
 }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -7,10 +10,185 @@
             name="party_mobo_detail_model"
             type="com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel"></variable>
     </data>
+    <!--<com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout -->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:openDrawer="start">
 
-    </android.support.constraint.ConstraintLayout>
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/party_subject_appbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                <android.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/collapsingTbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:contentScrim="@color/white"
+                    app:expandedTitleMarginEnd="@dimen/d_60"
+                    app:expandedTitleMarginStart="@dimen/d_60"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                    <include
+                        layout="@layout/detail_top_subject_part"
+                        app:data="@{party_mobo_detail_model}"></include>
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_50"
+                        app:contentInsetStart="0dp"
+                        app:layout_collapseMode="pin"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d_70">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:id="@+id/arrow_party"
+                                android:onClick="@{party_mobo_detail_model::onClick}"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="@dimen/d_15"
+                                android:src="@drawable/arrow_black"></ImageView>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:text="活动详情"
+                                android:textColor="@color/black_12"
+                                android:textSize="@dimen/s_15" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="@dimen/d_15"
+                                android:src="@drawable/three_point"></ImageView>
+                        </RelativeLayout>
+
+                    </android.support.v7.widget.Toolbar>
+                </android.support.design.widget.CollapsingToolbarLayout>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <com.cstec.administrator.party_module.CustomNestedScrollView
+                android:id="@+id/nest_subject"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <include
+                            layout="@layout/party_detail_item_subject_top"
+                            app:data="@{party_mobo_detail_model}"></include>
+
+                        <android.support.design.widget.TabLayout
+                            android:id="@+id/mPartyDetailSubjectTabLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d_42"
+                            android:layout_marginLeft="@dimen/d_5"
+                            android:layout_marginTop="@dimen/d_10"
+                            android:elevation="@dimen/d_05"
+                            app:tabIndicatorColor="@color/black"
+                            app:tabIndicatorFullWidth="false"
+                            app:tabIndicatorHeight="0dp"
+                            app:tabMode="fixed"
+                            app:tabRippleColor="@color/trans"
+                            app:tabSelectedTextColor="@color/black"
+                            app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
+
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/mPartyDetailSubjectViewPager"
+                            android:layout_width="match_parent"
+                            android:layout_height="1000dp"
+                            app:adapter="@{party_mobo_detail_model.adapter}"
+                            app:itemBinding="@{party_mobo_detail_model.itemBinding}"
+                            app:items="@{party_mobo_detail_model.items}"
+                            app:pageTitles="@{party_mobo_detail_model.pagerTitle}"></android.support.v4.view.ViewPager>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.cstec.administrator.party_module.CustomNestedScrollView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_50"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:layout_gravity="bottom"
+                app:layout_behavior="com.cstec.administrator.party_module.MyBottomBarBehavior"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_20"
+                    android:drawableTop="@drawable/customservice_icon"
+                    android:gravity="center"
+                    android:text="客服"
+                    android:textColor="@color/black_12"
+                    android:textSize="@dimen/s_11" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_20"
+                    android:drawableTop="@drawable/restore_icon"
+                    android:gravity="center"
+                    android:text="收藏"
+                    android:textColor="@color/black_12"
+                    android:textSize="@dimen/s_11" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_40"
+                    android:layout_marginLeft="@dimen/d_20"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:background="@drawable/login_btn_shape_nomal"
+                    android:gravity="center"
+                    android:text="立即报名"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </android.support.design.widget.CoordinatorLayout>
+
+
+
+        <android.support.design.widget.NavigationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/activity_main_drawer"></android.support.design.widget.NavigationView>
+    </android.support.v4.widget.DrawerLayout>
+    <!--</com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>-->
 </layout>

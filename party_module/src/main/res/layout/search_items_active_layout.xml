@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="search_party"
+            type="com.cstec.administrator.party_module.ViewModel.SearchPartyViewModel.PartySearchEntity"></variable>
+
+        <variable
+            name="model"
+            type="com.cstec.administrator.party_module.ViewModel.SearchPartyViewModel"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{()->model.itemClick(search_party)}"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="@dimen/d_154"
+            android:layout_height="@dimen/d_96"
+            android:layout_marginLeft="@dimen/d_15">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:LoadClockRoadImg="@{search_party.FILE_NAME_URL}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/d_8"
+                android:layout_marginLeft="@dimen/d_8"
+                android:layout_marginRight="@dimen/d_8"
+                android:background="@drawable/black_circle"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_05"
+                    android:drawableLeft="@drawable/littlest_location"
+                    android:drawablePadding="@dimen/d_02"
+                    android:paddingRight="@dimen/d_05"
+                    android:singleLine="true"
+                    android:text="@{search_party.PATH_POINT}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_10" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:singleLine="true"
+                android:text="@{search_party.TITLE}"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_15" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_10"
+                android:text="@{search_party.ACTIVITY_START}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_12" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_05"
+                android:layout_marginLeft="@dimen/d_10"
+                android:layout_marginRight="@dimen/d_10"
+                android:layout_marginTop="@dimen/d_10"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/d_16"
+                        android:layout_height="@dimen/d_16"
+                        app:setPartyAvatar="@{search_party.memberImages}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@{search_party.MEMBER_NAME}" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/rmb + search_party.TICKET_PRICE}"
+                    android:textColor="#F5222D"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

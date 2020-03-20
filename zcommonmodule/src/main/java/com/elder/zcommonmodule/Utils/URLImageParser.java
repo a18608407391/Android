@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -36,19 +37,11 @@ public class URLImageParser implements Html.ImageGetter {
     @Override
     public Drawable getDrawable(final String source) {
         final URLDrawable urlDrawable = new URLDrawable();
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-
-            }
-        });
-
         Observable.just(source).map(new Function<String, File>() {
             @Override
             public File apply(String s) throws Exception {
+                Log.e("result", "URLImageParse图片路径" + source);
+
                 FutureTarget<File> file = Glide.with(mTextView).load(source).downloadOnly(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
 
                 return file.get();

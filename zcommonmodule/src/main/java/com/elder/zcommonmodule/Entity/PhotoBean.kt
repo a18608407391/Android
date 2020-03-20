@@ -3,7 +3,7 @@ package com.elder.zcommonmodule.Entity
 import java.io.Serializable
 
 
-class PhotoBean:Serializable {
+class PhotoBean : Serializable {
 
     var msg: String? = null
     var code: Int = 0
@@ -31,12 +31,18 @@ class PhotoBean:Serializable {
         var id: String? = null
         var imgUrl: String? = null
         var createTime: String? = null
+        var createDate:String ? = null
         var createUser: String? = null
         var smallUrl: String? = null
         var status: Int = 0
         var baseUrl: String? = null
-        var photoId :String? = null
+        var photoId: String? = null
         var memberId: Int = 0
         var imgType: Int = 0
+        var filePathUrl: String? = null
+        var filePath: String? = null
+        var projectUrl: String? = null
+        var scheduleId = 0
+        var basicsId = 0
     }
 }

@@ -3,6 +3,7 @@ package com.cstec.administrator.party_module.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.SearchPartyViewModel
@@ -10,9 +11,10 @@ import com.cstec.administrator.party_module.databinding.ActivitySearchPartyBindi
 import com.elder.zcommonmodule.Entity.Location
 import com.zk.library.Base.BaseActivity
 import com.zk.library.Utils.RouterUtils
+import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_search_party.*
 
-
+@Route(path = RouterUtils.PartyConfig.SEARCH_PARTY)
 class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchPartyViewModel>() {
 
 
@@ -29,6 +31,9 @@ class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchParty
     }
 
     override fun initContentView(savedInstanceState: Bundle?): Int {
+        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
+        StatusbarUtils.setTranslucentStatus(this)
+        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
         return R.layout.activity_search_party
     }
 

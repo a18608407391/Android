@@ -44,7 +44,8 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
                 DialogUtils.showProviceDialog(partyFragment.activity!!, province, "选择城市")
             }
             R.id.search_address -> {
-
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
             }
         }
     }
@@ -102,14 +103,26 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
     }
 
     override fun onMBcommandClick(entity: Any) {
+        var en = entity as PartyHomeEntity.MBRecommend
+        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
+                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
     }
 
     override fun onWonderfulClick(entity: Any) {
+        var ac = entity as PartyHomeEntity.WonderfulActive
+        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
+                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
     }
 
-    override fun onClockActiveClick(entity: Any, position: Int) {
-
+    override fun onClockActiveClick(entity: Any) {
+        var clock = entity as PartyHomeEntity.ClockActive
+        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, clock.ID)
+                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, clock.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
     }
+
 
     override fun onTitleArrowClick(entity: Any) {
         //处理Arrow跳转
@@ -133,9 +146,9 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
             if (t.ID == 0) {
                 return
             }
-            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
+            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
                     .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                            Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+                            Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
         }
     })
     lateinit var partyFragment: PartyFragment

@@ -5,7 +5,7 @@
 
         <variable
             name="data"
-            type="com.cstec.administrator.party_module.ViewModel.PartyClockDetailViewModel" />
+            type="com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,6 +25,7 @@
             android:textColor="@color/black_12"
             android:textSize="@dimen/s_18"></TextView>
 
+
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,71 +38,6 @@
                 android:orientation="horizontal"
                 app:setHoriType="@{data.typeData}"></LinearLayout>
         </HorizontalScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/d_60"
-            android:layout_marginRight="@dimen/d_15"
-            android:layout_marginTop="@dimen/d_20"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="@dimen/d_42"
-                android:layout_height="@dimen/d_42">
-
-                <ImageView
-                    android:layout_width="@dimen/d_36"
-                    android:layout_height="@dimen/d_36"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/default_avatar"></ImageView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/d_16"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/little_tv_color_corner"
-                    android:gravity="center"
-                    android:paddingLeft="@dimen/d_05"
-                    android:paddingRight="@dimen/d_05"
-                    android:text="发起人"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/s_10"></TextView>
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/d_15"
-                android:layout_marginRight="@dimen/d_10"
-                android:layout_weight="1"
-                app:PartyMembers="@{data.members}"></RelativeLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{data.data.MAN_COUNT}"
-                android:textColor="#3FC5C9"
-                android:textSize="@dimen/s_12"
-                android:textStyle="bold"></TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="人报名 / 不限"
-                android:textColor="@color/black_12"
-                android:textSize="@dimen/s_12"
-                android:textStyle="bold"></TextView>
-
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/d_17"
-                android:src="@drawable/arrow_right_gray"></ImageView>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -192,6 +128,72 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_60"
+            android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="@dimen/d_42"
+                android:layout_height="@dimen/d_42">
+
+                <ImageView
+                    android:layout_width="@dimen/d_36"
+                    android:layout_height="@dimen/d_36"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/default_avatar"></ImageView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/d_16"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/little_tv_color_corner"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/d_05"
+                    android:paddingRight="@dimen/d_05"
+                    android:text="发起人"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_10"></TextView>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:layout_marginRight="@dimen/d_10"
+                android:layout_weight="1"
+                app:PartyMembers="@{data.members}"></RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{data.data.MAN_COUNT}"
+                android:textColor="#3FC5C9"
+                android:textSize="@dimen/s_12"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="人报名 / 不限"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_12"
+                android:textStyle="bold"></TextView>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_17"
+                android:src="@drawable/arrow_right_gray"></ImageView>
+        </LinearLayout>
+
+
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_01"
@@ -209,7 +211,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@{@string/resort + data.data.COLLECTION_PLACE }"
+                android:text="@{@string/destrict + data.data.COLLECTION_PLACE }"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_14"
                 android:textStyle="bold"></TextView>
@@ -254,6 +256,32 @@
             android:layout_marginRight="@dimen/d_15"
             android:background="@color/FivepercentBlackColor"></View>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_60"
+            android:layout_marginRight="@dimen/d_15"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@{@string/sponsor + data.restoreTime}"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_14"
+                android:textStyle="bold"></TextView>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrow_right_gray"></ImageView>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_01"
+            android:layout_marginRight="@dimen/d_15"
+            android:background="@color/FivepercentBlackColor"></View>
     </LinearLayout>
 </layout>

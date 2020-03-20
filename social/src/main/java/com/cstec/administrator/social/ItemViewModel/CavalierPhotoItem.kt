@@ -81,11 +81,11 @@ class CavalierPhotoItem : CavalierItemModel {
 
     var onLoadMoreCommand = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-            if (t > curLoad) {
+            if (t >= curLoad) {
                 page++
                 limit = 30
                 getAllPhoto(false)
-                curLoad = t
+                curLoad = page*30
             }
         }
     })
@@ -101,6 +101,7 @@ class CavalierPhotoItem : CavalierItemModel {
         if (refresh) {
             page = 1
             limit = 30
+            curLoad = 30
         }
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         viewModel.activity.showProgressDialog(getString(R.string.get_photo_info))

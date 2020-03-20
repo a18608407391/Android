@@ -6,9 +6,11 @@
 
         <activity android:name=".Activity.PartyDetailActivty"></activity>
         <activity android:name=".Activity.SubjectPartyActivity"></activity>
-        <activity android:name=".Activity.PartyMoboDetailActivity"></activity>
+        <activity android:name=".Activity.PartySubjectDetailActivity"></activity>
         <activity android:name=".Activity.PartyClockDetailActivity"></activity>
-        <activity android:name=".Activity.SearchPartyActivity"></activity>
+        <activity
+            android:name=".Activity.SearchPartyActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
         <activity android:name=".Activity.OrganizationListActivity"></activity>
         <activity android:name=".Activity.EnrollListActivity"></activity>
     </application>

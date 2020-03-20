@@ -260,12 +260,24 @@ class HttpInteface {
         fun PartySubjectSucccess(it: String)
         fun PartySubjectError(it: Throwable)
     }
+
     interface PartyMoto_inf {
         fun PartyMotoSucccess(it: String)
         fun PartyMotoError(it: Throwable)
     }
+
     interface PartyClock_inf {
         fun PartyClockSucccess(it: String)
         fun PartyClockError(it: Throwable)
+    }
+
+    interface PartyAlbum_inf {
+        fun PartyAlbumSucccess(it: String)
+        fun PartyAlbumError(it: Throwable)
+    }
+
+    interface PartyRanking_inf {
+        fun PartyRankingSucccess(it: String)
+        fun PartyRankingError(it: Throwable)
     }
 }

@@ -5,18 +5,18 @@
     <data>
 
         <variable
-            name="clock_active_item_data"
-            type="com.cstec.administrator.party_module.PartyHomeEntity.ClockActive"></variable>
+            name="search_party"
+            type="com.cstec.administrator.party_module.ViewModel.SearchPartyViewModel.PartySearchEntity"></variable>
 
         <variable
-            name="listener"
-            type="com.elder.zcommonmodule.Inteface.ClockActiveClickListener"></variable>
+            name="model"
+            type="com.cstec.administrator.party_module.ViewModel.SearchPartyViewModel"></variable>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{()->listener.onClockActiveClick(clock_active_item_data)}"
+        android:onClick="@{()->model.itemClick(search_party)}"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -28,14 +28,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
-                app:LoadClockRoadImg="@{clock_active_item_data.FILE_NAME_URL}" />
+                app:LoadClockRoadImg="@{search_party.FILE_NAME_URL}" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/corner_clock_inner_bg"
                 android:gravity="center"
-                android:text="@{clock_active_item_data.MAN_COUNT + @string/check_card}"
+                android:text="@{search_party.MAN_COUNT + @string/check_card}"
                 android:textColor="@color/white"
                 android:textSize="@dimen/s_10" />
         </RelativeLayout>
@@ -53,14 +53,14 @@
                 android:layout_marginBottom="@dimen/d_05"
                 android:layout_weight="1"
                 android:gravity="bottom"
-                android:text="@{clock_active_item_data.TITLE}"
+                android:text="@{search_party.TITLE}"
                 android:textColor="@color/black_12" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/d_05"
-                android:text="@{clock_active_item_data.DISTANCE}"
+                android:text="@{search_party.DISTANCE}"
                 android:textColor="#A4A4A4"
                 android:textSize="@dimen/s_12" />
 
@@ -68,10 +68,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/d_05"
-                android:text="@{clock_active_item_data.ACTIVITY_START}"
+                android:text="@{search_party.ACTIVITY_START}"
                 android:textColor="#A4A4A4"
                 android:textSize="@dimen/s_12" />
         </LinearLayout>
-
     </LinearLayout>
 </layout>
+

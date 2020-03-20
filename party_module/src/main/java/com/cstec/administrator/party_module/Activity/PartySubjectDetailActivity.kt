@@ -10,20 +10,21 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.R
-import com.cstec.administrator.party_module.ViewModel.PartyClockDetailViewModel
+import com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyClockDetailBinding
 import com.elder.zcommonmodule.Entity.Location
-import com.elder.zcommonmodule.Utils.Utils
 import com.zk.library.Base.BaseActivity
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
-import kotlinx.android.synthetic.main.activity_party_clock_detail.*
 import kotlinx.android.synthetic.main.activity_party_detail.*
+import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
 import org.cs.tec.library.Utils.ConvertUtils
 
-@Route(path = RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL)
-class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, PartyClockDetailViewModel>(), AppBarLayout.OnOffsetChangedListener {
 
+@Route(path = RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
+class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, PartyMoboDetailViewModel>(), AppBarLayout.OnOffsetChangedListener {
+    override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
+    }
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)
     @JvmField
@@ -36,45 +37,35 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CODE)
     @JvmField
     var code: Int = 0
-    override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
-
-    }
-
     override fun initVariableId(): Int {
-        return BR.party_clock_detail_model
+        return BR.party_mobo_detail_model
     }
 
     override fun initContentView(savedInstanceState: Bundle?): Int {
-        Utils.setStatusBar(this, false, false)
-        return R.layout.activity_party_clock_detail
+        return R.layout.activity_party_mobo_detail
     }
 
-    override fun initViewModel(): PartyClockDetailViewModel? {
-        return ViewModelProviders.of(this)[PartyClockDetailViewModel::class.java]
-    }
-
-    override fun doPressBack() {
-        super.doPressBack()
-        finish()
+    override fun initViewModel(): PartyMoboDetailViewModel? {
+        return ViewModelProviders.of(this)[PartyMoboDetailViewModel::class.java]
     }
 
     override fun initData() {
         super.initData()
-        mPartyClockDetailViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyClockDetailTabLayout))
-        mPartyClockDetailTabLayout.setupWithViewPager(mPartyClockDetailViewPager)
-        party_clock_appbar_layout.addOnOffsetChangedListener(this)
-        mPartyClockDetailTabLayout.addOnTabSelectedListener(mViewModel!!)
+        mPartyDetailSubjectViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailSubjectTabLayout))
+        mPartyDetailSubjectTabLayout.setupWithViewPager(mPartyDetailSubjectViewPager)
+        party_subject_appbar_layout.addOnOffsetChangedListener(this)
+        mPartyDetailSubjectTabLayout.addOnTabSelectedListener(mViewModel!!)
         initTrans(true)
-        nest_clock.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { p0, p1, p2, p3, p4 ->
+        nest_subject.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { p0, p1, p2, p3, p4 ->
             val location = IntArray(2)
-            mPartyClockDetailTabLayout.getLocationOnScreen(location)
+            mPartyDetailSubjectTabLayout.getLocationOnScreen(location)
             var xPosition = location[0]
             var yPosition = location[1]
             Log.e("result", "offset" + ConvertUtils.px2dp(yPosition * 1F))
-            if (ConvertUtils.px2dp(yPosition * 1F) < 55) {
-                nest_clock.setNeedScroll(false)
+            if (ConvertUtils.px2dp(yPosition * 1F) < 50) {
+                nest_subject.setNeedScroll(false)
             } else {
-                nest_clock.setNeedScroll(true)
+                nest_subject.setNeedScroll(true)
             }
         })
         mViewModel?.inject(this)

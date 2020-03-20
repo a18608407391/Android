@@ -58,9 +58,8 @@
                     android:id="@+id/mesure"
                     android:layout_width="@dimen/d_02"
                     android:layout_height="match_parent"
-                    android:visibility="@{party_detail_item_list.itemtype==2?View.GONE:View.VISIBLE}"
-                    android:background="@color/FivepercentBlackColor" />
-
+                    android:background="@color/FivepercentBlackColor"
+                    android:visibility="@{party_detail_item_list.itemtype==2?View.GONE:View.VISIBLE}" />
             </LinearLayout>
 
             <LinearLayout
@@ -90,44 +89,40 @@
                         android:text="@{party_detail_item_list.TIME_REQUIRED}"
                         android:textColor="#A4A4A4"
                         android:textSize="@dimen/s_12"></TextView>
-
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/d_85"
                     android:layout_marginTop="@dimen/d_8"
-                    android:visibility="@{party_detail_item_list.IMAGE1.isEmpty?View.GONE:View.VISIBLE}"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="@{party_detail_item_list.IMAGE1.isEmpty?View.GONE:View.VISIBLE}">
+
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@color/common_red"
-                        android:scaleType="centerCrop"></ImageView>
+                        android:scaleType="centerCrop"
+                        app:LoadItemImge="@{party_detail_item_list.IMAGE1.size==0?@string/space:party_detail_item_list.IMAGE1[1]}"></ImageView>
 
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/d_02"
                         android:layout_weight="1"
-                        android:background="@color/black"
-                        android:scaleType="centerCrop"></ImageView>
+                        android:scaleType="centerCrop"
+                        android:visibility="@{party_detail_item_list.IMAGE1.size==2?View.VISIBLE:View.GONE}"
+                        app:LoadItemImge="@{party_detail_item_list.IMAGE1.size==2?party_detail_item_list.IMAGE1[1]:@string/space}"></ImageView>
                 </LinearLayout>
-
-
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/d_10"
-                    android:text="@{party_detail_item_list.ADDRESS}"
                     android:textColor="@color/black_12"
-                    android:textSize="@dimen/s_14"></TextView>
-
+                    android:textSize="@dimen/s_14"
+                    app:initHtml="@{party_detail_item_list.ADDRESS}"></TextView>
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 </layout>

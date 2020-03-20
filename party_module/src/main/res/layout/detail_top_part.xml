@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
+            app:ratio="1"
             app:PartyTopBg="@{data.data.FILE_NAME_URL}" />
 
         <RelativeLayout
@@ -23,11 +24,14 @@
             android:layout_height="@dimen/d_50">
 
             <ImageView
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/d_15"
-                android:src="@drawable/arrow_black"></ImageView>
+                android:src="@drawable/arrow_black"
+                android:id="@+id/detail_arrow"
+                android:onClick="@{data::onClick}"></ImageView>
 
             <ImageView
                 android:layout_width="wrap_content"
