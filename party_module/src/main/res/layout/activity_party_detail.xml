@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View"></import>
         <variable
             name="party_detail_model"
             type="com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel"></variable>
@@ -47,7 +47,7 @@
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/d_50"
+                        android:layout_height="@dimen/d_70"
                         app:contentInsetStart="0dp"
                         app:layout_collapseMode="pin"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -55,7 +55,8 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/d_70">
+                            android:layout_height="@dimen/d_70"
+                            android:visibility="@{party_detail_model.visible?View.VISIBLE:View.GONE}">
 
                             <ImageView
                                 android:id="@+id/arrow_party"
@@ -101,12 +102,6 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
                         <include
                             layout="@layout/party_detail_item_top"
                             app:data="@{party_detail_model}"></include>
@@ -136,47 +131,53 @@
                             app:pageTitles="@{party_detail_model.pagerTitle}"></android.support.v4.view.ViewPager>
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/d_50"
-                        android:background="@color/white"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/d_20"
-                            android:drawableTop="@drawable/customservice_icon"
-                            android:gravity="center"
-                            android:text="客服"
-                            android:textColor="@color/black_12"
-                            android:textSize="@dimen/s_11" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/d_20"
-                            android:drawableTop="@drawable/restore_icon"
-                            android:gravity="center"
-                            android:text="收藏"
-                            android:textColor="@color/black_12"
-                            android:textSize="@dimen/s_11" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/d_40"
-                            android:layout_marginLeft="@dimen/d_20"
-                            android:layout_marginRight="@dimen/d_15"
-                            android:background="@drawable/login_btn_shape_nomal"
-                            android:gravity="center"
-                            android:text="立即报名"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/s_15" />
-                    </LinearLayout>
-                </LinearLayout>
             </com.cstec.administrator.party_module.CustomNestedScrollView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_50"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_behavior="com.cstec.administrator.party_module.MyBottomBarBehavior">
 
+                <TextView
+                    android:id="@+id/tel_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_20"
+                    android:drawableTop="@drawable/customservice_icon"
+                    android:gravity="center"
+                    android:text="客服"
+                    android:onClick="@{party_detail_model::onClick}"
+                    android:textColor="@color/black_12"
+                    android:textSize="@dimen/s_11" />
+
+                <TextView
+                    android:id="@+id/restore_party"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_20"
+                    android:drawableTop="@{party_detail_model.collection==0?@drawable/restore_icon:@drawable/star_icon}"
+                    android:gravity="center"
+                    android:text="收藏"
+                    android:onClick="@{party_detail_model::onClick}"
+                    android:textColor="@color/black_12"
+                    android:textSize="@dimen/s_11" />
+
+                <TextView
+                    android:id="@+id/right_now"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_40"
+                    android:layout_marginLeft="@dimen/d_20"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:background="@drawable/login_btn_shape_nomal"
+                    android:gravity="center"
+                    android:onClick="@{party_detail_model::onClick}"
+                    android:text="立即报名"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_15" />
+            </LinearLayout>
 
         </android.support.design.widget.CoordinatorLayout>
 

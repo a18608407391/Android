@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="data"
             type="com.cstec.administrator.party_module.ViewModel.PartyClockDetailViewModel"></variable>
@@ -21,7 +23,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_50">
+            android:layout_height="@dimen/d_70"
+            android:visibility="@{data.visible?View.GONE:View.VISIBLE}">
 
             <ImageView
                 android:id="@+id/detail_arrow"

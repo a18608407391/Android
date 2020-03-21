@@ -60,19 +60,19 @@ public class RatioImageView extends ImageView {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Drawable drawable = getDrawable();
-                if (drawable != null) {
-                    drawable.mutate().setColorFilter(Color.GRAY,
-                            PorterDuff.Mode.MULTIPLY);
-                }
+//                if (drawable != null) {
+//                    drawable.mutate().setColorFilter(Color.GRAY,
+//                            PorterDuff.Mode.MULTIPLY);
+//                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                Drawable drawableUp = getDrawable();
-                if (drawableUp != null) {
-                    drawableUp.mutate().clearColorFilter();
-                }
+//                Drawable drawableUp = getDrawable();
+//                if (drawableUp != null) {
+//                    drawableUp.mutate().clearColorFilter();
+//                }
                 break;
         }
 

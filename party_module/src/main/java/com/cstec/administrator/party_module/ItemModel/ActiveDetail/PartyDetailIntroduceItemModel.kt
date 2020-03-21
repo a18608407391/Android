@@ -136,8 +136,11 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                 partyDetailRoadListItem.IMAGES!!.forEach {
                     k.IMAGE1!!.add(Base_URL + it.PROJECT_URL + it.METHOD_PATH_URL + it.FILE_PATH_URL)
                 }
-                k.START_TIME = partyDetailRoadListItem.START_TIME!!.split(":")[0] + ":" + partyDetailRoadListItem.START_TIME!!.split(":")[1]
-                list.add(k)
+                if (partyDetailRoadListItem.START_TIME != null) {
+                    Log.e("result","开始时间"+partyDetailRoadListItem.START_TIME)
+                    k.START_TIME = partyDetailRoadListItem.START_TIME!!.split(":")[0] + ":" + partyDetailRoadListItem.START_TIME!!.split(":")[1]
+                    list.add(k)
+                }
             }
             model.data.get()!!.TICKET_PRICE_DESCRIBE!!.forEachIndexed { index, describe ->
                 var cost = PartyDetailEntity.Cost()

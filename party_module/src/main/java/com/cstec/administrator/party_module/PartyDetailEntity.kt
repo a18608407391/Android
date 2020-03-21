@@ -5,6 +5,7 @@ import java.io.Serializable
 
 class PartyDetailEntity : Serializable {
 
+    var IS_COLLECTION = 0
     var ID = 0
     var CODE = 0
     var TITLE: String? = null

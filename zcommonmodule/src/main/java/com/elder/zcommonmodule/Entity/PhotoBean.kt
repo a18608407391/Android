@@ -41,6 +41,7 @@ class PhotoBean : Serializable {
         var imgType: Int = 0
         var filePathUrl: String? = null
         var filePath: String? = null
+        var fileNameUrl:String ? = null
         var projectUrl: String? = null
         var scheduleId = 0
         var basicsId = 0

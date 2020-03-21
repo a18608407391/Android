@@ -3,22 +3,30 @@ package com.cstec.administrator.party_module.ItemModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.util.Log
-import com.cstec.administrator.party_module.R
+import com.alibaba.android.arouter.launcher.ARouter
+import com.cstec.administrator.party_module.*
 import com.cstec.administrator.party_module.ViewModel.SubjectPartyViewModel
 import com.zk.library.Base.ItemViewModel
-import com.cstec.administrator.party_module.BR
-import com.cstec.administrator.party_module.HoriTitleEntity
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItemModel
-import com.cstec.administrator.party_module.SubjectItemModelEntity
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
-class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf {
+class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, SubjectClick {
+    override fun onSubjectItemClick(entity: SubjectEntity) {
+
+        var model = viewModel as SubjectPartyViewModel
+        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
+    }
+
     override fun PartyMotoSucccess(it: String) {
         var model = viewModel as SubjectPartyViewModel
         model.subject.dismissProgressDialog()
@@ -63,6 +71,10 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf {
         }
     })
 
+
+    var listener  :SubjectClick = this
+
+
     override fun load(flag:Boolean) {
         super.load(flag)
         Log.e("result","加载Mobo")
@@ -84,10 +96,10 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf {
     var type = ObservableField(1)
     var start = 1
     var pageSize = 10
-    var adapter = BindingRecyclerViewAdapter<Any>()
-    var items = ObservableArrayList<Any>()
-    var itemBinding = ItemBinding.of<Any>() { itemBinding, position, item ->
-        itemBinding.set(BR.subject_data, R.layout.mobrigage_child_item_layout)
+    var adapter = BindingRecyclerViewAdapter<SubjectEntity>()
+    var items = ObservableArrayList<SubjectEntity>()
+    var itemBinding = ItemBinding.of<SubjectEntity>() { itemBinding, position, item ->
+        itemBinding.set(BR.subject_data, R.layout.mobrigage_child_item_layout).bindExtra(BR.listener,listener)
     }
 
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {

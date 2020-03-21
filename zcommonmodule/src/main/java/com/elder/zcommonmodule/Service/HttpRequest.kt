@@ -1230,11 +1230,11 @@ class HttpRequest {
     }
 
 
-    var partyRanking: HttpInteface.PartyAlbum_inf? = null
+    var partyRanking: HttpInteface.PartyRanking_inf? = null
     fun getPartyRanking(map: HashMap<String, String>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyRanking(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
-            partyRanking?.PartyAlbumError(ExceptionEngine.handleException(it))
+            partyRanking?.PartyRankingError(ExceptionEngine.handleException(it))
         }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
             override fun onComplete() {
             }
@@ -1243,11 +1243,34 @@ class HttpRequest {
             }
 
             override fun onNext(t: String) {
-                partyRanking?.PartyAlbumSucccess(t)
+                partyRanking?.PartyRankingSucccess(t)
             }
 
             override fun onError(e: Throwable) {
-                partyRanking?.PartyAlbumError(e)
+                partyRanking?.PartyRankingError(e)
+            }
+        })
+    }
+
+
+    var partyRestore: HttpInteface.PartyRestore_inf? = null
+    fun getPartyRestore(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyRestore(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partyRestore?.PartyRestoreError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partyRestore?.PartyRestoreSucccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partyRestore?.PartyRestoreError(e)
             }
         })
     }

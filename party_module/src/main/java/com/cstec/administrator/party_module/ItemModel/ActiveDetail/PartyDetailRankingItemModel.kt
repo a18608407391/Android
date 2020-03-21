@@ -1,6 +1,8 @@
 package com.cstec.administrator.party_module.ItemModel.ActiveDetail
 
 import android.databinding.ObservableArrayList
+import android.util.Log
+import com.amap.api.track.query.model.BaseResponse
 import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel
 import com.elder.zcommonmodule.Entity.PhotoEntitiy
@@ -14,22 +16,27 @@ import com.google.gson.reflect.TypeToken
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 
-class PartyDetailRankingItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_inf {
-    override fun PartyAlbumSucccess(it: String) {
-        var entity = Gson().fromJson<ArrayList<PartyRankingEntity>>(it, object : TypeToken<ArrayList<PartyRankingEntity>>() {}.type)
-        entity.forEach {
-            items.add(it)
+class PartyDetailRankingItemModel : BasePartyItemModel(), HttpInteface.PartyRanking_inf {
+    override fun PartyRankingSucccess(it: String) {
+        Log.e("result", "PartyAlbumSucccess数据" + it)
+        var entity = Gson().fromJson<PartyRankingEntity>(it, PartyRankingEntity::class.java)
+        if (!entity.data.isNullOrEmpty()) {
+            entity.data!!.forEach {
+                items.add(it)
+            }
         }
     }
 
-    override fun PartyAlbumError(it: Throwable) {
+    override fun PartyRankingError(it: Throwable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    var adapter = BindingRecyclerViewAdapter<PartyRankingEntity>()
 
-    var items = ObservableArrayList<PartyRankingEntity>()
+    var adapter = BindingRecyclerViewAdapter<PartyRankingEntity.PartyRanking>()
 
-    var itemBinding = ItemBinding.of<PartyRankingEntity>() { itemBinding, position, item ->
+    var items = ObservableArrayList<PartyRankingEntity.PartyRanking>()
+
+    var itemBinding = ItemBinding.of<PartyRankingEntity.PartyRanking>() { itemBinding, position, item ->
         itemBinding.set(BR.party_ranking, R.layout.party_ranking_item).bindExtra(BR.position, position)
     }
 

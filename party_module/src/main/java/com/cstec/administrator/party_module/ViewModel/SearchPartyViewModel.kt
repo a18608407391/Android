@@ -7,10 +7,14 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.Activity.SearchPartyActivity
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.R
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
@@ -57,7 +61,35 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
     var items = ObservableArrayList<PartySearchEntity>()
 
     fun itemClick(entity: PartySearchEntity) {
-
+        when (entity.BIG_TYPE) {
+            1 -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            }
+            2 -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            }
+            3 -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            }
+        }
     }
 
     var itemBinding = ItemBinding.of<PartySearchEntity> { itemBinding, position, item ->

@@ -11,7 +11,7 @@
 
         <variable
             name="party_ranking"
-            type="com.cstec.administrator.party_module.PartyRankingEntity"></variable>
+            type="com.cstec.administrator.party_module.PartyRankingEntity.PartyRanking"></variable>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

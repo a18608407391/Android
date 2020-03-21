@@ -3,22 +3,31 @@ package com.cstec.administrator.party_module.ItemModel
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.util.Log
-import com.cstec.administrator.party_module.R
+import com.alibaba.android.arouter.launcher.ARouter
+import com.cstec.administrator.party_module.*
 import com.cstec.administrator.party_module.ViewModel.SubjectPartyViewModel
-import com.cstec.administrator.party_module.BR
-import com.cstec.administrator.party_module.HoriTitleEntity
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItemModel
-import com.cstec.administrator.party_module.SubjectItemModelEntity
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 import java.util.*
 
-class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf {
+class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, SubjectClick {
+    override fun onSubjectItemClick(entity: SubjectEntity) {
+
+        var model = viewModel as SubjectPartyViewModel
+        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
+
+    }
+
     override fun PartySubjectSucccess(it: String) {
         var model = viewModel as SubjectPartyViewModel
         model.subject.dismissProgressDialog()
@@ -37,10 +46,10 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf {
     }
 
     var hori = ObservableArrayList<HoriTitleEntity>().apply {
-        this.add(HoriTitleEntity("推荐",true))
-        this.add(HoriTitleEntity("热门",false))
-        this.add(HoriTitleEntity("离我最近",false))
-        this.add(HoriTitleEntity("活动里程",false))
+        this.add(HoriTitleEntity("推荐", true))
+        this.add(HoriTitleEntity("热门", false))
+        this.add(HoriTitleEntity("离我最近", false))
+        this.add(HoriTitleEntity("活动里程", false))
     }
 
     var command = BindingCommand(object : BindingConsumer<Int> {
@@ -84,19 +93,20 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf {
         HttpRequest.instance.getPartySubject(map)
     }
 
-    var adapter = BindingRecyclerViewAdapter<Any>()
+    var adapter = BindingRecyclerViewAdapter<SubjectEntity>()
 
-    var items = ObservableArrayList<Any>()
+    var items = ObservableArrayList<SubjectEntity>()
 
-    var itemBinding = ItemBinding.of<Any>() { itemBinding, position, item ->
-        itemBinding.set(BR.subject_data, R.layout.subject_child_item_layout)
+    var listener: SubjectClick = this
+    var itemBinding = ItemBinding.of<SubjectEntity> { itemBinding, position, item ->
+        itemBinding.set(BR.subject_data, R.layout.subject_child_item_layout).bindExtra(BR.listener, listener)
     }
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             Log.e("result", "加载更多" + t)
-            if (t <start*pageSize) {
+            if (t < start * pageSize) {
                 return
-            }else{
+            } else {
                 start++
                 load(false)
             }

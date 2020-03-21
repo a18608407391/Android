@@ -3,6 +3,11 @@
 
     <data>
 
+
+        <variable
+            name="photo_click"
+            type="com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailPhotoItemModel"></variable>
+
         <variable
             name="img_item"
             type="com.elder.zcommonmodule.Entity.PhotoEntitiy"></variable>
@@ -15,7 +20,8 @@
         android:layout_height="@dimen/d_90"
         android:layout_marginLeft="@dimen/d_01"
         android:layout_marginRight="@dimen/d_01"
+        android:imgUrl="@{img_item.path}"
+        android:onClick="@{()->photo_click.onAdapterItemClick(img_item)}"
         android:scaleType="centerCrop"
-        android:src="@drawable/default_avatar"
         app:ratio="1"></com.elder.zcommonmodule.Widget.RatioImageView>
 </layout>

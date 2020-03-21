@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="data"
             type="com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel"></variable>
@@ -16,22 +18,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
-            app:ratio="1"
-            app:PartyTopBg="@{data.data.FILE_NAME_URL}" />
+            app:PartyTopBg="@{data.data.FILE_NAME_URL}"
+            app:ratio="1" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_50">
+            android:layout_height="@dimen/d_70"
+            android:visibility="@{data.visible?View.GONE:View.VISIBLE}">
 
             <ImageView
 
+                android:id="@+id/detail_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/d_15"
-                android:src="@drawable/arrow_black"
-                android:id="@+id/detail_arrow"
-                android:onClick="@{data::onClick}"></ImageView>
+                android:onClick="@{data::onClick}"
+                android:src="@drawable/arrow_black"></ImageView>
 
             <ImageView
                 android:layout_width="wrap_content"

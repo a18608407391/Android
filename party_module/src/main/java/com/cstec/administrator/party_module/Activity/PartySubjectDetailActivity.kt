@@ -13,6 +13,7 @@ import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyClockDetailBinding
 import com.elder.zcommonmodule.Entity.Location
+import com.elder.zcommonmodule.Utils.Utils
 import com.zk.library.Base.BaseActivity
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
@@ -24,6 +25,18 @@ import org.cs.tec.library.Utils.ConvertUtils
 @Route(path = RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
 class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, PartyMoboDetailViewModel>(), AppBarLayout.OnOffsetChangedListener {
     override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
+//        Log.e("result", "offset" + ConvertUtils.px2dp(Math.abs(p1) * 1F))
+        if (p1 >= -ConvertUtils.dp2px(300F)) {
+            mViewModel?.visible!!.set(false)
+//            Utils.setStatusTextColor(false, activity)
+//            viewModel?.VisField!!.set(false)
+//            log_swipe.isEnabled = p1 >= 0
+        } else {
+            mViewModel?.visible!!.set(true)
+//            Utils.setStatusTextColor(true, activity)
+//            log_swipe.isEnabled = false
+//            viewModel?.VisField!!.set(true)
+        }
     }
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)

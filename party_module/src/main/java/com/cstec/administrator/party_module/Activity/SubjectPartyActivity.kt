@@ -22,8 +22,6 @@ import org.cs.tec.library.Base.Utils.uiContext
 
 @Route(path = RouterUtils.PartyConfig.SUBJECT_PARTY)
 class SubjectPartyActivity : BaseActivity<ActivitySubjectPartyBinding, SubjectPartyViewModel>() {
-
-
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)
     @JvmField
     var location: Location? = null

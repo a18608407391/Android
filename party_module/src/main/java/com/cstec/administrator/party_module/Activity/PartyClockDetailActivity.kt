@@ -37,7 +37,18 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
     @JvmField
     var code: Int = 0
     override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
-
+//        Log.e("result", "offset" + ConvertUtils.px2dp(Math.abs(p1) * 1F))
+        if (p1 >= -ConvertUtils.dp2px(300F)) {
+            mViewModel?.visible!!.set(false)
+//            Utils.setStatusTextColor(false, activity)
+//            viewModel?.VisField!!.set(false)
+//            log_swipe.isEnabled = p1 >= 0
+        } else {
+            mViewModel?.visible!!.set(true)
+//            Utils.setStatusTextColor(true, activity)
+//            log_swipe.isEnabled = false
+//            viewModel?.VisField!!.set(true)
+        }
     }
 
     override fun initVariableId(): Int {

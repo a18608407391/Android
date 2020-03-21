@@ -65,5 +65,8 @@ interface PartyService {
     fun partyRanking(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>
 
-
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/appRidingGuideManage/collectionActivity")
+    fun partyRestore(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
 }

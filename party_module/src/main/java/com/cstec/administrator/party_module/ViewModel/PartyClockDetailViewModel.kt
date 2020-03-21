@@ -18,11 +18,25 @@ import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab> {
+class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, HttpInteface.PartyRestore_inf {
+    override fun PartyRestoreSucccess(it: String) {
+        party.dismissProgressDialog()
+        if (collection.get() == 0) {
+            collection.set(1)
+        } else {
+            collection.set(0)
+        }
+    }
+
+    override fun PartyRestoreError(it: Throwable) {
+
+    }
+
     override fun onTabReselected(p0: TabLayout.Tab?) {
     }
 
@@ -76,10 +90,13 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
     fun inject(partyClockDetailActivity: PartyClockDetailActivity) {
         this.party = partyClockDetailActivity
         items.add(PartyDetailIntroduceItemModel().ItemViewModel(this@PartyClockDetailViewModel))
-        items.add(PartyDetailPhotoItemModel().setPartyId(party.code).ItemViewModel(this@PartyClockDetailViewModel))
+        items.add(PartyDetailPhotoItemModel().setActivity(partyClockDetailActivity).setPartyId(party.code).ItemViewModel(this@PartyClockDetailViewModel))
         items.add(PartyDetailRankingItemModel().setCode(party.code).ItemViewModel(this@PartyClockDetailViewModel))
     }
 
+    var collection = ObservableField(0)
+
+    var visible = ObservableField<Boolean>(false)
     var data = ObservableField<PartyDetailEntity>()
 
     var typeData = ObservableArrayList<String>()
@@ -137,15 +154,31 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
             R.id.arrow_party -> {
                 finish()
             }
+            R.id.tel_phone -> {
+
+            }
+            R.id.restore_party -> {
+                party.showProgressDialog(getString(R.string.http_loading))
+                HttpRequest.instance.partyRestore = this
+                var map = HashMap<String, String>()
+                map["targetId"] = data.get()!!.ID.toString()
+                map["targetIdType"] = data.get()!!.TYPE.toString()
+                HttpRequest.instance.getPartyRestore(map)
+            }
+            R.id.right_now -> {
+
+            }
         }
     }
 
     private fun initData() {
-        HttpRequest.instance.partyDetail = this
-        var map = HashMap<String, String>()
-        map["id"] = party.party_id!!.toString()
-        map["x"] = party.location!!.longitude.toString()
-        map["y"] = party.location!!.latitude.toString()
-        HttpRequest.instance.getPartyDetail(map)
+        if (data.get() == null) {
+            HttpRequest.instance.partyDetail = this
+            var map = HashMap<String, String>()
+            map["id"] = party.party_id!!.toString()
+            map["x"] = party.location!!.longitude.toString()
+            map["y"] = party.location!!.latitude.toString()
+            HttpRequest.instance.getPartyDetail(map)
+        }
     }
 }

@@ -2,6 +2,9 @@ package com.cstec.administrator.party_module.ItemModel.ActiveDetail
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.support.v4.app.FragmentActivity
+import android.util.Log
+import com.cstec.administrator.party_module.Adapter.PhotoAdapter
 import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel
 import com.elder.zcommonmodule.Entity.PhotoEntitiy
@@ -11,10 +14,12 @@ import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Entity.PhotoBean
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
+import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.getImageUrl
 import com.google.gson.Gson
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 import java.text.SimpleDateFormat
@@ -23,14 +28,15 @@ import java.util.*
 class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_inf {
     override fun PartyAlbumSucccess(it: String) {
         var result = Gson().fromJson<PhotoBean.ResultPhoto>(it, PhotoBean.ResultPhoto::class.java)
-        if (result!=null && !result.data.isNullOrEmpty()) {
+        if (result != null && !result.data.isNullOrEmpty()) {
             var count = 0
             result?.data?.forEachIndexed { index, photo ->
-                var url  = Base_URL + photo.filePathUrl + photo.filePath
+                var url = getImageUrl(photo.filePath!!.split("/home/uploadFile/images")[1] + "/" + photo.fileNameUrl)
+
+                Log.e("result", "图片链接" + url)
                 if (tes != photo.createDate) {
                     tes = photo.createDate!!
                     items.add(PhotoEntitiy(ObservableField(""), ObservableField(photo.createDate!!), ObservableField(0)))
-
                     items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.createDate!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
                 } else {
                     items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.createDate!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
@@ -55,7 +61,7 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
 
     }
 
-    var adapter = BindingRecyclerViewAdapter<PhotoEntitiy>()
+    var adapter = PhotoAdapter()
 
     var items = ObservableArrayList<PhotoEntitiy>()
 
@@ -63,15 +69,32 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
         if (item.getItemType() == 0) {
             itemBinding.set(BR.title, R.layout.party_detail_title_item)
         } else if (item.getItemType() == 1) {
-            itemBinding.set(BR.img_item, R.layout.party_detail_img_item)
+            itemBinding.set(BR.img_item, R.layout.party_detail_img_item).bindExtra(BR.photo_click, this@PartyDetailPhotoItemModel)
         }
     }
 
+    fun onAdapterItemClick(item: PhotoEntitiy) {
+        var list = ObservableArrayList<String>()
+        items.forEach {
+            if (!it.path.get().isNullOrEmpty()) {
+                list.add(it.path.get())
+            }
+        }
+        var index = list.indexOf(item.path.get())
+        DialogUtils.createBigPicShow(mActivity!!, list, index)
+    }
 
     var partyid = 0
     fun setPartyId(partyId: Int): PartyDetailPhotoItemModel {
         this.partyid = partyId
         return this
+    }
+
+
+    lateinit var mActivity: FragmentActivity
+    fun setActivity(activity: FragmentActivity): PartyDetailPhotoItemModel {
+        this.mActivity = activity
+        return this@PartyDetailPhotoItemModel
     }
 
     fun initData(flag: Boolean) {
