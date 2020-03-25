@@ -5,6 +5,7 @@ import android.databinding.ObservableField
 import android.support.design.widget.TabLayout
 import android.util.Log
 import android.view.View
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.Activity.SubjectPartyActivity
 import com.cstec.administrator.party_module.R
 import com.zk.library.Base.BaseViewModel
@@ -14,9 +15,11 @@ import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItem
 import com.cstec.administrator.party_module.ItemModel.ClockItemModel
 import com.cstec.administrator.party_module.ItemModel.MoBrigadeItemModel
 import com.cstec.administrator.party_module.ItemModel.SubjectItemModel
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
+import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_subject_party.*
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
@@ -26,15 +29,13 @@ import org.cs.tec.library.binding.command.BindingConsumer
 
 class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListener<TabLayout.Tab> {
 
-
+    var msgCount = ObservableField(0)
     var onCreate = false
     override fun onTabSelected(p0: TabLayout.Tab?) {
         if (!onCreate) {
-            if (subject.type == 0) {
-                items[0].load(true)
-            }
-            onCreate = true
+            items[subject.type].load(true)
         } else {
+            Log.e("result", "Position" + p0!!.position)
             items[p0!!.position].load(true)
         }
     }
@@ -96,6 +97,13 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
             }
             R.id.title_ev -> {
                 DialogUtils.showProviceDialog(subject!!, province, "选择城市")
+            }
+            R.id.search_address -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        subject.location).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+            }
+            R.id.notify_icon->{
+                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,subject.location).navigation()
             }
         }
     }

@@ -34,8 +34,9 @@
             app:adapter="@{mo_brigade_item_model.adapter}"
             app:itemBinding="@{mo_brigade_item_model.itemBinding}"
             app:items="@{mo_brigade_item_model.items}"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:onLoadMoreCommand="@{mo_brigade_item_model.scrollerBinding}"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+            app:spanCount="2"></android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 </layout>

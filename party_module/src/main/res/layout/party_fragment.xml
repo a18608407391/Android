@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="party_main_model"
             type="com.cstec.administrator.party_module.ViewModel.PartyViewModel"></variable>
@@ -67,15 +69,32 @@
             </RelativeLayout>
 
 
-            <ImageView
-
-                android:id="@+id/notify_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <RelativeLayout
+                android:layout_width="@dimen/d_35"
+                android:layout_height="@dimen/d_35"
                 android:layout_marginLeft="@dimen/d_15"
-                android:layout_marginRight="@dimen/d_15"
-                android:onClick="@{party_main_model::onClick}"
-                android:src="@drawable/clock_icon" />
+                android:layout_marginRight="@dimen/d_15">
+
+                <ImageView
+                    android:id="@+id/notify_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:onClick="@{party_main_model::onClick}"
+                    android:src="@drawable/clock_icon" />
+
+                <TextView
+                    android:layout_width="@dimen/d_12"
+                    android:layout_height="@dimen/d_12"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/red_circle"
+                    android:gravity="center"
+                    android:text="@{party_main_model.msgCount.toString()}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/s_08"
+                    android:visibility="@{party_main_model.msgCount==0?View.GONE:View.VISIBLE}" />
+            </RelativeLayout>
+
         </LinearLayout>
 
 
@@ -86,6 +105,7 @@
             app:adapter="@{party_main_model.adapter}"
             app:itemBinding="@{party_main_model.itemBinding}"
             app:items="@{party_main_model.items}"
+            android:layout_marginBottom="@dimen/d_15"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:spanCount="2"></android.support.v7.widget.RecyclerView>
 

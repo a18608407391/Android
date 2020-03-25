@@ -316,16 +316,19 @@ public class ViewAdapter {
             @Override
             public void onReceivedClientCertRequest(WebView webView, ClientCertRequest clientCertRequest) {
                 super.onReceivedClientCertRequest(webView, clientCertRequest);
+                Log.e("result","onReceivedClientCertRequest");
             }
 
             @Override
             public void onReceivedLoginRequest(WebView webView, String s, String s1, String s2) {
                 super.onReceivedLoginRequest(webView, s, s1, s2);
+                Log.e("result","onReceivedLoginRequest");
             }
 
             @Override
             public void onReceivedError(WebView webView, int i, String s, String s1) {
                 super.onReceivedError(webView, i, s, s1);
+                Log.e("result","onReceivedLoginRequest");
             }
 
             @Override
@@ -365,6 +368,16 @@ public class ViewAdapter {
         RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(154), ConvertUtils.Companion.dp2px(98));
         Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
     }
+
+    @BindingAdapter("LoadImg")
+    public static void LoadImg(ImageView img, String url) {
+        String s =ConfigKt.Base_URL + url;
+        Log.e("result","当前图片路径" + s);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(154), ConvertUtils.Companion.dp2px(98));
+        Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
+    }
+
 
     @BindingAdapter("LoadMBRoadImg")
     public static void LoadMBRoadImg(ImageView img, String url) {

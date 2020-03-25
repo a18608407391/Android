@@ -305,10 +305,23 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
                 homeActivity.runOnUiThread {
                     homeActivity.main_bottom_bg.check(R.id.main_right)
                 }
+            } else if (it == "ActiveWebGotoApp") {
+                returnPrivate = true
             }
         }
         RxSubscriptions.add(m)
         RxSubscriptions.add(s)
         RxSubscriptions.add(n)
+    }
+
+
+    var returnPrivate = false
+
+    override fun onResume() {
+        super.onResume()
+        if (returnPrivate) {
+            homeActivity.main_bottom_bg.check(R.id.main_right)
+            returnPrivate = false
+        }
     }
 }

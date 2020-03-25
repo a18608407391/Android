@@ -22,7 +22,7 @@ import com.zk.library.Utils.StatusbarUtils
 
 
 @Route(path = RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
-class ActiveWebActivity : BaseActivity<ActiveWebActivityBinding, ActiveWebViewModel>(){
+class ActiveWebActivity : BaseActivity<ActiveWebActivityBinding, ActiveWebViewModel>() {
 
     @Autowired(name = RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE)
     @JvmField
@@ -31,6 +31,10 @@ class ActiveWebActivity : BaseActivity<ActiveWebActivityBinding, ActiveWebViewMo
     @Autowired(name = RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID)
     @JvmField
     var id: String? = null
+
+    @Autowired(name = RouterUtils.PartyConfig.PARTY_CODE)
+    @JvmField
+    var code: String? = null
 
     override fun initVariableId(): Int {
         return BR.active_web_model
@@ -54,8 +58,13 @@ class ActiveWebActivity : BaseActivity<ActiveWebActivityBinding, ActiveWebViewMo
 
     override fun doPressBack() {
         super.doPressBack()
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-        finish()
+        if (type < 5) {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+            finish()
+        } else {
+            finish()
+        }
+
     }
 
     override fun onResume() {

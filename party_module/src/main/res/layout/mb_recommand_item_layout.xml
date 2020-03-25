@@ -16,8 +16,10 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="@dimen/d_167"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_10"
         android:background="@drawable/corner_dialog"
         android:elevation="@dimen/d_05"
+        android:onClick="@{()->mb_listener.onMBcommandClick(mb_recommand)}"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -27,6 +29,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
                 app:LoadMBRoadImg="@{mb_recommand.FILE_NAME_URL}" />
 
             <LinearLayout
@@ -93,7 +96,7 @@
                 <ImageView
                     android:layout_width="@dimen/d_16"
                     android:layout_height="@dimen/d_16"
-                   app:setPartyAvatar="@{mb_recommand.HEAD_IMG_FILE}" />
+                    app:setPartyAvatar="@{mb_recommand.HEAD_IMG_FILE}" />
 
                 <TextView
                     android:layout_width="wrap_content"

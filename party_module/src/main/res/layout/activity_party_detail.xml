@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View"></import>
+
         <variable
             name="party_detail_model"
             type="com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel"></variable>
@@ -55,8 +57,7 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/d_70"
-                            android:visibility="@{party_detail_model.visible?View.VISIBLE:View.GONE}">
+                            android:layout_height="@dimen/d_70">
 
                             <ImageView
                                 android:id="@+id/arrow_party"
@@ -73,7 +74,8 @@
                                 android:layout_centerInParent="true"
                                 android:text="活动详情"
                                 android:textColor="@color/black_12"
-                                android:textSize="@dimen/s_15" />
+                                android:textSize="@dimen/s_15"
+                                android:visibility="@{party_detail_model.visible?View.VISIBLE:View.GONE}" />
 
                             <ImageView
                                 android:layout_width="wrap_content"
@@ -100,38 +102,40 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/d_50"
                     android:orientation="vertical">
 
-                        <include
-                            layout="@layout/party_detail_item_top"
-                            app:data="@{party_detail_model}"></include>
+                    <include
+                        layout="@layout/party_detail_item_top"
+                        app:data="@{party_detail_model}"></include>
 
-                        <android.support.design.widget.TabLayout
-                            android:id="@+id/mPartyDetailTabLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/d_42"
-                            android:layout_marginLeft="@dimen/d_5"
-                            android:layout_marginTop="@dimen/d_10"
-                            android:elevation="@dimen/d_05"
-                            app:tabIndicatorColor="@color/black"
-                            app:tabIndicatorFullWidth="false"
-                            app:tabIndicatorHeight="0dp"
-                            app:tabMode="fixed"
-                            app:tabRippleColor="@color/trans"
-                            app:tabSelectedTextColor="@color/black"
-                            app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
+                    <android.support.design.widget.TabLayout
+                        android:id="@+id/mPartyDetailTabLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_42"
+                        android:layout_marginLeft="@dimen/d_5"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:elevation="@dimen/d_05"
+                        app:tabIndicatorColor="@color/black"
+                        app:tabIndicatorFullWidth="false"
+                        app:tabIndicatorHeight="0dp"
+                        app:tabMode="fixed"
+                        app:tabRippleColor="@color/trans"
+                        app:tabSelectedTextColor="@color/black"
+                        app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
 
-                        <android.support.v4.view.ViewPager
-                            android:id="@+id/mPartyDetailViewPager"
-                            android:layout_width="match_parent"
-                            android:layout_height="1000dp"
-                            app:adapter="@{party_detail_model.adapter}"
-                            app:itemBinding="@{party_detail_model.itemBinding}"
-                            app:items="@{party_detail_model.items}"
-                            app:pageTitles="@{party_detail_model.pagerTitle}"></android.support.v4.view.ViewPager>
-                    </LinearLayout>
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/mPartyDetailViewPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="1000dp"
+                        app:adapter="@{party_detail_model.adapter}"
+                        app:itemBinding="@{party_detail_model.itemBinding}"
+                        app:items="@{party_detail_model.items}"
+                        app:pageTitles="@{party_detail_model.pagerTitle}"></android.support.v4.view.ViewPager>
+                </LinearLayout>
 
             </com.cstec.administrator.party_module.CustomNestedScrollView>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/d_50"
@@ -148,8 +152,8 @@
                     android:layout_marginLeft="@dimen/d_20"
                     android:drawableTop="@drawable/customservice_icon"
                     android:gravity="center"
-                    android:text="客服"
                     android:onClick="@{party_detail_model::onClick}"
+                    android:text="客服"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_11" />
 
@@ -160,8 +164,8 @@
                     android:layout_marginLeft="@dimen/d_20"
                     android:drawableTop="@{party_detail_model.collection==0?@drawable/restore_icon:@drawable/star_icon}"
                     android:gravity="center"
-                    android:text="收藏"
                     android:onClick="@{party_detail_model::onClick}"
+                    android:text="收藏"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_11" />
 
@@ -171,12 +175,11 @@
                     android:layout_height="@dimen/d_40"
                     android:layout_marginLeft="@dimen/d_20"
                     android:layout_marginRight="@dimen/d_15"
-                    android:background="@drawable/login_btn_shape_nomal"
                     android:gravity="center"
                     android:onClick="@{party_detail_model::onClick}"
-                    android:text="立即报名"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/s_15" />
+                    android:textSize="@dimen/s_15"
+                    app:setStates="@{party_detail_model.state}" />
             </LinearLayout>
 
         </android.support.design.widget.CoordinatorLayout>

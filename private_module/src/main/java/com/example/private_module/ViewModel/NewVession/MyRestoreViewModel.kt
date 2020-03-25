@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Component.TitleComponent
 import com.elder.zcommonmodule.Entity.CollectionEntity
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Entity.RestoreEntity
 import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
@@ -36,7 +37,21 @@ import org.cs.tec.library.binding.command.BindingConsumer
 class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, TitleComponent.titleComponentCallBack, SwipeRefreshLayout.OnRefreshListener, SimpleClickListener {
     override fun onSimpleClick(entity: Any) {
         var c = entity as CollectionEntity.Collection
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+        if (c.BIG_TYPE == 0) {
+            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+        } else if (c.BIG_TYPE == 1) {
+            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
+                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                            restoreActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
+        } else if (c.BIG_TYPE == 2) {
+            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
+                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                            restoreActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
+        } else if (c.BIG_TYPE == 3) {
+            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
+                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                            restoreActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
+        }
     }
 
     override fun onRefresh() {
@@ -71,6 +86,7 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
         entity.data?.forEach {
             items.add(it)
         }
+        Log.e("result", "列表数量" + items.size)
         restoreActivity.restore_swipe.isRefreshing = false
     }
 
@@ -132,8 +148,10 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
 
     private fun initDatas() {
         var mao = HashMap<String, String>()
-        mao.put("pageSize", pageSize.toString())
-        mao.put("length", lenth.toString())
+        mao.put("start", pageSize.toString())
+        mao.put("pageSize", lenth.toString())
+        mao.put("x", restoreActivity.location!!.longitude.toString())
+        mao.put("y", restoreActivity.location!!.latitude.toString())
         HttpRequest.instance.getPrivateCollection(mao)
     }
 

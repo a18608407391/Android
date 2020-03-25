@@ -19,6 +19,8 @@ import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_my_restore.*
+import org.cs.tec.library.Bus.RxBus
+import org.cs.tec.library.Bus.RxSubscriptions
 
 
 @Route(path = RouterUtils.PrivateModuleConfig.MY_RESTORE_AC)
@@ -45,6 +47,12 @@ class MyRestoreActivity  :BaseActivity<ActivityMyRestoreBinding,MyRestoreViewMod
     override fun initData() {
         restore_swipe.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
         restore_swipe.setOnRefreshListener(mViewModel!!)
+        var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
+            if (it == "ActiveWebGotoApp") {
+                finish()
+            }
+        }
+        RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
 

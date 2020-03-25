@@ -3,6 +3,7 @@ apply from: "../module.gradle"
 dependencies {
     api project(':zcommonmodule')
     kapt rootProject.ext.dependencies["arouter-compiler"]
+
 }
 
 android {

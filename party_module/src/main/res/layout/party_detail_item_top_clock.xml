@@ -43,12 +43,15 @@
             android:layout_height="@dimen/d_60"
             android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"
+            android:id="@+id/members_click"
+            android:onClick="@{data::onClick}"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <RelativeLayout
                 android:layout_width="@dimen/d_42"
-                android:layout_height="@dimen/d_42">
+                android:layout_height="@dimen/d_42"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="@dimen/d_36"

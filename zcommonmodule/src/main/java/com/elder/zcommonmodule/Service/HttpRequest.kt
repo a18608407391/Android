@@ -1274,4 +1274,27 @@ class HttpRequest {
             }
         })
     }
+
+
+    var partyUnRead: HttpInteface.PartyUnReadNotify_inf? = null
+    fun getPartyActiveUnRead(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partyUnReadActive(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            partyUnRead?.PartyUnReadNotifyError(ExceptionEngine.handleException(it))
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                partyUnRead?.PartyUnReadNotifySucccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                partyUnRead?.PartyUnReadNotifyError(e)
+            }
+        })
+    }
 }

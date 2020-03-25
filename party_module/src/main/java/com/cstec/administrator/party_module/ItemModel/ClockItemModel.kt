@@ -19,7 +19,16 @@ import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
-class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, SubjectClick {
+class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, SubjectClick, HttpInteface.PartyUnReadNotify_inf {
+    override fun PartyUnReadNotifySucccess(it: String) {
+        var model = viewModel as SubjectPartyViewModel
+        model.msgCount.set(Integer.valueOf(it))
+        model.onCreate = true
+    }
+
+    override fun PartyUnReadNotifyError(it: Throwable) {
+    }
+
     override fun onSubjectItemClick(entity: SubjectEntity) {
 
         var model = viewModel as SubjectPartyViewModel
@@ -37,13 +46,19 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
                 items.add(it)
             }
         }
-
-        Log.e("result", "itemSize" + items.size)
+        if (!model.onCreate) {
+            getUnRead()
+        }
     }
 
     override fun PartyClockError(it: Throwable) {
         var model = viewModel as SubjectPartyViewModel
         model.subject.dismissProgressDialog()
+    }
+
+    fun getUnRead() {
+        HttpRequest.instance.partyUnRead = this
+        HttpRequest.instance.getPartyActiveUnRead(java.util.HashMap())
     }
 
     var hori = ObservableArrayList<HoriTitleEntity>().apply {
@@ -77,6 +92,8 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
         super.load(flag)
         if (flag) {
             items.clear()
+            start = 1
+            pageSize = 10
         }
         var model = viewModel as SubjectPartyViewModel
         model.subject.showProgressDialog("正在获取打卡列表数据.....")

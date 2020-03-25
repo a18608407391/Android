@@ -4,6 +4,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.support.design.widget.TabLayout
 import android.view.View
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.Activity.PartyDetailActivty
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItemModel
@@ -16,6 +17,7 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.getString
@@ -51,6 +53,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
             model.initData(true)
         }
     }
+
     var visible = ObservableField<Boolean>(false)
     var data = ObservableField<PartyDetailEntity>()
 
@@ -80,7 +83,14 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
                 }
             }
         }
+        collection.set(entity.IS_COLLECTION)
+        state.set(entity.ACTIVITY_STATUS)
         restoreTime.set(entity.COLLECTION_TIME!!.split(" ")[0])
+        if (entity.TICKET_PRICE.isNullOrEmpty() || entity.TICKET_PRICE!!.toDouble() <= 0) {
+            entity.TICKET_PRICE = "免费"
+        } else {
+            entity.TICKET_PRICE = getString(R.string.rmb) + entity.TICKET_PRICE
+        }
         data.set(entity)
         var t = items[0] as PartyDetailIntroduceItemModel
         t.initData()
@@ -105,7 +115,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
         if (data.get() == null) {
             HttpRequest.instance.partyDetail = this
             var map = HashMap<String, String>()
-            map["id"] = partyDetailActivty.party_id!!.toString()
+            map["id"] = partyDetailActivty.code!!.toString()
             map["x"] = partyDetailActivty.location!!.longitude.toString()
             map["y"] = partyDetailActivty.location!!.latitude.toString()
             HttpRequest.instance.getPartyDetail(map)
@@ -117,11 +127,9 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
         }
     })
     var collection = ObservableField(0)
+    var state = ObservableField(1)
     fun onClick(view: View) {
         when (view.id) {
-            R.id.detail_arrow -> {
-                finish()
-            }
             R.id.arrow_party -> {
                 finish()
             }
@@ -133,10 +141,18 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
                 HttpRequest.instance.partyRestore = this
                 var map = HashMap<String, String>()
                 map["targetId"] = data.get()!!.ID.toString()
-                map["targetIdType"] = data.get()!!.TYPE.toString()
+                map["targetIdType"] = data.get()!!.BIG_TYPE.toString()
                 HttpRequest.instance.getPartyRestore(map)
             }
             R.id.right_now -> {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
+                        .withString(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID, data.get()!!.ID.toString())
+                        .withString(RouterUtils.PartyConfig.PARTY_CODE, data.get()!!.CODE.toString())
+                        .withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 5).navigation()
+
+            }
+            R.id.members_click -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
             }
         }
     }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="enroll_model"
-            type="com.cstec.administrator.party_module.ViewModel.EnrollViewModel.EnrollEntity"></variable>
+            type="com.cstec.administrator.party_module.ViewModel.EnrollViewModel.EnrollEntity.Enroll"></variable>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,16 +22,16 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/default_avatar" />
+                android:layout_width="@dimen/d_45"
+                android:layout_height="@dimen/d_45"
+                app:setPartyAvatar="@{enroll_model.HEAD_IMG_FILE}" />
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_15"
-                android:text="孟牛牛" />
+                android:text="@{enroll_model.NAME}" />
         </LinearLayout>
 
 

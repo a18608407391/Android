@@ -82,7 +82,7 @@
     <string name="set_dauf">恢复默认</string>
     <string name="change_bg">更换背景图</string>
     <string name="destrict">目的地</string>
-    <string name="sponsor">主办方</string>
+    <string name="sponsor">主办方：</string>
     <string name="wx_friend">微信好友</string>
     <string name="wx_pyq">微信朋友圈</string>
     <string name="restore_phone">收藏到相册</string>

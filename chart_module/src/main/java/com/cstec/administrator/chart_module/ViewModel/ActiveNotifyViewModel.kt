@@ -4,41 +4,92 @@ import android.databinding.ObservableArrayList
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import com.alibaba.android.arouter.facade.Postcard
+import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.chart_module.Activity.ActiveNotifyListActivity
 import com.cstec.administrator.chart_module.BR
+import com.cstec.administrator.chart_module.Data.ActiveNotifyData
 import com.elder.zcommonmodule.Entity.SystemNotifyData
 import com.cstec.administrator.chart_module.R
 import com.elder.zcommonmodule.Component.TitleComponent
+import com.elder.zcommonmodule.Entity.Location
+import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
+import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
+import com.elder.zcommonmodule.Utils.DialogUtils
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_active_notify.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, HttpInteface.queryActiveNotifyList, TitleComponent.titleComponentCallBack {
+class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, HttpInteface.queryActiveNotifyList, TitleComponent.titleComponentCallBack, SimpleClickListener, HttpInteface.deleteSystemNotifyList {
+    override fun SystemNotifyDeleteListSuccess(response: String) {
+        items.clear()
+    }
+
+    override fun SystemNotifyDeleteListError(ex: Throwable) {
+        Toast.makeText(context, "系统通知清除失败", Toast.LENGTH_SHORT).show()
+    }
+
+
+    override fun onSimpleClick(entity: Any) {
+        var data = entity as ActiveNotifyData
+        var code = Integer.valueOf(data.msg_title!!.split(":")[1])
+        var bigType = data.msg_title!!.split(":")[2]
+        when (Integer.valueOf(bigType)) {
+            1 -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                activeNotifyListActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, code).navigation()
+            }
+            2 -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                activeNotifyListActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, code).navigation()
+            }
+            3 -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                activeNotifyListActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, code).navigation()
+            }
+        }
+    }
+
     override fun onComponentClick(view: View) {
         finish()
     }
 
     override fun onComponentFinish(view: View) {
-
+        showDialog()
     }
 
     override fun ActiveNotifyListSuccess(response: String) {
-        Log.e("result", "ActiveNotifyListSuccess" + response)
+        if (response.isNullOrEmpty()) {
+            return
+        }
+        var s = Gson().fromJson<ArrayList<ActiveNotifyData>>(response, object : TypeToken<ArrayList<ActiveNotifyData>>() {}.type)
 
+        s.forEach {
+            items.add(it)
+        }
     }
 
     override fun ActiveNotifyListError(ex: Throwable) {
-        Log.e("result", "ActiveNotifyListError" + ex.message)
+
     }
 
     override fun onRefresh() {
@@ -53,11 +104,11 @@ class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
 
     var titleComponent = TitleComponent()
 
-    var adapter = BindingRecyclerViewAdapter<SystemNotifyData>()
+    var adapter = BindingRecyclerViewAdapter<ActiveNotifyData>()
 
-    var items = ObservableArrayList<SystemNotifyData>()
-
-    var itemBinding = ItemBinding.of<SystemNotifyData>(BR.active_notify_item_model, R.layout.active_notify_item_layout)
+    var items = ObservableArrayList<ActiveNotifyData>()
+    var listener: SimpleClickListener = this
+    var itemBinding = ItemBinding.of<ActiveNotifyData>(BR.active_notify_item_model, R.layout.active_notify_item_layout).bindExtra(BR.listener, listener)
 
     var pageSize = 1
 
@@ -78,6 +129,19 @@ class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
         HttpRequest.instance.queryActiveNotify(HashMap())
     }
 
+    fun showDialog() {
+        var dialog = DialogUtils.createNomalDialog(activeNotifyListActivity, "是否清除所有活动消息", "取消", "清除")
+        dialog.setOnBtnClickL(OnBtnClickL {
+            dialog.dismiss()
+        }, OnBtnClickL {
+            HttpRequest.instance.deleteSystemNotify = this
+            var map = HashMap<String, String>()
+            map["type"] = "2"
+            HttpRequest.instance.deleteSystemNotifyRequest(map)
+            dialog.dismiss()
+        })
+        dialog.show()
+    }
 
     lateinit var activeNotifyListActivity: ActiveNotifyListActivity
     fun inject(activeNotifyListActivity: ActiveNotifyListActivity) {

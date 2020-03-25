@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="data"
             type="com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel" />
@@ -129,6 +131,8 @@
 
 
         <LinearLayout
+            android:id="@+id/members_click"
+            android:onClick="@{data::onClick}"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
             android:layout_marginRight="@dimen/d_15"
@@ -138,7 +142,8 @@
 
             <RelativeLayout
                 android:layout_width="@dimen/d_42"
-                android:layout_height="@dimen/d_42">
+                android:layout_height="@dimen/d_42"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="@dimen/d_36"
@@ -257,17 +262,20 @@
             android:background="@color/FivepercentBlackColor"></View>
 
         <LinearLayout
+            android:id="@+id/sponsor_click"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
             android:layout_marginRight="@dimen/d_15"
+            android:onClick="@{data::onClick}"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="@{data.data.SPONSOR_UNIT==null?View.GONE:View.VISIBLE}">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@{@string/sponsor + data.restoreTime}"
+                android:text="@{@string/sponsor + data.data.SPONSOR_UNIT}"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_14"
                 android:textStyle="bold"></TextView>

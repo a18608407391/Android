@@ -18,7 +18,16 @@ import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
-class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, SubjectClick {
+class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, SubjectClick, HttpInteface.PartyUnReadNotify_inf {
+    override fun PartyUnReadNotifySucccess(it: String) {
+        var model = viewModel as SubjectPartyViewModel
+        model.msgCount.set(Integer.valueOf(it))
+        model.onCreate = true
+    }
+
+    override fun PartyUnReadNotifyError(it: Throwable) {
+    }
+
     override fun onSubjectItemClick(entity: SubjectEntity) {
 
         var model = viewModel as SubjectPartyViewModel
@@ -38,8 +47,14 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Su
             }
         }
 
+        if (!model.onCreate) {
+            getUnRead()
+        }
     }
-
+    fun getUnRead() {
+        HttpRequest.instance.partyUnRead = this
+        HttpRequest.instance.getPartyActiveUnRead(HashMap())
+    }
     override fun PartyMotoError(it: Throwable) {
         var model = viewModel as SubjectPartyViewModel
         model.subject.dismissProgressDialog()
@@ -55,7 +70,6 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Su
     var command  = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             var item = hori.get(t)
-            item.check = true
             if (!item.check) {
                 hori.forEachIndexed { index, horiTitleEntity ->
                     if (index == t) {
@@ -80,6 +94,8 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Su
         Log.e("result","加载Mobo")
         if(flag){
             items.clear()
+            start = 1
+            pageSize = 10
         }
         var model = viewModel as SubjectPartyViewModel
         model.subject.showProgressDialog("正在获取摩旅列表数据.....")

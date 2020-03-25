@@ -4,9 +4,13 @@ import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +31,13 @@ import com.elder.zcommonmodule.Utils.URLImageParser;
 import com.elder.zcommonmodule.Widget.ExpandableTextView;
 import com.zk.library.Base.BaseApplication;
 import com.zk.library.Utils.PreferenceUtils;
+import com.zk.library.Utils.TextView.HtmlSpanner;
 
+
+import org.cs.tec.library.Base.Utils.UtilsKt;
 import org.cs.tec.library.Utils.ConvertUtils;
 import org.cs.tec.library.binding.command.BindingCommand;
+import org.xml.sax.XMLReader;
 
 import java.util.ArrayList;
 
@@ -227,8 +235,20 @@ public class ViewAdapter {
         if (html == null) {
             return;
         }
+
         if (html.contains(".jpg")) {
-            tv.setText(Html.fromHtml(html, new URLImageParser(tv), null));
+            HtmlSpanner spanner = new HtmlSpanner();
+//            spanner.registerHandler("img",new ImageHandler());
+            Spannable spannable =  spanner.fromHtml(html);
+            tv.setText(spannable);
+//            tv.setMovementMethod(LinkMovementMethodExt.getInstance(handler, ImageSpan.class));
+
+//            tv.setText(Html.fromHtml(html, new URLImageParser(tv), new Html.TagHandler() {
+//                @Override
+//                public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+//
+//                }
+//            }));
         } else {
             tv.setText(Html.fromHtml(html));
         }
@@ -308,5 +328,23 @@ public class ViewAdapter {
         }
         Double d = Double.valueOf(listener);
         view.setText(((d.intValue() / 1000)) + "");
+    }
+
+
+    @BindingAdapter("setStates")
+    public static void setStates(TextView tv, int status) {
+        if (status == 1) {
+            tv.setText("立即报名");
+            tv.setTextColor(Color.WHITE);
+            tv.setBackground(UtilsKt.getContext().getDrawable(R.drawable.login_btn_shape_nomal));
+        } else if (status == 2) {
+            tv.setTextColor(Color.BLACK);
+            tv.setText("活动进行中");
+            tv.setBackground(UtilsKt.getContext().getDrawable(R.drawable.login_btn_shape_bottom1));
+        } else if (status == 3) {
+            tv.setText("活动结束");
+            tv.setTextColor(Color.BLACK);
+            tv.setBackground(UtilsKt.getContext().getDrawable(R.drawable.login_btn_shape_bottom1));
+        }
     }
 }

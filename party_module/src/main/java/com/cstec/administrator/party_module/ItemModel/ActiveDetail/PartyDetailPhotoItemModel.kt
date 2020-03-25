@@ -31,15 +31,16 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
         if (result != null && !result.data.isNullOrEmpty()) {
             var count = 0
             result?.data?.forEachIndexed { index, photo ->
-                var url = getImageUrl(photo.filePath!!.split("/home/uploadFile/images")[1] + "/" + photo.fileNameUrl)
 
-                Log.e("result", "图片链接" + url)
-                if (tes != photo.createDate) {
-                    tes = photo.createDate!!
-                    items.add(PhotoEntitiy(ObservableField(""), ObservableField(photo.createDate!!), ObservableField(0)))
-                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.createDate!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
+                //                "fileNameUrl":"fileNameUrlfb661ac96a614c91a2f3601eb829e94e.png",
+//                "filePath":"/home/uploadFile/images/createActivity/2020/03/23/10",
+                var url = getImageUrl(photo.filePath!!.split("/home/uploadFile/images")[1] + "/" + photo.fileNameUrl)
+                if (tes != photo.uploadTime) {
+                    tes = photo.uploadTime!!
+                    items.add(PhotoEntitiy(ObservableField(""), ObservableField(photo.uploadTime!!), ObservableField(0)))
+                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.uploadTime!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
                 } else {
-                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.createDate!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
+                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.uploadTime!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
                 }
             }
             var t = items.size - count
@@ -98,6 +99,7 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
     }
 
     fun initData(flag: Boolean) {
+        Log.e("result","加载数据次数")
         if (flag) {
             start = 1
             pageSize = 30
@@ -109,8 +111,8 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
         HttpRequest.instance.partyAlarm = this
         var map = HashMap<String, String>()
         map["id"] = partyid.toString()
-        map["start"] = "1"
-        map["pageSize"] = "30"
+        map["start"] = start.toString()
+        map["pageSize"] = pageSize.toString()
         HttpRequest.instance.getPartyAlumb(map)
     }
 
@@ -120,6 +122,7 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
 
     var onLoadMoreCommand = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
+            Log.e("result", "curLoad" + t)
             if (t >= curLoad) {
                 start++
                 initData(false)

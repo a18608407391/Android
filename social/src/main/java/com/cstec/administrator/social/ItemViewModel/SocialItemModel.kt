@@ -72,13 +72,14 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
 
         } else {
             viewModel.CurrentClickTime = System.currentTimeMillis()
-            if (viewModel.progress == null) {
-                viewModel.progress = DialogUtils.showProgress(viewModel.socialFragment.activity!!, getString(R.string.http_load_social))
-            } else {
-                if (!viewModel.progress!!.isShowing) {
-                    viewModel.progress!!.show()
-                }
-            }
+//            viewModel.refreshLayout.autoRefresh()
+//            if (viewModel.progress == null) {
+//                viewModel.progress = DialogUtils.showProgress(viewModel.socialFragment.activity!!, getString(R.string.http_load_social))
+//            } else {
+//                if (!viewModel.progress!!.isShowing) {
+//                    viewModel.progress!!.show()
+//                }
+//            }
         }
         HttpRequest.instance.DynamicListResult = viewModel
         var map = HashMap<String, String>()

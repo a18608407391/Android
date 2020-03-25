@@ -19,6 +19,8 @@ import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_party_detail.*
 import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
+import org.cs.tec.library.Bus.RxBus
+import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
 
 
@@ -50,6 +52,8 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CODE)
     @JvmField
     var code: Int = 0
+
+
     override fun initVariableId(): Int {
         return BR.party_mobo_detail_model
     }
@@ -74,13 +78,19 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
             mPartyDetailSubjectTabLayout.getLocationOnScreen(location)
             var xPosition = location[0]
             var yPosition = location[1]
-            Log.e("result", "offset" + ConvertUtils.px2dp(yPosition * 1F))
-            if (ConvertUtils.px2dp(yPosition * 1F) < 50) {
+            Log.e("result", "subjectoffset" + ConvertUtils.px2dp(yPosition * 1F))
+            if (ConvertUtils.px2dp(yPosition * 1F) < 300) {
                 nest_subject.setNeedScroll(false)
             } else {
                 nest_subject.setNeedScroll(true)
             }
         })
+        var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
+            if (it == "ActiveWebGotoApp") {
+                finish()
+            }
+        }
+        RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
 

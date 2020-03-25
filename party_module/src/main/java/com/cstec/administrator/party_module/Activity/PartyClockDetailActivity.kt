@@ -19,6 +19,8 @@ import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_party_clock_detail.*
 import kotlinx.android.synthetic.main.activity_party_detail.*
+import org.cs.tec.library.Bus.RxBus
+import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
 
 @Route(path = RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL)
@@ -36,18 +38,12 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CODE)
     @JvmField
     var code: Int = 0
+
     override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
-//        Log.e("result", "offset" + ConvertUtils.px2dp(Math.abs(p1) * 1F))
         if (p1 >= -ConvertUtils.dp2px(300F)) {
             mViewModel?.visible!!.set(false)
-//            Utils.setStatusTextColor(false, activity)
-//            viewModel?.VisField!!.set(false)
-//            log_swipe.isEnabled = p1 >= 0
         } else {
             mViewModel?.visible!!.set(true)
-//            Utils.setStatusTextColor(true, activity)
-//            log_swipe.isEnabled = false
-//            viewModel?.VisField!!.set(true)
         }
     }
 
@@ -81,13 +77,19 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
             mPartyClockDetailTabLayout.getLocationOnScreen(location)
             var xPosition = location[0]
             var yPosition = location[1]
-            Log.e("result", "offset" + ConvertUtils.px2dp(yPosition * 1F))
-            if (ConvertUtils.px2dp(yPosition * 1F) < 55) {
+            Log.e("result", "clockoffset" + ConvertUtils.px2dp(yPosition * 1F))
+            if (ConvertUtils.px2dp(yPosition * 1F) < 300) {
                 nest_clock.setNeedScroll(false)
             } else {
                 nest_clock.setNeedScroll(true)
             }
         })
+        var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
+            if (it == "ActiveWebGotoApp") {
+                finish()
+            }
+        }
+        RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
 

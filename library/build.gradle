@@ -90,5 +90,6 @@ dependencies {
     api 'com.alibaba:fastjson:1.1.68.android'
     api 'cn.jiguang.sdk:jmessage:2.9.0'  // 此处以J
     api 'cn.jiguang.sdk:jcore:2.0.0'
-
+    api 'net.sourceforge.htmlcleaner:htmlcleaner:2.21'
+    implementation 'com.osbcp:cssparser:1.7'
 }

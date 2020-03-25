@@ -280,8 +280,14 @@ class HttpInteface {
         fun PartyRankingSucccess(it: String)
         fun PartyRankingError(it: Throwable)
     }
+
     interface PartyRestore_inf {
         fun PartyRestoreSucccess(it: String)
         fun PartyRestoreError(it: Throwable)
+    }
+
+    interface PartyUnReadNotify_inf {
+        fun PartyUnReadNotifySucccess(it: String)
+        fun PartyUnReadNotifyError(it: Throwable)
     }
 }

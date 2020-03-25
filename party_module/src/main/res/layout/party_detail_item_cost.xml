@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/rmb +  item_cost.price}"
+                android:text="@{item_cost.price}"
                 android:textColor="@color/totaldrivebgColor"
                 android:textSize="@dimen/s_12" />
         </LinearLayout>

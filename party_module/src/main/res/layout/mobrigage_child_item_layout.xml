@@ -18,7 +18,11 @@
         android:background="@drawable/corner_dialog"
         android:elevation="@dimen/d_05"
         android:onClick="@{()->listener.onSubjectItemClick(subject_data)}"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/d_05"
+        android:layout_marginRight="@dimen/d_05"
+        android:layout_marginLeft="@dimen/d_05"
+        android:layout_marginBottom="@dimen/d_8">
 
         <RelativeLayout
             android:layout_width="@dimen/d_167"
@@ -27,6 +31,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
                 app:LoadMBRoadImg="@{subject_data.FILE_NAME_URL}" />
 
             <LinearLayout

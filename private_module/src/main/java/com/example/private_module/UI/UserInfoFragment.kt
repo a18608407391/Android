@@ -108,7 +108,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
                 super.onNext(it)
                 var data = Gson().fromJson<BaseResponse>(it, BaseResponse::class.java)
                 var code = Gson().fromJson<PrivateEntity>(Gson().toJson(data.data), PrivateEntity::class.java)
-                if (data.code == 0) {
+                if (data.code == 0 && code != null) {
                     //骑行数据
                     var max = code.queryUserDisCountRidingInfo?.ridingData!![0].maxDis
                     if (max.toInt() == 0) {

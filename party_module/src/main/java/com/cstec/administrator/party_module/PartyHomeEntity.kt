@@ -33,7 +33,7 @@ class PartyHomeEntity : Serializable {
         var ACTIVITY_START: String? = null
         var ACTIVITY_STOP: String? = null
         var ACTIVITY_END: String? = null
-        var TICKET_PRICE: Double = 0.0
+        var TICKET_PRICE: String?  = null
         var DACT_X_AXIS: Double = 0.0
         var DACT_Y_AXIS: Double = 0.0
         var SQRTVALUE: Long = 0
@@ -120,7 +120,7 @@ class PartyHomeEntity : Serializable {
         var DAY = 0
         var PATH_POINT: String? = null
         var SUBORDINATE_CITY: String? = null
-        var TICKET_PRICE: Double = 0.0
+        var TICKET_PRICE:String ? = null
         var DACT_Y_AXIS: Double = 0.0
         var DACT_X_AXIS: Double = 0.0
         var SQRTVALUE: Long = 0

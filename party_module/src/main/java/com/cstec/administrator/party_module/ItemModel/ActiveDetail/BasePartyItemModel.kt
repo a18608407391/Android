@@ -1,5 +1,6 @@
 package com.cstec.administrator.party_module.ItemModel.ActiveDetail
 
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Base.ItemViewModel
 
@@ -25,8 +26,9 @@ open class BasePartyItemModel : ItemViewModel<BaseViewModel>() {
 
     }
 
-  open fun load(flag:Boolean){
+    open fun load(flag: Boolean) {
 
     }
+
 
 }

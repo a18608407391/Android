@@ -11,7 +11,6 @@ import com.cstec.administrator.social.ViewModel.SocialViewModel
 import com.cstec.administrator.social.databinding.FragmentSocialBinding
 import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.activity_driverhome.*
 import kotlinx.android.synthetic.main.fragment_social.*
 
 
@@ -21,6 +20,7 @@ class SocialFragment : BaseFragment<FragmentSocialBinding, SocialViewModel>() {
     override fun initContentView(): Int {
         return R.layout.fragment_social
     }
+
 
     override fun initVariableId(): Int {
         return BR.social_model
@@ -33,8 +33,9 @@ class SocialFragment : BaseFragment<FragmentSocialBinding, SocialViewModel>() {
         mTabLayout.setupWithViewPager(social_viewpager)
         social_viewpager.currentItem = 0
         if (this.isAdded) {
-            social_swipe.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
-            social_swipe.setOnRefreshListener(viewModel!!)
+            social_swipe.setOnRefreshListener(viewModel)
+//            social_swipe.setColorSchemeColors(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT)
+//            social_swipe.setOnRefreshListener(viewModel!!)
             mTabLayout.addOnTabSelectedListener(viewModel!!)
         }
         viewModel?.inject(this)

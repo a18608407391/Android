@@ -2,6 +2,7 @@ package com.cstec.administrator.social.ViewModel
 
 import android.app.Dialog
 import android.databinding.ObservableArrayList
+import android.databinding.ObservableField
 import android.support.design.widget.TabLayout
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
@@ -23,6 +24,8 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.google.gson.Gson
+import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Bus.ServiceEven
 import com.zk.library.Utils.RouterUtils
@@ -42,7 +45,19 @@ import org.cs.tec.library.Bus.RxSubscriptions
 import java.text.DecimalFormat
 
 
-class SocialViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, HttpInteface.SocialDynamicsList, HttpInteface.SocialDynamicsFocuserList, HttpInteface.SocialDynamicsLikerList, HttpInteface.SocialDynamicsCollection, HttpInteface.SocialDynamicsComment, HttpInteface.SocialDynamicsFocus, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, HttpInteface.deleteSocialResult {
+class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpInteface.SocialDynamicsFocuserList, HttpInteface.SocialDynamicsLikerList, HttpInteface.SocialDynamicsCollection, HttpInteface.SocialDynamicsComment, HttpInteface.SocialDynamicsFocus, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, HttpInteface.deleteSocialResult, OnRefreshListener {
+
+    lateinit var refreshLayout: RefreshLayout
+    override fun onRefresh(refreshLayout: RefreshLayout) {
+
+        var itemmodel = items[socialFragment.social_viewpager.currentItem]
+        itemmodel.curLoad = 0
+        itemmodel.page = 20
+        itemmodel.pageSize = 1
+        itemmodel.initDatas(socialFragment.social_viewpager.currentItem)
+        refreshLayout.finishRefresh(10000)
+    }
+
     override fun deleteSocialSuccess(it: String) {
         var cur = items[socialFragment.social_viewpager.currentItem]
         if (cur.deleteItem != null) {
@@ -57,8 +72,6 @@ class SocialViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, H
     }
 
     var curItem = 0
-    var progress: Dialog? = null
-
     override fun onTabReselected(p0: TabLayout.Tab?) {
 
     }
@@ -113,9 +126,10 @@ class SocialViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, H
 
 
     override fun ResultSDListSuccess(it: String) {
-        if (progress != null && progress!!.isShowing!!) {
-            progress!!.dismiss()
-        }
+//        if (progress != null && progress!!.isShowing!!) {
+//            progress!!.dismiss()
+//        }
+        refreshLayout.finishRefresh(true)
         if (it.length < 10) {
             return
         }
@@ -142,31 +156,24 @@ class SocialViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, H
             }
         }
         items[socialFragment.social_viewpager.currentItem].adapter.initDatas(items[socialFragment.social_viewpager.currentItem].items)
-        socialFragment.social_swipe.isRefreshing = false
+//        socialFragment.social_swipe.isRefreshing = false
         socialFragment.initSecond()
     }
 
     override fun ResultSDListError(ex: Throwable) {
-        Log.e("result", "ResultSDListError" + socialFragment.social_viewpager.currentItem + "当前" + ex.message)
-        if (progress != null && progress?.isShowing!!) {
-            progress!!.dismiss()
-        }
-        socialFragment.social_swipe.isRefreshing = false
+        refreshLayout.finishRefresh(true)
+//        if (progress != null && progress?.isShowing!!) {
+//            progress!!.dismiss()
+//        }
+//        socialFragment.social_swipe.isRefreshing = false
     }
 
     var CurrentClickTime = 0L
 
-    override fun onRefresh() {
-        var itemmodel = items[socialFragment.social_viewpager.currentItem]
-        itemmodel.curLoad = 0
-        itemmodel.page = 20
-        itemmodel.pageSize = 1
-        itemmodel.initDatas(socialFragment.social_viewpager.currentItem)
-        CoroutineScope(uiContext).launch {
-            delay(10000)
-            socialFragment.social_swipe.isRefreshing = false
-        }
-    }
+//    override fun onRefresh() {
+
+//        socialFragment.social_swipe.isRefreshing = false
+//    }
 
     var mTiltes = arrayOf(getString(R.string.focus_str), getString(R.string.hot_str), getString(R.string.nearly))
     var adapter = BindingViewPagerAdapter<SocialItemModel>()
@@ -236,11 +243,11 @@ class SocialViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, H
     lateinit var socialFragment: SocialFragment
     fun inject(socialFragment: SocialFragment) {
         this.socialFragment = socialFragment
+        this.refreshLayout = socialFragment.social_swipe
         first = true
         var pos = ServiceEven()
         pos.type = "HomeStart"
         RxBus.default?.post(pos)
-        progress = DialogUtils.showProgress(socialFragment.activity!!, getString(R.string.getHttp_location))
         HttpRequest.instance.DynamicListResult = this
         RxSubscriptions.add(RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
             invoke(it)
@@ -255,7 +262,7 @@ class SocialViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, H
                     itemmodel.initDatas(0)
                     CoroutineScope(uiContext).launch {
                         delay(10000)
-                        socialFragment.social_swipe.isRefreshing = false
+//                        socialFragment.social_swipe.isRefreshing = false
                     }
                 }
             }
@@ -292,9 +299,10 @@ class SocialViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, H
     var location: AMapLocation? = null
     private fun invoke(it: AMapLocation?) {
         if (location == null) {
-            if (progress != null && progress!!.isShowing) {
-                progress?.dismiss()
-            }
+//            if (progress != null && progress!!.isShowing) {
+//                progress?.dismiss()
+//            }
+            refreshLayout.finishRefresh(true)
             location = it
             var mo = items[0]
             mo.initDatas(0)

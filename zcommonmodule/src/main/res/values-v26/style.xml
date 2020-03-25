@@ -19,8 +19,7 @@
         <item name="textAllCaps">false</item>
     </style>
     <style name="Splash" parent="android:Theme.Black.NoTitleBar.Fullscreen">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/black</item>
     </style>
 
     <style name="WxStyle" parent="android:Theme.Translucent.NoTitleBar">

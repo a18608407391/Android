@@ -18,6 +18,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.uiContext
+import org.cs.tec.library.Bus.RxBus
+import org.cs.tec.library.Bus.RxSubscriptions
 
 
 @Route(path = RouterUtils.PartyConfig.SUBJECT_PARTY)
@@ -57,6 +59,12 @@ class SubjectPartyActivity : BaseActivity<ActivitySubjectPartyBinding, SubjectPa
             delay(200)
             subject_TabLayout.getTabAt(type)!!.select()
         }
+        var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
+            if (it == "ActiveWebGotoApp") {
+                finish()
+            }
+        }
+        RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
 

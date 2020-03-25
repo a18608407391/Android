@@ -2,6 +2,7 @@ package com.cstec.administrator.social.ViewAdapter;
 
 import android.databinding.BindingAdapter;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -230,7 +231,7 @@ public class ViewAdapter {
                         text.setCollapsed(true);
                         text.change();
                         ViewGroup.LayoutParams params = text.getLayoutParams();
-                        ViewGroup.LayoutParams tparams =text.mTv.getLayoutParams();
+                        ViewGroup.LayoutParams tparams = text.mTv.getLayoutParams();
                         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                         tparams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                         text.setLayoutParams(params);
@@ -346,4 +347,15 @@ public class ViewAdapter {
 //    }
 
 
+    @BindingAdapter("LoadingAnimator")
+    public static void LoadingAnimator(ImageView img, int status) {
+        AnimationDrawable drawable = (AnimationDrawable) img.getBackground();
+        if(status==1){
+            img.setVisibility(View.VISIBLE);
+            drawable.start();
+        }else {
+            drawable.stop();
+            img.setVisibility(View.GONE);
+        }
+    }
 }

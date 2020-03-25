@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -10,61 +11,74 @@
     </data>
 
 
-    <com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/social_swipe"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="@dimen/d_60"
+            android:layout_marginTop="@dimen/d_20"
+            android:elevation="@dimen/d_05"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/mTabLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_60"
+                android:layout_marginLeft="@dimen/d_15"
+                app:tabIndicatorColor="@color/black"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="0dp"
+                app:tabMode="fixed"
+                app:tabRippleColor="@color/trans"
+                app:tabSelectedTextColor="@color/black"
+                app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/d_50"
-                android:layout_marginTop="@dimen/d_20"
-                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:gravity="right|center_vertical"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.TabLayout
-                    android:id="@+id/mTabLayout"
+                <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/d_42"
-                    android:layout_marginLeft="@dimen/d_15"
-                    app:tabIndicatorColor="@color/black"
-                    app:tabIndicatorFullWidth="false"
-                    app:tabIndicatorHeight="0dp"
-                    app:tabRippleColor="@color/trans"
-                    app:tabMode="fixed"
-                    app:tabSelectedTextColor="@color/black"
-                    app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right|center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_marginRight="@dimen/d_15"
-                        android:src="@drawable/search_icon" />
-
-                </LinearLayout>
-
-
+                    android:layout_marginRight="@dimen/d_15"
+                    android:src="@drawable/search_icon"
+                    android:visibility="gone" />
             </LinearLayout>
+        </LinearLayout>
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center">-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/loading_animate"-->
+        <!--android:layout_width="@dimen/d_24"-->
+        <!--android:layout_height="@dimen/d_24"-->
+        <!--android:background="@drawable/progress_dialog_anim"-->
+        <!--app:LoadingAnimator="@{social_model.animateStatus}" />-->
+
+        <!--</LinearLayout>-->
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/social_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/social_viewpager"
@@ -86,6 +100,7 @@
                     android:onClick="@{social_model::onClick}"
                     android:src="@drawable/release_photo" />
             </RelativeLayout>
-        </LinearLayout>
-    </com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </LinearLayout>
+
 </layout>

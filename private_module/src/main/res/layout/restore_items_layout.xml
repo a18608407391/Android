@@ -31,7 +31,7 @@
                 android:layout_height="@dimen/d_80"
                 android:layout_marginLeft="@dimen/d_15"
                 android:scaleType="centerCrop"
-                app:setRstoreImage="@{restore_item_entity.FILE_PATH}" />
+                app:LoadImg="@{restore_item_entity.FILE_PATH}" />
 
             <TextView
                 android:layout_width="wrap_content"

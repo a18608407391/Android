@@ -18,7 +18,16 @@ import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 import java.util.*
 
-class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, SubjectClick {
+class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, SubjectClick, HttpInteface.PartyUnReadNotify_inf {
+    override fun PartyUnReadNotifySucccess(it: String) {
+        var model = viewModel as SubjectPartyViewModel
+        model.msgCount.set(Integer.valueOf(it))
+        model.onCreate = true
+    }
+
+    override fun PartyUnReadNotifyError(it: Throwable) {
+    }
+
     override fun onSubjectItemClick(entity: SubjectEntity) {
 
         var model = viewModel as SubjectPartyViewModel
@@ -38,6 +47,9 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
                 items.add(it)
             }
         }
+        if (!model.onCreate) {
+            getUnRead()
+        }
     }
 
     override fun PartySubjectError(it: Throwable) {
@@ -55,7 +67,6 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
     var command = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             var item = hori.get(t)
-            item.check = true
             if (!item.check) {
                 hori.forEachIndexed { index, horiTitleEntity ->
                     if (index == t) {
@@ -73,12 +84,17 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
     var type = ObservableField(1)
     var start = 1
     var pageSize = 10
-
+    fun getUnRead() {
+        HttpRequest.instance.partyUnRead = this
+        HttpRequest.instance.getPartyActiveUnRead(HashMap())
+    }
 
     override fun load(flag: Boolean) {
         super.load(flag)
         if (flag) {
             items.clear()
+            start = 1
+            pageSize = 10
         }
         var model = viewModel as SubjectPartyViewModel
         model.subject.showProgressDialog("正在获取主题列表数据.....")

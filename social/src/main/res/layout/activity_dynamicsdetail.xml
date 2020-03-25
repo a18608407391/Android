@@ -27,7 +27,7 @@
         <LinearLayout
             android:id="@+id/top_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_60"
+            android:layout_height="@dimen/d_80"
             android:layout_marginLeft="@dimen/d_15"
             android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"

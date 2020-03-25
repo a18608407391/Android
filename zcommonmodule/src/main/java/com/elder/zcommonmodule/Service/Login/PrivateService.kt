@@ -42,7 +42,7 @@ interface PrivateService {
     //    POST /UserPersonalCenter/dynamicCollectionList
     //个人赞列表POST /UserPersonalCenter/queryFabulousList
     @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
-    @POST("AmoskiActivity/UserPersonalCenter/dynamicCollectionList")
+    @POST("AmoskiActivity/UserPersonalCenter/collectionList")
     fun MyCollection(@Header("appToken") header: String, @Body builder: RequestBody
     ): Observable<BaseResponse>
 //    POST /SameCity/sameCityData

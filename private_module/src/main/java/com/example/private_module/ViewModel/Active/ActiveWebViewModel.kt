@@ -36,6 +36,7 @@ import okhttp3.*
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Base.Utils.uiContext
+import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.WX_APP_ID
 import org.cs.tec.library.binding.command.BindingCommand
@@ -67,6 +68,8 @@ class ActiveWebViewModel : BaseViewModel() {
         } else if (activeWebActivity.type == 4) {
             Log.e("result", "$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/activity/detail.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "id=" + activeWebActivity.id + "&type=app")
             webUrl.set("$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/activity/detail.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&id=" + activeWebActivity.id + "&type=app")
+        } else if (activeWebActivity.type == 5) {
+            webUrl.set("$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/order/index.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&id=" + activeWebActivity.id + "&code=" + activeWebActivity.code + "&type=app")
         }
     }
 
@@ -74,12 +77,18 @@ class ActiveWebViewModel : BaseViewModel() {
     var webUrl = ObservableField<String>("")
     var roadCommand = BindingCommand(object : BindingConsumer<String> {
         override fun call(t: String) {
-
             Log.e("result", t + "当前链接")
-
             if (t.endsWith("gotoApp")) {
-                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-                finish()
+                if (ac.type < 5) {
+                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+                    finish()
+                } else {
+                    finish()
+                }
+            } else if (t.contains("gotoTicketList")) {
+                ac.type = 1
+                webUrl.set(Base_URL + "/AmoskiWebActivity/personalcenter/roadbookActivitype/eticket/eticketList.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&type=app")
+                RxBus.default!!.post("ActiveWebGotoApp")
             } else if (t.startsWith("alipays://platformapi")) {
                 if (t.contains("end")) {
                     var m = t.split("end")

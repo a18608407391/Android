@@ -17,6 +17,7 @@
     </style>
 
     <style name="Splash" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@color/black</item>
     </style>
 
     <style name="roomRatingBar" parent="@android:style/Widget.RatingBar">

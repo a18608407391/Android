@@ -13,6 +13,8 @@ import com.zk.library.Base.BaseActivity
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_search_party.*
+import org.cs.tec.library.Bus.RxBus
+import org.cs.tec.library.Bus.RxSubscriptions
 
 @Route(path = RouterUtils.PartyConfig.SEARCH_PARTY)
 class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchPartyViewModel>() {
@@ -45,6 +47,12 @@ class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchParty
     override fun initData() {
         super.initData()
         search_et.setOnEditorActionListener(mViewModel)
+        var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
+            if (it == "ActiveWebGotoApp") {
+                finish()
+            }
+        }
+        RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
 }

@@ -32,6 +32,7 @@ class PhotoBean : Serializable {
         var imgUrl: String? = null
         var createTime: String? = null
         var createDate:String ? = null
+        var uploadTime:String ? = null
         var createUser: String? = null
         var smallUrl: String? = null
         var status: Int = 0

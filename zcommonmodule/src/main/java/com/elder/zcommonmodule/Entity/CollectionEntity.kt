@@ -10,30 +10,24 @@ class CollectionEntity : Serializable {
 
 
     class Collection : Serializable {
-
         var CREATE_DATE: String? = null
-
+        var createDate :String ? = null
         var DYNAMIC_ID: String? = null
-
+        var publishContent :String ? = null
         var ID: String? = null
-
         var isRead: String? = null
-
         var MEMBER_ID: String? = null
-
         var memberImages: String? = null
         var MEMBER_NAME: String? = null
-
+        var memberName :String ? = null
         var releaseDynamicParent: DynamicsCategoryEntity.Dynamics? = null
-
-
         var TARGET_ID: String? = null
         var TARGET_ID_TYPE: String? = null
         var PUBLISH_CONTENT: String? = null
-        var FILE_PATH: SocialPhotoEntity? = null
+        var FILE_PATH: String? = null
         var TITLE: String? = null
         var CODE = 0
-        var BIG_TYPE = 0
+        var BIG_TYPE:Int = 0
         var STATE = 0
         var FILE_NAME_URL: String? = null
         var COLLECTION_PLACE: String? = null

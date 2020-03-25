@@ -25,20 +25,29 @@ import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.collections.MergeObservableList
 import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
+import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickListener, WonderfulClickListener, MBCommandClickListener, HttpInteface.PartyHome {
+class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickListener, WonderfulClickListener, MBCommandClickListener, HttpInteface.PartyHome, HttpInteface.PartyUnReadNotify_inf {
+    override fun PartyUnReadNotifySucccess(it: String) {
+        var o = Integer.valueOf(it)
+        msgCount.set(o)
+    }
 
+    override fun PartyUnReadNotifyError(it: Throwable) {
 
+    }
+
+    var msgCount = ObservableField(0)
     var city = ObservableField<String>("湖南省")
     fun onClick(view: View) {
         when (view.id) {
             R.id.notify_icon -> {
-
+                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, Location(location!!.latitude, location!!.longitude)).navigation()
             }
             R.id.title_ev -> {
                 DialogUtils.showProviceDialog(partyFragment.activity!!, province, "选择城市")
@@ -70,6 +79,11 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
             var start = item.ACTIVITY_START!!.split(" ")[0]
             var stop = item.ACTIVITY_STOP!!.split(" ")[0]
             item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE / 1000 + "km"
+            if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
+                item.TICKET_PRICE = "免费"
+            } else {
+                item.TICKET_PRICE = getString(R.string.rmb) + item.TICKET_PRICE
+            }
             entity.list.add(item)
         }
         var clock = ObservableArrayList<PartyHomeEntity.ClockActive>()
@@ -77,7 +91,6 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         var select = ObservableArrayList<PartyHomeEntity.WonderfulActive>()
         if (!home.clockActivityList.isNullOrEmpty()) {
             home.clockActivityList!!.forEach {
-
                 var item = it
                 item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
                 var start = item.ACTIVITY_START!!.split(" ")[0]
@@ -86,15 +99,52 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
                 clock.add(item)
             }
         }
+
+        if (!home.motoActivityList.isNullOrEmpty()) {
+            home.motoActivityList!!.forEach {
+                var item = it
+                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
+                var start = item.ACTIVITY_START!!.split(" ")[0]
+                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
+                item.ACTIVITY_START = start + "至" + stop
+                mobo.add(item)
+            }
+        }
+        if (!home.selectedActivityList.isNullOrEmpty()) {
+            home.selectedActivityList!!.forEach {
+                var item = it
+//                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
+                var start = item.ACTIVITY_START!!.split(" ")[0]
+                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
+                item.ACTIVITY_START = start + "至" + stop
+                Log.e("result", "票价" + item.TICKET_PRICE)
+                if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
+                    item.TICKET_PRICE = "免费"
+                } else {
+                    item.TICKET_PRICE = getString(R.string.rmb) + item.TICKET_PRICE
+                }
+                select.add(item)
+            }
+        }
+
         hot.set(entity)
         items.insertItem(ObservableField("热门推荐").get())
         items.insertItem(hot.get())
-        items.insertItem(ObservableField("打卡活动").get())
-        items.insertList(clock)
+        if (!clock.isEmpty()) {
+            items.insertItem(ObservableField("打卡活动").get())
+            items.insertList(clock)
+        }
         items.insertItem(ObservableField("摩旅推荐").get())
         items.insertList(mobo)
         items.insertItem(ObservableField("精彩活动").get())
         items.insertList(select)
+        getUnRead()
+    }
+
+
+    fun getUnRead() {
+        HttpRequest.instance.partyUnRead = this
+        HttpRequest.instance.getPartyActiveUnRead(HashMap())
     }
 
     var hot = ObservableField<PartyHotRecommand>()

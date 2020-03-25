@@ -219,6 +219,8 @@ class RouterUtils() {
             const val PARTY_CLOCK_DETAIL = "/party/clock_detail"
             const val PARTY_SUBJECT_DETAIL = "/party/subject_detail"
             const val SEARCH_PARTY = "/party/search"
+            const val ORGANIZATION = "/party/organization"
+            const val ENROLL = "/party/enroll"
         }
 
     }

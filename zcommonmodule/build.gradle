@@ -44,5 +44,5 @@ dependencies {
     //    api 'com.diogobernardino:williamchart:2.5.0'
     api 'mbanje.kurt:fabbutton:1.2.4@aar'
     api 'cn.carbs.android:ExpandableTextView:1.0.3'
-
+    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.2'
 }
