@@ -14,11 +14,14 @@ import com.google.gson.Gson
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 import java.util.*
 
 class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, SubjectClick, HttpInteface.PartyUnReadNotify_inf {
+
+
     override fun PartyUnReadNotifySucccess(it: String) {
         var model = viewModel as SubjectPartyViewModel
         model.msgCount.set(Integer.valueOf(it))
@@ -27,6 +30,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
 
     override fun PartyUnReadNotifyError(it: Throwable) {
     }
+
 
     override fun onSubjectItemClick(entity: SubjectEntity) {
 
@@ -39,17 +43,46 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
 
     override fun PartySubjectSucccess(it: String) {
         var model = viewModel as SubjectPartyViewModel
-        model.subject.dismissProgressDialog()
-        model.subject.dismissProgressDialog()
         var entity = Gson().fromJson<SubjectItemModelEntity>(it, SubjectItemModelEntity::class.java)
+        refreshStatus.set(2)
         if (!entity.data.isNullOrEmpty()) {
             entity.data!!.forEach {
-                items.add(it)
+                var item = it
+                var start = item.ACTIVITY_START!!.split(" ")[0]
+                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
+                item.ACTIVITY_START = start + "至" + stop
+                if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
+                    item.TICKET_PRICE = "免费"
+                } else {
+                    item.TICKET_PRICE = getString(R.string.rmb) + item.TICKET_PRICE
+                }
+                if (!item.TYPE.isNullOrEmpty()) {
+                    item.TYPE!!.split(",").forEachIndexed { index, s ->
+                        when (index) {
+                            0 -> {
+                                item.type1 = s
+                            }
+                            1 -> {
+                                item.type2 = s
+                            }
+                            2 -> {
+                                item.type3 = s
+                            }
+                        }
+                    }
+                }
+                items.add(item)
             }
         }
         if (!model.onCreate) {
             getUnRead()
         }
+    }
+
+    override fun refresh() {
+        super.refresh()
+        load(true)
+        refreshStatus.set(1)
     }
 
     override fun PartySubjectError(it: Throwable) {
@@ -61,23 +94,19 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
         this.add(HoriTitleEntity("推荐", true))
         this.add(HoriTitleEntity("热门", false))
         this.add(HoriTitleEntity("离我最近", false))
-        this.add(HoriTitleEntity("活动里程", false))
+        this.add(HoriTitleEntity("最新发布", false))
     }
 
-    var command = BindingCommand(object : BindingConsumer<Int> {
-        override fun call(t: Int) {
-            var item = hori.get(t)
-            if (!item.check) {
+    var command = BindingCommand(object : BindingConsumer<HoriTitleEntity> {
+        override fun call(t: HoriTitleEntity) {
+            var i = hori.indexOf(t)
+            if (!t.check) {
                 hori.forEachIndexed { index, horiTitleEntity ->
-                    if (index == t) {
-                        hori[index] = item
-                    } else {
-                        horiTitleEntity.check = false
-                        hori[index] = horiTitleEntity
-                    }
+                    horiTitleEntity.check = index == i
+                    hori.set(index, horiTitleEntity)
                 }
             }
-            type.set(t + 1)
+            type.set(i + 1)
             load(true)
         }
     })
@@ -89,6 +118,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
         HttpRequest.instance.getPartyActiveUnRead(HashMap())
     }
 
+
     override fun load(flag: Boolean) {
         super.load(flag)
         if (flag) {
@@ -97,7 +127,6 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
             pageSize = 10
         }
         var model = viewModel as SubjectPartyViewModel
-        model.subject.showProgressDialog("正在获取主题列表数据.....")
         HttpRequest.instance.partySubject = this
         var map = HashMap<String, String>()
         map["x"] = model.subject?.location!!.longitude.toString()
@@ -117,14 +146,24 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
     var itemBinding = ItemBinding.of<SubjectEntity> { itemBinding, position, item ->
         itemBinding.set(BR.subject_data, R.layout.subject_child_item_layout).bindExtra(BR.listener, listener)
     }
+
+    var cur = 0L
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             Log.e("result", "加载更多" + t)
-            if (t < start * pageSize) {
+            var model = viewModel as SubjectPartyViewModel
+            if (!model.onCreate) {
                 return
+            }
+            if (System.currentTimeMillis() - cur > 2000) {
+                if (t < start * pageSize) {
+                    return
+                } else {
+                    start++
+                    load(false)
+                }
             } else {
-                start++
-                load(false)
+                cur = System.currentTimeMillis()
             }
         }
     })

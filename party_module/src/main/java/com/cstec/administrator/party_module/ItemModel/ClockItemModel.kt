@@ -39,7 +39,7 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
 
     override fun PartyClockSucccess(it: String) {
         var model = viewModel as SubjectPartyViewModel
-        model.subject.dismissProgressDialog()
+        refreshStatus.set(2)
         var entity = Gson().fromJson<SubjectItemModelEntity>(it, SubjectItemModelEntity::class.java)
         if (!entity.data.isNullOrEmpty()) {
             entity.data!!.forEach {
@@ -60,6 +60,11 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
         HttpRequest.instance.partyUnRead = this
         HttpRequest.instance.getPartyActiveUnRead(java.util.HashMap())
     }
+    override fun refresh() {
+        super.refresh()
+        load(true)
+        refreshStatus.set(1)
+    }
 
     var hori = ObservableArrayList<HoriTitleEntity>().apply {
         this.add(HoriTitleEntity("推荐", true))
@@ -69,21 +74,16 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
     }
 
 
-    var command = BindingCommand(object : BindingConsumer<Int> {
-        override fun call(t: Int) {
-            var item = hori.get(t)
-            if (!item.check) {
+    var command = BindingCommand(object : BindingConsumer<HoriTitleEntity> {
+        override fun call(t: HoriTitleEntity) {
+            var i = hori.indexOf(t)
+            if (!t.check) {
                 hori.forEachIndexed { index, horiTitleEntity ->
-                    if (index == t) {
-                        item.check = true
-                        hori[index] = item
-                    } else {
-                        horiTitleEntity.check = false
-                        hori[index] = horiTitleEntity
-                    }
+                    horiTitleEntity.check = index == i
+                    hori.set(index, horiTitleEntity)
                 }
             }
-            type.set(t + 1)
+            type.set(i + 1)
             load(true)
         }
     })
@@ -96,7 +96,6 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
             pageSize = 10
         }
         var model = viewModel as SubjectPartyViewModel
-        model.subject.showProgressDialog("正在获取打卡列表数据.....")
         HttpRequest.instance.partyClock = this
         var map = HashMap<String, String>()
         map["x"] = model.subject?.location!!.longitude.toString()
@@ -120,14 +119,24 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
     var itemBinding = ItemBinding.of<SubjectEntity> { itemBinding, position, item ->
         itemBinding.set(BR.subject_data, R.layout.clock_child_item_layout).bindExtra(BR.listener, listener)
     }
+
+    var cur = 0L
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
             Log.e("result", "加载更多" + t)
-            if (t < start * pageSize) {
+            var model = viewModel as SubjectPartyViewModel
+            if (!model.onCreate) {
                 return
+            }
+            if (System.currentTimeMillis() - cur > 1000) {
+                if (t < start * pageSize) {
+                    return
+                } else {
+                    start++
+                    load(false)
+                }
             } else {
-                start++
-                load(false)
+                cur = System.currentTimeMillis()
             }
         }
     })

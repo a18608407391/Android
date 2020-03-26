@@ -61,7 +61,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/d_10"
                         android:onClick="@{party_main_model::onClick}"
-                        android:text="搜索目的地/产品名称"
+                        android:hint="@string/search_active"
+                        android:singleLine="true"
                         android:textColor="#A4A4A4" />
                 </LinearLayout>
 

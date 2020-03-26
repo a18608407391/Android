@@ -25,6 +25,7 @@ import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_guide.*
 import org.cs.tec.library.APP_CREATE
 import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Utils.ConvertUtils
 
 
 @Route(path = RouterUtils.ActivityPath.GUIDE)
@@ -64,7 +65,7 @@ class GuideActivity : BaseActivity<ActivityGuideBinding, GuideViewModel>() {
         }, (str + lastStr).length - lastStr.length, (str + lastStr).length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         builder.setSpan(foregroundColorSpan, (str + lastStr).length - lastStr.length, (str + lastStr).length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-        var dialog = DialogUtils.createNomalTwoBuilderDialog(this, builder, getString(R.string.cancle), org.cs.tec.library.Base.Utils.getString(com.elder.blogin.R.string.confirm))
+        var dialog = DialogUtils.createNomalTwoBuilderDialog(this, builder, getString(R.string.cancle), org.cs.tec.library.Base.Utils.getString(com.elder.blogin.R.string.confirm)).contentTextSize(14F)
         dialog.setOnBtnClickL(OnBtnClickL {
             AppManager.get()?.AppExit()
             dialog.dismiss()

@@ -3,8 +3,12 @@ package com.cstec.administrator.party_module.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.util.Log
+import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.R
 import com.zk.library.Base.BaseActivity
 import com.cstec.administrator.party_module.BR
@@ -67,9 +71,20 @@ class SubjectPartyActivity : BaseActivity<ActivitySubjectPartyBinding, SubjectPa
         RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
-
+    fun returnBack() {
+        if (!mViewModel?.destroyList!!.contains("HomeActivity")) {
+            Log.e("result", "当前界面只有一个了")
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    finish()
+                }
+            })
+        } else {
+            finish()
+        }
+    }
     override fun doPressBack() {
         super.doPressBack()
-        finish()
+       returnBack()
     }
 }

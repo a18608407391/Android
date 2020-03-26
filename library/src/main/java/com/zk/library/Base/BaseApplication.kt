@@ -26,14 +26,16 @@ import java.util.concurrent.TimeUnit
 import android.content.Intent
 import cn.jpush.im.android.api.model.Message
 import cn.jpush.im.android.api.model.Conversation
-
-
+import me.jessyan.autosize.AutoSize
+import me.jessyan.autosize.AutoSizeConfig
 
 
 open class BaseApplication : Application() {
     var getWidthPixels = 0
     var getHightPixels = 0
     var curActivity = 0
+
+    var curFragment = 0
 
 
     companion object {
@@ -120,7 +122,7 @@ open class BaseApplication : Application() {
         val DELETE_MODE = "deleteMode"
         val RESULT_CODE_ME_INFO = 20
         var forwardMsg: ArrayList<Message> = ArrayList()
-//        val CONV_TYPE = "conversationType" //value使用 ConversationType
+        //        val CONV_TYPE = "conversationType" //value使用 ConversationType
         val ROOM_ID = "roomId"
         val POSITION = "position"
 
@@ -195,12 +197,15 @@ open class BaseApplication : Application() {
             }
         }
     }
+
     lateinit var mWxApi: IWXAPI
     private fun registerWx() {
         mWxApi = WXAPIFactory.createWXAPI(this, WX_APP_ID, false)
         // 将该app注册到微信
         mWxApi.registerApp(WX_APP_ID)
         var map = HashMap<String, Any>()
+        AutoSize.checkAndInit(this)
+        AutoSizeConfig.getInstance().unitsManager.setSupportSP(true)
         map[TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER] = true
         QbSdk.initTbsSettings(map)
         var intent = Intent(this, PreLoadX5Service::class.java)

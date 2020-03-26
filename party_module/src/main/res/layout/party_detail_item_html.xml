@@ -9,8 +9,10 @@
             type="com.cstec.administrator.party_module.PartyDetailEntity" />
     </data>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.zk.library.Weidge.TextView.HtmlTextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:PartyHtmlText="@{party_detail_item_html.DETAILS_ACTIVITIES}"></TextView>
+        android:layout_marginLeft="@dimen/d_15"
+        android:layout_marginRight="@dimen/d_15"
+        app:PartyHtmlText="@{party_detail_item_html.DETAILS_ACTIVITIES}"></com.zk.library.Weidge.TextView.HtmlTextView>
 </layout>

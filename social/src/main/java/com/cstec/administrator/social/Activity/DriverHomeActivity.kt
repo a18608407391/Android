@@ -243,6 +243,12 @@ class DriverHomeActivity : BaseActivity<ActivityDriverhomeBinding, DriverHomeVie
                             })
                 }
             }
+        } else if (navigationType == 11) {
+            if (!mViewModel?.destroyList!!.contains("EnrollListActivity")) {
+                finish()
+            } else {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, location).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(targetId)).navigation()
+            }
         }
     }
 

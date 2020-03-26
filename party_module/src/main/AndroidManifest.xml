@@ -2,6 +2,7 @@
     package="com.cstec.administrator.party_module">
 
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <application>
 
         <activity android:name=".Activity.PartyDetailActivty"></activity>

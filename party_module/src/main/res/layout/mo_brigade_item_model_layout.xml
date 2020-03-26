@@ -27,16 +27,29 @@
                 app:initSubjectPartyHoriCommand="@{mo_brigade_item_model.command}"></LinearLayout>
         </HorizontalScrollView>
 
-        <android.support.v7.widget.RecyclerView
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d_15"
-            app:adapter="@{mo_brigade_item_model.adapter}"
-            app:itemBinding="@{mo_brigade_item_model.itemBinding}"
-            app:items="@{mo_brigade_item_model.items}"
-            app:layoutManager="android.support.v7.widget.GridLayoutManager"
-            app:onLoadMoreCommand="@{mo_brigade_item_model.scrollerBinding}"
-            app:spanCount="2"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:refreshCommand="@{mo_brigade_item_model.refreshCommand}"
+            app:refreshLayout="@{mo_brigade_item_model.refreshStatus}">
+
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_15"
+                app:adapter="@{mo_brigade_item_model.adapter}"
+                app:itemBinding="@{mo_brigade_item_model.itemBinding}"
+                app:items="@{mo_brigade_item_model.items}"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:onLoadMoreCommand="@{mo_brigade_item_model.scrollerBinding}"
+                app:spanCount="2"></android.support.v7.widget.RecyclerView>
+
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     </LinearLayout>
 </layout>

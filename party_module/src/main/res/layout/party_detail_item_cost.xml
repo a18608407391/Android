@@ -25,14 +25,15 @@
                 android:layout_height="wrap_content"
                 android:text="@{item_cost.title}"
                 android:textColor="@color/black_12"
-                android:textSize="@dimen/s_15" />
+                android:textSize="@dimen/s_18" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{item_cost.price}"
+                android:layout_marginLeft="@dimen/d_10"
                 android:textColor="@color/totaldrivebgColor"
-                android:textSize="@dimen/s_12" />
+                android:textSize="@dimen/s_14" />
         </LinearLayout>
 
         <TextView

@@ -4,6 +4,10 @@
     <data>
 
         <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.SimpleClickListener"></variable>
+
+        <variable
             name="enroll_model"
             type="com.cstec.administrator.party_module.ViewModel.EnrollViewModel.EnrollEntity.Enroll"></variable>
     </data>
@@ -12,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_60"
         android:layout_marginLeft="@dimen/d_15"
+        android:onClick="@{()->listener.onSimpleClick(enroll_model)}"
         android:layout_marginRight="@dimen/d_15"
         android:orientation="horizontal">
 

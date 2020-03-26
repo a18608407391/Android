@@ -37,7 +37,7 @@
                 android:drawableLeft="@drawable/ic_sousuo"
                 android:drawablePadding="5dp"
                 android:singleLine="true"
-                android:hint="@string/enter_destination"
+                android:hint="@string/search_active"
                 android:paddingLeft="@dimen/d_10" />
 
             <TextView

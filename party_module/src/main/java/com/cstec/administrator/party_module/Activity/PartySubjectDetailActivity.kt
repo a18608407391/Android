@@ -6,8 +6,11 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.TabLayout
 import android.support.v4.widget.NestedScrollView
 import android.util.Log
+import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel
@@ -97,5 +100,22 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     fun initTrans(falg: Boolean) {
         StatusbarUtils.setTranslucentStatus(this)
         StatusbarUtils.setStatusBarMode(this, falg, 0x00000000)
+    }
+
+    fun returnBack() {
+        if (!mViewModel?.destroyList!!.contains("HomeActivity")) {
+            Log.e("result", "当前界面只有一个了")
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    finish()
+                }
+            })
+        } else {
+            finish()
+        }
+    }
+    override fun doPressBack() {
+        super.doPressBack()
+       returnBack()
     }
 }

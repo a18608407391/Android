@@ -31,9 +31,15 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
 
     var msgCount = ObservableField(0)
     var onCreate = false
+
+    var cur = 0L
     override fun onTabSelected(p0: TabLayout.Tab?) {
         if (!onCreate) {
-            items[subject.type].load(true)
+            Log.e("result", "执行次数")
+            if (System.currentTimeMillis() - cur > 1000) {
+                items[subject.type].load(true)
+            }
+            cur = System.currentTimeMillis()
         } else {
             Log.e("result", "Position" + p0!!.position)
             items[p0!!.position].load(true)
@@ -93,7 +99,7 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
     fun onClick(view: View) {
         when (view.id) {
             R.id.arrow -> {
-                finish()
+                subject.returnBack()
             }
             R.id.title_ev -> {
                 DialogUtils.showProviceDialog(subject!!, province, "选择城市")
@@ -102,8 +108,8 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
                 ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                         subject.location).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
             }
-            R.id.notify_icon->{
-                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,subject.location).navigation()
+            R.id.notify_icon -> {
+                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, subject.location).navigation()
             }
         }
     }

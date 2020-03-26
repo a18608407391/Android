@@ -27,6 +27,7 @@ import com.elder.zcommonmodule.Utils.getScaleUpAnimation
 import com.example.drivermodule.Activity.MapActivity
 import com.example.private_module.UI.UserInfoFragment
 import com.zk.library.Base.AppManager
+import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_home.*
@@ -48,13 +49,14 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
         when (checkedId) {
             R.id.same_city -> {
 //                StatusbarUtils.setStatusBarMode(homeActivity, false, 0x000000)
-
+                BaseApplication.getInstance().curFragment = 0
 
                 Log.e("result", "设置ChangeFragmentsame_city")
                 changerFragment(0)
                 lastChecked = checkedId
             }
             R.id.main_left -> {
+                BaseApplication.getInstance().curFragment = 1
                 Utils.setStatusTextColor(true, homeActivity)
                 changerFragment(1)
                 lastChecked = checkedId
@@ -82,11 +84,13 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
                 homeActivity.main_bottom_bg.check(lastChecked)
             }
             R.id.dynamics -> {
+                BaseApplication.getInstance().curFragment = 3
                 Utils.setStatusTextColor(true, homeActivity)
                 changerFragment(2)
                 lastChecked = checkedId
             }
             R.id.main_right -> {
+                BaseApplication.getInstance().curFragment = 4
                 Utils.setStatusTextColor(true, homeActivity)
                 changerFragment(3)
                 lastChecked = checkedId
@@ -129,8 +133,11 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
     fun inject(homeActivity: HomeActivity) {
         this.homeActivity = homeActivity
         lastChecked = R.id.same_city
-
-        changerFragment(0)
+        if (BaseApplication.getInstance().curFragment == 1) {
+            homeActivity.main_bottom_bg.check(R.id.main_left)
+        } else {
+            changerFragment(0)
+        }
         Log.e("result", "重新启动了")
         Utils.setStatusTextColor(false, homeActivity)
         RxSubscriptions.add(RxBus.default?.toObservable(BooleanEven::class.java)?.subscribe {
@@ -176,17 +183,6 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
                 mFragments.add(social!!)
                 tans?.add(R.id.rootlayout, social!!)
             }
-
-//            homeActivity.main_layout.setBackgroundColor(getColor(R.color.blackTextColor))
-//            logSelected.set(false)
-//            if (type == 2) {
-//                driverSelected.set(context.getDrawable(R.drawable.start_driver))
-//            } else {
-//                driverSelected.set(context.getDrawable(R.drawable.driving_icon_big))
-//            }
-//            bottomBg.set(context.getDrawable(R.drawable.big_circle_bottom_bg))
-//            privateSelected.set(false)
-
         } else if (position == 3) {
             if (myself == null) {
                 myself = ARouter.getInstance().build(RouterUtils.FragmentPath.MYSELFPAGE).navigation() as Fragment

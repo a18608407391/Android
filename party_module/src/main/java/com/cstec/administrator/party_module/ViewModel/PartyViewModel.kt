@@ -103,7 +103,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         if (!home.motoActivityList.isNullOrEmpty()) {
             home.motoActivityList!!.forEach {
                 var item = it
-                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
+                item.DISTANCE = "时长" + item.DAY + "km" + " 里程" + it.DISTANCE + "km"
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
                 item.ACTIVITY_START = start + "至" + stop
@@ -116,12 +116,27 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 //                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
-                item.ACTIVITY_START = start + "至" + stop
-                Log.e("result", "票价" + item.TICKET_PRICE)
+                item.ACTIVITY_START = start + "至" + stop + " " + item.SQRTVALUE + "km"
                 if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
                     item.TICKET_PRICE = "免费"
                 } else {
                     item.TICKET_PRICE = getString(R.string.rmb) + item.TICKET_PRICE
+                }
+
+                if (!item.TYPE.isNullOrEmpty()) {
+                    item.TYPE!!.split(",").forEachIndexed { index, s ->
+                        when (index) {
+                            0 -> {
+                                item.type1 = s
+                            }
+                            1 -> {
+                                item.type2 = s
+                            }
+                            2 -> {
+                                item.type3 = s
+                            }
+                        }
+                    }
                 }
                 select.add(item)
             }

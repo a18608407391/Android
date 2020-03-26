@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="detail_photo"
             type="com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailPhotoItemModel"></variable>
@@ -11,19 +13,27 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/d_50"
             app:adapter="@{detail_photo.adapter}"
             app:itemBinding="@{detail_photo.itemBinding}"
             app:items="@{detail_photo.items}"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:onLoadMoreCommand="@{detail_photo.onLoadMoreCommand}"
             app:spanCount="4"></android.support.v7.widget.RecyclerView>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_50"
+            android:src="@drawable/empty"
+            android:visibility="@{detail_photo.isEmpty?View.VISIBLE: View.GONE}" />
 
     </LinearLayout>
 </layout>

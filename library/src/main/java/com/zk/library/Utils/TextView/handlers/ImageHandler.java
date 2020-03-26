@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.util.Log;
 
 import com.zk.library.Utils.TextView.SpanStack;
 import com.zk.library.Utils.TextView.TagNodeHandler;
@@ -48,6 +49,7 @@ public class ImageHandler extends TagNodeHandler {
     public void handleTagNode(TagNode node, SpannableStringBuilder builder,
                               int start, int end, SpanStack stack) {
         String src = node.getAttributeByName("src");
+        Log.e("result","src" + src);
         builder.append("\uFFFC");
         String url = base_url.substring(0, base_url.length() - 1) + src;
         Bitmap bitmap = loadBitmap(url);

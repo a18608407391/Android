@@ -29,7 +29,10 @@ class PartyCheckTicketActivity : BaseActivity<ActivityPartyCheckTicketBinding, P
         return ViewModelProviders.of(this)[PartyCheckTicketViewModel::class.java]
     }
 
-
+    override fun doPressBack() {
+        super.doPressBack()
+        finish()
+    }
     override fun initData() {
         super.initData()
         mViewModel?.inejct(this)

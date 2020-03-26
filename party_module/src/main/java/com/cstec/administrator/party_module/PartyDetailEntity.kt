@@ -27,9 +27,12 @@ class PartyDetailEntity : Serializable {
     var DACT_X_AXIS: Double = 0.0
     var SUBORDINATE_CITY: String? = null
     var MANDATORY_FIELD: String? = null
+    var SERVICE_TEL :String ? = null
     var SCOPE_REGISTRATION: String? = null
     var COLLECTION_PLACE: String? = null
+
     var COLLECTION_TIME: String? = null
+
     var ACTIVITY_START: String? = null
     var ACTIVITY_STOP: String? = null
     var ACTIVITY_END: String? = null
@@ -50,7 +53,7 @@ class PartyDetailEntity : Serializable {
     var X_AXIS: Double = 0.0
     var Y_AXIS: Double = 0.0
     var DISTANCE: String? = null
-    var MAN_COUNT: String? = null
+    var MAN_COUNT: Int = 0
     var SQRTVALUE = 0
     var SQRTVALUE1 = 0
     var SIGN_UP: ArrayList<SignUp>? = null

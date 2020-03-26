@@ -55,4 +55,8 @@ class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchParty
         RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
+    override fun doPressBack() {
+        super.doPressBack()
+        finish()
+    }
 }

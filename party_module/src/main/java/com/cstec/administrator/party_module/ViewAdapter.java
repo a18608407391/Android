@@ -5,6 +5,7 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -24,20 +25,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel;
 import com.elder.zcommonmodule.ConfigKt;
 import com.elder.zcommonmodule.LocalUtilsKt;
-import com.elder.zcommonmodule.Utils.URLImageParser;
-import com.elder.zcommonmodule.Widget.ExpandableTextView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zk.library.Base.BaseApplication;
-import com.zk.library.Utils.PreferenceUtils;
-import com.zk.library.Utils.TextView.HtmlSpanner;
+import com.zk.library.Weidge.TextView.HtmlHttpImageGetter;
+import com.zk.library.Weidge.TextView.HtmlTextView;
 
 
 import org.cs.tec.library.Base.Utils.UtilsKt;
 import org.cs.tec.library.Utils.ConvertUtils;
+import org.cs.tec.library.binding.command.BindingAction;
 import org.cs.tec.library.binding.command.BindingCommand;
-import org.xml.sax.XMLReader;
 
 import java.util.ArrayList;
 
@@ -185,7 +186,7 @@ public class ViewAdapter {
     }
 
     @BindingAdapter({"initSubjectPartyHori", "initSubjectPartyHoriCommand"})
-    public static void initSubjectPartyHori(LinearLayout layout, ArrayList<HoriTitleEntity> check, final BindingCommand command) {
+    public static void initSubjectPartyHori(LinearLayout layout, final ArrayList<HoriTitleEntity> check, final BindingCommand command) {
         layout.removeAllViews();
         for (int i = 0; i < check.size(); i++) {
             LayoutInflater inflater = (LayoutInflater) layout.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -196,7 +197,7 @@ public class ViewAdapter {
                 @Override
                 public void onClick(View v) {
                     if (command != null) {
-                        command.execute(finalI);
+                        command.execute(check.get(finalI));
                     }
                 }
             });
@@ -231,16 +232,19 @@ public class ViewAdapter {
 
 
     @BindingAdapter("PartyHtmlText")
-    public static void setHtmlText(TextView tv, String html) {
+    public static void setHtmlText(HtmlTextView tv, String html) {
         if (html == null) {
             return;
         }
 
         if (html.contains(".jpg")) {
-            HtmlSpanner spanner = new HtmlSpanner();
-//            spanner.registerHandler("img",new ImageHandler());
-            Spannable spannable =  spanner.fromHtml(html);
-            tv.setText(spannable);
+//            HtmlSpanner spanner = new HtmlSpanner();
+////            spanner.registerHandler("img",new ImageHandler());
+//            Spannable spannable =  spanner.fromHtml(html);
+//            tv.setText(spannable);
+
+            tv.setHtml(html, new HtmlHttpImageGetter(tv, ConfigKt.Base_URL, true));
+
 //            tv.setMovementMethod(LinkMovementMethodExt.getInstance(handler, ImageSpan.class));
 
 //            tv.setText(Html.fromHtml(html, new URLImageParser(tv), new Html.TagHandler() {
@@ -251,6 +255,22 @@ public class ViewAdapter {
 //            }));
         } else {
             tv.setText(Html.fromHtml(html));
+        }
+    }
+
+
+    @BindingAdapter({"refreshLayout", "refreshCommand"})
+    public static void refreshLayout(SmartRefreshLayout layout, final int status, final BindingCommand action) {
+        layout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                action.execute(status);
+            }
+        });
+        if (status == 1) {
+            layout.finishRefresh(2000);
+        } else if (status == 2) {
+            layout.finishRefresh();
         }
     }
 

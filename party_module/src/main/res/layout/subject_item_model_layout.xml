@@ -27,15 +27,27 @@
                 app:initSubjectPartyHoriCommand="@{subject_item_model.command}"></LinearLayout>
         </HorizontalScrollView>
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:adapter="@{subject_item_model.adapter}"
-            android:layout_marginTop="@dimen/d_15"
-            app:itemBinding="@{subject_item_model.itemBinding}"
-            app:items="@{subject_item_model.items}"
-            app:onLoadMoreCommand="@{subject_item_model.scrollerBinding}"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
 
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:refreshCommand="@{subject_item_model.refreshCommand}"
+            app:refreshLayout="@{subject_item_model.refreshStatus}">
+
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_15"
+                app:adapter="@{subject_item_model.adapter}"
+                app:itemBinding="@{subject_item_model.itemBinding}"
+                app:items="@{subject_item_model.items}"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:onLoadMoreCommand="@{subject_item_model.scrollerBinding}"></android.support.v7.widget.RecyclerView>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     </LinearLayout>
 </layout>

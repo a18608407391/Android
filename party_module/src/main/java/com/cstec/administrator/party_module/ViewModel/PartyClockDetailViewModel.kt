@@ -1,7 +1,10 @@
 package com.cstec.administrator.party_module.ViewModel
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.net.Uri
 import android.support.design.widget.TabLayout
 import android.view.View
 import com.alibaba.android.arouter.launcher.ARouter
@@ -63,8 +66,8 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
             return
         }
         var entity = Gson().fromJson<PartyDetailEntity>(it, PartyDetailEntity::class.java)
-        if (!entity.TYPE.isNullOrEmpty()) {
-            entity.TYPE!!.split(",").forEach {
+        if (!entity.LABEL.isNullOrEmpty()) {
+            entity.LABEL!!.split(",").forEach {
                 typeData.add(it)
             }
         }
@@ -79,7 +82,7 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
         }
         collection.set(entity.IS_COLLECTION)
         state.set(entity.ACTIVITY_STATUS)
-        restoreTime.set(entity.COLLECTION_TIME!!.split(" ")[0])
+        restoreTime.set(entity.ACTIVITY_START + "至" + entity.ACTIVITY_STOP)
         if (entity.TICKET_PRICE.isNullOrEmpty() || entity.TICKET_PRICE!!.toDouble() <= 0) {
             entity.TICKET_PRICE = "免费"
         } else {
@@ -155,19 +158,23 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun onClick(view: View) {
         when (view.id) {
             R.id.arrow_party -> {
-                finish()
+                party.returnBack()
             }
             R.id.tel_phone -> {
-
+                var intent = Intent(Intent.ACTION_CALL)
+                var datas = Uri.parse("tel:" + data.get()?.SERVICE_TEL)
+                intent.data = datas
+                party.startActivity(intent)
             }
             R.id.restore_party -> {
                 party.showProgressDialog(getString(R.string.http_loading))
                 HttpRequest.instance.partyRestore = this
                 var map = HashMap<String, String>()
-                map["targetId"] = data.get()!!.ID.toString()
+                map["targetId"] = data.get()!!.CODE.toString()
                 map["targetIdType"] = data.get()!!.BIG_TYPE.toString()
                 HttpRequest.instance.getPartyRestore(map)
             }
@@ -178,7 +185,10 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
                         .withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 5).navigation()
             }
             R.id.members_click -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
+                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,party.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
+            }
+            R.id.sponsor_click -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.ORGANIZATION).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID).navigation()
             }
         }
     }

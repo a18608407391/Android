@@ -18,7 +18,7 @@ import java.io.Serializable
 
 class OrganizationListViewModel : BaseViewModel(), HttpInteface.PartyOrganization, TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        finish()
+        activity.returnBack()
     }
 
     override fun onComponentFinish(view: View) {

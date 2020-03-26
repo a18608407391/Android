@@ -18,7 +18,7 @@ import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
-class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, SubjectClick, HttpInteface.PartyUnReadNotify_inf {
+class MoBrigadeItemModel : BasePartyItemModel(), HttpInteface.PartyMoto_inf, SubjectClick, HttpInteface.PartyUnReadNotify_inf {
     override fun PartyUnReadNotifySucccess(it: String) {
         var model = viewModel as SubjectPartyViewModel
         model.msgCount.set(Integer.valueOf(it))
@@ -38,12 +38,13 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Su
 
     override fun PartyMotoSucccess(it: String) {
         var model = viewModel as SubjectPartyViewModel
-        model.subject.dismissProgressDialog()
-        model.subject.dismissProgressDialog()
+        refreshStatus.set(2)
         var entity = Gson().fromJson<SubjectItemModelEntity>(it, SubjectItemModelEntity::class.java)
         if (!entity.data.isNullOrEmpty()) {
             entity.data!!.forEach {
-                items.add(it)
+                var model = it
+                model.DISTANCE = "时长" + model.DAY + "天" + " " + "里程" + model.DISTANCE + "km"
+                items.add(model)
             }
         }
 
@@ -51,54 +52,55 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Su
             getUnRead()
         }
     }
+    override fun refresh() {
+        super.refresh()
+        load(true)
+        refreshStatus.set(1)
+    }
     fun getUnRead() {
         HttpRequest.instance.partyUnRead = this
         HttpRequest.instance.getPartyActiveUnRead(HashMap())
     }
+
     override fun PartyMotoError(it: Throwable) {
         var model = viewModel as SubjectPartyViewModel
         model.subject.dismissProgressDialog()
     }
 
     var hori = ObservableArrayList<HoriTitleEntity>().apply {
-        this.add(HoriTitleEntity("推荐",true))
-        this.add(HoriTitleEntity("热门",false))
-        this.add(HoriTitleEntity("离我最近",false))
-        this.add(HoriTitleEntity("活动里程",false))
+        this.add(HoriTitleEntity("推荐", true))
+        this.add(HoriTitleEntity("热门", false))
+        this.add(HoriTitleEntity("离我最近", false))
+        this.add(HoriTitleEntity("最新发布", false))
     }
 
-    var command  = BindingCommand(object : BindingConsumer<Int> {
-        override fun call(t: Int) {
-            var item = hori.get(t)
-            if (!item.check) {
+    var command = BindingCommand(object : BindingConsumer<HoriTitleEntity> {
+        override fun call(t: HoriTitleEntity) {
+            var i = hori.indexOf(t)
+            if (!t.check) {
                 hori.forEachIndexed { index, horiTitleEntity ->
-                    if (index == t) {
-                        hori[index] = item
-                    } else {
-                        horiTitleEntity.check = false
-                        hori[index] = horiTitleEntity
-                    }
+                    horiTitleEntity.check = index == i
+                    hori.set(index, horiTitleEntity)
                 }
             }
-            type.set(t + 1)
+            type.set(i + 1)
             load(true)
         }
     })
 
 
-    var listener  :SubjectClick = this
+    var listener: SubjectClick = this
 
 
-    override fun load(flag:Boolean) {
+    override fun load(flag: Boolean) {
         super.load(flag)
-        Log.e("result","加载Mobo")
-        if(flag){
+        Log.e("result", "加载Mobo")
+        if (flag) {
             items.clear()
             start = 1
             pageSize = 10
         }
         var model = viewModel as SubjectPartyViewModel
-        model.subject.showProgressDialog("正在获取摩旅列表数据.....")
         HttpRequest.instance.partyMobo = this
         var map = HashMap<String, String>()
         map["x"] = model.subject?.location!!.longitude.toString()
@@ -109,24 +111,38 @@ class MoBrigadeItemModel  : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Su
         map["pageSize"] = pageSize.toString()
         HttpRequest.instance.getPartyMobo(map)
     }
+
     var type = ObservableField(1)
     var start = 1
     var pageSize = 10
     var adapter = BindingRecyclerViewAdapter<SubjectEntity>()
     var items = ObservableArrayList<SubjectEntity>()
     var itemBinding = ItemBinding.of<SubjectEntity>() { itemBinding, position, item ->
-        itemBinding.set(BR.subject_data, R.layout.mobrigage_child_item_layout).bindExtra(BR.listener,listener)
+        itemBinding.set(BR.subject_data, R.layout.mobrigage_child_item_layout).bindExtra(BR.listener, listener)
     }
+
+
+    var cur = 0L
+
 
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-            Log.e("result", "加载更多" + t)
-            if (t <start*pageSize) {
+
+            var model = viewModel as SubjectPartyViewModel
+            if (!model.onCreate) {
                 return
-            }else{
-                start++
-               load(false)
             }
+            if (System.currentTimeMillis() - cur > 1000) {
+                if (t < start * pageSize) {
+                    return
+                } else {
+                    start++
+                    load(false)
+                }
+            } else {
+                cur = System.currentTimeMillis()
+            }
+
         }
     })
 }

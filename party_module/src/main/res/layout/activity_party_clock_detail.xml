@@ -83,6 +83,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
+                                android:visibility="gone"
                                 android:layout_marginRight="@dimen/d_15"
                                 android:src="@drawable/three_point"></ImageView>
                         </RelativeLayout>
@@ -119,11 +120,16 @@
                         android:elevation="@dimen/d_05"
                         app:tabIndicatorColor="@color/black"
                         app:tabIndicatorFullWidth="false"
-                        app:tabIndicatorHeight="0dp"
+                        app:tabIndicatorHeight="4dp"
                         app:tabMode="fixed"
                         app:tabRippleColor="@color/trans"
                         app:tabSelectedTextColor="@color/black"
                         app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/FivepercentBlackColor"></View>
 
                     <android.support.v4.view.ViewPager
                         android:id="@+id/mPartyClockDetailViewPager"

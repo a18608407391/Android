@@ -2,9 +2,12 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="android.view.View"></import>
         <variable
             name="listener"
             type="com.cstec.administrator.party_module.SubjectClick"></variable>
+
         <variable
             name="subject_data"
             type="com.cstec.administrator.party_module.SubjectEntity"></variable>
@@ -61,14 +64,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_05"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="@{subject_data.TYPE==null?View.GONE:View.VISIBLE}">
 
                 <TextView
                     android:layout_width="@dimen/d_32"
                     android:layout_height="wrap_content"
                     android:background="@drawable/corner_active_inner_bg1"
                     android:gravity="center"
-                    android:text="集市"
+                    android:text="@{subject_data.type1}"
+                    android:textColor="#3FC5C9"
+                    android:visibility="@{subject_data.type1.isEmpty?View.GONE:View.VISIBLE}"
+                    android:textSize="@dimen/s_10" />
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="@{subject_data.type2}"
+                    android:visibility="@{subject_data.type2.isEmpty?View.GONE:View.VISIBLE}"
                     android:textColor="#3FC5C9"
                     android:textSize="@dimen/s_10" />
 
@@ -77,16 +92,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/corner_active_inner_bg1"
                     android:gravity="center"
-                    android:text="舞蹈"
-                    android:textColor="#3FC5C9"
-                    android:textSize="@dimen/s_10" />
-
-                <TextView
-                    android:layout_width="@dimen/d_32"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/corner_active_inner_bg1"
-                    android:gravity="center"
-                    android:text="篝火"
+                    android:text="@{subject_data.type3}"
+                    android:visibility="@{subject_data.type3.isEmpty?View.GONE:View.VISIBLE}"
                     android:textColor="#3FC5C9"
                     android:textSize="@dimen/s_10" />
             </LinearLayout>
@@ -103,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_05"
-                android:text="@{@string/rmb + subject_data.TICKET_PRICE}"
+                android:text="@{subject_data.TICKET_PRICE}"
                 android:textColor="#F5222D"
                 android:textSize="@dimen/s_15" />
         </LinearLayout>

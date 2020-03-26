@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="wonderful_listener"
             type="com.elder.zcommonmodule.Inteface.WonderfulClickListener"></variable>
@@ -63,14 +65,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_05"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="@{wonderful.TYPE==null?View.GONE:View.VISIBLE}">
 
                 <TextView
                     android:layout_width="@dimen/d_32"
                     android:layout_height="wrap_content"
                     android:background="@drawable/corner_active_inner_bg1"
                     android:gravity="center"
-                    android:text="集市"
+                    android:text="@{wonderful.type1}"
+                    android:textColor="#3FC5C9"
+                    android:visibility="@{wonderful.type1.isEmpty?View.GONE:View.VISIBLE}"
+                    android:textSize="@dimen/s_10" />
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="@{wonderful.type2}"
+                    android:visibility="@{wonderful.type2.isEmpty?View.GONE:View.VISIBLE}"
                     android:textColor="#3FC5C9"
                     android:textSize="@dimen/s_10" />
 
@@ -79,16 +93,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/corner_active_inner_bg1"
                     android:gravity="center"
-                    android:text="舞蹈"
-                    android:textColor="#3FC5C9"
-                    android:textSize="@dimen/s_10" />
-
-                <TextView
-                    android:layout_width="@dimen/d_32"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/corner_active_inner_bg1"
-                    android:gravity="center"
-                    android:text="篝火"
+                    android:text="@{wonderful.type3}"
+                    android:visibility="@{wonderful.type3.isEmpty?View.GONE:View.VISIBLE}"
                     android:textColor="#3FC5C9"
                     android:textSize="@dimen/s_10" />
             </LinearLayout>

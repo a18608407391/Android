@@ -21,12 +21,12 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scaleType="fitXY"
                 app:LoadClockRoadImg="@{restore_item_entity.FILE_NAME_URL}" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/d_16"
-                android:layout_marginLeft="1.5dp"
                 android:background="@drawable/corner_active_inner_bg"
                 android:gravity="center"
                 android:text="@{restore_item_entity.DAY + @string/day_name}"

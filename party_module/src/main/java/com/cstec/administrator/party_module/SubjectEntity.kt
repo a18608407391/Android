@@ -19,7 +19,7 @@ class SubjectEntity : Serializable {
     var ACTIVITY_START: String? = null
     var ACTIVITY_STOP: String? = null
     var DAY = 0
-    var TICKET_PRICE: Double = 0.0
+    var TICKET_PRICE: String? = null
     var SQRTVALUE: Long = 0
     var MAN_COUNT: String? = ""
     var DISTANCE: String? = null
@@ -32,5 +32,8 @@ class SubjectEntity : Serializable {
     var X_AXIS: Double = 0.0
     var Y_AXIS: Double = 0.0
     var RN = 0
+    var type1: String = ""
+    var type2: String = ""
+    var type3: String = ""
 
 }

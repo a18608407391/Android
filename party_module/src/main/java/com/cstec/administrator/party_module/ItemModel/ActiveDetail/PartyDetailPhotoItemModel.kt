@@ -26,6 +26,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_inf {
+
+
     override fun PartyAlbumSucccess(it: String) {
         var result = Gson().fromJson<PhotoBean.ResultPhoto>(it, PhotoBean.ResultPhoto::class.java)
         if (result != null && !result.data.isNullOrEmpty()) {

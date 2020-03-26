@@ -110,6 +110,7 @@ class PartyHomeEntity : Serializable {
         var CODE = 0
         var TITLE: String? = null
         var STATE = 0
+        var TYPE :String ? = null
         var CREATE_DATA: String? = null
         var BIG_TYPE = 0
         var RECOMMEND_ORDER = 0
@@ -124,6 +125,9 @@ class PartyHomeEntity : Serializable {
         var DACT_Y_AXIS: Double = 0.0
         var DACT_X_AXIS: Double = 0.0
         var SQRTVALUE: Long = 0
+        var type1: String = ""
+        var type2: String = ""
+        var type3: String = ""
     }
 
 }

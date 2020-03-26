@@ -83,7 +83,7 @@ dependencies {
     api 'org.jetbrains.anko:anko-sqlite:0.10.5'
     api 'de.hdodenhof:circleimageview:2.2.0'
     api rootProject.ext.dependencies["arouter-api"]
-    api 'me.jessyan:autosize:1.1.2'
+    api 'me.jessyan:autosize:1.2.1'
     api 'com.roughike:bottom-bar:2.3.1'
     api files('libs/nineoldandroids-2.4.0.jar')
     api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.4.0'

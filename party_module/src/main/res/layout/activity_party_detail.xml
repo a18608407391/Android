@@ -82,6 +82,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
+                                android:visibility="gone"
                                 android:layout_marginRight="@dimen/d_15"
                                 android:src="@drawable/three_point"></ImageView>
                         </RelativeLayout>

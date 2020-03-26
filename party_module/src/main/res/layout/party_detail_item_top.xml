@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="data"
             type="com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel" />
@@ -16,12 +18,13 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
-        android:paddingTop="@dimen/d_16">
+        android:paddingTop="@dimen/d_15">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{data.data.TITLE}"
+            android:singleLine="true"
             android:textColor="@color/black_12"
             android:textSize="@dimen/s_18"></TextView>
 
@@ -172,6 +175,7 @@
             android:layout_marginTop="@dimen/d_20"
             android:id="@+id/members_click"
             android:onClick="@{data::onClick}"
+            android:visibility="@{data.data.MAN_COUNT==0?View.GONE:View.VISIBLE}"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -206,13 +210,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_15"
                 android:layout_marginRight="@dimen/d_10"
+
                 android:layout_weight="1"
                 app:PartyMembers="@{data.members}"></RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{data.data.MAN_COUNT}"
+                android:text="@{@string/empty +data.data.MAN_COUNT}"
                 android:textColor="#3FC5C9"
                 android:textSize="@dimen/s_12"
                 android:textStyle="bold"></TextView>

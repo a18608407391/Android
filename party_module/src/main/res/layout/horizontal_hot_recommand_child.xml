@@ -10,7 +10,7 @@
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/d_264"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/d_10"
         android:orientation="vertical">
@@ -27,6 +27,7 @@
             android:layout_marginTop="@dimen/d_10"
             android:text="@{hot_recommand.TITLE}"
             android:textColor="@color/black_12"
+            android:singleLine="true"
             android:textSize="@dimen/s_15" />
 
         <TextView

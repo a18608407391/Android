@@ -44,9 +44,6 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //页面接受的参数方法
-        if(savedInstanceState!=null){
-            Log.e("result","不为空")
-        }
         window.setBackgroundDrawable(null)
         initParam()
         ARouter.getInstance().inject(this)

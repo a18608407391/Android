@@ -15,14 +15,14 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="@dimen/d_167"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/d_8"
+        android:layout_marginLeft="@dimen/d_05"
+        android:layout_marginRight="@dimen/d_05"
+        android:layout_marginTop="@dimen/d_05"
         android:background="@drawable/corner_dialog"
         android:elevation="@dimen/d_05"
         android:onClick="@{()->listener.onSubjectItemClick(subject_data)}"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/d_05"
-        android:layout_marginRight="@dimen/d_05"
-        android:layout_marginLeft="@dimen/d_05"
-        android:layout_marginBottom="@dimen/d_8">
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="@dimen/d_167"
@@ -66,6 +66,7 @@
             android:layout_marginRight="@dimen/d_10"
             android:layout_marginTop="@dimen/d_12"
             android:gravity="left"
+            android:maxLines="2"
             android:text="@{subject_data.TITLE}"
             android:textColor="@color/black_12"
             android:textSize="@dimen/s_15" />
