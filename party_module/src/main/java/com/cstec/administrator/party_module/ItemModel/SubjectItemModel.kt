@@ -50,7 +50,10 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
                 var item = it
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
-                item.ACTIVITY_START = start + "至" + stop
+                if (item.DISTANCE == null) {
+                    item.DISTANCE = "0"
+                }
+                item.ACTIVITY_START = start + "至" + stop + " " + item.SQRTVALUE + "km"
                 if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
                     item.TICKET_PRICE = "免费"
                 } else {

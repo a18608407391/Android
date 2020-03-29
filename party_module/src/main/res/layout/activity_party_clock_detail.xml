@@ -47,7 +47,7 @@
                         app:data="@{party_clock_detail_model}"></include>
 
                     <android.support.v7.widget.Toolbar
-                        android:id="@+id/toolbar"
+                        android:id="@+id/clock_toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/d_70"
                         app:contentInsetStart="0dp"
@@ -57,8 +57,7 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/d_70"
-                        >
+                            android:layout_height="@dimen/d_70">
 
                             <ImageView
                                 android:id="@+id/arrow_party"
@@ -74,18 +73,18 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
                                 android:text="活动详情"
-                                android:visibility="@{party_clock_detail_model.visible?View.VISIBLE:View.GONE}"
                                 android:textColor="@color/black_12"
-                                android:textSize="@dimen/s_15" />
+                                android:textSize="@dimen/s_15"
+                                android:visibility="@{party_clock_detail_model.visible?View.VISIBLE:View.GONE}" />
 
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
-                                android:visibility="gone"
                                 android:layout_marginRight="@dimen/d_15"
-                                android:src="@drawable/three_point"></ImageView>
+                                android:src="@drawable/three_point"
+                                android:visibility="gone"></ImageView>
                         </RelativeLayout>
 
                     </android.support.v7.widget.Toolbar>
@@ -134,7 +133,7 @@
                     <android.support.v4.view.ViewPager
                         android:id="@+id/mPartyClockDetailViewPager"
                         android:layout_width="match_parent"
-                        android:layout_height="1000dp"
+                        android:layout_height="wrap_content"
                         app:adapter="@{party_clock_detail_model.adapter}"
                         app:itemBinding="@{party_clock_detail_model.itemBinding}"
                         app:items="@{party_clock_detail_model.items}"
@@ -184,19 +183,19 @@
                     android:layout_marginRight="@dimen/d_15"
                     android:gravity="center"
                     android:onClick="@{party_clock_detail_model::onClick}"
-                    app:setStates="@{party_clock_detail_model.state}"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/s_15" />
+                    android:textSize="@dimen/s_15"
+                    app:setStates="@{party_clock_detail_model.state}" />
             </LinearLayout>
         </android.support.design.widget.CoordinatorLayout>
 
-        <android.support.design.widget.NavigationView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/activity_main_drawer"></android.support.design.widget.NavigationView>
+        <!--<android.support.design.widget.NavigationView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:fitsSystemWindows="true"-->
+            <!--app:headerLayout="@layout/nav_header_main"-->
+            <!--app:menu="@menu/activity_main_drawer"></android.support.design.widget.NavigationView>-->
     </android.support.v4.widget.DrawerLayout>
     <!--</com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>-->
 </layout>

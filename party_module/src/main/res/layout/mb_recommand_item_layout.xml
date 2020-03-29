@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="mb_recommand"
             type="com.cstec.administrator.party_module.PartyHomeEntity.MBRecommend"></variable>
@@ -91,16 +93,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="@dimen/d_16"
                     android:layout_height="@dimen/d_16"
+                    android:visibility="@{mb_recommand.NAME==null?View.GONE:View.VISIBLE}"
                     app:setPartyAvatar="@{mb_recommand.HEAD_IMG_FILE}" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/d_10"
                     android:singleLine="true"
                     android:text="@{mb_recommand.NAME}" />
 
@@ -109,7 +114,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/rmb + mb_recommand.TICKET_PRICE}"
+                android:text="@{mb_recommand.TICKET_PRICE}"
                 android:textColor="#F5222D"
                 android:textSize="@dimen/s_15" />
         </LinearLayout>

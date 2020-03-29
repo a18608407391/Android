@@ -54,7 +54,7 @@ class PartyHomeEntity : Serializable {
         var DACT_Y_AXIS: Double = 0.0
         var SUBORDINATE_CITY: String? = null
         var SQRTVALUE: Long = 0
-        var MAN_COUNT: String? = ""
+        var MAN_COUNT  = 0
     }
 
     class HotDistination {
@@ -99,7 +99,7 @@ class PartyHomeEntity : Serializable {
         var DISTANCE: String? = null
         var PATH_POINT: String? = null
         var SUBORDINATE_CITY: String? = null
-        var TICKET_PRICE: Double = 0.0
+        var TICKET_PRICE: String ? = null
         var Y_AXIS: Double = 0.0
         var X_AXIS: Double = 0.0
         var SQRTVALUE: Long = 0

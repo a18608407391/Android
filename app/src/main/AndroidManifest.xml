@@ -29,7 +29,6 @@
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -85,6 +84,7 @@
         <!--android:value="30b727d7433c79235f071a1ea2d5a2f7"></meta-data>-->
 
         <!--C3:5B:48:71:FB:FF:B0:64:AD:C6:C5:B4:95:F0:81:B0-->
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="ae6a7daba4d1ed21141b49dcaed053b7"></meta-data>

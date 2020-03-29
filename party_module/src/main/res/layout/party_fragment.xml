@@ -60,8 +60,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/d_10"
-                        android:onClick="@{party_main_model::onClick}"
                         android:hint="@string/search_active"
+                        android:onClick="@{party_main_model::onClick}"
                         android:singleLine="true"
                         android:textColor="#A4A4A4" />
                 </LinearLayout>
@@ -99,17 +99,28 @@
         </LinearLayout>
 
 
-        <android.support.v7.widget.RecyclerView
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/d_15"
-            app:adapter="@{party_main_model.adapter}"
-            app:itemBinding="@{party_main_model.itemBinding}"
-            app:items="@{party_main_model.items}"
-            android:layout_marginBottom="@dimen/d_15"
-            app:layoutManager="android.support.v7.widget.GridLayoutManager"
-            app:spanCount="2"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:refreshCommand="@{party_main_model.refreshCommand}"
+            app:refreshLayout="@{party_main_model.refreshStatus}">
 
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_15"
+                android:layout_marginTop="@dimen/d_15"
+                app:adapter="@{party_main_model.adapter}"
+                app:itemBinding="@{party_main_model.itemBinding}"
+                app:items="@{party_main_model.items}"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:spanCount="2"></android.support.v7.widget.RecyclerView>
+
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     </LinearLayout>
 </layout>

@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="restore_item_entity"
             type="com.elder.zcommonmodule.Entity.CollectionEntity.Collection"></variable>
@@ -31,7 +33,8 @@
                 android:gravity="center"
                 android:text="@{restore_item_entity.MAN_COUNT + @string/check_card}"
                 android:textColor="@color/white"
-                android:textSize="@dimen/s_10" />
+                android:textSize="@dimen/s_10"
+                android:visibility="@{restore_item_entity.MAN_COUNT==0?View.GONE:View.VISIBLE}" />
         </RelativeLayout>
 
         <LinearLayout

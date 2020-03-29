@@ -110,7 +110,10 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
         }
         avatar.set(entity.Member?.headImgFile)
         name.set(entity.Member?.name)
-        city.set(activity.location!!.aoiName)
+        if (activity.location != null) {
+            city.set(activity.location!!.aoiName)
+        }
+
         if (entity.getFabulous > 1000) {
             likeCount.set(((entity.getFabulous / 1000 * 1.0F).toString()))
         } else {
@@ -295,7 +298,6 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
                             .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
                             .navigation()
                 }
-
             }
             R.id.home_focus_click -> {
                 HttpRequest.instance.DynamicFocusResult = this

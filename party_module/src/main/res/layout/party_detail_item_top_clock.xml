@@ -17,14 +17,15 @@
         android:background="@color/white"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:orientation="vertical"   android:paddingTop="@dimen/d_15">
+        android:orientation="vertical"
+        android:paddingTop="@dimen/d_15">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:text="@{data.data.TITLE}"
             android:textColor="@color/black_12"
-            android:singleLine="true"
             android:textSize="@dimen/s_18"></TextView>
 
         <HorizontalScrollView
@@ -48,8 +49,8 @@
             android:layout_marginTop="@dimen/d_20"
             android:gravity="center_vertical"
             android:onClick="@{data::onClick}"
-            android:visibility="@{data.data.MAN_COUNT==0?View.GONE:View.VISIBLE}"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="@{data.data.MAN_COUNT==0?View.GONE:View.VISIBLE}">
 
             <RelativeLayout
                 android:layout_width="@dimen/d_42"
@@ -184,7 +185,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.data.TICKET_PRICE}"
+                    android:text="@{data.day}"
                     android:textColor="#F5222D"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>
@@ -193,7 +194,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/d_02"
-                    android:text="费用(元)"></TextView>
+                    android:text="剩余(天)"></TextView>
             </LinearLayout>
         </LinearLayout>
 
@@ -209,13 +210,14 @@
             android:layout_height="@dimen/d_60"
             android:layout_marginRight="@dimen/d_15"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="@{data.data.DESTINATION==null?View.GONE:View.VISIBLE}">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@{@string/resort + data.data.COLLECTION_PLACE }"
+                android:text="@{@string/destrict +data.data.DESTINATION}"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_14"
                 android:textStyle="bold"></TextView>
@@ -230,7 +232,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_01"
             android:layout_marginRight="@dimen/d_15"
-            android:background="@color/FivepercentBlackColor"></View>
+            android:background="@color/FivepercentBlackColor"
+            android:visibility="@{data.data.DESTINATION==null?View.GONE:View.VISIBLE}"></View>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -261,7 +264,7 @@
             android:background="@color/FivepercentBlackColor"></View>
 
         <LinearLayout
-            android:id="@+id/sponsor_click"
+            android:id="@+id/clock_sponsor_click"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
             android:layout_marginRight="@dimen/d_15"

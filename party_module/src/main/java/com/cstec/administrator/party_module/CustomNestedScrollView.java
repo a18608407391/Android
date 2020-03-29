@@ -44,10 +44,12 @@ import android.widget.ScrollView;
 
 import java.util.List;
 
-public class CustomNestedScrollView extends NestedScrollView {
+public class CustomNestedScrollView extends FixNestedScrollView {
 
 
     private boolean isNeedScroll = true;
+    private float xDistance, yDistance, xLast, yLast;
+    private int scaledTouchSlop;
 
     public CustomNestedScrollView(@NonNull Context context) {
         super(context);
@@ -59,14 +61,28 @@ public class CustomNestedScrollView extends NestedScrollView {
 
     public CustomNestedScrollView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        scaledTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                xDistance = yDistance = 0f;
+                xLast = ev.getX();
+                yLast = ev.getY();
+                break;
             case MotionEvent.ACTION_MOVE:
-                return isNeedScroll;
+                final float curX = ev.getX();
+                final float curY = ev.getY();
+
+                xDistance += Math.abs(curX - xLast);
+                yDistance += Math.abs(curY - yLast);
+                xLast = curX;
+                yLast = curY;
+                Log.e("SiberiaDante", "xDistance ：" + xDistance + "---yDistance:" + yDistance);
+                return !(xDistance >= yDistance || yDistance < scaledTouchSlop) && isNeedScroll;
         }
         return super.onInterceptTouchEvent(ev);
     }
@@ -77,4 +93,7 @@ public class CustomNestedScrollView extends NestedScrollView {
     public void setNeedScroll(boolean isNeedScroll) {
         this.isNeedScroll = isNeedScroll;
     }
+
+
+
 }

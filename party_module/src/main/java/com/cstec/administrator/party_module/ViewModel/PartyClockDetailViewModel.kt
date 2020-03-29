@@ -6,6 +6,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.net.Uri
 import android.support.design.widget.TabLayout
+import android.util.Log
 import android.view.View
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.Activity.PartyClockDetailActivity
@@ -21,11 +22,13 @@ import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
+import kotlinx.android.synthetic.main.activity_party_clock_detail.*
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
+import java.text.SimpleDateFormat
 
 
 class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, HttpInteface.PartyRestore_inf {
@@ -61,6 +64,10 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
         }
     }
 
+
+    var day = ObservableField<String>()
+
+    var dis = ObservableField<String>()
     override fun getPartyDetailSuccess(it: String) {
         if (it.isNullOrEmpty()) {
             return
@@ -80,6 +87,7 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
                 }
             }
         }
+        dis.set((entity.SQRTVALUE / 1000).toString())
         collection.set(entity.IS_COLLECTION)
         state.set(entity.ACTIVITY_STATUS)
         restoreTime.set(entity.ACTIVITY_START + "至" + entity.ACTIVITY_STOP)
@@ -89,6 +97,13 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
             entity.TICKET_PRICE = getString(R.string.rmb) + entity.TICKET_PRICE
         }
         data.set(entity)
+
+        var sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        var start = sdf.parse(entity.ACTIVITY_START).time
+        var stop = sdf.parse(entity.ACTIVITY_STOP).time
+        var m = (stop - start) / 1000 / 3600
+        day.set(m.toString())
+        Log.e("result", "时间" + m)
         var t = items[0] as PartyDetailIntroduceItemModel
         t.initDataClock()
     }
@@ -179,13 +194,15 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
                 HttpRequest.instance.getPartyRestore(map)
             }
             R.id.right_now -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
-                        .withString(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID, data.get()!!.ID.toString())
-                        .withString(RouterUtils.PartyConfig.PARTY_CODE, data.get()!!.CODE.toString())
-                        .withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 5).navigation()
+                if (state.get() == 1) {
+                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
+                            .withString(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID, data.get()!!.ID.toString())
+                            .withString(RouterUtils.PartyConfig.PARTY_CODE, data.get()!!.CODE.toString())
+                            .withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 5).navigation()
+                }
             }
             R.id.members_click -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,party.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
+                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, party.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
             }
             R.id.sponsor_click -> {
                 ARouter.getInstance().build(RouterUtils.PartyConfig.ORGANIZATION).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID).navigation()

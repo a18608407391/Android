@@ -10,6 +10,7 @@ import com.cstec.administrator.party_module.ViewModel.PartyClockDetailViewModel
 import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel
 import com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel
 import com.elder.zcommonmodule.Base_URL
+import com.google.gson.Gson
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.collections.MergeObservableList
 import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
@@ -85,24 +86,25 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                         list.add(k)
                     }
                 }
-                if (!model.data.get()!!.TICKET_PRICE_DESCRIBE.isNullOrEmpty()) {
-                    model.data.get()!!.TICKET_PRICE_DESCRIBE!!.forEachIndexed { index, describe ->
-                        if (!describe.DESCRIBE.isNullOrEmpty() && !describe.NAME_INVOICE.isNullOrEmpty()) {
-                            var cost = PartyDetailEntity.Cost()
-                            cost.describe = describe.DESCRIBE
-                            cost.title = describe.NAME_INVOICE!!
-                            if (describe.TICKET_PRICE.isNullOrEmpty()) {
-                                cost.price = "免费"
-                            } else {
-                                cost.price = getString(R.string.rmb) + describe.TICKET_PRICE
-                            }
-                            lists.add(cost)
-                        }
+
+            }
+        }
+        if (!model.data.get()!!.TICKET_PRICE_DESCRIBE.isNullOrEmpty()) {
+
+            model.data.get()!!.TICKET_PRICE_DESCRIBE!!.forEachIndexed { index, describe ->
+                if (!describe.DESCRIBE.isNullOrEmpty() && !describe.NAME_INVOICE.isNullOrEmpty()) {
+                    var cost = PartyDetailEntity.Cost()
+                    cost.describe = describe.DESCRIBE
+                    cost.title = describe.NAME_INVOICE!!
+                    if (describe.TICKET_PRICE.isNullOrEmpty()) {
+                        cost.price = "免费"
+                    } else {
+                        cost.price = getString(R.string.rmb) + describe.TICKET_PRICE
                     }
+                    lists.add(cost)
                 }
             }
         }
-
         if (!model.data.get()!!.DETAILS_ACTIVITIES.isNullOrEmpty()) {
             items.insertItem("活动详情")
             items.insertItem(model.data.get()!!)
@@ -162,24 +164,23 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                         list.add(k)
                     }
                 }
-                if (!model.data.get()!!.TICKET_PRICE_DESCRIBE.isNullOrEmpty()) {
-                    model.data.get()!!.TICKET_PRICE_DESCRIBE!!.forEachIndexed { index, describe ->
-                        if (!describe.DESCRIBE.isNullOrEmpty() && !describe.NAME_INVOICE.isNullOrEmpty()) {
-                            var cost = PartyDetailEntity.Cost()
-                            cost.describe = describe.DESCRIBE
-                            cost.title = describe.NAME_INVOICE!!
-                            if (describe.TICKET_PRICE.isNullOrEmpty()) {
-                                cost.price = "免费"
-                            } else {
-                                cost.price = getString(R.string.rmb) + describe.TICKET_PRICE
-                            }
-                            lists.add(cost)
-                        }
+            }
+        }
+        if (!model.data.get()!!.TICKET_PRICE_DESCRIBE.isNullOrEmpty()) {
+            model.data.get()!!.TICKET_PRICE_DESCRIBE!!.forEachIndexed { index, describe ->
+                if (!describe.DESCRIBE.isNullOrEmpty() && !describe.NAME_INVOICE.isNullOrEmpty()) {
+                    var cost = PartyDetailEntity.Cost()
+                    cost.describe = describe.DESCRIBE
+                    cost.title = describe.NAME_INVOICE!!
+                    if (describe.TICKET_PRICE.isNullOrEmpty()) {
+                        cost.price = "免费"
+                    } else {
+                        cost.price = getString(R.string.rmb) + describe.TICKET_PRICE
                     }
+                    lists.add(cost)
                 }
             }
         }
-
         if (!model.data.get()!!.DETAILS_ACTIVITIES.isNullOrEmpty()) {
             items.insertItem("活动详情")
             items.insertItem(model.data.get()!!)
@@ -237,24 +238,24 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                         list.add(k)
                     }
                 }
-                if (!model.data.get()!!.TICKET_PRICE_DESCRIBE.isNullOrEmpty()) {
-                    model.data.get()!!.TICKET_PRICE_DESCRIBE!!.forEachIndexed { index, describe ->
-                        if (!describe.DESCRIBE.isNullOrEmpty() && !describe.NAME_INVOICE.isNullOrEmpty()) {
-                            var cost = PartyDetailEntity.Cost()
-                            cost.describe = describe.DESCRIBE
-                            cost.title = describe.NAME_INVOICE!!
-                            if (describe.TICKET_PRICE.isNullOrEmpty()) {
-                                cost.price = "免费"
-                            } else {
-                                cost.price = getString(R.string.rmb) + describe.TICKET_PRICE
-                            }
-                            lists.add(cost)
-                        }
+
+            }
+        }
+        if (!model.data.get()!!.TICKET_PRICE_DESCRIBE.isNullOrEmpty()) {
+            model.data.get()!!.TICKET_PRICE_DESCRIBE!!.forEachIndexed { index, describe ->
+                if (!describe.DESCRIBE.isNullOrEmpty() && !describe.NAME_INVOICE.isNullOrEmpty()) {
+                    var cost = PartyDetailEntity.Cost()
+                    cost.describe = describe.DESCRIBE
+                    cost.title = describe.NAME_INVOICE!!
+                    if (describe.TICKET_PRICE.isNullOrEmpty()) {
+                        cost.price = "免费"
+                    } else {
+                        cost.price = getString(R.string.rmb) + describe.TICKET_PRICE
                     }
+                    lists.add(cost)
                 }
             }
         }
-
         if (!model.data.get()!!.DETAILS_ACTIVITIES.isNullOrEmpty()) {
             items.insertItem("活动详情")
             items.insertItem(model.data.get()!!)

@@ -21,6 +21,8 @@ import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
+import kotlinx.android.synthetic.main.activity_party_clock_detail.*
+import kotlinx.android.synthetic.main.activity_party_detail.*
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.getString
@@ -57,6 +59,8 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
         }
     }
 
+
+    var dis = ObservableField<String>()
     var visible = ObservableField<Boolean>(false)
     var data = ObservableField<PartyDetailEntity>()
 
@@ -86,6 +90,8 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
                 }
             }
         }
+
+        dis.set((entity.SQRTVALUE / 1000).toString())
         collection.set(entity.IS_COLLECTION)
         state.set(entity.ACTIVITY_STATUS)
         restoreTime.set(entity.ACTIVITY_START + "至" + entity.ACTIVITY_STOP)
@@ -152,14 +158,15 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
                 HttpRequest.instance.getPartyRestore(map)
             }
             R.id.right_now -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
-                        .withString(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID, data.get()!!.ID.toString())
-                        .withString(RouterUtils.PartyConfig.PARTY_CODE, data.get()!!.CODE.toString())
-                        .withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 5).navigation()
-
+                if (state.get() == 1) {
+                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
+                            .withString(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID, data.get()!!.ID.toString())
+                            .withString(RouterUtils.PartyConfig.PARTY_CODE, data.get()!!.CODE.toString())
+                            .withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 5).navigation()
+                }
             }
-            R.id.members_click -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,partyDetailActivty.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
+            R.id.detail_members_click -> {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, partyDetailActivty.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
             }
         }
     }

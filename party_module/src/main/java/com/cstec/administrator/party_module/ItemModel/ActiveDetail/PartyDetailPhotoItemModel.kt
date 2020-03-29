@@ -36,13 +36,15 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
 
                 //                "fileNameUrl":"fileNameUrlfb661ac96a614c91a2f3601eb829e94e.png",
 //                "filePath":"/home/uploadFile/images/createActivity/2020/03/23/10",
+                var ti =  photo.uploadTime!!.split(" ")[0]
                 var url = getImageUrl(photo.filePath!!.split("/home/uploadFile/images")[1] + "/" + photo.fileNameUrl)
                 if (tes != photo.uploadTime) {
-                    tes = photo.uploadTime!!
-                    items.add(PhotoEntitiy(ObservableField(""), ObservableField(photo.uploadTime!!), ObservableField(0)))
-                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.uploadTime!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
+
+                    tes = ti
+                    items.add(PhotoEntitiy(ObservableField(""), ObservableField(ti), ObservableField(0)))
+                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(ti), ObservableField(1), ObservableField(photo.basicsId.toString())))
                 } else {
-                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(photo.uploadTime!!), ObservableField(1), ObservableField(photo.basicsId.toString())))
+                    items.add(PhotoEntitiy(ObservableField(url), ObservableField(ti), ObservableField(1), ObservableField(photo.basicsId.toString())))
                 }
             }
             var t = items.size - count

@@ -27,6 +27,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.elder.zcommonmodule.ConfigKt;
 import com.elder.zcommonmodule.LocalUtilsKt;
+import com.elder.zcommonmodule.Widget.RichEditText.RichEditText;
+import com.elder.zcommonmodule.Widget.RichEditText.RichTextView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -129,7 +131,9 @@ public class ViewAdapter {
 
     @BindingAdapter("initHtml")
     public static void initHtml(TextView tv, String str) {
-        tv.setText(Html.fromHtml(str));
+        if (str != null) {
+            tv.setText(Html.fromHtml(str));
+        }
     }
 
 
@@ -366,5 +370,12 @@ public class ViewAdapter {
             tv.setTextColor(Color.BLACK);
             tv.setBackground(UtilsKt.getContext().getDrawable(R.drawable.login_btn_shape_bottom1));
         }
+    }
+
+
+    @BindingAdapter("richText")
+    public static void richText(RichTextView text, String title) {
+        text.setRichText(title);
+        text.setMaxLines(2);
     }
 }

@@ -130,7 +130,7 @@ class DriverHomeActivity : BaseActivity<ActivityDriverhomeBinding, DriverHomeVie
                 })
             }
         } else if (navigationType == 0) {
-            if (!mViewModel?.destroyList!!.contains("HomeActivity")) {
+            if (mViewModel?.destroyList!!.contains("HomeActivity")) {
                 Log.e("result", "当前界面只有一个了")
                 ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
                     override fun onArrival(postcard: Postcard?) {

@@ -11,15 +11,13 @@
             type="com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailPhotoItemModel"></variable>
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/d_50"
             app:adapter="@{detail_photo.adapter}"
             app:itemBinding="@{detail_photo.itemBinding}"
@@ -28,12 +26,30 @@
             app:onLoadMoreCommand="@{detail_photo.onLoadMoreCommand}"
             app:spanCount="4"></android.support.v7.widget.RecyclerView>
 
-        <ImageView
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/d_50"
-            android:src="@drawable/empty"
-            android:visibility="@{detail_photo.isEmpty?View.VISIBLE: View.GONE}" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="@{detail_photo.isEmpty?View.VISIBLE: View.GONE}">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/photo_empty" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:text="暂无可查询数据"
+                android:textColor="#A5A5BC"
+                android:textSize="@dimen/s_15" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
 </layout>

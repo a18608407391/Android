@@ -15,6 +15,7 @@ import com.google.gson.Gson
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
@@ -44,6 +45,12 @@ class MoBrigadeItemModel : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Sub
             entity.data!!.forEach {
                 var model = it
                 model.DISTANCE = "时长" + model.DAY + "天" + " " + "里程" + model.DISTANCE + "km"
+
+                if (model.TICKET_PRICE.isNullOrEmpty() || model.TICKET_PRICE!!.toDouble() <= 0) {
+                    model.TICKET_PRICE = "免费"
+                } else {
+                    model.TICKET_PRICE = getString(R.string.rmb) + model.TICKET_PRICE
+                }
                 items.add(model)
             }
         }
@@ -70,7 +77,7 @@ class MoBrigadeItemModel : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Sub
     var hori = ObservableArrayList<HoriTitleEntity>().apply {
         this.add(HoriTitleEntity("推荐", true))
         this.add(HoriTitleEntity("热门", false))
-        this.add(HoriTitleEntity("离我最近", false))
+        this.add(HoriTitleEntity("活动里程", false))
         this.add(HoriTitleEntity("最新发布", false))
     }
 

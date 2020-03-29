@@ -20,8 +20,6 @@
             android:scaleType="fitXY"
             app:PartyTopBg="@{data.data.FILE_NAME_URL}"
             app:ratio="1" />
-
-
     </RelativeLayout>
 
 </layout>

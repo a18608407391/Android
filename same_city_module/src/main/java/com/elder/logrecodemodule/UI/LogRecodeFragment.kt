@@ -192,6 +192,8 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
             log_swipe.setOnRefreshListener(viewModel)
             appbar_layout.addOnOffsetChangedListener(this)
             toolbar.setOnTouchListener { v, event ->
+
+
                 var g = isTouchPointInView(log_enter, event.x.toInt(), event.y.toInt())
                 if (g) {
                     if (System.currentTimeMillis() - CurrentClickTime < 1000) {

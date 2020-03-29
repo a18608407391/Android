@@ -43,7 +43,12 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
         var entity = Gson().fromJson<SubjectItemModelEntity>(it, SubjectItemModelEntity::class.java)
         if (!entity.data.isNullOrEmpty()) {
             entity.data!!.forEach {
-                items.add(it)
+                var item = it
+                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
+                var start = item.ACTIVITY_START!!.split(" ")[0]
+                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
+                item.ACTIVITY_START = start + "至" + stop
+                items.add(item)
             }
         }
         if (!model.onCreate) {

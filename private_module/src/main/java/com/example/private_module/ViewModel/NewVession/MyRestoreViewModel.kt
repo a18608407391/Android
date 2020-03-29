@@ -86,7 +86,6 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
         entity.data?.forEach {
             items.add(it)
         }
-        Log.e("result", "列表数量" + items.size)
         restoreActivity.restore_swipe.isRefreshing = false
     }
 

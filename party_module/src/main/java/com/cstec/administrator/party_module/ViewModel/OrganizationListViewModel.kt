@@ -132,10 +132,9 @@ class OrganizationListViewModel : BaseViewModel(), HttpInteface.PartyOrganizatio
         var guidanceUnit: String? = null
         var id = 0
         var label: String? = null
-        var ridingOfficerMemberId = 0
+        var ridingOfficerMemberId: String? = null
         var sponsorUnit: String? = null
         var undertakingUnit: String? = null
-
     }
 
     class Organization : Serializable {

@@ -35,13 +35,11 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
     var cur = 0L
     override fun onTabSelected(p0: TabLayout.Tab?) {
         if (!onCreate) {
-            Log.e("result", "执行次数")
             if (System.currentTimeMillis() - cur > 1000) {
                 items[subject.type].load(true)
             }
             cur = System.currentTimeMillis()
         } else {
-            Log.e("result", "Position" + p0!!.position)
             items[p0!!.position].load(true)
         }
     }

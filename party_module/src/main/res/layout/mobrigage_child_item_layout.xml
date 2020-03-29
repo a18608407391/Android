@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="listener"
             type="com.cstec.administrator.party_module.SubjectClick"></variable>
@@ -99,6 +101,7 @@
                 <ImageView
                     android:layout_width="@dimen/d_16"
                     android:layout_height="@dimen/d_16"
+                    android:visibility="@{subject_data.NAME==null?View.GONE:View.VISIBLE}"
                     app:setPartyAvatar="@{subject_data.HEAD_IMG_FILE}" />
 
                 <TextView
@@ -112,7 +115,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/rmb + subject_data.TICKET_PRICE}"
+                android:text="@{subject_data.TICKET_PRICE}"
                 android:textColor="#F5222D"
                 android:textSize="@dimen/s_15" />
 

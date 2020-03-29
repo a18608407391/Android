@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+
         <variable
             name="clock_active_item_data"
             type="com.cstec.administrator.party_module.PartyHomeEntity.ClockActive"></variable>
@@ -16,6 +18,7 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_10"
         android:onClick="@{()->listener.onClockActiveClick(clock_active_item_data)}"
         android:orientation="horizontal">
 
@@ -37,7 +40,8 @@
                 android:gravity="center"
                 android:text="@{clock_active_item_data.MAN_COUNT + @string/check_card}"
                 android:textColor="@color/white"
-                android:textSize="@dimen/s_10" />
+                android:textSize="@dimen/s_10"
+                android:visibility="@{clock_active_item_data.MAN_COUNT==0?View.GONE:View.VISIBLE}" />
         </RelativeLayout>
 
         <LinearLayout

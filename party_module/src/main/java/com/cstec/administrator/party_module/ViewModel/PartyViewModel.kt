@@ -4,6 +4,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.util.Log
 import android.view.View
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.location.AMapLocation
 import com.cstec.administrator.party_module.Adapter.PartyAdapter
@@ -42,7 +43,17 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     }
 
+    var refreshStatus = ObservableField(0)
+
+    var refreshCommand = BindingCommand(object : BindingConsumer<Int> {
+        override fun call(t: Int) {
+            initData(location)
+            refreshStatus.set(1)
+        }
+    })
+
     var msgCount = ObservableField(0)
+
     var city = ObservableField<String>("湖南省")
     fun onClick(view: View) {
         when (view.id) {
@@ -71,6 +82,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         if (it.isNullOrEmpty() || it == "系统繁忙") {
             return
         }
+        refreshStatus.set(2)
         items.removeAll()
         var home = Gson().fromJson<PartyHomeEntity>(it, PartyHomeEntity::class.java)
         var entity = PartyHotRecommand()
@@ -103,10 +115,19 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         if (!home.motoActivityList.isNullOrEmpty()) {
             home.motoActivityList!!.forEach {
                 var item = it
-                item.DISTANCE = "时长" + item.DAY + "km" + " 里程" + it.DISTANCE + "km"
+                if (it.DISTANCE.isNullOrEmpty()) {
+                    item.DISTANCE = "时长" + item.DAY + "天" + " 里程" + "0" + "km"
+                } else {
+                    item.DISTANCE = "时长" + item.DAY + "天" + " 里程" + it.DISTANCE + "km"
+                }
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
                 item.ACTIVITY_START = start + "至" + stop
+                if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
+                    item.TICKET_PRICE = "免费"
+                } else {
+                    item.TICKET_PRICE = getString(R.string.rmb) + item.TICKET_PRICE
+                }
                 mobo.add(item)
             }
         }
@@ -116,7 +137,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 //                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
-                item.ACTIVITY_START = start + "至" + stop + " " + item.SQRTVALUE + "km"
+                item.ACTIVITY_START = start + "至" + stop + " 距离" + item.SQRTVALUE + "km"
                 if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
                     item.TICKET_PRICE = "免费"
                 } else {
@@ -242,9 +263,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         HttpRequest.instance.getPartyHome(map)
     }
 
-    var adapter = PartyAdapter()
 
-    var items = MergeObservableList<Any>()
 
     var titlelistener: TitleClickListener = this
 
@@ -254,6 +273,9 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     var mb_click: MBCommandClickListener = this
 
+
+    var adapter = PartyAdapter()
+    var items = MergeObservableList<Any>()
     var itemBinding = OnItemBindClass<Any>()
             .map(String::class.java) { itemBinding, position, item ->
                 itemBinding.set(BR.title, R.layout.base_item_title).bindExtra(BR.title_listener, titlelistener).bindExtra(BR.position, position)

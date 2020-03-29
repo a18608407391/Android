@@ -11,22 +11,27 @@
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/subject_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/d_15"
-        android:background="@color/white"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical"   android:paddingTop="@dimen/d_15">
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/d_350"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/FivepercentBlackColor"></View>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_15"
+            android:singleLine="true"
             android:text="@{data.data.TITLE}"
             android:textColor="@color/black_12"
-            android:singleLine="true"
             android:textSize="@dimen/s_18"></TextView>
-
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -88,7 +93,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.data.DISTANCE}"
+                    android:text="@{data.dis}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>
@@ -97,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/d_02"
-                    android:text="全长(KM)"></TextView>
+                    android:text="距离(KM)"></TextView>
 
             </LinearLayout>
 
@@ -131,15 +136,15 @@
 
 
         <LinearLayout
-            android:id="@+id/members_click"
+            android:id="@+id/subject_members_click"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
             android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"
             android:gravity="center_vertical"
             android:onClick="@{data::onClick}"
-            android:visibility="@{data.data.MAN_COUNT==0?View.GONE:View.VISIBLE}"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="@{data.data.MAN_COUNT==0?View.GONE:View.VISIBLE}">
 
             <RelativeLayout
                 android:layout_width="@dimen/d_42"

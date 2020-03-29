@@ -72,8 +72,7 @@ class SubjectPartyActivity : BaseActivity<ActivitySubjectPartyBinding, SubjectPa
         mViewModel?.inject(this)
     }
     fun returnBack() {
-        if (!mViewModel?.destroyList!!.contains("HomeActivity")) {
-            Log.e("result", "当前界面只有一个了")
+        if (mViewModel?.destroyList!!.contains("HomeActivity")) {
             ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
                 override fun onArrival(postcard: Postcard?) {
                     finish()

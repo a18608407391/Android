@@ -294,6 +294,7 @@
                             android:layout_margin="@dimen/d_15"
                             app:adapter="@{log_model.cityPartyAdapter}"
                             app:itemBinding="@{log_model.cityPartyitemBinding}"
+                            android:descendantFocusability="blocksDescendants"
                             app:items="@{log_model.cityPartyitems}"
                             app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
 
@@ -316,6 +317,7 @@
                             android:nestedScrollingEnabled="false"
                             android:orientation="horizontal"
                             app:adapter="@{log_model.partyAdapter}"
+                            android:descendantFocusability="blocksDescendants"
                             app:itemBinding="@{log_model.partyitemBinding}"
                             app:items="@{log_model.partyitems}"
                             app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
@@ -402,6 +404,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/d_10"
                             android:layout_marginLeft="@dimen/d_10"
+                            android:descendantFocusability="blocksDescendants"
                             android:nestedScrollingEnabled="false"
                             app:adapter="@{log_model.staggeredAdapter}"
                             app:itemBinding="@{log_model.staggereditemBinding}"
@@ -754,6 +757,7 @@
                                 android:layout_marginBottom="@dimen/d_20"
                                 android:layout_marginTop="@dimen/d_10"
                                 android:nestedScrollingEnabled="false"
+                                android:descendantFocusability="blocksDescendants"
                                 android:orientation="horizontal"
                                 app:adapter="@{log_model.pagerAdapter}"
                                 app:itemBinding="@{log_model.itemBinding}"

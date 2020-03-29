@@ -21,7 +21,7 @@ class SubjectEntity : Serializable {
     var DAY = 0
     var TICKET_PRICE: String? = null
     var SQRTVALUE: Long = 0
-    var MAN_COUNT: String? = ""
+    var MAN_COUNT :Int= 0
     var DISTANCE: String? = null
     var PATH_POINT: String? = null
     var NAME: String? = null

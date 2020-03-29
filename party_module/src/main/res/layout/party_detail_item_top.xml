@@ -23,8 +23,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{data.data.TITLE}"
             android:singleLine="true"
+            android:text="@{data.data.TITLE}"
             android:textColor="@color/black_12"
             android:textSize="@dimen/s_18"></TextView>
 
@@ -89,7 +89,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.data.DISTANCE}"
+                    android:text="@{data.dis}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>
@@ -169,15 +169,15 @@
 
 
         <LinearLayout
+            android:id="@+id/detail_members_click"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
             android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"
-            android:id="@+id/members_click"
-            android:onClick="@{data::onClick}"
-            android:visibility="@{data.data.MAN_COUNT==0?View.GONE:View.VISIBLE}"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:onClick="@{data::onClick}"
+            android:orientation="horizontal"
+            android:visibility="@{data.data.MAN_COUNT==0?View.GONE:View.VISIBLE}">
 
             <RelativeLayout
                 android:layout_width="@dimen/d_42"
@@ -210,7 +210,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_15"
                 android:layout_marginRight="@dimen/d_10"
-
                 android:layout_weight="1"
                 app:PartyMembers="@{data.members}"></RelativeLayout>
 
@@ -229,7 +228,6 @@
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_12"
                 android:textStyle="bold"></TextView>
-
 
             <ImageView
                 android:layout_width="wrap_content"
