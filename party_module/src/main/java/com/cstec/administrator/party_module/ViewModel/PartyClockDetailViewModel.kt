@@ -104,8 +104,18 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
         var m = (stop - start) / 1000 / 3600
         day.set(m.toString())
         Log.e("result", "时间" + m)
-        var t = items[0] as PartyDetailIntroduceItemModel
-        t.initDataClock()
+        if (party.mPartyDetailClockViewPager.currentItem == 0) {
+            var t = items[0] as PartyDetailIntroduceItemModel
+            t.initDataClock()
+        } else if (party.mPartyDetailClockViewPager.currentItem == 1) {
+            var t = items[1] as PartyDetailPhotoItemModel
+            t.initData(true)
+        } else if (party.mPartyDetailClockViewPager.currentItem == 2) {
+            var model = items[2] as PartyDetailRankingItemModel
+            model.initData()
+        }
+
+        party.clock_refreshLayout.finishRefresh()
     }
 
     override fun getPartyDetailError(it: Throwable) {
@@ -176,7 +186,7 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
     @SuppressLint("MissingPermission")
     fun onClick(view: View) {
         when (view.id) {
-            R.id.arrow_party -> {
+            R.id.clock_iv_back -> {
                 party.returnBack()
             }
             R.id.tel_phone -> {
@@ -210,14 +220,12 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
         }
     }
 
-    private fun initData() {
-        if (data.get() == null) {
-            HttpRequest.instance.partyDetail = this
-            var map = HashMap<String, String>()
-            map["id"] = party.code!!.toString()
-            map["x"] = party.location!!.longitude.toString()
-            map["y"] = party.location!!.latitude.toString()
-            HttpRequest.instance.getPartyDetail(map)
-        }
+    fun initData() {
+        HttpRequest.instance.partyDetail = this
+        var map = HashMap<String, String>()
+        map["id"] = party.code!!.toString()
+        map["x"] = party.location!!.longitude.toString()
+        map["y"] = party.location!!.latitude.toString()
+        HttpRequest.instance.getPartyDetail(map)
     }
 }

@@ -75,6 +75,12 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
         if (it.isNullOrEmpty()) {
             return
         }
+
+        if (!typeData.isNullOrEmpty()) {
+            typeData!!.clear()
+            members!!.clear()
+        }
+
         var entity = Gson().fromJson<PartyDetailEntity>(it, PartyDetailEntity::class.java)
         if (!entity.LABEL.isNullOrEmpty()) {
             entity.LABEL!!.split(",").forEach {
@@ -101,8 +107,14 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
             entity.TICKET_PRICE = getString(R.string.rmb) + entity.TICKET_PRICE
         }
         data.set(entity)
-        var t = items[0] as PartyDetailIntroduceItemModel
-        t.initData()
+        if (partyDetailActivty.mPartyDetailViewPager.currentItem == 0) {
+            var t = items[0] as PartyDetailIntroduceItemModel
+            t.initData()
+        } else if (partyDetailActivty.mPartyDetailViewPager.currentItem == 1) {
+            var t = items[1] as PartyDetailPhotoItemModel
+            t.initData(true)
+        }
+        partyDetailActivty.detail_refreshLayout.finishRefresh()
     }
 
     override fun getPartyDetailError(it: Throwable) {
@@ -120,15 +132,13 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
         items.add(PartyDetailPhotoItemModel().setActivity(partyDetailActivty).setPartyId(partyDetailActivty!!.code).ItemViewModel(this@PartyDetailViewModel))
     }
 
-    private fun initData() {
-        if (data.get() == null) {
-            HttpRequest.instance.partyDetail = this
-            var map = HashMap<String, String>()
-            map["id"] = partyDetailActivty.code!!.toString()
-            map["x"] = partyDetailActivty.location!!.longitude.toString()
-            map["y"] = partyDetailActivty.location!!.latitude.toString()
-            HttpRequest.instance.getPartyDetail(map)
-        }
+    fun initData() {
+        HttpRequest.instance.partyDetail = this
+        var map = HashMap<String, String>()
+        map["id"] = partyDetailActivty.code!!.toString()
+        map["x"] = partyDetailActivty.location!!.longitude.toString()
+        map["y"] = partyDetailActivty.location!!.latitude.toString()
+        HttpRequest.instance.getPartyDetail(map)
     }
 
     var tabCommand = BindingCommand(object : BindingConsumer<Int> {
@@ -140,7 +150,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
     @SuppressLint("MissingPermission")
     fun onClick(view: View) {
         when (view.id) {
-            R.id.arrow_party -> {
+            R.id.detail_iv_back -> {
                 partyDetailActivty.returnBack()
             }
             R.id.tel_phone -> {

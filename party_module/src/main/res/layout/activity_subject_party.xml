@@ -33,9 +33,9 @@
                 android:id="@+id/arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{subject_party_model::onClick}"
                 android:layout_marginLeft="@dimen/d_15"
-                android:src="@drawable/arrow_black"/>
+                android:onClick="@{subject_party_model::onClick}"
+                android:src="@drawable/arrow_black" />
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -56,8 +56,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/d_15"
-                        android:drawablePadding="@dimen/d_03"
                         android:drawableRight="@drawable/gray_down_arrow"
+                        android:drawablePadding="@dimen/d_03"
                         android:onClick="@{subject_party_model::onClick}"
                         android:text="@{subject_party_model.city}"
                         android:textColor="#A4A4A4"

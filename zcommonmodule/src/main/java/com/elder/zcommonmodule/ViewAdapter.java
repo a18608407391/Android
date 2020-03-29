@@ -14,8 +14,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.zk.library.Utils.PreferenceUtils;
 
-import java.text.SimpleDateFormat;
-
 public class ViewAdapter {
 
 

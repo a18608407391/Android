@@ -19,7 +19,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
 
         <com.elder.zcommonmodule.Widget.RatioImageView
@@ -66,8 +67,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:contentScrim="@color/white"
-                            app:expandedTitleMarginEnd="@dimen/d_60"
-                            app:expandedTitleMarginStart="@dimen/d_60"
                             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
                             app:titleEnabled="false">
 
@@ -81,17 +80,20 @@
                     <android.support.design.widget.TabLayout
                         android:id="@+id/mPartyDetailSubjectTabLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/d_42"
-                        android:layout_marginLeft="@dimen/d_5"
-                        android:layout_marginTop="@dimen/d_10"
+                        android:layout_height="@dimen/d_55"
                         android:elevation="@dimen/d_05"
                         app:tabIndicatorColor="@color/black"
                         app:tabIndicatorFullWidth="false"
-                        app:tabIndicatorHeight="0dp"
+                        app:tabIndicatorHeight="2dp"
                         app:tabMode="fixed"
                         app:tabRippleColor="@color/trans"
                         app:tabSelectedTextColor="@color/black"
                         app:tabTextColor="#33000000"></android.support.design.widget.TabLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_01"
+                        android:background="@color/FivepercentBlackColor"></View>
 
                     <android.support.v4.view.ViewPager
                         android:id="@+id/mPartyDetailSubjectViewPager"
@@ -117,59 +119,41 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_marginBottom="0dp"
                 android:background="@android:color/transparent"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                android:elevation="@dimen/d_05"
                 app:layout_collapseMode="pin">
 
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/buttonBarLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/iv_back"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/arrow_black"/>
+                        android:layout_centerVertical="true"
+                        android:onClick="@{party_mobo_detail_model::onClick}"
+                        android:src="@drawable/arrow_black" />
 
-
-                    <android.support.v7.widget.ButtonBarLayout
-                        android:id="@+id/buttonBarLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:id="@+id/toolbar_avatar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-
-                        <!--                        <de.hdodenhof.circleimageview.CircleImageView-->
-                        <!--                            android:id="@+id/toolbar_avatar"-->
-                        <!--                            style="@style/UserTitleAvatar"-->
-                        <!--                            android:src="@drawable/timg" />-->
-
-
-                        <TextView
-                            android:id="@+id/toolbar_username"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:maxLines="1"
-                            android:text="SiberiaDante"
-                            android:textColor="@color/black_12"
-                            android:textSize="@dimen/s_16" />
-                    </android.support.v7.widget.ButtonBarLayout>
-
-                    <ImageView
-                        android:id="@+id/iv_menu"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/toolbar_username"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_gravity="end" />
-                </LinearLayout>
+                        android:layout_marginRight="@dimen/d_15"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="活动详情"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_16" />
+
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_01"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/FivepercentBlackColor"></View>
+                </RelativeLayout>
 
             </android.support.v7.widget.Toolbar>
 
@@ -177,16 +161,15 @@
             <android.support.design.widget.TabLayout
                 android:id="@+id/mPartyDetailSubjectMagicTabLayout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/d_42"
+                android:layout_height="@dimen/d_55"
                 android:layout_below="@+id/subject_toolbar"
-                android:layout_marginLeft="@dimen/d_5"
-                android:layout_marginTop="@dimen/d_10"
-                android:elevation="@dimen/d_05"
+                android:background="@color/white"
+                android:elevation="@dimen/d_5"
                 android:visibility="gone"
                 app:layout_collapseMode="pin"
                 app:tabIndicatorColor="@color/black"
                 app:tabIndicatorFullWidth="false"
-                app:tabIndicatorHeight="0dp"
+                app:tabIndicatorHeight="2dp"
                 app:tabMode="fixed"
                 app:tabRippleColor="@color/trans"
                 app:tabSelectedTextColor="@color/black"
@@ -210,7 +193,6 @@
             android:background="@color/white"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="gone"
             app:layout_behavior="com.cstec.administrator.party_module.MyBottomBarBehavior">
 
             <TextView

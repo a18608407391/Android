@@ -20,6 +20,8 @@
             app:adapter="@{detail_introduce.adapter}"
             app:itemBinding="@{detail_introduce.itemBinding}"
             app:items="@{detail_introduce.items}"
+            android:nestedScrollingEnabled="false"
+            app:canScroller="@{detail_introduce.commandTopAndBottom}"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:spanCount="1"></android.support.v7.widget.RecyclerView>
     </LinearLayout>

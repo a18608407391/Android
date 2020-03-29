@@ -13,12 +13,10 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/d_15"
-        android:background="@color/white"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/d_15">
+        android:layout_marginTop="@dimen/d_365"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,8 +43,8 @@
             android:id="@+id/members_click"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
-            android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_15"
             android:gravity="center_vertical"
             android:onClick="@{data::onClick}"
             android:orientation="horizontal"
@@ -113,8 +111,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_68"
-            android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_15"
             android:background="#FAFAFA"
             android:gravity="center_vertical"
             android:orientation="horizontal">

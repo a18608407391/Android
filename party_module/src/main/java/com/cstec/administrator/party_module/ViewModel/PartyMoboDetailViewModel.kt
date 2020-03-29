@@ -24,11 +24,13 @@ import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
+import kotlinx.android.synthetic.main.party_detail_item_subject_top.*
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
+import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
@@ -77,7 +79,12 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
             return
         }
         var entity = Gson().fromJson<PartyDetailEntity>(it, PartyDetailEntity::class.java)
+        if (!typeData.isNullOrEmpty()) {
+            typeData!!.clear()
+            members!!.clear()
+        }
         if (!entity.LABEL.isNullOrEmpty()) {
+
             entity.LABEL!!.split(",").forEach {
                 typeData.add(it)
             }
@@ -102,8 +109,15 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
             entity.TICKET_PRICE = getString(R.string.rmb) + entity.TICKET_PRICE
         }
         data.set(entity)
-        var t = items[0] as PartyDetailIntroduceItemModel
-        t.initDataSubject()
+        if (partyDetailActivty.mPartyDetailSubjectViewPager.currentItem == 0) {
+            var t = items[0] as PartyDetailIntroduceItemModel
+            t.initDataSubject()
+        } else if (partyDetailActivty.mPartyDetailSubjectViewPager.currentItem == 1) {
+            var t = items[1] as PartyDetailPhotoItemModel
+            t.initData(true)
+        }
+        partyDetailActivty.refreshLayout.finishRefresh()
+        // 772
     }
 
     override fun getPartyDetailError(it: Throwable) {
@@ -123,15 +137,13 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
 
     }
 
-    private fun initData() {
-        if (data.get() == null) {
-            HttpRequest.instance.partyDetail = this
-            var map = HashMap<String, String>()
-            map["id"] = partyDetailActivty.code!!.toString()
-            map["x"] = partyDetailActivty.location!!.longitude.toString()
-            map["y"] = partyDetailActivty.location!!.latitude.toString()
-            HttpRequest.instance.getPartyDetail(map)
-        }
+    fun initData() {
+        HttpRequest.instance.partyDetail = this
+        var map = HashMap<String, String>()
+        map["id"] = partyDetailActivty.code!!.toString()
+        map["x"] = partyDetailActivty.location!!.longitude.toString()
+        map["y"] = partyDetailActivty.location!!.latitude.toString()
+        HttpRequest.instance.getPartyDetail(map)
     }
 
     var tabCommand = BindingCommand(object : BindingConsumer<Int> {
@@ -144,7 +156,7 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
     @SuppressLint("MissingPermission")
     fun onClick(view: View) {
         when (view.id) {
-            R.id.arrow_party -> {
+            R.id.iv_back -> {
                 partyDetailActivty.returnBack()
             }
             R.id.tel_phone -> {

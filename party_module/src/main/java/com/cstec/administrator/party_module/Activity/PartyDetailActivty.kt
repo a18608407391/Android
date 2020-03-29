@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.TabLayout
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.util.Log
 import android.view.View
@@ -20,6 +21,8 @@ import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyDetailBinding
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Utils.Utils
+import com.scwang.smartrefresh.layout.api.RefreshHeader
+import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import com.zk.library.Base.BaseActivity
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.RouterUtils
@@ -79,31 +82,110 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
     var downx = 0F
     var downy = 0F
     var onScroll = false
+
+
+    var mScrollY = 0;
+    var lastScrollY = 0;
+    var toolBarPositionY = 0;
+    var mOffset = 0
+    var h = ConvertUtils.dp2px(304F)
     override fun initData() {
         super.initData()
         mPartyDetailViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailTabLayout))
         mPartyDetailTabLayout.setupWithViewPager(mPartyDetailViewPager)
+        mPartyDetailViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailMagicTabLayout))
+        mPartyDetailMagicTabLayout.setupWithViewPager(mPartyDetailViewPager)
+//        party_subject_appbar_layout.addOnOffsetChangedListener(this)
         mPartyDetailTabLayout.addOnTabSelectedListener(mViewModel!!)
-        party_appbar_layout.addOnOffsetChangedListener(this)
+
         initTrans(true)
         detail_toolbar.post {
             var height = detail_toolbar.height
+            toolBarPositionY = height
             var params = mPartyDetailViewPager.layoutParams
-            params.height = BaseApplication.getInstance().getHightPixels - height - ConvertUtils.dp2px(50F)
+            params.height = BaseApplication.getInstance().getHightPixels - height - ConvertUtils.dp2px(55F) + 1
             mPartyDetailViewPager.layoutParams = params
         }
-        nest.setOnScrollChangeListener(FixNestedScrollView.OnScrollChangeListener { p0, p1, p2, p3, p4 ->
-            val location = IntArray(2)
-            mPartyDetailTabLayout.getLocationOnScreen(location)
-            var xPosition = location[0]
-            var yPosition = location[1]
-            if (ConvertUtils.px2dp(yPosition * 1F) < 300) {
-                nest.setNeedScroll(false)
-            } else {
-                nest.setNeedScroll(true)
+        detail_refreshLayout.setOnRefreshListener {
+            mViewModel?.initData()
+            it.finishRefresh(10000)
+        }
+
+        val color = ContextCompat.getColor(applicationContext, R.color.white) and 0x00ffffff
+        detail_refreshLayout.setOnMultiPurposeListener(object : SimpleMultiPurposeListener() {
+            override fun onHeaderMoving(header: RefreshHeader?, isDragging: Boolean, percent: Float, offset: Int, headerHeight: Int, maxDragHeight: Int) {
+                super.onHeaderMoving(header, isDragging, percent, offset, headerHeight, maxDragHeight)
+                mOffset = offset / 2
+//                ivHeader.setTranslationY((mOffset - mScrollY).toFloat())
+//                subject_toolbar.setAlpha(1 - Math.min(percent, 1f))
             }
 
+            override fun onHeaderReleased(header: RefreshHeader?, headerHeight: Int, maxDragHeight: Int) {
+                super.onHeaderReleased(header, headerHeight, maxDragHeight)
+//                mOffset = offset / 2
+//                ivHeader.setTranslationY((mOffset - mScrollY).toFloat())
+//                subject_toolbar.setAlpha(1 - Math.min(percent, 1f))
+            }
         })
+
+
+        nest.setOnScrollChangeListener(FixNestedScrollView.OnScrollChangeListener { p0, scrollX, scrollY, oldScrollX, oldScrollY ->
+
+            var y = scrollY
+
+            //            Log.e("LocationP", "Location2" + p2)
+//            Log.e("LocationP", "Location4" + p4)
+//            fling = Math.abs(p4 - p2) > ConvertUtils.dp2px(20F)
+
+
+            Log.e("result", "当前H值" + h + "最小高度" + ConvertUtils.px2dp(912F))
+            var location = IntArray(2)
+            mPartyDetailTabLayout.getLocationOnScreen(location)
+            var yPosition = location[1];
+//            Log.e("result", "yPosition" + yPosition)  //2314
+//            Log.e("result", "toolBarPositionY" + toolBarPositionY)
+            if (yPosition < toolBarPositionY) {
+//                mPartyDetailMagicTabLayout.visibility = View.VISIBLE
+//                mPartyDetailSubjectTabLayout.visibility = View.INVISIBLE
+                nest.setNeedScroll(false)
+            } else {
+//                mPartyDetailMagicTabLayout.visibility = View.GONE
+//                mPartyDetailSubjectTabLayout.visibility = View.VISIBLE
+                nest.setNeedScroll(true)
+            }
+            if (lastScrollY < h) {
+                y = Math.min(h, y)
+//                y = y > h ? h : y;
+                mScrollY = if (y > h) {
+                    h
+                } else {
+                    y
+                }
+
+                Log.e("result", "h=" + h)
+                Log.e("result", "y=" + y)
+                Log.e("result", "mScrollY= " + mScrollY)
+
+//                Log.e("result", "mScrollY" + mScrollY)
+//                Log.e("result", "mScrollH" + h)
+//                if (mScrollY == 900) {
+//                    Log.e("result","这里执行了吗")
+//                    subject_toolbar.setBackgroundColor(Color.WHITE)
+//                }
+                detail_buttonBarLayout.setAlpha(1f * mScrollY / h);
+                detail_toolbar.setBackgroundColor(255 * mScrollY / h shl 24 or color);
+                detail_ivHeader.translationY = (mOffset - mScrollY).toFloat();
+            }
+
+            if (scrollY == 0) {
+                detail_iv_back.setImageResource(R.drawable.arrow_white);
+            } else {
+                detail_iv_back.setImageResource(R.drawable.arrow_black);
+            }
+            lastScrollY = y
+        })
+        detail_buttonBarLayout.setAlpha(0F)
+        detail_toolbar.setBackgroundColor(0)
         var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
             if (it == "ActiveWebGotoApp") {
                 finish()

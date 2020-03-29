@@ -2,6 +2,7 @@ package com.cstec.administrator.party_module.Activity
 
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.TabLayout
@@ -33,6 +34,8 @@ import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewPager
+import androidx.annotation.RequiresApi
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 
@@ -97,7 +100,7 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     var lastScrollY = 0;
     var toolBarPositionY = 0;
     var mOffset = 0
-    var h = ConvertUtils.dp2px(300F)
+    var h = ConvertUtils.dp2px(304F)
     override fun initData() {
         super.initData()
         mPartyDetailSubjectViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailSubjectTabLayout))
@@ -111,25 +114,32 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
             var height = subject_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailSubjectViewPager.layoutParams
-            params.height = BaseApplication.getInstance().getHightPixels - height - ConvertUtils.dp2px(42F)+1
+            params.height = BaseApplication.getInstance().getHightPixels - height - ConvertUtils.dp2px(55F) + 1
             mPartyDetailSubjectViewPager.layoutParams = params
         }
-
+        refreshLayout.setOnRefreshListener {
+            mViewModel?.initData()
+            it.finishRefresh(10000)
+        }
 
         val color = ContextCompat.getColor(applicationContext, R.color.white) and 0x00ffffff
         refreshLayout.setOnMultiPurposeListener(object : SimpleMultiPurposeListener() {
-            fun onHeaderPulling(header: RefreshHeader, percent: Float, offset: Int, bottomHeight: Int, extendHeight: Int) {
-                mOffset = offset / 2
-                ivHeader.setTranslationY((mOffset - mScrollY).toFloat())
-                subject_toolbar.setAlpha(1 - Math.min(percent, 1f))
+            override fun onHeaderMoving(header: RefreshHeader?, isDragging: Boolean, percent: Float, offset: Int, headerHeight: Int, maxDragHeight: Int) {
+                super.onHeaderMoving(header, isDragging, percent, offset, headerHeight, maxDragHeight)
+//                mOffset = offset / 2
+//                ivHeader.setTranslationY((mOffset - mScrollY).toFloat())
+//                subject_toolbar.setAlpha(1 - Math.min(percent, 1f))
             }
 
-            fun onHeaderReleasing(header: RefreshHeader, percent: Float, offset: Int, bottomHeight: Int, extendHeight: Int) {
-                mOffset = offset / 2
-                ivHeader.setTranslationY((mOffset - mScrollY).toFloat())
-                subject_toolbar.setAlpha(1 - Math.min(percent, 1f))
+            override fun onHeaderReleased(header: RefreshHeader?, headerHeight: Int, maxDragHeight: Int) {
+                super.onHeaderReleased(header, headerHeight, maxDragHeight)
+//                mOffset = offset / 2
+//                ivHeader.setTranslationY((mOffset - mScrollY).toFloat())
+//                subject_toolbar.setAlpha(1 - Math.min(percent, 1f))
             }
         })
+
+
         nest_subject.setOnScrollChangeListener(FixNestedScrollView.OnScrollChangeListener { p0, scrollX, scrollY, oldScrollX, oldScrollY ->
 
             var y = scrollY
@@ -138,21 +148,24 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
 //            Log.e("LocationP", "Location4" + p4)
 //            fling = Math.abs(p4 - p2) > ConvertUtils.dp2px(20F)
 
+
+            Log.e("result", "当前H值" + h + "最小高度" + ConvertUtils.px2dp(912F))
             var location = IntArray(2)
             mPartyDetailSubjectTabLayout.getLocationOnScreen(location)
             var yPosition = location[1];
-//            Log.e("result", "yPosition" + yPosition)
+//            Log.e("result", "yPosition" + yPosition)  //2314
 //            Log.e("result", "toolBarPositionY" + toolBarPositionY)
             if (yPosition < toolBarPositionY) {
-                mPartyDetailSubjectMagicTabLayout.visibility = View.VISIBLE
+//                mPartyDetailSubjectMagicTabLayout.visibility = View.VISIBLE
+//                mPartyDetailSubjectTabLayout.visibility = View.INVISIBLE
                 nest_subject.setNeedScroll(false)
             } else {
-                mPartyDetailSubjectMagicTabLayout.visibility = View.GONE
+//                mPartyDetailSubjectMagicTabLayout.visibility = View.GONE
+//                mPartyDetailSubjectTabLayout.visibility = View.VISIBLE
                 nest_subject.setNeedScroll(true)
             }
-
             if (lastScrollY < h) {
-                y = Math.min(h, scrollY)
+                y = Math.min(h, y)
 //                y = y > h ? h : y;
                 mScrollY = if (y > h) {
                     h
@@ -160,29 +173,34 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
                     y
                 }
 
-                Log.e("result","mScrollY" + mScrollY)
-                Log.e("result","mScrollH" + h)
-                buttonBarLayout.setAlpha(1f * mScrollY / h);
-                if(mScrollY==h){
-                    subject_toolbar.setBackgroundColor(Color.WHITE)
-                }
 
-//                subject_toolbar.setBackgroundColor(255 * mScrollY / h shl 24 or color);
+
+
+                Log.e("result", "h=" + h)
+                Log.e("result", "y=" + y)
+                Log.e("result", "mScrollY= " + mScrollY)
+
+//                Log.e("result", "mScrollY" + mScrollY)
+//                Log.e("result", "mScrollH" + h)
+//                if (mScrollY == 900) {
+//                    Log.e("result","这里执行了吗")
+//                    subject_toolbar.setBackgroundColor(Color.WHITE)
+//                }
+                buttonBarLayout.setAlpha(1f * mScrollY / h);
+                subject_toolbar.setBackgroundColor(255 * mScrollY / h shl 24 or color);
                 ivHeader.translationY = (mOffset - mScrollY).toFloat();
             }
-//            if (scrollY == 0) {
-//                ivBack.setImageResource(R.drawable.back_white);
-//                ivMenu.setImageResource(R.drawable.icon_menu_white);
-//            } else {
-//                ivBack.setImageResource(R.drawable.back_black);
-//                ivMenu.setImageResource(R.drawable.icon_menu_black);
-//            }
 
-            lastScrollY = scrollY
-            buttonBarLayout.setAlpha(0F)
-            subject_toolbar.setBackgroundColor(0)
-            mPartyDetailSubjectViewPager.setOffscreenPageLimit(10);
+            if (scrollY == 0) {
+                iv_back.setImageResource(R.drawable.arrow_white);
+            } else {
+                iv_back.setImageResource(R.drawable.arrow_black);
+            }
+            lastScrollY = y
         })
+
+        buttonBarLayout.setAlpha(0F)
+        subject_toolbar.setBackgroundColor(0)
         var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
             if (it == "ActiveWebGotoApp") {
                 finish()

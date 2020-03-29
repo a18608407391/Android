@@ -235,6 +235,31 @@ public class ViewAdapter {
     }
 
 
+    @BindingAdapter("canScroller")
+    public static void canScroller(RecyclerView recyclerView, final BindingCommand command) {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) { //当前状态为停止滑动
+                    if (!recyclerView.canScrollVertically(1)) { // 到达底部
+                        command.execute("bottom");
+                    } else if (!recyclerView.canScrollVertically(-1)) { // 到达顶部
+                        command.execute("top");
+                    } else {
+                        command.execute("idea");
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+    }
+
     @BindingAdapter("PartyHtmlText")
     public static void setHtmlText(HtmlTextView tv, String html) {
         if (html == null) {

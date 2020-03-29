@@ -3,6 +3,7 @@ package com.cstec.administrator.party_module.ItemModel.ActiveDetail
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.util.Log
+import com.cstec.administrator.party_module.Activity.PartySubjectDetailActivity
 import com.cstec.administrator.party_module.PartyDetailEntity
 import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.BR
@@ -11,10 +12,15 @@ import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel
 import com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel
 import com.elder.zcommonmodule.Base_URL
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_party_clock_detail.*
+import kotlinx.android.synthetic.main.activity_party_detail.*
+import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.collections.MergeObservableList
 import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
 import org.cs.tec.library.Base.Utils.getString
+import org.cs.tec.library.binding.command.BindingCommand
+import org.cs.tec.library.binding.command.BindingConsumer
 
 
 class PartyDetailIntroduceItemModel : BasePartyItemModel() {
@@ -51,6 +57,7 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
     var lists = ObservableArrayList<PartyDetailEntity.Cost>()
 
     fun initData() {
+        items.removeAll()
         var model = viewModel as PartyDetailViewModel
         if (!model.data.get()!!.SCHEDULE.isNullOrEmpty()) {
             model.data.get()?.SCHEDULE!!.forEachIndexed { index, schedules ->
@@ -86,7 +93,6 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                         list.add(k)
                     }
                 }
-
             }
         }
         if (!model.data.get()!!.TICKET_PRICE_DESCRIBE.isNullOrEmpty()) {
@@ -126,8 +132,29 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
         }
     }
 
+    var commandTopAndBottom = BindingCommand(object : BindingConsumer<String> {
+        override fun call(t: String) {
+            if (t == "top") {
+                if (viewModel is PartyDetailViewModel) {
+                    var model = viewModel as PartyDetailViewModel
+                    model.partyDetailActivty.nest.setNeedScroll(true)
+                } else if (viewModel is PartyMoboDetailViewModel) {
+                    var model = viewModel as PartyMoboDetailViewModel
+                    model.partyDetailActivty.nest_subject.setNeedScroll(true)
+                } else if (viewModel is PartyClockDetailViewModel) {
+                    var model = viewModel as PartyClockDetailViewModel
+                    model.party.nest_clock.setNeedScroll(true)
+                }
+
+
+            }
+            Log.e("result", "到底底部或者顶部" + t)
+
+        }
+    })
 
     fun initDataClock() {
+        items.removeAll()
         var model = viewModel as PartyClockDetailViewModel
         if (!model.data.get()!!.SCHEDULE.isNullOrEmpty()) {
             model.data.get()?.SCHEDULE!!.forEachIndexed { index, schedules ->
@@ -203,6 +230,7 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
     }
 
     fun initDataSubject() {
+        items.removeAll()
         var model = viewModel as PartyMoboDetailViewModel
         if (!model.data.get()!!.SCHEDULE.isNullOrEmpty()) {
             model.data.get()?.SCHEDULE!!.forEachIndexed { index, schedules ->
