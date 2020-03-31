@@ -158,9 +158,17 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
             var height = clock_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailClockViewPager.layoutParams
-
-            if (flag) {
-                params.height = getScreenHeightPx() - height - mPartyDetailClockTabLayout.height + 1 - Utils.getNavigationBarHeight(context)
+            var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights() - Utils.getStatusBarHeight(context)
+            if (flag && values != 0) {
+                if (values == org.cs.tec.library.Base.Utils.getStatusBarHeight()) {
+                    params.height = getScreenHeightPx() - height - mPartyDetailClockTabLayout.height + 1
+                } else {
+                    if (values > getNavigationBarHeight(this@PartyClockDetailActivity) && values < org.cs.tec.library.Base.Utils.getStatusBarHeight() + getNavigationBarHeight(context)) {
+                        params.height = BaseApplication.getInstance().getHightPixels - ConvertUtils.dp2pxValue(125F, this@PartyClockDetailActivity)
+                    } else {
+                        params.height = getScreenHeightPx() - height - mPartyDetailClockTabLayout.height + 1 - values     //适配全面屏
+                    }
+                }
             } else {
                 params.height = getScreenHeightPx() - height - mPartyDetailClockTabLayout.height + 1
             }

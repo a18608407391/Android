@@ -57,6 +57,24 @@ fun getRealScreenRelatedInformation(context: Context) {
                 ",density = " + density + ",scaledDensity = " + scaledDensity)
     }
 }
+
+fun getScreenRelatedInformation() {
+    val outMetrics = getDisplayMetrics()
+    val widthPixels = outMetrics!!.widthPixels
+    val heightPixels = outMetrics.heightPixels
+    val densityDpi = outMetrics.densityDpi
+    val density = outMetrics.density
+    val scaledDensity = outMetrics.scaledDensity
+    //可用显示大小的绝对宽度（以像素为单位）。
+    //可用显示大小的绝对高度（以像素为单位）。
+    //屏幕密度表示为每英寸点数。
+    //显示器的逻辑密度。
+    //显示屏上显示的字体缩放系数。
+    Log.e("display", "widthPixels = " + widthPixels + ",heightPixels = " + heightPixels + "\n" +
+            ",densityDpi = " + densityDpi + "\n" +
+            ",density = " + density + ",scaledDensity = " + scaledDensity)
+}
+
 fun getStatusBarHeight(): Int {
     val resources = context.getResources()
     val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -80,6 +98,8 @@ fun getStatusBarHeight(): Int {
 //    Log.i("StatusBarHeight", "" + sbar);
 //    return sbar;
 //}
+
+
 fun getInteger(id: Int): Int {
     return context.resources.getInteger(id)
 }

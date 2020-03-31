@@ -115,7 +115,15 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
             var flag = hasDeviceNavigationBar(this@PartyDetailActivty)
             var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights() - getStatusBarHeight(context)
             if (flag && values != 0) {
-                params.height = getScreenHeightPx() - height - mPartyDetailTabLayout.height + 1 - getNavigationBarHeight(context)
+                if (values == org.cs.tec.library.Base.Utils.getStatusBarHeight()) {
+                    params.height = getScreenHeightPx() - height - mPartyDetailTabLayout.height + 1
+                } else {
+                    if (values > getNavigationBarHeight(this@PartyDetailActivty) && values < org.cs.tec.library.Base.Utils.getStatusBarHeight() + getNavigationBarHeight(context)) {
+                        params.height = BaseApplication.getInstance().getHightPixels - ConvertUtils.dp2pxValue(125F, this@PartyDetailActivty)
+                    } else {
+                        params.height = getScreenHeightPx() - height - mPartyDetailTabLayout.height + 1 - values     //适配全面屏
+                    }
+                }
             } else {
                 params.height = getScreenHeightPx() - height - mPartyDetailTabLayout.height + 1
             }

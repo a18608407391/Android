@@ -1,6 +1,7 @@
 package org.cs.tec.library.Utils
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -15,8 +16,8 @@ import kotlin.experimental.or
 import com.zk.library.Utils.OSUtil.toByteArray
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.Bitmap
-
-
+import android.util.DisplayMetrics
+import android.view.WindowManager
 
 
 /**
@@ -343,6 +344,7 @@ class ConvertUtils private constructor() {
             if (recycle && !src.isRecycled) src.recycle()
             return bytes
         }
+
         /**
          * 以unit为单位的时间长度转毫秒时间戳
          *
@@ -714,6 +716,17 @@ class ConvertUtils private constructor() {
         fun dp2px(dpValue: Float): Int {
             val scale = getDisplayMetrics()!!.density
             return (dpValue * scale + 0.5f).toInt()
+        }
+
+        fun dp2pxValue(dpValue: Float, context: Context): Int {
+            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            if (windowManager != null) {
+                val outMetrics = DisplayMetrics()
+                windowManager.defaultDisplay.getRealMetrics(outMetrics)
+                val scaledDensity = outMetrics.density
+                return (dpValue * scaledDensity).toInt()
+            }
+            return 0
         }
 
         /**
