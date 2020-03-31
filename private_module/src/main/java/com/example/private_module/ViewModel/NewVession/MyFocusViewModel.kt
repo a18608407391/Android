@@ -1,5 +1,6 @@
 package com.example.private_module.ViewModel.NewVession
 
+import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
@@ -61,6 +62,7 @@ class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleCo
                 .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(myFocusActivity.location?.latitude!!, myFocusActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, myFocusActivity.location?.aoiName!!, myFocusActivity.location!!.poiName))
                 .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.fansMemberId)
                 .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 6)
+                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
                 .navigation()
     }
 

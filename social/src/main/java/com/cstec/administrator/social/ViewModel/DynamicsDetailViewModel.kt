@@ -63,8 +63,8 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
         //一级评论点赞
 
         var map = HashMap<String, String>()
-        Log.e("retrofitBack","当前dynamicId" + detialBean.id!!)
-        Log.e("retrofitBack","当前commentId" + bean!!.id.toString())
+        Log.e("retrofitBack", "当前dynamicId" + detialBean.id!!)
+        Log.e("retrofitBack", "当前commentId" + bean!!.id.toString())
         map["dynamicId"] = detialBean.id!!
         map["commentId"] = bean!!.id.toString()
         HttpRequest.instance.getCommentDynamicsLike(map)
@@ -255,7 +255,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
             } else {
                 finish()
             }
-        }else if (dynamicsDetailActivity.navigationType == 8) {
+        } else if (dynamicsDetailActivity.navigationType == 8) {
             if (destroyList!!.contains("MyRestoreActivity")) {
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
                     override fun onArrival(postcard: Postcard?) {

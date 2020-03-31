@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -62,6 +66,19 @@ public class Utils {
         return navigationHeight;
     }
 
+    public static boolean hasDeviceNavigationBar(Activity context) {
+        boolean hasMenuKey = ViewConfiguration.get(context)
+                .hasPermanentMenuKey();
+        boolean hasBackKey = KeyCharacterMap
+                .deviceHasKey(KeyEvent.KEYCODE_BACK);
+        if (!hasMenuKey && !hasBackKey) {
+            // 没有虚拟按键返回 true
+            return true;
+        }
+        // 有虚拟按键返回 false
+        return false;
+    }
+
     //获取是否存在NavigationBar
     public static boolean checkDeviceHasNavigationBar(Context context) {
         boolean hasNavigationBar = false;
@@ -91,7 +108,8 @@ public class Utils {
      * @param useThemestatusBarColor   是否要状态栏的颜色，不设置则为透明色
      * @param withoutUseStatusBarColor 是否不需要使用状态栏为暗色调
      */
-    public static void setStatusBar(Activity activity, boolean useThemestatusBarColor, boolean withoutUseStatusBarColor) {
+    public static void setStatusBar(Activity activity, boolean useThemestatusBarColor,
+                                    boolean withoutUseStatusBarColor) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {//5.0及以上
             View decorView = activity.getWindow().getDecorView();
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -156,8 +174,8 @@ public class Utils {
             Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
             Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
             darkModeFlag = field.getInt(layoutParams);
-            Method extraFlagField = clazz.getMethod("setExtraFlags",int.class,int.class);
-            extraFlagField.invoke(activity.getWindow(), lightStatusBar? darkModeFlag : 0, darkModeFlag);
+            Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
+            extraFlagField.invoke(activity.getWindow(), lightStatusBar ? darkModeFlag : 0, darkModeFlag);
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
@@ -169,6 +187,7 @@ public class Utils {
 
     /**
      * 判断手机是否是小米
+     *
      * @return
      */
     public static boolean isMIUI() {
@@ -184,6 +203,7 @@ public class Utils {
 
     /**
      * 判断手机是否是魅族
+     *
      * @return
      */
     public static boolean isFlyme() {
@@ -198,7 +218,8 @@ public class Utils {
 
     /**
      * 设置状态栏文字色值为深色调
-     * @param useDart 是否使用深色调
+     *
+     * @param useDart  是否使用深色调
      * @param activity
      */
     public static void setStatusTextColor(boolean useDart, Activity activity) {

@@ -279,7 +279,7 @@
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/d_60"
+                        android:layout_height="@dimen/d_80"
                         app:contentInsetStart="0dp"
                         app:layout_collapseMode="pin"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -287,7 +287,7 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 

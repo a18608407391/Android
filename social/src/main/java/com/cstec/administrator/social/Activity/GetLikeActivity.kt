@@ -80,7 +80,7 @@ class GetLikeActivity : BaseActivity<ActivityReceivelikeBinding, GetLikeViewMode
                 finish()
             }
         } else if (type == 8) {
-            if (mViewModel?.destroyList!!.contains("DriverHomeActivity")) {
+            if (mViewModel?.destroyList!!.contains("MsgActivity")) {
                 ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC)
                         .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(this, object : NavCallback() {
                             override fun onArrival(postcard: Postcard?) {

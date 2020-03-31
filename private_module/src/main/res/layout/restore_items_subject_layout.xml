@@ -3,6 +3,10 @@
 
     <data>
 
+        <import type="android.view.View"></import>
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.SimpleClickListener"></variable>
         <variable
             name="restore_item_entity"
             type="com.elder.zcommonmodule.Entity.CollectionEntity.Collection"></variable>
@@ -11,6 +15,8 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_15"
+        android:onClick="@{()->listener.onSimpleClick(restore_item_entity)}"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -56,14 +62,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_05"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="@{restore_item_entity.TYPE==null?View.GONE:View.VISIBLE}">
 
                 <TextView
                     android:layout_width="@dimen/d_32"
                     android:layout_height="wrap_content"
                     android:background="@drawable/corner_active_inner_bg1"
                     android:gravity="center"
-                    android:text="集市"
+                    android:text="@{restore_item_entity.type1}"
+                    android:textColor="#3FC5C9"
+                    android:visibility="@{restore_item_entity.type1.isEmpty?View.GONE:View.VISIBLE}"
+                    android:textSize="@dimen/s_10" />
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="@{restore_item_entity.type2}"
+                    android:visibility="@{restore_item_entity.type2.isEmpty?View.GONE:View.VISIBLE}"
                     android:textColor="#3FC5C9"
                     android:textSize="@dimen/s_10" />
 
@@ -72,16 +90,8 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/corner_active_inner_bg1"
                     android:gravity="center"
-                    android:text="舞蹈"
-                    android:textColor="#3FC5C9"
-                    android:textSize="@dimen/s_10" />
-
-                <TextView
-                    android:layout_width="@dimen/d_32"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/corner_active_inner_bg1"
-                    android:gravity="center"
-                    android:text="篝火"
+                    android:text="@{restore_item_entity.type3}"
+                    android:visibility="@{restore_item_entity.type3.isEmpty?View.GONE:View.VISIBLE}"
                     android:textColor="#3FC5C9"
                     android:textSize="@dimen/s_10" />
             </LinearLayout>
@@ -98,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_05"
-                android:text="@{@string/rmb + restore_item_entity.TICKET_PRICE}"
+                android:text="@{restore_item_entity.TICKET_PRICE}"
                 android:textColor="#F5222D"
                 android:textSize="@dimen/s_15" />
         </LinearLayout>

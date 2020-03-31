@@ -110,7 +110,6 @@ open class BaseViewModel : ViewModel(), IBaseViewModel {
     override fun onStop() {
     }
 
-
     var destroyList = ArrayList<String>()
     var destroyEven: Disposable? = null
     override fun registerRxBus() {

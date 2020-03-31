@@ -1,6 +1,7 @@
 package com.elder.zcommonmodule
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -9,6 +10,7 @@ import java.io.File
 import java.io.File.separator
 import android.os.Environment.getExternalStorageDirectory
 import android.provider.Settings
+import android.view.ViewConfiguration
 import com.amap.api.maps.model.LatLng
 import com.amap.api.navi.model.NaviLatLng
 import com.amap.api.services.core.LatLonPoint
@@ -17,7 +19,9 @@ import com.zk.library.Utils.PreferenceUtils
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.USERID
 //const val Base_URL = "http://ly532915135.vicp.cc/"
+
 const val Base_URL = "http://yomoy.com.cn/"
+
 //const val Base_URL = "http://192.168.5.242/"
 //const val Base_URL = "http://192.168.5.253/"
 //const val Base_URL = "http://192.168.5.155/"
@@ -144,7 +148,51 @@ fun gotoSettingIgnoringBatteryOptimizations(context: Activity) {
         }
     }
 }
+fun getNavigationBarHeight(context: Context): Int {
+    var result = 0
+    if (hasNavBar(context)) {
+        val res = context.getResources()
+        val resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId)
+        }
+    }
+    return result
+}
 
+fun hasNavBar(context: Context): Boolean {
+    var res = context.getResources()
+    var resourceId = res.getIdentifier("config_showNavigationBar", "bool", "android");
+
+    if (resourceId != 0) {
+        var hasNav = res.getBoolean(resourceId);
+//            // check override flag
+        var sNavBarOverride = getNavBarOverride();
+        if ("1".equals(sNavBarOverride)) {
+            hasNav = false;
+        } else if ("0".equals(sNavBarOverride)) {
+            hasNav = true;
+        }
+        return hasNav;
+    } else { // fallback
+        return !ViewConfiguration.get(context).hasPermanentMenuKey();
+    }
+}
+
+fun getNavBarOverride(): String {
+    var sNavBarOverride = ""
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        try {
+            val c = Class.forName("android.os.SystemProperties")
+            val m = c.getDeclaredMethod("get", String::class.java)
+            m.isAccessible = true
+            sNavBarOverride = m.invoke(null, "qemu.hw.mainkeys") as String
+        } catch (e: Throwable) {
+
+        }
+    }
+    return sNavBarOverride;
+}
 fun checkDriverStatus(): Boolean {
     var uid = PreferenceUtils.getString(context, USERID)
     return if (uid == null) {

@@ -19,6 +19,7 @@ import com.zk.library.Base.BaseActivity
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
+import kotlinx.android.synthetic.main.active_web_activity.*
 
 
 @Route(path = RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
@@ -74,5 +75,14 @@ class ActiveWebActivity : BaseActivity<ActiveWebActivityBinding, ActiveWebViewMo
             mViewModel?.startWx = false
             showProgressDialog(getString(R.string.http_loading))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        web_active.clearCache(true)
+        web_active.clearHistory()
+        web_active.clearFormData()
+        web_active.clearMatches()
+        web_active.clearSslPreferences()
     }
 }

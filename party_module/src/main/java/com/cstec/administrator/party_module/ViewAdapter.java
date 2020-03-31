@@ -266,6 +266,10 @@ public class ViewAdapter {
             return;
         }
 
+        if (html.contains("\n")) {
+            html.replace("\n", "");
+        }
+
         if (html.contains(".jpg")) {
 //            HtmlSpanner spanner = new HtmlSpanner();
 ////            spanner.registerHandler("img",new ImageHandler());

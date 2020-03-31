@@ -49,6 +49,12 @@ class CollectionEntity : Serializable {
         var SQRTVALUE = 0
         var SQRTVALUE1 = 0
         var RN = 0
+        var NAME :String ? = null
+        var HEAD_IMG_FILE :String ? = null
+        var type1: String = ""
+        var type2: String = ""
+        var type3: String = ""
+        var TYPE: String? = null
         var TIME: String? = null
     }
 

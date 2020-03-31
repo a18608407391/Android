@@ -45,15 +45,7 @@ class OrganizationListActivity : BaseActivity<ActivityOrganizationBinding, Organ
     }
 
     fun returnBack() {
-        if (mViewModel?.destroyList!!.contains("HomeActivity")) {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
-        } else {
-            finish()
-        }
+        finish()
     }
 
     override fun initData() {

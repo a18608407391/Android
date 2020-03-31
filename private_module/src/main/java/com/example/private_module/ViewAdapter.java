@@ -39,6 +39,8 @@ import com.google.gson.Gson;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.tencent.smtt.export.external.interfaces.ClientCertRequest;
 import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
+import com.tencent.smtt.export.external.interfaces.JsResult;
+import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.zk.bfind.LinearLayout.OnHorizontalScrollerViewClickListener;
@@ -301,9 +303,16 @@ public class ViewAdapter {
         webSetting.setAppCacheMaxSize(Long.MAX_VALUE);//设置应用缓存内容的最大值
         webSetting.setPluginState(WebSettings.PluginState.ON_DEMAND);//设置是否支持插件
         webSetting.setCacheMode(WebSettings.LOAD_NO_CACHE);//重写使用缓存的方式
-
         webSetting.setAllowUniversalAccessFromFileURLs(true);//是否允许运行在一个file schema URL环境下的JavaScript访问来自其他任何来源的内容
         webSetting.setAllowFileAccessFromFileURLs(true);//是否允许运行在一个URL环境
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsAlert(WebView webView, String s, String s1, JsResult jsResult) {
+
+
+                return super.onJsAlert(webView, s, s1, jsResult);
+            }
+        });
         webView.setWebViewClient(new com.tencent.smtt.sdk.WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webView, String s) {
@@ -316,19 +325,19 @@ public class ViewAdapter {
             @Override
             public void onReceivedClientCertRequest(WebView webView, ClientCertRequest clientCertRequest) {
                 super.onReceivedClientCertRequest(webView, clientCertRequest);
-                Log.e("result","onReceivedClientCertRequest");
+                Log.e("result", "onReceivedClientCertRequest");
             }
 
             @Override
             public void onReceivedLoginRequest(WebView webView, String s, String s1, String s2) {
                 super.onReceivedLoginRequest(webView, s, s1, s2);
-                Log.e("result","onReceivedLoginRequest");
+                Log.e("result", "onReceivedLoginRequest");
             }
 
             @Override
             public void onReceivedError(WebView webView, int i, String s, String s1) {
                 super.onReceivedError(webView, i, s, s1);
-                Log.e("result","onReceivedLoginRequest");
+                Log.e("result", "onReceivedLoginRequest");
             }
 
             @Override
@@ -345,6 +354,7 @@ public class ViewAdapter {
                 }
 
             }
+
         });
 
         webView.loadUrl(html);
@@ -364,16 +374,16 @@ public class ViewAdapter {
     @BindingAdapter("LoadClockRoadImg")
     public static void LoadClockRoadImg(ImageView img, String url) {
         String s = LocalUtilsKt.getRoadImgUrl(url);
-        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(8));
         RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(154), ConvertUtils.Companion.dp2px(98));
         Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
     }
 
     @BindingAdapter("LoadImg")
     public static void LoadImg(ImageView img, String url) {
-        String s =ConfigKt.Base_URL + url;
-        Log.e("result","当前图片路径" + s);
-        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        String s = ConfigKt.Base_URL + url;
+        Log.e("result", "当前图片路径" + s);
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(8));
         RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(154), ConvertUtils.Companion.dp2px(98));
         Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
     }
@@ -382,7 +392,7 @@ public class ViewAdapter {
     @BindingAdapter("LoadMBRoadImg")
     public static void LoadMBRoadImg(ImageView img, String url) {
         String s = LocalUtilsKt.getRoadImgUrl(url);
-        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(5));
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(8));
         RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(167), ConvertUtils.Companion.dp2px(143));
         Glide.with(img.getContext()).asBitmap().load(s).apply(options).into(img);
     }

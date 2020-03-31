@@ -90,7 +90,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
             var item = it
             var start = item.ACTIVITY_START!!.split(" ")[0]
             var stop = item.ACTIVITY_STOP!!.split(" ")[0]
-            item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE / 1000 + "km"
+            item.ACTIVITY_START = start + "至" + stop + "  距离" + item.SQRTVALUE + "km"
             if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
                 item.TICKET_PRICE = "免费"
             } else {
@@ -104,7 +104,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         if (!home.clockActivityList.isNullOrEmpty()) {
             home.clockActivityList!!.forEach {
                 var item = it
-                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
+                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE + "km"
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
                 item.ACTIVITY_START = start + "至" + stop

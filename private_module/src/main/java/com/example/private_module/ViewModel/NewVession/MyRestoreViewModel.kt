@@ -4,6 +4,7 @@ import android.databinding.ObservableArrayList
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
@@ -37,20 +38,26 @@ import org.cs.tec.library.binding.command.BindingConsumer
 class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, TitleComponent.titleComponentCallBack, SwipeRefreshLayout.OnRefreshListener, SimpleClickListener {
     override fun onSimpleClick(entity: Any) {
         var c = entity as CollectionEntity.Collection
-        if (c.BIG_TYPE == 0) {
-            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+
+
+        if (c.BIG_TYPE == null || c.BIG_TYPE == 0) {
+            if (c.releaseDynamicParent == null) {
+                Toast.makeText(restoreActivity, "该动态已被删除！", Toast.LENGTH_SHORT).show()
+            } else {
+                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+            }
         } else if (c.BIG_TYPE == 1) {
             ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
                     .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                            restoreActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
+                            restoreActivity.location).withInt(RouterUtils.PartyConfig.NavigationType, 2).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
         } else if (c.BIG_TYPE == 2) {
-            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
+            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.NavigationType, 2).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
                     .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                             restoreActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
         } else if (c.BIG_TYPE == 3) {
-            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
+            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.NavigationType, 2).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
                     .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                            restoreActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
+                            restoreActivity.location).withInt(RouterUtils.PartyConfig.NavigationType, 2).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).navigation()
         }
     }
 
@@ -84,7 +91,51 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
         }
         var entity = Gson().fromJson<CollectionEntity>(it, CollectionEntity::class.java)
         entity.data?.forEach {
-            items.add(it)
+            var item = it
+            if (it.BIG_TYPE == 1) {
+                item.DISTANCE = "全长" + item.DISTANCE + "km" + " \n距离" + it.SQRTVALUE + "km"
+                var start = item.ACTIVITY_START!!.split(" ")[0]
+                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
+                item.ACTIVITY_START = start + "至" + stop
+            } else if (it.BIG_TYPE == 2) {
+                var start = item.ACTIVITY_START!!.split(" ")[0]
+                var stop = item.ACTIVITY_STOP!!.split(" ")[0]
+                if (item.DISTANCE == null) {
+                    item.DISTANCE = "0"
+                }
+                item.ACTIVITY_START = start + "至" + stop + " \n距离" + item.SQRTVALUE + "km"
+                if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
+                    item.TICKET_PRICE = "免费"
+                } else {
+                    item.TICKET_PRICE = getString(R.string.rmb) + item.TICKET_PRICE
+                }
+                if (!item.TYPE.isNullOrEmpty()) {
+                    item.TYPE!!.split(",").forEachIndexed { index, s ->
+                        when (index) {
+                            0 -> {
+                                item.type1 = s
+                            }
+                            1 -> {
+                                item.type2 = s
+                            }
+                            2 -> {
+                                item.type3 = s
+                            }
+                        }
+                    }
+                }
+            } else if (it.BIG_TYPE == 3) {
+                if (item.DISTANCE == null) {
+                    item.DISTANCE = "0"
+                }
+                item.DISTANCE = "时长" + item.DAY + "天" + " " + "里程" + item.DISTANCE + "km"
+                if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
+                    item.TICKET_PRICE = "免费"
+                } else {
+                    item.TICKET_PRICE = getString(R.string.rmb) + item.TICKET_PRICE
+                }
+            }
+            items.add(item)
         }
         restoreActivity.restore_swipe.isRefreshing = false
     }
@@ -111,15 +162,15 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
         when (item.BIG_TYPE) {
             1 -> {
                 //打卡
-                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_clock_layout)
+                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_clock_layout).bindExtra(BR.listener, listener)
             }
             2 -> {
                 //主题
-                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_subject_layout)
+                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_subject_layout).bindExtra(BR.listener, listener)
             }
             3 -> {
                 //摩旅活动
-                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_active_layout)
+                itemBinding.set(BR.restore_item_entity, R.layout.restore_items_active_layout).bindExtra(BR.listener, listener)
             }
             0 -> {
                 itemBinding.set(BR.restore_item_entity, R.layout.restore_items_layout).bindExtra(BR.listener, listener)
@@ -134,7 +185,6 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
 
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-            Log.e("result", "加载更多" + t)
             if (t < lenth * pageSize) {
                 return
             } else {

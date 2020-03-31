@@ -63,13 +63,13 @@ class ActiveWebViewModel : BaseViewModel() {
         } else if (activeWebActivity.type == 2) {
             webUrl.set(Base_URL + "/AmoskiWebActivity/personalcenter/roadbookActivitype/activity/detail.html?id=" + activeWebActivity.id + "&type=app")
         } else if (activeWebActivity.type == 3) {
-            Log.e("result", "加载")
             webUrl.set("$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/activity/activityList.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&type=app")
         } else if (activeWebActivity.type == 4) {
-            Log.e("result", "$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/activity/detail.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "id=" + activeWebActivity.id + "&type=app")
             webUrl.set("$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/activity/detail.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&id=" + activeWebActivity.id + "&type=app")
         } else if (activeWebActivity.type == 5) {
-            webUrl.set("$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/order/index.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&id=" + activeWebActivity.id + "&code=" + activeWebActivity.code + "&type=app")
+            var t = "$Base_URL/AmoskiWebActivity/personalcenter/roadbookActivitype/order/index.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&id=" + activeWebActivity.id + "&code=" + activeWebActivity.code + "&type=app"
+            Log.e("result", t)
+            webUrl.set(t)
         }
     }
 
@@ -131,9 +131,11 @@ class ActiveWebViewModel : BaseViewModel() {
                     Toast.makeText(context, "支付错误！请检查是否安装微信", Toast.LENGTH_SHORT).show()
                 }
             } else if (t == "com.elder.amoski://") {
+                Log.e("result", "加载数据2")
                 ac.web_active.loadUrl("http://yomoy.com.cn/AmoskiWebActivity/personalcenter/roadbookActivitype/order/orderPayment.html?isWeiXin=true")
                 return
             } else if (t.startsWith("https://mclient.alipay.com/h5Continue.htm")) {
+                Log.e("result", "加载数据1")
                 ac.web_active.loadUrl(Base_URL + "/AmoskiWebActivity/personalcenter/roadbookActivitype/order/orderList.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&type=app")
             } else if (t.contains("/AmoskiWebActivity/personalcenter/album/shopalbum.html") || t.contains("/AmoskiWebActivity/personalcenter/roadbookActivitype/activity/detail.html")) {
                 if (t.contains("code=")) {
@@ -182,14 +184,33 @@ class ActiveWebViewModel : BaseViewModel() {
                         shareDialog!!.dismiss()
                     }
                 } else {
-                    ac.web_active.loadUrl(t)
+                    Log.e("result", "普通页面加载")
+                    var url = t
+                    if (url.endsWith("html")) {
+                        url = url + "?type=appUrl"
+                    } else {
+                        url = url + "&type=appUrl"
+                    }
+                    ac.web_active.loadUrl(url)
                 }
             } else {
+
+                if (t == "http://yomoy.com.cn//AmoskiWebActivity/personalcenter/roadbookActivitype/order/a.html") {
+                    return
+                }
+
                 var url = t
-                if (t.startsWith("http://yomoy.com.cn//AmoskiWebActivity/personalcenter/roadbookActivitype/order/index.html")) {
+                if (t.contains("http://yomoy.com.cn/AmoskiWebActivity/personalcenter/roadbookActivitype/order/index.html")) {
                     url = url + "&appToken=" + PreferenceUtils.getString(context, USER_TOKEN)
                 }
-                ac.web_active.loadUrl(url)
+                Log.e("result", "当前数据" + url + "&type=appUrl")
+                if (url.endsWith("html")) {
+                    url = url + "?type=appUrl"
+                } else {
+                    url = url + "&type=appUrl"
+                }
+
+                ac.web_active.loadUrl(url + "&type=appUrl")
             }
         }
     })

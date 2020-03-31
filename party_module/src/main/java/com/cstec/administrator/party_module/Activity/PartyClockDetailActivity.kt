@@ -20,6 +20,7 @@ import com.cstec.administrator.party_module.ViewModel.PartyClockDetailViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyClockDetailBinding
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Utils.Utils
+import com.elder.zcommonmodule.getNavigationBarHeight
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import com.zk.library.Base.BaseActivity
@@ -32,6 +33,8 @@ import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
 import kotlinx.android.synthetic.main.party_detail_item_subject_top.*
 import kotlinx.android.synthetic.main.party_detail_item_top.*
 import kotlinx.android.synthetic.main.party_detail_item_top_clock.*
+import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Base.Utils.getScreenHeightPx
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
@@ -51,6 +54,15 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CODE)
     @JvmField
     var code: Int = 0
+
+
+    @Autowired(name = RouterUtils.PartyConfig.NavigationType)
+    @JvmField
+    var navigation: Int = 0
+
+    @Autowired(name = RouterUtils.PartyConfig.PARTY_CITY)
+    @JvmField
+    var city: String = ""
 
     override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
 
@@ -80,16 +92,46 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
         returnBack()
     }
 
-
     fun returnBack() {
-        if (mViewModel?.destroyList!!.contains("HomeActivity")) {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+        if (navigation == 0) {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this@PartyClockDetailActivity, object : NavCallback() {
                 override fun onArrival(postcard: Postcard?) {
                     finish()
                 }
             })
-        } else {
-            finish()
+        } else if (navigation == 1) {
+            if (mViewModel?.destroyList!!.contains("SubjectPartyActivity")) {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY).withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, 2)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city).navigation(this@PartyClockDetailActivity, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            } else {
+                finish()
+            }
+        } else if (navigation == 2) {
+            if (mViewModel?.destroyList!!.contains("MyRestoreActivity")) {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(this@PartyClockDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
+        } else if (navigation == 3) {
+            if (mViewModel?.destroyList!!.contains("SearchPartyActivity")) {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        location).withString(RouterUtils.PartyConfig.PARTY_CITY, city).navigation(this@PartyClockDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
         }
     }
 
@@ -104,7 +146,7 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
     var lastScrollY = 0;
     var toolBarPositionY = 0;
     var mOffset = 0
-    var h = ConvertUtils.dp2px(304F)
+    var h = 0
     override fun initData() {
         super.initData()
         mPartyDetailClockViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailClockTabLayout))
@@ -116,7 +158,12 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
             var height = clock_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailClockViewPager.layoutParams
-            params.height = BaseApplication.getInstance().getHightPixels - height - ConvertUtils.dp2px(55F) + 1
+
+            if (flag) {
+                params.height = getScreenHeightPx() - height - mPartyDetailClockTabLayout.height + 1 - Utils.getNavigationBarHeight(context)
+            } else {
+                params.height = getScreenHeightPx() - height - mPartyDetailClockTabLayout.height + 1
+            }
             mPartyDetailClockViewPager.layoutParams = params
         }
         clock_refreshLayout.setOnRefreshListener {
@@ -143,18 +190,18 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
 
 
         nest_clock.setOnScrollChangeListener(FixNestedScrollView.OnScrollChangeListener { p0, scrollX, scrollY, oldScrollX, oldScrollY ->
-
             var y = scrollY
-
             //            Log.e("LocationP", "Location2" + p2)
 //            Log.e("LocationP", "Location4" + p4)
 //            fling = Math.abs(p4 - p2) > ConvertUtils.dp2px(20F)
-
 
             Log.e("result", "当前H值" + h + "最小高度" + ConvertUtils.px2dp(912F))
             var location = IntArray(2)
             mPartyDetailClockTabLayout.getLocationOnScreen(location)
             var yPosition = location[1];
+            if (h == 0) {
+                h = clock_ivHeader.height - toolBarPositionY
+            }
 //            Log.e("result", "yPosition" + yPosition)  //2314
 //            Log.e("result", "toolBarPositionY" + toolBarPositionY)
             if (yPosition < toolBarPositionY) {
@@ -174,14 +221,9 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
                 } else {
                     y
                 }
-
-
-
-
                 Log.e("result", "h=" + h)
                 Log.e("result", "y=" + y)
                 Log.e("result", "mScrollY= " + mScrollY)
-
 //                Log.e("result", "mScrollY" + mScrollY)
 //                Log.e("result", "mScrollH" + h)
 //                if (mScrollY == 900) {

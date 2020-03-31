@@ -58,6 +58,10 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
 
     fun initData() {
         items.removeAll()
+        if (!lists.isEmpty() || !list.isEmpty()) {
+            list.clear()
+            lists.clear()
+        }
         var model = viewModel as PartyDetailViewModel
         if (!model.data.get()!!.SCHEDULE.isNullOrEmpty()) {
             model.data.get()?.SCHEDULE!!.forEachIndexed { index, schedules ->
@@ -155,6 +159,10 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
 
     fun initDataClock() {
         items.removeAll()
+        if (!lists.isEmpty() || !list.isEmpty()) {
+            list.clear()
+            lists.clear()
+        }
         var model = viewModel as PartyClockDetailViewModel
         if (!model.data.get()!!.SCHEDULE.isNullOrEmpty()) {
             model.data.get()?.SCHEDULE!!.forEachIndexed { index, schedules ->
@@ -228,9 +236,12 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
             items.insertItem(notice)
         }
     }
-
     fun initDataSubject() {
         items.removeAll()
+        if (!lists.isEmpty() || !list.isEmpty()) {
+            list.clear()
+            lists.clear()
+        }
         var model = viewModel as PartyMoboDetailViewModel
         if (!model.data.get()!!.SCHEDULE.isNullOrEmpty()) {
             model.data.get()?.SCHEDULE!!.forEachIndexed { index, schedules ->

@@ -28,6 +28,8 @@ class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchParty
     @JvmField
     var party_city: String? = null
 
+
+
     override fun initVariableId(): Int {
         return BR.search_party_model
     }

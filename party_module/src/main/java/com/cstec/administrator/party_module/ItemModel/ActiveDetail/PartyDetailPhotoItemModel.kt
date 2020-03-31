@@ -36,10 +36,9 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
 
                 //                "fileNameUrl":"fileNameUrlfb661ac96a614c91a2f3601eb829e94e.png",
 //                "filePath":"/home/uploadFile/images/createActivity/2020/03/23/10",
-                var ti =  photo.uploadTime!!.split(" ")[0]
+                var ti = photo.uploadTime!!.split(" ")[0]
                 var url = getImageUrl(photo.filePath!!.split("/home/uploadFile/images")[1] + "/" + photo.fileNameUrl)
-                if (tes != photo.uploadTime) {
-
+                if (tes != ti) {
                     tes = ti
                     items.add(PhotoEntitiy(ObservableField(""), ObservableField(ti), ObservableField(0)))
                     items.add(PhotoEntitiy(ObservableField(url), ObservableField(ti), ObservableField(1), ObservableField(photo.basicsId.toString())))
@@ -103,7 +102,7 @@ class PartyDetailPhotoItemModel : BasePartyItemModel(), HttpInteface.PartyAlbum_
     }
 
     fun initData(flag: Boolean) {
-        Log.e("result","加载数据次数")
+        Log.e("result", "加载数据次数")
         if (flag) {
             start = 1
             pageSize = 30

@@ -65,7 +65,7 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
             1 -> {
                 ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
                         .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
+                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
                             override fun onArrival(postcard: Postcard?) {
                                 finish()
                             }
@@ -74,7 +74,7 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
             2 -> {
                 ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
                         .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
+                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
                             override fun onArrival(postcard: Postcard?) {
                                 finish()
                             }
@@ -83,7 +83,7 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
             3 -> {
                 ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
                         .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
+                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
                             override fun onArrival(postcard: Postcard?) {
                                 finish()
                             }

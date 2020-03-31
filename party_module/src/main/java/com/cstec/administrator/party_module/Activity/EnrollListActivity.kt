@@ -23,12 +23,13 @@ class EnrollListActivity : BaseActivity<ActivityEnrollBinding, EnrollViewModel>(
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_ID)
     @JvmField
-    var id: Int  = 0
+    var id: Int = 0
 
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)
     @JvmField
-    var location: Location  ? = null
+    var location: Location? = null
+
     override fun initVariableId(): Int {
         return BR.enroll_model
     }
@@ -39,25 +40,20 @@ class EnrollListActivity : BaseActivity<ActivityEnrollBinding, EnrollViewModel>(
         StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
         return R.layout.activity_enroll
     }
+
     fun returnBack() {
-        if (mViewModel?.destroyList!!.contains("HomeActivity")) {
-            Log.e("result", "当前界面只有一个了")
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
-        } else {
-            finish()
-        }
+        finish()
     }
+
     override fun initViewModel(): EnrollViewModel? {
         return ViewModelProviders.of(this)[EnrollViewModel::class.java]
     }
+
     override fun doPressBack() {
         super.doPressBack()
-     returnBack()
+        returnBack()
     }
+
     override fun initData() {
         super.initData()
         mViewModel?.inject(this)

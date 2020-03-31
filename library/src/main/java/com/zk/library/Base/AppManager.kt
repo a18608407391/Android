@@ -56,6 +56,19 @@ class AppManager {
     }
 
 
+    fun findActivityIsDestroy(name: String): Boolean {
+        var flag = false
+        activityStack!!.forEach {
+            if (it?.javaClass!!.simpleName == name) {
+                flag = true
+                flag = !(it.isDestroyed || it == null || it.isFinishing)
+            }
+        }
+
+        return flag
+    }
+
+
     /**
      * 是否有activity
      */

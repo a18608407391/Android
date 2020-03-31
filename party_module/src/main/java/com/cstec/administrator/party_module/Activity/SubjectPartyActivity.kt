@@ -35,6 +35,8 @@ class SubjectPartyActivity : BaseActivity<ActivitySubjectPartyBinding, SubjectPa
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CITY)
     @JvmField
     var city: String? = null
+
+
     @Autowired(name = RouterUtils.PartyConfig.Party_SELECT_TYPE)
     @JvmField
     var type: Int = 0
@@ -71,19 +73,17 @@ class SubjectPartyActivity : BaseActivity<ActivitySubjectPartyBinding, SubjectPa
         RxSubscriptions.add(s)
         mViewModel?.inject(this)
     }
+
     fun returnBack() {
-        if (mViewModel?.destroyList!!.contains("HomeActivity")) {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
-        } else {
-            finish()
-        }
+        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+            override fun onArrival(postcard: Postcard?) {
+                finish()
+            }
+        })
     }
+
     override fun doPressBack() {
         super.doPressBack()
-       returnBack()
+        returnBack()
     }
 }

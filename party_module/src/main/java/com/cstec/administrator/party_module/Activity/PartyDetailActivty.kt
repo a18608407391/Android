@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.TabLayout
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.NestedScrollView
 import android.util.Log
 import android.view.View
 import com.alibaba.android.arouter.facade.Postcard
@@ -16,11 +15,11 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.FixNestedScrollView
 import com.cstec.administrator.party_module.R
-import com.cstec.administrator.party_module.R.id.members_click
 import com.cstec.administrator.party_module.ViewModel.PartyDetailViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyDetailBinding
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Utils.Utils
+import com.elder.zcommonmodule.Utils.Utils.*
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import com.zk.library.Base.BaseActivity
@@ -28,9 +27,8 @@ import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_party_detail.*
-import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
-import kotlinx.android.synthetic.main.party_detail_item_subject_top.*
-import kotlinx.android.synthetic.main.party_detail_item_top.*
+import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Base.Utils.getScreenHeightPx
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
@@ -57,6 +55,16 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CODE)
     @JvmField
     var code: Int = 0
+
+    @Autowired(name = RouterUtils.PartyConfig.PARTY_CITY)
+    @JvmField
+    var city: String = ""
+
+
+    @Autowired(name = RouterUtils.PartyConfig.NavigationType)
+    @JvmField
+    var navigation: Int = 0
+
 
     override fun initVariableId(): Int {
         return BR.party_detail_model
@@ -88,7 +96,7 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
     var lastScrollY = 0;
     var toolBarPositionY = 0;
     var mOffset = 0
-    var h = ConvertUtils.dp2px(304F)
+    var h = 0
     override fun initData() {
         super.initData()
         mPartyDetailViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailTabLayout))
@@ -98,12 +106,19 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
 //        party_subject_appbar_layout.addOnOffsetChangedListener(this)
         mPartyDetailTabLayout.addOnTabSelectedListener(mViewModel!!)
 
+
         initTrans(true)
         detail_toolbar.post {
             var height = detail_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailViewPager.layoutParams
-            params.height = BaseApplication.getInstance().getHightPixels - height - ConvertUtils.dp2px(55F) + 1
+            var flag = hasDeviceNavigationBar(this@PartyDetailActivty)
+            var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights() - getStatusBarHeight(context)
+            if (flag && values != 0) {
+                params.height = getScreenHeightPx() - height - mPartyDetailTabLayout.height + 1 - getNavigationBarHeight(context)
+            } else {
+                params.height = getScreenHeightPx() - height - mPartyDetailTabLayout.height + 1
+            }
             mPartyDetailViewPager.layoutParams = params
         }
         detail_refreshLayout.setOnRefreshListener {
@@ -142,6 +157,9 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
             var location = IntArray(2)
             mPartyDetailTabLayout.getLocationOnScreen(location)
             var yPosition = location[1];
+            if (h == 0) {
+                h = detail_ivHeader.height - toolBarPositionY
+            }
 //            Log.e("result", "yPosition" + yPosition)  //2314
 //            Log.e("result", "toolBarPositionY" + toolBarPositionY)
             if (yPosition < toolBarPositionY) {
@@ -174,7 +192,7 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
 //                }
                 detail_buttonBarLayout.setAlpha(1f * mScrollY / h);
                 detail_toolbar.setBackgroundColor(255 * mScrollY / h shl 24 or color);
-                detail_ivHeader.translationY = (mOffset - mScrollY).toFloat();
+                detail_ivHeader.translationY = (mOffset - mScrollY).toFloat()
             }
 
             if (scrollY == 0) {
@@ -196,15 +214,45 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
     }
 
     fun returnBack() {
-        if (mViewModel?.destroyList!!.contains("HomeActivity")) {
-            Log.e("result", "当前界面只有一个了")
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+        if (navigation == 0) {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this@PartyDetailActivty, object : NavCallback() {
                 override fun onArrival(postcard: Postcard?) {
                     finish()
                 }
             })
-        } else {
-            finish()
+        } else if (navigation == 1) {
+            if (mViewModel?.destroyList!!.contains("SubjectPartyActivity")) {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY).withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, 1)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city).navigation(this@PartyDetailActivty, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            } else {
+                finish()
+            }
+        } else if (navigation == 2) {
+            if (mViewModel?.destroyList!!.contains("MyRestoreActivity")) {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withString(RouterUtils.PartyConfig.PARTY_CITY, city).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(this@PartyDetailActivty, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
+        } else if (navigation == 3) {
+            if (mViewModel?.destroyList!!.contains("SearchPartyActivity")) {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        location).withString(RouterUtils.PartyConfig.PARTY_CITY, city).navigation(this@PartyDetailActivty, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
         }
     }
 
@@ -220,5 +268,6 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
         StatusbarUtils.setTranslucentStatus(this)
         StatusbarUtils.setStatusBarMode(this, falg, 0x00000000)
     }
+
 
 }

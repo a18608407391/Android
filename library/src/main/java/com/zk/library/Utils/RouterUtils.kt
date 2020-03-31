@@ -221,6 +221,7 @@ class RouterUtils() {
             const val SEARCH_PARTY = "/party/search"
             const val ORGANIZATION = "/party/organization"
             const val ENROLL = "/party/enroll"
+            const val NavigationType = "/party/navigation_type"
         }
 
     }

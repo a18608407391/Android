@@ -78,7 +78,7 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
         ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
                 .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
                 .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
                 .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 4).navigation()
     }
 

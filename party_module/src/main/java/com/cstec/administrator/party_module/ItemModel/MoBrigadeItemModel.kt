@@ -34,7 +34,7 @@ class MoBrigadeItemModel : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Sub
         var model = viewModel as SubjectPartyViewModel
         ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
                 .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
+                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
     }
 
     override fun PartyMotoSucccess(it: String) {
@@ -44,8 +44,10 @@ class MoBrigadeItemModel : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Sub
         if (!entity.data.isNullOrEmpty()) {
             entity.data!!.forEach {
                 var model = it
+                if (model.DISTANCE == null) {
+                    model.DISTANCE = "0"
+                }
                 model.DISTANCE = "时长" + model.DAY + "天" + " " + "里程" + model.DISTANCE + "km"
-
                 if (model.TICKET_PRICE.isNullOrEmpty() || model.TICKET_PRICE!!.toDouble() <= 0) {
                     model.TICKET_PRICE = "免费"
                 } else {
@@ -59,11 +61,13 @@ class MoBrigadeItemModel : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Sub
             getUnRead()
         }
     }
+
     override fun refresh() {
         super.refresh()
         load(true)
         refreshStatus.set(1)
     }
+
     fun getUnRead() {
         HttpRequest.instance.partyUnRead = this
         HttpRequest.instance.getPartyActiveUnRead(HashMap())

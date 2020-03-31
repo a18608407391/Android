@@ -37,7 +37,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
         var model = viewModel as SubjectPartyViewModel
         ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
                 .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
+                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
 
     }
 
@@ -53,7 +53,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
                 if (item.DISTANCE == null) {
                     item.DISTANCE = "0"
                 }
-                item.ACTIVITY_START = start + "至" + stop + " " + item.SQRTVALUE + "km"
+                item.ACTIVITY_START = start + "至" + stop + " 距离" + item.SQRTVALUE + "km"
                 if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
                     item.TICKET_PRICE = "免费"
                 } else {

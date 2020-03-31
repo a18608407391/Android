@@ -4,7 +4,9 @@
     <data>
 
         <import type="android.view.View"></import>
-
+        <variable
+            name="listener"
+            type="com.elder.zcommonmodule.Inteface.SimpleClickListener"></variable>
         <variable
             name="restore_item_entity"
             type="com.elder.zcommonmodule.Entity.CollectionEntity.Collection"></variable>
@@ -13,6 +15,8 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_15"
+        android:onClick="@{()->listener.onSimpleClick(restore_item_entity)}"
         android:orientation="horizontal">
 
         <RelativeLayout

@@ -34,7 +34,7 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
         var model = viewModel as SubjectPartyViewModel
         ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
                 .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
+                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
     }
 
     override fun PartyClockSucccess(it: String) {
@@ -44,7 +44,7 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
         if (!entity.data.isNullOrEmpty()) {
             entity.data!!.forEach {
                 var item = it
-                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
+                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE + "km"
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
                 item.ACTIVITY_START = start + "至" + stop
@@ -65,6 +65,7 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
         HttpRequest.instance.partyUnRead = this
         HttpRequest.instance.getPartyActiveUnRead(java.util.HashMap())
     }
+
     override fun refresh() {
         super.refresh()
         load(true)

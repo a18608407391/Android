@@ -84,7 +84,6 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
             members!!.clear()
         }
         if (!entity.LABEL.isNullOrEmpty()) {
-
             entity.LABEL!!.split(",").forEach {
                 typeData.add(it)
             }

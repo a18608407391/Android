@@ -87,7 +87,7 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
                 }
             }
         }
-        dis.set((entity.SQRTVALUE / 1000).toString())
+        dis.set((entity.DISTANCE).toString())
         collection.set(entity.IS_COLLECTION)
         state.set(entity.ACTIVITY_STATUS)
         restoreTime.set(entity.ACTIVITY_START + "至" + entity.ACTIVITY_STOP)

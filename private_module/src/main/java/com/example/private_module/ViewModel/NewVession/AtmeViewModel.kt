@@ -1,5 +1,6 @@
 package com.example.private_module.ViewModel.NewVession
 
+import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
@@ -64,6 +65,7 @@ class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, Htt
         ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
                 .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.MEMBER_ID)
                 .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location)
+                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
                 .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
     }
 

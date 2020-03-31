@@ -115,14 +115,14 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/clock_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="@dimen/d_70"
                 android:layout_marginBottom="0dp"
                 android:background="@android:color/transparent"
                 android:elevation="@dimen/d_05"
                 app:layout_collapseMode="pin">
 
                 <RelativeLayout
-                    android:id="@+id/clock_buttonBarLayout"
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
@@ -136,7 +136,7 @@
                         android:src="@drawable/arrow_black" />
 
                     <TextView
-                        android:id="@+id/clock_toolbar_username"
+                        android:id="@+id/clock_buttonBarLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginRight="@dimen/d_15"

@@ -114,14 +114,14 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="@dimen/d_70"
                 android:layout_marginBottom="0dp"
                 android:background="@android:color/transparent"
                 android:elevation="@dimen/d_05"
                 app:layout_collapseMode="pin">
 
                 <RelativeLayout
-                    android:id="@+id/detail_buttonBarLayout"
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
@@ -130,18 +130,18 @@
                         android:id="@+id/detail_iv_back"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="@{party_detail_model::onClick}"
                         android:layout_centerVertical="true"
+                        android:onClick="@{party_detail_model::onClick}"
                         android:src="@drawable/arrow_black" />
 
                     <TextView
-                        android:id="@+id/detail_toolbar_username"
+                        android:id="@+id/detail_buttonBarLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginRight="@dimen/d_15"
                         android:gravity="center"
                         android:maxLines="1"
                         android:text="活动详情"
-                        android:layout_marginRight="@dimen/d_15"
                         android:textColor="@color/black_12"
                         android:textSize="@dimen/s_16" />
 

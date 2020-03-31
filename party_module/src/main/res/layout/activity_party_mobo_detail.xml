@@ -81,7 +81,6 @@
                         android:id="@+id/mPartyDetailSubjectTabLayout"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/d_55"
-                        android:elevation="@dimen/d_05"
                         app:tabIndicatorColor="@color/black"
                         app:tabIndicatorFullWidth="false"
                         app:tabIndicatorHeight="2dp"
@@ -116,14 +115,12 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/subject_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="@dimen/d_70"
                 android:layout_marginBottom="0dp"
                 android:background="@android:color/transparent"
-                android:elevation="@dimen/d_05"
                 app:layout_collapseMode="pin">
-
                 <RelativeLayout
-                    android:id="@+id/buttonBarLayout"
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
@@ -137,7 +134,7 @@
                         android:src="@drawable/arrow_black" />
 
                     <TextView
-                        android:id="@+id/toolbar_username"
+                        android:id="@+id/buttonBarLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginRight="@dimen/d_15"

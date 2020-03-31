@@ -1,14 +1,12 @@
 package com.cstec.administrator.party_module.Activity
 
 import android.arch.lifecycle.ViewModelProviders
-import android.graphics.Color
-import android.os.Build
+import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.TabLayout
-import android.support.v4.widget.NestedScrollView
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Autowired
@@ -21,23 +19,30 @@ import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.PartyMoboDetailViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyClockDetailBinding
 import com.elder.zcommonmodule.Entity.Location
-import com.elder.zcommonmodule.Utils.Utils
 import com.zk.library.Base.BaseActivity
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
-import kotlinx.android.synthetic.main.activity_party_detail.*
 import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
-import kotlinx.android.synthetic.main.party_detail_item_subject_top.*
-import kotlinx.android.synthetic.main.party_detail_item_top.*
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
-import androidx.annotation.RequiresApi
+import android.view.Window
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
+import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Base.Utils.getStatusBarHeight
+import android.view.Window.ID_ANDROID_CONTENT
+import android.util.DisplayMetrics
+import android.content.Context.WINDOW_SERVICE
+import android.support.v4.content.ContextCompat.getSystemService
+import android.view.WindowManager
+import com.elder.zcommonmodule.Utils.Utils
+import com.elder.zcommonmodule.getNavigationBarHeight
+import com.zk.library.Base.AppManager
+import kotlinx.android.synthetic.main.activity_party_detail.*
+import org.cs.tec.library.Base.Utils.getScreenHeightPx
 
 
 @Route(path = RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
@@ -54,6 +59,7 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
 //            Utils.setStatusTextColor(false, activity)
 //            viewModel?.VisField!!.set(false)
 //            log_swipe.isEnabled = p1 >= 0
+
         } else {
             mViewModel?.visible!!.set(true)
             nest_subject.setNeedScroll(false)
@@ -72,10 +78,16 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     @JvmField
     var party_id: Int = 0
 
+    @Autowired(name = RouterUtils.PartyConfig.NavigationType)
+    @JvmField
+    var navigation: Int = 0
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CODE)
     @JvmField
     var code: Int = 0
+    @Autowired(name = RouterUtils.PartyConfig.PARTY_CITY)
+    @JvmField
+    var city: String = ""
 
 
     override fun initVariableId(): Int {
@@ -100,21 +112,57 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     var lastScrollY = 0;
     var toolBarPositionY = 0;
     var mOffset = 0
-    var h = ConvertUtils.dp2px(304F)
+    var h = 0
+    var baseStatus = 60
     override fun initData() {
         super.initData()
+        //60
+
+        Log.e("result", "状态栏高度" + getStatusBarHeight())
         mPartyDetailSubjectViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailSubjectTabLayout))
         mPartyDetailSubjectTabLayout.setupWithViewPager(mPartyDetailSubjectViewPager)
+        AppManager.get()
         mPartyDetailSubjectViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailSubjectMagicTabLayout))
         mPartyDetailSubjectMagicTabLayout.setupWithViewPager(mPartyDetailSubjectViewPager)
 //        party_subject_appbar_layout.addOnOffsetChangedListener(this)
+
         mPartyDetailSubjectTabLayout.addOnTabSelectedListener(mViewModel!!)
         initTrans(true)
         subject_toolbar.post {
             var height = subject_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailSubjectViewPager.layoutParams
-            params.height = BaseApplication.getInstance().getHightPixels - height - ConvertUtils.dp2px(55F) + 1
+            var flag = Utils.checkDeviceHasNavigationBar(context)
+            var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights()
+            Log.e("result", "values" + values)
+            Log.e("result", "navigation" + getNavigationBarHeight(context) + flag)
+            Log.e("result", "statusbar" + getStatusBarHeight())
+            Log.e("result", "realHeight" + getScreenHeightPx())
+            Log.e("result", "hight" + BaseApplication.getInstance().getScreenHights())
+            Log.e("result", "toolbar" + height + "yPosition" + subject_toolbar.y)
+            Log.e("result", "TabLayout" + mPartyDetailSubjectTabLayout.height)
+            Log.e("result", "70DP=" + ConvertUtils.dp2px(70F))
+            Log.e("result", "mPartyDetailSubjectTabLayout" + mPartyDetailSubjectTabLayout.y)
+
+            if (flag && values != 0) {
+                if (values == getStatusBarHeight()) {
+                    params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1
+                } else {
+
+                    Log.e("result", "执行了全面屏")
+                    if (values > getNavigationBarHeight(this@PartySubjectDetailActivity) && values < getStatusBarHeight() + getNavigationBarHeight(context)) {
+                        params.height = mPartyDetailSubjectTabLayout.y.toInt()+ConvertUtils.dp2px(8F)
+                        Log.e("result", mPartyDetailSubjectTabLayout.y.toInt().toString())
+                        Log.e("result", (getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1 - getStatusBarHeight()).toString())
+
+
+                    } else {
+                        params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1 - values     //适配全面屏
+                    }
+                }
+            } else {
+                params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1
+            }
             mPartyDetailSubjectViewPager.layoutParams = params
         }
         refreshLayout.setOnRefreshListener {
@@ -140,21 +188,26 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
         })
 
 
+
+
         nest_subject.setOnScrollChangeListener(FixNestedScrollView.OnScrollChangeListener { p0, scrollX, scrollY, oldScrollX, oldScrollY ->
-
             var y = scrollY
-
-            //            Log.e("LocationP", "Location2" + p2)
-//            Log.e("LocationP", "Location4" + p4)
-//            fling = Math.abs(p4 - p2) > ConvertUtils.dp2px(20F)
-
-
-            Log.e("result", "当前H值" + h + "最小高度" + ConvertUtils.px2dp(912F))
             var location = IntArray(2)
             mPartyDetailSubjectTabLayout.getLocationOnScreen(location)
             var yPosition = location[1];
-//            Log.e("result", "yPosition" + yPosition)  //2314
-//            Log.e("result", "toolBarPositionY" + toolBarPositionY)
+            if (h == 0) {
+                h = ivHeader.height - toolBarPositionY
+            }
+
+
+            Log.e("result", "ivHeader" + ivHeader.height + "width" + ivHeader.width)
+            Log.e("result", "yPosition" + yPosition)  //2314
+            Log.e("result", "toolBarPositionY" + toolBarPositionY)
+            //873
+            //1441
+            //2314
+
+            Log.e("result", "mCurScrollY= " + y)
             if (yPosition < toolBarPositionY) {
 //                mPartyDetailSubjectMagicTabLayout.visibility = View.VISIBLE
 //                mPartyDetailSubjectTabLayout.visibility = View.INVISIBLE
@@ -172,10 +225,6 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
                 } else {
                     y
                 }
-
-
-
-
                 Log.e("result", "h=" + h)
                 Log.e("result", "y=" + y)
                 Log.e("result", "mScrollY= " + mScrollY)
@@ -226,14 +275,47 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     }
 
     fun returnBack() {
-        if (mViewModel?.destroyList!!.contains("HomeActivity")) {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+
+        var flag = AppManager.get()!!.findActivityIsDestroy("HomeActivity")
+        if (navigation == 0) {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this@PartySubjectDetailActivity, object : NavCallback() {
                 override fun onArrival(postcard: Postcard?) {
                     finish()
                 }
             })
-        } else {
-            finish()
+        } else if (navigation == 1) {
+            if (mViewModel?.destroyList!!.contains("SubjectPartyActivity")) {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY).withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, 0)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                                Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city).navigation(this@PartySubjectDetailActivity, object : NavCallback() {
+                            override fun onArrival(postcard: Postcard?) {
+                                finish()
+                            }
+                        })
+            } else {
+                finish()
+            }
+        } else if (navigation == 2) {
+            if (mViewModel?.destroyList!!.contains("MyRestoreActivity")) {
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withString(RouterUtils.PartyConfig.PARTY_CITY, city).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(this@PartySubjectDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
+        } else if (navigation == 3) {
+            if (mViewModel?.destroyList!!.contains("SearchPartyActivity")) {
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        location).withString(RouterUtils.PartyConfig.PARTY_CITY, city).navigation(this@PartySubjectDetailActivity, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                finish()
+            }
         }
     }
 
@@ -241,4 +323,6 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
         super.doPressBack()
         returnBack()
     }
+
+
 }

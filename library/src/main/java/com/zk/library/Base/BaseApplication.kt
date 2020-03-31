@@ -63,7 +63,6 @@ open class BaseApplication : Application() {
                 }
 
                 override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
-                    Log.e("result", "onActivitySaveInstanceState" + activity!!.componentName)
                 }
 
                 override fun onActivityStopped(activity: Activity?) {
@@ -71,7 +70,6 @@ open class BaseApplication : Application() {
 
                 override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
                     AppManager.get()!!.addActivity(activity!!)
-                    Log.e("result", "onActivityCreated" + activity!!.componentName)
                 }
             })
         }
