@@ -27,7 +27,7 @@ class PartyDetailEntity : Serializable {
     var DACT_X_AXIS: Double = 0.0
     var SUBORDINATE_CITY: String? = null
     var MANDATORY_FIELD: String? = null
-    var SERVICE_TEL :String ? = null
+    var SERVICE_TEL: String? = null
     var SCOPE_REGISTRATION: String? = null
     var COLLECTION_PLACE: String? = null
 
@@ -39,7 +39,8 @@ class PartyDetailEntity : Serializable {
     var DAY: String = ""
     var TICKET_PRICE: String? = null
     var TICKET_PRICE_DESCRIBE: ArrayList<Describe>? = null
-    var NUMBER_LIMITATION: String? = null
+    var NUMBER_LIMITATION: Int? = null
+    var MAN_COUNT: Int = 0
     var SHOW_NUMBER: String? = null
     var SPONSOR_UNIT: String? = null
     var GUIDANCE_UNIT: String? = null
@@ -53,7 +54,7 @@ class PartyDetailEntity : Serializable {
     var X_AXIS: Double = 0.0
     var Y_AXIS: Double = 0.0
     var DISTANCE: String? = null
-    var MAN_COUNT: Int = 0
+
     var SQRTVALUE = 0
     var SQRTVALUE1 = 0
     var SIGN_UP: ArrayList<SignUp>? = null

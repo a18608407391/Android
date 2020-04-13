@@ -11,7 +11,8 @@
             type="com.example.drivermodule.ViewModel.RoadBook.RoadBookFirstViewModel"></variable>
     </data>
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -188,7 +189,6 @@
                             android:textColor="@color/nomalTextColor"
                             android:textSize="@dimen/s_15"
                             app:HtmlText="@{roadbook_first_model.discribe}" />
-
 
                         <TextView
                             android:id="@+id/road_book_first_detail"

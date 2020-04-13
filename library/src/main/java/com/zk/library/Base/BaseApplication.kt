@@ -197,6 +197,7 @@ open class BaseApplication : Application() {
     }
 
     lateinit var mWxApi: IWXAPI
+
     private fun registerWx() {
         mWxApi = WXAPIFactory.createWXAPI(this, WX_APP_ID, false)
         // 将该app注册到微信
@@ -209,4 +210,5 @@ open class BaseApplication : Application() {
         var intent = Intent(this, PreLoadX5Service::class.java)
         startService(intent)
     }
+
 }

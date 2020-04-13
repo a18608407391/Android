@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="activityPartyHotRecommend"
+            type="com.elder.logrecodemodule.ActivityPartyRecommand" />
+
+        <variable
+            name="activityPartyHotViewModel"
+            type="com.elder.logrecodemodule.ViewModel.ActivityViewModel" />
+
+    </data>
+
+    <HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_05"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:setActivityPartyChildClick="@{activityPartyHotViewModel.activityPartyHotRecommendCommand}"
+            app:setActivityPartyLinearLayout="@{activityPartyHotRecommend}"></LinearLayout>
+
+
+    </HorizontalScrollView>
+</layout>

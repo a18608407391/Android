@@ -4,7 +4,6 @@ import android.content.Context
 import android.databinding.ObservableField
 import android.graphics.Bitmap
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -21,11 +20,8 @@ import org.cs.tec.library.Utils.ConvertUtils
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import android.content.Intent
-import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Toast
-import com.elder.zcommonmodule.REQUEST_IMG_WARTER_MARK
 import org.cs.tec.library.Base.Utils.getString
 import java.io.File
 
@@ -34,7 +30,7 @@ class PictureWaterMarkViewModel : BaseViewModel(), OnItemClickListener {
     override fun HorizontalScrollViewItemClick(view: View, position: Int) {
         when (position) {
             R.drawable.warter_marker_non -> {
-                pictureWaterMackActivity.move_img.setImageResource(R.drawable.trans)
+                pictureWaterMackActivity.move_img.setImageResource(R.drawable.trans_bg)
             }
             R.drawable.warter_marker -> {
                 pictureWaterMackActivity.move_img.setImageResource(R.drawable.maker_logo)

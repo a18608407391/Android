@@ -1,6 +1,7 @@
 package com.example.drivermodule.Ui
 
 import android.content.Intent
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
@@ -43,6 +44,7 @@ class TeamFragment : BaseFragment<FragmentTeamBinding, TeamViewModel>() {
     var xF = 0F
     override fun initData() {
         super.initData()
+        Log.e("team","initData")
         var mapActivity = activity as MapActivity
         viewModel?.inject(this, mapActivity)
         scroller.setOnDragListener { v, event ->

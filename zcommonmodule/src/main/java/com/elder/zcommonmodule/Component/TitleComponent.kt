@@ -1,6 +1,7 @@
 package com.elder.zcommonmodule.Component
 
 import android.databinding.ObservableField
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.annotation.RequiresApi
@@ -19,9 +20,14 @@ open class TitleComponent : Serializable {
     var arrowVisible = ObservableField<Boolean>(true)
     var rightText = ObservableField<String>(getString(R.string.finish))
     var rightVisibleType = ObservableField<Boolean>(true)
+    var arrowBackVisible = ObservableField<Boolean>(true)
+    var titleTextVisible = ObservableField<Boolean>(true)
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     var rightIcon = ObservableField<Drawable>(context.getDrawable(R.drawable.add_photo))
     var rightTextColor = ObservableField<Int>(getColor(R.color.blackTextColor))
+    var leftIcon = ObservableField<Drawable>(context.getDrawable(R.drawable.arrow_black))
+    var backgroundColor = ObservableField<Drawable>(context.getDrawable(R.color.white))
     fun onClick(view: View) {
         when (view.id) {
             R.id.title_arrow_btn -> {

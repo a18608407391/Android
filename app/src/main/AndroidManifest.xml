@@ -87,7 +87,7 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="ae6a7daba4d1ed21141b49dcaed053b7"></meta-data>
+            android:value="30b727d7433c79235f071a1ea2d5a2f7"></meta-data>
 
         <service android:name="com.amap.api.location.APSService"></service>
         <service android:name="com.amap.api.track.AMapTrackService" />
@@ -96,7 +96,7 @@
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme= "@style/DefaultCityPickerTheme" />
 
         <service
             android:name=".Service.LowLocationService"

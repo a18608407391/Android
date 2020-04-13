@@ -1,1 +1,2 @@
 include ':app', ':library', ':blogin', ':zcommonmodule', ':private_module', ':drivermodule', ':same_city_module', ':social', ':party_module', ':chart_module'
+include ':mine_module'

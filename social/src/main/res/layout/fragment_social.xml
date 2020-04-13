@@ -5,9 +5,12 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="social_model"
             type="com.cstec.administrator.social.ViewModel.SocialViewModel"></variable>
+
     </data>
 
 
@@ -19,7 +22,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/d_60"
+            android:layout_height="@dimen/d_44"
             android:layout_marginTop="@dimen/d_20"
             android:elevation="@dimen/d_05"
             android:gravity="center_vertical"
@@ -93,12 +96,13 @@
                     android:id="@+id/release_photo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginBottom="@dimen/d_20"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginRight="@dimen/d_15"
+                    android:layout_marginBottom="@dimen/d_20"
                     android:onClick="@{social_model::onClick}"
-                    android:src="@drawable/release_photo" />
+                    android:src="@drawable/release_photo"
+                    android:visibility="@{social_model.ivReleasePhotoVisible?View.VISIBLE:View.GONE}" />
             </RelativeLayout>
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     </LinearLayout>

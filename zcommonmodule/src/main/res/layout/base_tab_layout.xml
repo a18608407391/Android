@@ -14,7 +14,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d_44"
-        android:background="@color/white">
+        android:background="@{data.backgroundColor}">
 
         <ImageView
             android:id="@+id/title_arrow_btn"
@@ -23,7 +23,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/d_15"
             android:onClick="@{data::onClick}"
-            android:src="@drawable/arrow_black" />
+            android:src="@{data.leftIcon}"
+            android:visibility="@{data.arrowBackVisible ? View.VISIBLE :View.GONE}" />
 
 
         <LinearLayout
@@ -38,7 +39,8 @@
                 android:layout_height="wrap_content"
                 android:text="@{data.title}"
                 android:textColor="@color/blackTextColor"
-                android:textSize="@dimen/s_18" />
+                android:textSize="@dimen/s_18"
+                android:visibility="@{data.titleTextVisible ? View.VISIBLE :View.GONE}" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -69,9 +71,9 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/d_15"
-            android:visibility="@{data.rightVisibleType ? View.GONE :View.VISIBLE}"
             android:onClick="@{data::onClick}"
-            android:src="@{data.rightIcon}"/>
+            android:src="@{data.rightIcon}"
+            android:visibility="@{data.rightVisibleType ? View.GONE :View.VISIBLE}" />
 
 
     </RelativeLayout>

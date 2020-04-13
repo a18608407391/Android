@@ -33,6 +33,7 @@ import cn.jpush.im.android.api.JMessageClient
 import cn.jpush.im.android.api.event.LoginStateChangeEvent
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.cstec.administrator.chart_module.Fragment.MessageFragment
 import com.elder.zcommonmodule.*
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Even.RequestErrorEven
@@ -61,10 +62,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     }
 
     override fun initContentView(savedInstanceState: Bundle?): Int {
-        Log.e("result", "HomeCreated")
+        Log.e("home", "HomeCreated")
         Utils.setStatusBar(this, false, false)
-//        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
-//        val fragmentManagerImpl = fragmentManager as FragmentManagerImpl
         return R.layout.activity_home
     }
 
@@ -78,6 +77,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
         BaseApplication.getInstance().curActivity = 1
         var key = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         var clip = key.primaryClip
+        Log.e("home", "$clip")
         if (clip != null && clip.itemCount > 0 && clip.getItemAt(0).text != null) {
             var tv = clip.getItemAt(0).text.toString()
             if (!tv.isNullOrEmpty() && tv.contains("Amoski:HDID=")) {
@@ -100,6 +100,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initData() {
         super.initData()
+        Log.e("home", "initData")
         JMessageClient.registerEventReceiver(this)
         var pos = ServiceEven()
         pos.type = "HomeStart"
@@ -109,6 +110,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
         mViewModel?.inject(this)
         main_bottom_bg.setOnCheckedChangeListener(mViewModel)
         RxSubscriptions.add(RxBus.default?.toObservable(RequestErrorEven::class.java)?.subscribe {
+            Log.e(this.javaClass.name, "${it.errorCode}")
             if (it.errorCode == 10009) {
                 exitForce()
             }
@@ -138,10 +140,31 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
                 if (data != null) {
                     var date = data.getSerializableExtra("hotdata") as HotData
                     RxBus.default?.post(date)
-                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "myroad").withSerializable(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY_ROAD, date).navigation()
+                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY)
+                            .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+                            .withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "myroad")
+                            .withSerializable(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY_ROAD, date)
+                            .navigation()
                     finish()
                 }
             }
+
+            REQUEST_DISCOVER_LOAD_ROADBOOK -> {//路书页-》发现页路书
+                if (data != null) {
+                    var data = data!!.getSerializableExtra("hotdata") as HotData
+                    Log.e("debug", "${this.localClassName};${data.title}")
+                    var pos = ServiceEven()
+                    pos.type = "HomeDriver"
+                    RxBus.default?.post(pos)
+                    ARouter.getInstance()
+                            .build(RouterUtils.MapModuleConfig.MAP_ACTIVITY)
+                            .withString("type", "discover2RoodBook")
+                            .withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "nomal")
+                            .withSerializable(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY_ROAD, data)
+                            .navigation()
+                }
+            }
+
             SOCIAL_DETAIL_RETURN -> {
                 if (data != null) {
                     mViewModel?.social!!.initResult(data)
@@ -151,13 +174,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
                 var fr = mViewModel?.myself as UserInfoFragment
                 fr.getUserInfo(false)
             }
-            MSG_RETURN_REQUEST -> {
-                if (resultCode == MSG_RETURN_REQUEST) {
-                    main_bottom_bg.check(R.id.main_left)
-                } else {
-                    var fr = mViewModel?.myself as UserInfoFragment
-                    fr.getUserInfo(false)
-                }
+            MSG_RETURN_REQUEST -> {//从消息界面返回
+//                if (resultCode == MSG_RETURN_REQUEST) {
+//                    main_bottom_bg.check(R.id.main_left)
+//                } else {
+//                    var fr = mViewModel?.myself as UserInfoFragment
+//                    fr.getUserInfo(false)
+//                }
+
+            }
+            MSG_RETURN_REFRESH_REQUEST -> {//@我的界面返回
+                var fr = mViewModel?.messageFragment as MessageFragment
+                fr.viewModel!!.initNet()
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

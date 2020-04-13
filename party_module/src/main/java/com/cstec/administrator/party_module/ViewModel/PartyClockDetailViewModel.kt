@@ -4,11 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.MediaStore
 import android.support.design.widget.TabLayout
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.cstec.administrator.party_module.Activity.PartyClockDetailActivity
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItemModel
@@ -17,15 +22,29 @@ import com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailPh
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailRankingItemModel
 import com.cstec.administrator.party_module.PartyDetailEntity
 import com.cstec.administrator.party_module.R
+import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
+import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_party_clock_detail.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
+import org.cs.tec.library.Base.Utils.ioContext
+import org.cs.tec.library.Base.Utils.uiContext
+import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 import java.text.SimpleDateFormat
@@ -217,6 +236,43 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
             R.id.sponsor_click -> {
                 ARouter.getInstance().build(RouterUtils.PartyConfig.ORGANIZATION).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID).navigation()
             }
+            R.id.ivClockDetailTrans -> {
+
+                //分享
+                shareToWxSmallProgram(data.get()!!.CODE, data.get()!!.TITLE, data.get()!!.FILE_NAME_URL)
+            }
+        }
+    }
+
+    private fun shareToWxSmallProgram(id: Int, title: String?, url: String?) {
+        // 小程序消息desc
+        CoroutineScope(ioContext).async {
+            var str = url!!.replace("/home/uploadFile/images", "")
+            var url = Base_URL + "AmoskiActivity/userCenterManage/getImg?appToken=activeImg&imgUrl=" + str
+            var file = Glide.with(context)
+                    .load(url)
+                    .downloadOnly(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+            var files = file.get()
+            if (files != null) {
+                Log.e(this.javaClass.name, "${files.path}")
+                var bitmap = BitmapFactory.decodeFile(files.path)
+                var newBitmap = ConvertUtils.compressByQuality(bitmap, 32000, true)
+                var wxMiniProgramObject = WXMiniProgramObject()
+                wxMiniProgramObject.webpageUrl = "www.amoski.net" // 兼容低版本的网页链接
+                wxMiniProgramObject.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;// 正式版:0，测试版:1，体验版:2
+                wxMiniProgramObject.userName = "gh_3fdce548de72";     // 小程序原始id
+                wxMiniProgramObject.path = "/pages/userCenter-activityview/userCenter-activityview?aId=$id"
+
+                var wxMediaMessage = WXMediaMessage(wxMiniProgramObject)
+                wxMediaMessage.title = title;                   // 小程序消息title
+                wxMediaMessage.description = "";
+                wxMediaMessage.thumbData = newBitmap                // 小程序消息封面图片，小于128k
+                var req = SendMessageToWX.Req()
+                req.transaction = ""
+                req.message = wxMediaMessage
+                req.scene = SendMessageToWX.Req.WXSceneSession  // 目前只支持会话
+                BaseApplication.getInstance().mWxApi.sendReq(req)
+            }
         }
     }
 
@@ -228,4 +284,5 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
         map["y"] = party.location!!.latitude.toString()
         HttpRequest.instance.getPartyDetail(map)
     }
+
 }

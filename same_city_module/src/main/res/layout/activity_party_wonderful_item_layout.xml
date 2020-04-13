@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="activityPartyWonderfulListener"
+            type="com.elder.zcommonmodule.Inteface.WonderfulClickListener" />
+
+        <variable
+            name="activityPartyWonderful"
+            type="com.elder.logrecodemodule.Entity.ActivityPartyEntity.WonderfulActive" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d_10"
+        android:onClick="@{()->activityPartyWonderfulListener.onWonderfulClick(activityPartyWonderful)}"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="@dimen/d_154"
+            android:layout_height="@dimen/d_96"
+            android:layout_marginLeft="@dimen/d_15">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                app:LoadActivityPartyClockRoadImg="@{activityPartyWonderful.FILE_NAME_URL}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/d_16"
+                android:background="@drawable/corner_active_inner_bg"
+                android:gravity="center"
+                android:text="@{activityPartyWonderful.DAY + @string/day_name}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/s_10" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d_15"
+            android:layout_marginRight="@dimen/d_15"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:singleLine="true"
+                android:text="@{activityPartyWonderful.TITLE}"
+                android:textColor="@color/black_12"
+                android:textSize="@dimen/s_15" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:orientation="horizontal"
+                android:visibility="@{activityPartyWonderful.TYPE==null?View.GONE:View.VISIBLE}">
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="@{activityPartyWonderful.type1}"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_10"
+                    android:visibility="@{activityPartyWonderful.type1.isEmpty?View.GONE:View.VISIBLE}" />
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="@{activityPartyWonderful.type2}"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_10"
+                    android:visibility="@{activityPartyWonderful.type2.isEmpty?View.GONE:View.VISIBLE}" />
+
+                <TextView
+                    android:layout_width="@dimen/d_32"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_active_inner_bg1"
+                    android:gravity="center"
+                    android:text="@{activityPartyWonderful.type3}"
+                    android:textColor="#3FC5C9"
+                    android:textSize="@dimen/s_10"
+                    android:visibility="@{activityPartyWonderful.type3.isEmpty?View.GONE:View.VISIBLE}" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:text="@{activityPartyWonderful.ACTIVITY_START}"
+                android:textColor="#A4A4A4"
+                android:textSize="@dimen/s_12" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_05"
+                android:text="@{activityPartyWonderful.TICKET_PRICE}"
+                android:textColor="#F5222D"
+                android:textSize="@dimen/s_15" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

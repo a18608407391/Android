@@ -46,12 +46,11 @@
                     android:layout_marginTop="@dimen/d_12"
                     android:layout_weight="1"
                     android:button="@null"
-                    android:drawableTop="@drawable/same_city_select"
+                    android:drawableTop="@drawable/active_select"
                     android:gravity="center"
-                    android:text="@string/same_city"
+                    android:text="@string/active"
                     android:textColor="@color/radio_buttom_color_selector"
                     android:textSize="@dimen/s_11" />
-
 
                 <RadioButton
                     android:id="@+id/main_left"
@@ -60,9 +59,9 @@
                     android:layout_marginTop="@dimen/d_12"
                     android:layout_weight="1"
                     android:button="@null"
-                    android:drawableTop="@drawable/active_select"
+                    android:drawableTop="@drawable/dyma_select"
                     android:gravity="center"
-                    android:text="@string/active"
+                    android:text="@string/discover"
                     android:textColor="@color/radio_buttom_color_selector"
                     android:textSize="@dimen/s_11" />
 
@@ -86,9 +85,9 @@
                     android:layout_marginTop="@dimen/d_12"
                     android:layout_weight="1"
                     android:button="@null"
-                    android:drawableTop="@drawable/dyma_select"
+                    android:drawableTop="@drawable/message_selector"
                     android:gravity="center"
-                    android:text="@string/dynamics"
+                    android:text="@string/message"
                     android:textColor="@color/radio_buttom_color_selector"
                     android:textSize="@dimen/s_11" />
 

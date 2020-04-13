@@ -1,2 +1,7 @@
 <resources>
+    <string name="persion">人</string>
+
+    <string name="impose">人报名/人数限制</string>
+    <string name="noImpose">人报名/人数不限</string>
+    <string name="none">0</string>
 </resources>

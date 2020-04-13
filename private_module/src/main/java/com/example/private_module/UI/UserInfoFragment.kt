@@ -66,7 +66,6 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
         even.type = "MsgCount"
         count = data.callMeCount + data.commentCount + data.fabulousCount + data.lastSystemCount
         RxBus.default?.post(even)
-
     }
 
     var count = 0
@@ -182,6 +181,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
 
     override fun initData() {
         super.initData()
+        Log.e("user","initData")
         setchart()
         RxSubscriptions.add(RxBus.default?.toObservable(DataEven::class.java)!!.subscribe {
             var m = it.value + count
@@ -214,6 +214,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
 
 
     fun callback(info: UserInfo) {
+        Log.e("user","${Gson().toJson(userInfo)}")
         userInfo = info
         insertUserInfo(userInfo?.data!!)
         PreferenceUtils.putString(context, USER_INFO, Gson().toJson(userInfo))

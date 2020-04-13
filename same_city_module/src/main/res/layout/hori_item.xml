@@ -22,7 +22,7 @@
         <TextView
             android:layout_width="@dimen/d_36"
             android:layout_height="@dimen/d_36"
-            android:background="@{hori_item_data.isChecked?@drawable/four_corner_bg:@drawable/trans}"
+            android:background="@{hori_item_data.isChecked?@drawable/four_corner_bg:@drawable/trans_bg}"
             android:gravity="center"
             android:text="@{hori_item_data.month}"
             android:textColor="@{hori_item_data.isChecked?@color/register_btn_bg_nomal:@color/text_nomal_color}"

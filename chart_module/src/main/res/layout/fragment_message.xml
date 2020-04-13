@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="messageViewModel"
+            type="com.cstec.administrator.chart_module.ViewModel.MessageViewModel" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/messageSwipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_44"
+                android:layout_marginTop="@dimen/d_20"
+                android:gravity="center"
+                android:text="消息"
+                android:textColor="@color/black"
+                android:textSize="@dimen/s_18" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_01"
+                android:background="@color/FivepercentBlackColor"></View>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d_15"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/messageTvGetLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableTop="@drawable/like_msg"
+                        android:drawablePadding="@dimen/d_15"
+                        android:gravity="center"
+                        android:onClick="@{messageViewModel::onClick}"
+                        android:text="收到的赞"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_14" />
+
+                    <TextView
+                        android:layout_width="@dimen/d_16"
+                        android:layout_height="@dimen/d_16"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/d_25"
+                        android:background="@drawable/red_circle"
+                        android:gravity="center"
+                        android:text="@{messageViewModel.likeCount.toString()}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s_10"
+                        android:visibility="@{messageViewModel.likeCount==0?View.GONE:View.VISIBLE}" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+
+                    <TextView
+                        android:id="@+id/messgaeTvCommand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableTop="@drawable/command_msg"
+                        android:drawablePadding="@dimen/d_15"
+                        android:gravity="center"
+                        android:onClick="@{messageViewModel::onClick}"
+                        android:text="评论"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_14" />
+
+                    <TextView
+                        android:layout_width="@dimen/d_16"
+                        android:layout_height="@dimen/d_16"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/d_25"
+                        android:background="@drawable/red_circle"
+                        android:gravity="center"
+                        android:text="@{messageViewModel.commandCount.toString()}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s_10"
+                        android:visibility="@{messageViewModel.commandCount==0?View.GONE:View.VISIBLE}" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/messageTvAt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:drawableTop="@drawable/at_msg"
+                        android:drawablePadding="@dimen/d_15"
+                        android:gravity="center"
+                        android:onClick="@{messageViewModel::onClick}"
+                        android:text="@string/atmse"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_14" />
+
+                    <TextView
+                        android:layout_width="@dimen/d_16"
+                        android:layout_height="@dimen/d_16"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/d_25"
+                        android:background="@drawable/red_circle"
+                        android:gravity="center"
+                        android:text="@{messageViewModel.atMeCount.toString()}"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s_10"
+                        android:visibility="@{messageViewModel.atMeCount==0?View.GONE:View.VISIBLE}" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/messgaeTvNullConversation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:text="暂无会话"
+                    android:textColor="#999999"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_64"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:layout_marginTop="@dimen/d_10"
+                        android:layout_marginRight="@dimen/d_15"
+                        android:orientation="vertical">
+
+
+                        <LinearLayout
+                            android:id="@+id/messageLlSys"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d_63"
+                            android:gravity="center_vertical"
+                            android:onClick="@{messageViewModel::onClick}"
+                            android:orientation="horizontal">
+
+
+                            <ImageView
+                                android:layout_width="@dimen/d_45"
+                                android:layout_height="@dimen/d_45"
+                                android:src="@drawable/system_notify_icon" />
+
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/d_15"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical">
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="系统通知"
+                                    android:textColor="@color/black_12"
+                                    android:textSize="@dimen/s_15" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/d_05"
+                                    android:singleLine="true"
+                                    android:text="@{messageViewModel.systemStr}"
+                                    android:textColor="#A4A4A4"
+                                    android:textSize="@dimen/s_12"
+                                    android:visibility="@{messageViewModel.systemStr==null?View.GONE:View.VISIBLE}" />
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical|right"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@{messageViewModel.SystemTime}"
+                                    android:textColor="#A4A4A4"
+                                    android:textSize="@dimen/s_10" />
+
+
+                                <RelativeLayout
+                                    android:layout_width="@dimen/d_16"
+                                    android:layout_height="@dimen/d_16"
+                                    android:layout_marginTop="@dimen/d_05"
+                                    android:background="@drawable/red_circle"
+                                    android:visibility="@{messageViewModel.systemCount==0?View.GONE:View.VISIBLE}">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="@{messageViewModel.systemCount.toString()}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_10" />
+                                </RelativeLayout>
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d_01"
+                            android:background="@color/FivepercentBlackColor"></View>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/messageLlActive"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_64"
+                        android:layout_marginLeft="@dimen/d_15"
+                        android:layout_marginRight="@dimen/d_15"
+                        android:onClick="@{messageViewModel::onClick}"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d_63"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+
+                            <ImageView
+                                android:layout_width="@dimen/d_45"
+                                android:layout_height="@dimen/d_45"
+                                android:src="@drawable/active_notify_icon" />
+
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/d_15"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical">
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="活动通知"
+                                    android:textColor="@color/black_12"
+                                    android:textSize="@dimen/s_15" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/d_05"
+                                    android:singleLine="true"
+                                    android:text="阳城国际汽车文化艺术节！"
+                                    android:textColor="#A4A4A4"
+                                    android:textSize="@dimen/s_12" />
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical|right"
+                                android:orientation="vertical">
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="3小时前"
+                                    android:textColor="#A4A4A4"
+                                    android:textSize="@dimen/s_10" />
+
+
+                                <RelativeLayout
+                                    android:layout_width="@dimen/d_16"
+                                    android:layout_height="@dimen/d_16"
+                                    android:layout_marginTop="@dimen/d_05"
+                                    android:background="@drawable/red_circle">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="5"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_12" />
+                                </RelativeLayout>
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d_01"
+                            android:background="@color/FivepercentBlackColor"></View>
+
+                    </LinearLayout>
+
+                    <ListView
+                        android:id="@+id/messageListConv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="0dp"
+                        android:divider="@drawable/main_list_divider_line"
+                        android:dividerHeight="0.3dp"
+                        android:headerDividersEnabled="false" />
+                </LinearLayout>
+
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</layout>

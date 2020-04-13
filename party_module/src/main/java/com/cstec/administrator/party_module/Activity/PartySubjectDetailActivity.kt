@@ -43,34 +43,17 @@ import kotlinx.android.synthetic.main.activity_party_detail.*
 import org.cs.tec.library.Base.Utils.*
 
 
+/**
+ * 热门推荐&精彩活动详情页
+ * */
 @Route(path = RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
-class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, PartyMoboDetailViewModel>(), AppBarLayout.OnOffsetChangedListener {
-
+class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, PartyMoboDetailViewModel>() {
 
     var offset = 0
-    override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
-        Log.e("result", "Subjectoffset" + ConvertUtils.px2dp(p1 * 1F))
-        offset = ConvertUtils.px2dp(p1 * 1F)
-        if (p1 >= -ConvertUtils.dp2px(280F)) {
-            mViewModel?.visible!!.set(false)
-            nest_subject.setNeedScroll(true)
-//            Utils.setStatusTextColor(false, activity)
-//            viewModel?.VisField!!.set(false)
-//            log_swipe.isEnabled = p1 >= 0
-
-        } else {
-            mViewModel?.visible!!.set(true)
-            nest_subject.setNeedScroll(false)
-//            Utils.setStatusTextColor(true, activity)
-//            log_swipe.isEnabled = false
-//            viewModel?.VisField!!.set(true)
-        }
-    }
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)
     @JvmField
     var location: Location? = null
-
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_ID)
     @JvmField
@@ -86,7 +69,6 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     @Autowired(name = RouterUtils.PartyConfig.PARTY_CITY)
     @JvmField
     var city: String = ""
-
 
     override fun initVariableId(): Int {
         return BR.party_mobo_detail_model
@@ -115,7 +97,6 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
     override fun initData() {
         super.initData()
         //60
-
         Log.e("result", "状态栏高度" + getStatusBarHeight())
         mPartyDetailSubjectViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mPartyDetailSubjectTabLayout))
         mPartyDetailSubjectTabLayout.setupWithViewPager(mPartyDetailSubjectViewPager)
@@ -148,7 +129,7 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
                     params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1
                 } else {
                     if (values > getNavigationBarHeight(this@PartySubjectDetailActivity) && values < getStatusBarHeight() + getNavigationBarHeight(context)) {
-                        params.height = BaseApplication.getInstance().getHightPixels- ConvertUtils.dp2pxValue(125F, this@PartySubjectDetailActivity)
+                        params.height = BaseApplication.getInstance().getHightPixels - ConvertUtils.dp2pxValue(125F, this@PartySubjectDetailActivity)
                     } else {
                         params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1 - values     //适配全面屏
                     }
@@ -235,8 +216,10 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
 
             if (scrollY == 0) {
                 iv_back.setImageResource(R.drawable.arrow_white);
+                ivPartyMoBoTrans.setImageResource(R.drawable.more_white)
             } else {
                 iv_back.setImageResource(R.drawable.arrow_black);
+                ivPartyMoBoTrans.setImageResource(R.drawable.more_black);
             }
             lastScrollY = y
         })
@@ -262,13 +245,11 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
         if (view == null) {
             return false
         }
-
         var m = Math.abs(offset - firstOffset) > ConvertUtils.dp2px(20F)
         return y >= view.y && y <= (view.y + view.height - ConvertUtils.dp2px(20F)) && y - downy < view.height && !m && !fling
     }
 
     fun returnBack() {
-
         var flag = AppManager.get()!!.findActivityIsDestroy("HomeActivity")
         if (navigation == 0) {
             ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this@PartySubjectDetailActivity, object : NavCallback() {

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="activityPartyHotRecommend"
+            type="com.elder.logrecodemodule.Entity.ActivityPartyEntity.HotRecommend" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/d_264"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d_10"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/d_264"
+            android:layout_height="@dimen/d_168"
+            android:scaleType="fitXY"
+            app:LoadActivityPartyRoadImg="@{activityPartyHotRecommend.FILE_NAME_URL}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_10"
+            android:singleLine="true"
+            android:text="@{activityPartyHotRecommend.TITLE}"
+            android:textColor="@color/black_12"
+            android:textSize="@dimen/s_15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d_02"
+            android:text="@{activityPartyHotRecommend.ACTIVITY_START}"
+            android:textColor="#A4A4A4"
+            android:textSize="@dimen/s_12" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{activityPartyHotRecommend.TICKET_PRICE}"
+            android:textColor="#F5222D"
+            android:textSize="@dimen/s_15" />
+
+    </LinearLayout>
+</layout>

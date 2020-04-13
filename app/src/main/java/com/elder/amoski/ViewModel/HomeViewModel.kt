@@ -12,9 +12,11 @@ import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cstec.administrator.chart_module.Fragment.MessageFragment
 import com.cstec.administrator.social.Fragment.SocialFragment
 import com.elder.amoski.Activity.HomeActivity
 import com.elder.amoski.R
+import com.elder.logrecodemodule.UI.ActivityFragment
 import com.elder.logrecodemodule.UI.LogRecodeFragment
 import com.elder.zcommonmodule.CALL_BACK_STATUS
 import com.elder.zcommonmodule.DriverCancle
@@ -29,6 +31,7 @@ import com.example.private_module.UI.UserInfoFragment
 import com.zk.library.Base.AppManager
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.CoroutineScope
@@ -39,31 +42,37 @@ import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
+import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.http.NetworkUtil
+import java.lang.Exception
 import java.util.*
 
 
 class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
+
+
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
         when (checkedId) {
-            R.id.same_city -> {
-//                StatusbarUtils.setStatusBarMode(homeActivity, false, 0x000000)
+            R.id.same_city -> {//同城
                 BaseApplication.getInstance().curFragment = 0
-
-                Log.e("result", "设置ChangeFragmentsame_city")
                 changerFragment(0)
                 lastChecked = checkedId
             }
-            R.id.main_left -> {
+            R.id.main_left -> {//发现
                 BaseApplication.getInstance().curFragment = 1
                 Utils.setStatusTextColor(true, homeActivity)
                 changerFragment(1)
                 lastChecked = checkedId
             }
-            R.id.driver_middle -> {
+            R.id.driver_middle -> {//骑行
                 if (!NetworkUtil.isNetworkAvailable(homeActivity)) {
                     Toast.makeText(context, getString(R.string.network_notAvailable), Toast.LENGTH_SHORT).show()
+                    return
+                }
+                if (PreferenceUtils.getString(homeActivity, USERID) == null) {
+                    Toast.makeText(context, getString(R.string.network_notAvailable), Toast.LENGTH_SHORT).show()
+                    homeActivity.main_bottom_bg.check(lastChecked)
                     return
                 }
                 if (type != DriverCancle) {
@@ -79,17 +88,22 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
                     var pos = ServiceEven()
                     pos.type = "HomeDriver"
                     RxBus.default?.post(pos)
-                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT).withOptionsCompat(getScaleUpAnimation(homeActivity.rootlayout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "nomal").navigation()
+                    ARouter.getInstance()
+                            .build(RouterUtils.MapModuleConfig.MAP_ACTIVITY)
+                            .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+                            .withOptionsCompat(getScaleUpAnimation(homeActivity.rootlayout))
+                            .withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "nomal")
+                            .navigation()
                 }
                 homeActivity.main_bottom_bg.check(lastChecked)
             }
-            R.id.dynamics -> {
+            R.id.dynamics -> {//消息
                 BaseApplication.getInstance().curFragment = 3
                 Utils.setStatusTextColor(true, homeActivity)
                 changerFragment(2)
                 lastChecked = checkedId
             }
-            R.id.main_right -> {
+            R.id.main_right -> {//我的
                 BaseApplication.getInstance().curFragment = 4
                 Utils.setStatusTextColor(true, homeActivity)
                 changerFragment(3)
@@ -104,7 +118,6 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
 
     lateinit var homeActivity: HomeActivity
     var mFragments = ArrayList<Fragment>()
-    var bottomSrc = ObservableField<Drawable>()
     var type = 2
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -116,17 +129,13 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
 
     var privateSelected = ObservableField<Boolean>()
 
-    var cityelected = ObservableField<Boolean>()
-
-
-    var activeSelected = ObservableField<Boolean>()
     var curPosition = 0
 
 
     var myself: Fragment? = null
-    var party: Fragment? = null
     var social: SocialFragment? = null
-    var logmodule: LogRecodeFragment? = null
+    var activityFragment: ActivityFragment? = null
+    var messageFragment: MessageFragment? = null
 
     var tans: FragmentTransaction? = null
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -138,9 +147,10 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
         } else {
             changerFragment(0)
         }
-        Log.e("result", "重新启动了")
+        Log.e("home", "重新启动了")
         Utils.setStatusTextColor(false, homeActivity)
         RxSubscriptions.add(RxBus.default?.toObservable(BooleanEven::class.java)?.subscribe {
+            Log.e("home", "$it")
             bottomVisible.set(it.flag)
             if (it.type == 1) {
                 homeActivity.main_bottom_bg.check(R.id.main_right)
@@ -148,15 +158,23 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
         })
     }
 
+
+    /**
+     * @param position 0活动
+     *                 1动态
+     *                 2消息
+     *                 3我的
+     *
+     * */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun changerFragment(position: Int) {
         tans = homeActivity.supportFragmentManager.beginTransaction()
-        if (position == 0) {
-            if (logmodule == null) {
-                logmodule = ARouter.getInstance().build(RouterUtils.LogRecodeConfig.LogRecodeFR).navigation() as LogRecodeFragment
-                mFragments.add(logmodule!!)
-                tans?.add(R.id.rootlayout, logmodule!!)
-                if (logmodule!!.curOffset > -ConvertUtils.dp2px(122F)) {
+        if (position == 0) {//活动
+            if (activityFragment == null) {
+                activityFragment = ARouter.getInstance().build(RouterUtils.LogRecodeConfig.ACTIVITY_FRAGMENT).navigation() as ActivityFragment
+                mFragments.add(activityFragment!!)
+                tans?.add(R.id.rootlayout, activityFragment!!)
+                if (activityFragment!!.curOffset > -ConvertUtils.dp2px(122F)) {
                     Utils.setStatusTextColor(false, homeActivity)
                 } else {
                     Utils.setStatusTextColor(true, homeActivity)
@@ -171,21 +189,27 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
             logSelected.set(true)
             privateSelected.set(false)
 
-        } else if (position == 1) {
-            if (party == null) {
-                party = ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_MAIN).navigation() as Fragment
-                mFragments.add(party!!)
-                tans!!.add(R.id.rootlayout, party!!)
-            }
-        } else if (position == 2) {
+        } else if (position == 1) {//发现
             if (social == null) {
-                social = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_MAIN).navigation() as SocialFragment
+                social = ARouter.getInstance()
+                        .build(RouterUtils.SocialConfig.SOCIAL_MAIN)
+                        .navigation() as SocialFragment
                 mFragments.add(social!!)
                 tans?.add(R.id.rootlayout, social!!)
             }
+        } else if (position == 2) {//消息
+            if (messageFragment == null) {
+                messageFragment = ARouter.getInstance()
+                        .build(RouterUtils.Chat_Module.MESSAGE_FRAGMENT)
+                        .navigation() as MessageFragment
+                mFragments.add(messageFragment!!)
+                tans?.add(R.id.rootlayout, messageFragment!!)
+            }
         } else if (position == 3) {
-            if (myself == null) {
-                myself = ARouter.getInstance().build(RouterUtils.FragmentPath.MYSELFPAGE).navigation() as Fragment
+            if (myself == null) {//我的
+                myself = ARouter.getInstance()
+                        .build(RouterUtils.FragmentPath.MYSELFPAGE)
+                        .navigation() as Fragment
                 mFragments.add(myself!!)
                 tans?.add(R.id.rootlayout, myself!!)
             }
@@ -205,14 +229,13 @@ class HomeViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener {
             tans!!.hide(it)
         }
 
-
-        Log.e("result", "CurPosition" + position)
+        Log.e("result", "CurPosition$position;$messageFragment")
         if (position == 0) {
-            tans!!.show(logmodule!!)
-        } else if (position == 1) {
-            tans!!.show(party!!)
-        } else if (position == 2) {
+            tans!!.show(activityFragment!!)
+        } else if (position == 1) {//发现
             tans!!.show(social!!)
+        } else if (position == 2) {//消息
+            tans!!.show(messageFragment!!)
         } else if (position == 3) {
             tans!!.show(myself!!)
         }

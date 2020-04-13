@@ -34,6 +34,39 @@ import org.cs.tec.library.binding.command.BindingConsumer
 
 
 class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickListener, WonderfulClickListener, MBCommandClickListener, HttpInteface.PartyHome, HttpInteface.PartyUnReadNotify_inf {
+    var itemBinding = OnItemBindClass<Any>()
+            .map(String::class.java) { itemBinding, position, item ->
+                Log.e("activity","itemBinding111-->$position--${Gson().toJson(item)}")
+                itemBinding.set(BR.title, R.layout.base_item_title)
+                        .bindExtra(BR.title_listener, titlelistener)
+                        .bindExtra(BR.position, position)
+            }
+            .map(PartyHotRecommand::class.java) { itemBinding, position, item ->
+                Log.e("activity","itemBinding222-->$position")
+                itemBinding.set(BR.hot_recommend, R.layout.hot_recommend_item_layout)
+                        .bindExtra(BR.model, this@PartyViewModel)
+            }
+            .map(PartyHomeEntity.ClockActive::class.java) { itemBinding, position, item ->
+                Log.e("activity","itemBinding333-->$position")
+                itemBinding.set(BR.clock_active_item_data,
+                        R.layout.clock_item_layout)
+                        .bindExtra(BR.listener, activeListener)
+            }
+            .map(PartyHomeEntity.HotDistination::class.java) { itemBinding, position, item ->
+                Log.e("activity","itemBinding444-->$position")
+            }
+            .map(PartyHomeEntity.MBRecommend::class.java) { itemBinding, position, item ->
+                Log.e("activity","itemBinding555-->$position")
+                itemBinding.set(BR.mb_recommand, R.layout.mb_recommand_item_layout)
+                        .bindExtra(BR.mb_listener, mb_click)
+            }.map(PartyHomeEntity.WonderfulActive::class.java) { itemBinding, position, item ->
+                Log.e("activity","itemBindin666-->$position")
+                itemBinding.set(BR.wonderful, R.layout.wonderful_item_layout)
+                        .bindExtra(BR.wonderful_listener, wonderfulListener)
+            }
+
+
+
     override fun PartyUnReadNotifySucccess(it: String) {
         var o = Integer.valueOf(it)
         msgCount.set(o)
@@ -64,8 +97,10 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
                 DialogUtils.showProviceDialog(partyFragment.activity!!, province, "选择城市")
             }
             R.id.search_address -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY)
+                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(location!!.latitude, location!!.longitude))
+                        .withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
             }
         }
     }
@@ -174,7 +209,13 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         items.insertList(mobo)
         items.insertItem(ObservableField("精彩活动").get())
         items.insertList(select)
-        getUnRead()
+
+        Log.e("activity","================================")
+        items.forEach {
+            Log.e("activity","${Gson().toJson(it)}")
+        }
+        Log.e("activity","================================")
+//        getUnRead()
     }
 
 
@@ -276,20 +317,5 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     var adapter = PartyAdapter()
     var items = MergeObservableList<Any>()
-    var itemBinding = OnItemBindClass<Any>()
-            .map(String::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.title, R.layout.base_item_title).bindExtra(BR.title_listener, titlelistener).bindExtra(BR.position, position)
-            }
-            .map(PartyHotRecommand::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.hot_recommend, R.layout.hot_recommend_item_layout).bindExtra(BR.model, this@PartyViewModel)
-            }
-            .map(PartyHomeEntity.ClockActive::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.clock_active_item_data, R.layout.clock_item_layout).bindExtra(BR.listener, activeListener)
-            }
-            .map(PartyHomeEntity.HotDistination::class.java) { itemBinding, position, item -> }
-            .map(PartyHomeEntity.MBRecommend::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.mb_recommand, R.layout.mb_recommand_item_layout).bindExtra(BR.mb_listener, mb_click)
-            }.map(PartyHomeEntity.WonderfulActive::class.java) { itemBinding, position, item ->
-                itemBinding.set(BR.wonderful, R.layout.wonderful_item_layout).bindExtra(BR.wonderful_listener, wonderfulListener)
-            }
+
 }

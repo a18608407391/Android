@@ -28,8 +28,6 @@ import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.USERID
-import org.cs.tec.library.binding.command.BindingCommand
-import org.cs.tec.library.binding.command.BindingConsumer
 import java.io.Serializable
 
 
@@ -45,6 +43,9 @@ class UserInfoViewModel : BaseViewModel() {
     var fans = ObservableField<String>("0")
     var allTotal = ObservableField<String>()
     var allTime = ObservableField<String>()
+
+    var elderCount = ObservableField<String>("0")//勋章个数
+    var lvImgSrc = ObservableField<Drawable>()
     fun onClick(view: View) {
         when (view.id) {
             R.id.likes -> {
@@ -95,9 +96,11 @@ class UserInfoViewModel : BaseViewModel() {
             R.id.setting_icon -> {
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING).withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 1).navigation()
             }
-            R.id.notify_icon -> {
-                ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc).navigation(userInfoFragment.activity, MSG_RETURN_REQUEST)
-            }
+//            R.id.notify_icon -> {
+//                ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC)
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, loc)
+//                .navigation(userInfoFragment.activity, MSG_RETURN_REQUEST)
+//            }
             R.id.vertical_linear1 -> {
                 ARouter.getInstance().build(RouterUtils.LogRecodeConfig.LogListActivity).withInt(RouterUtils.LogRecodeConfig.LOG_LIST_ENTITY, 3).navigation()
             }
@@ -122,6 +125,11 @@ class UserInfoViewModel : BaseViewModel() {
 //            R.id.my_ticket -> {
 //                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC).withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 1).navigation()
 //            }
+
+            R.id.iv2MineElder -> {
+                //我的勋章
+                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MINE_ELDER).navigation()
+            }
         }
     }
 
@@ -138,8 +146,14 @@ class UserInfoViewModel : BaseViewModel() {
             entity.icon = context.getDrawable(iconArray.get(index))
             items.add(entity)
         }
+
+        initElderData()
     }
 
+    private fun initElderData() {//徽章数据
+        elderCount.set("5")
+        lvImgSrc.set(context.getDrawable(R.drawable.lv))
+    }
 
     var location: AMapLocation? = null
     var loc: Location? = null

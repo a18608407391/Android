@@ -59,7 +59,6 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
                     .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
         } else {
             Log.e("result", "动态id" + entity.dynamicId)
-
             activity.showProgressDialog("加载中......")
             HttpRequest.instance.DynamicListResult = this
             var map = HashMap<String, String>()
@@ -132,7 +131,6 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
 
     fun initData() {
         HttpRequest.instance.getLikeResult = this
-        Log.e("result", "当前memberID" + activity.id)
         var map = HashMap<String, String>()
         map["id"] = activity.id!!
         map["pageSize"] = pageSize.toString()

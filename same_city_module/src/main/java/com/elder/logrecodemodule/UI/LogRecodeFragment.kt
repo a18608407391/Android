@@ -192,14 +192,14 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
             log_swipe.setOnRefreshListener(viewModel)
             appbar_layout.addOnOffsetChangedListener(this)
             toolbar.setOnTouchListener { v, event ->
-
-
                 var g = isTouchPointInView(log_enter, event.x.toInt(), event.y.toInt())
                 if (g) {
                     if (System.currentTimeMillis() - CurrentClickTime < 1000) {
                     } else {
                         CurrentClickTime = System.currentTimeMillis()
-                        ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SEARCH_MEMBER).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, viewModel?.location).navigation()
+                        ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SEARCH_MEMBER)
+                                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, viewModel?.location)
+                                .navigation()
                     }
                 }
                 return@setOnTouchListener log_enter.dispatchTouchEvent(event)

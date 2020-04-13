@@ -10,7 +10,8 @@
             type="com.cstec.administrator.party_module.ViewModel.PartyViewModel"></variable>
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -99,7 +100,8 @@
         </LinearLayout>
 
 
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
@@ -119,7 +121,9 @@
                 app:itemBinding="@{party_main_model.itemBinding}"
                 app:items="@{party_main_model.items}"
                 app:layoutManager="android.support.v7.widget.GridLayoutManager"
-                app:spanCount="2"></android.support.v7.widget.RecyclerView>
+                app:spanCount="2">
+
+            </android.support.v7.widget.RecyclerView>
 
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     </LinearLayout>

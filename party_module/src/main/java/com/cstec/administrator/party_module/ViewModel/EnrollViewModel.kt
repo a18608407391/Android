@@ -2,6 +2,7 @@ package com.cstec.administrator.party_module.ViewModel
 
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.util.Log
 import android.view.View
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.Activity.EnrollListActivity
@@ -16,6 +17,8 @@ import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BR
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.binding.command.BindingCommand
+import org.cs.tec.library.binding.command.BindingConsumer
 import java.io.Serializable
 
 
@@ -28,12 +31,12 @@ class EnrollViewModel : BaseViewModel(), HttpInteface.PartySign, TitleComponent.
                 .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.ID.toString())
                 .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .withInt(RouterUtils.Chat_Module.Chat_TARGET_ID,activity.id)
+                .withInt(RouterUtils.Chat_Module.Chat_TARGET_ID, activity.id)
                 .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 11).navigation()
     }
 
     override fun onComponentClick(view: View) {
-    activity.returnBack()
+        activity.returnBack()
     }
 
     override fun onComponentFinish(view: View) {
@@ -74,6 +77,17 @@ class EnrollViewModel : BaseViewModel(), HttpInteface.PartySign, TitleComponent.
         HttpRequest.instance.getPartySign(map)
     }
 
+    var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
+        override fun call(t: Int) {
+            if (t < pageSize * start) {
+                return
+            } else {
+                start++
+                initData()
+            }
+        }
+    })
+
 
     var titleComponent = TitleComponent()
 
@@ -83,7 +97,8 @@ class EnrollViewModel : BaseViewModel(), HttpInteface.PartySign, TitleComponent.
 
     var simpleClick: SimpleClickListener = this
 
-    var itemBinding = ItemBinding.of<EnrollEntity.Enroll>(BR.enroll_model, R.layout.enroll_item_layout).bindExtra(BR.listener, simpleClick)
+    var itemBinding = ItemBinding.of<EnrollEntity.Enroll>(BR.enroll_model, R.layout.enroll_item_layout)
+            .bindExtra(BR.listener, simpleClick)
 
 
     class EnrollEntity : Serializable {
@@ -95,6 +110,7 @@ class EnrollViewModel : BaseViewModel(), HttpInteface.PartySign, TitleComponent.
             var ID = 0
             var HEAD_IMG_FILE: String? = null
             var RN = 0
+            var SUM_COUNT: String? = null
         }
     }
 

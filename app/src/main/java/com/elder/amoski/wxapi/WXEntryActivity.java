@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.elder.amoski.Activity.HomeActivity;
 import com.elder.amoski.AppInstance;
 import com.elder.amoski.NetworkUtil;
 import com.elder.amoski.R;
+import com.elder.amoski.WXLoginBean;
 import com.elder.zcommonmodule.DataBases.ContextExtensionsKt;
 import com.elder.zcommonmodule.DataBases.DataBaseUtilsKt;
 import com.elder.zcommonmodule.Entity.DriverDataStatus;
@@ -29,7 +31,10 @@ import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse;
 import com.elder.zcommonmodule.Utils.Dialog.NormalDialog;
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL;
 import com.elder.zcommonmodule.Utils.DialogUtils;
+import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinder;
+import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinderDialogFragment;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -42,12 +47,15 @@ import com.zk.library.Utils.RouterUtils;
 import org.cs.tec.library.Base.Utils.UtilsKt;
 import org.cs.tec.library.Bus.RxBus;
 import org.cs.tec.library.Utils.ToastUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
+import cn.jmessage.support.qiniu.android.utils.Json;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -66,15 +74,18 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.elder.zcommonmodule.ConfigKt.Base_URL;
+import static com.elder.zcommonmodule.ConfigKt.OPENID;
+import static com.elder.zcommonmodule.ConfigKt.UNIONID;
 import static com.elder.zcommonmodule.ConfigKt.USER_TOKEN;
 import static com.elder.zcommonmodule.ConfigKt.checkDriverStatus;
 import static org.cs.tec.library.ConstantKt.USERID;
 
-public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
+public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHandler, TelephoneBinderDialogFragment.DismissListener {
     private static final String TAG = "result";
     private static final int RETURN_MSG_TYPE_LOGIN = 1; //登录
     private static final int RETURN_MSG_TYPE_SHARE = 2; //分享
     private Context mContext;
+    private static final String LOG_TAG = "WXEntryActivity";
 
     Handler handler = new Handler() {
         @Override
@@ -103,8 +114,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     // 微信发送请求到第三方应用时，会回调到该方法
     @Override
     public void onReq(BaseReq baseReq) {
-            Log.e("result",baseReq.getType() + "的v方式能否科技大厦南方科技");
-
         if (baseReq.transaction == "login") {
             type = 0;
         } else if (baseReq.transaction == "inValidate") {
@@ -123,20 +132,18 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     //app发送消息给微信，处理返回消息的回调
     @Override
     public void onResp(BaseResp baseResp) {
-        Log.e(TAG, "onResp:------>");
-        Log.e(TAG, "error_code:---->" + baseResp.errCode);
-        Log.e("result", "onResp:" + baseResp.errCode + baseResp.errStr + baseResp.transaction + baseResp.getType());
+        Log.e(this.getClass().getName(), "onResp:------>");
+        Log.e(this.getClass().getName(), "error_code:---->" + baseResp.errCode);
+        Log.e(this.getClass().getName(), "onResp:" + baseResp.errCode + baseResp.errStr + baseResp.transaction + baseResp.getType());
         final int type = baseResp.getType(); //类型：分享还是登录
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
                 //用户拒绝授权
-
                 Toast.makeText(this, "微信授权取消!!!", Toast.LENGTH_SHORT).show();
                 finish();
 //                ToastUtils.showToast(mContext, "拒绝授权微信登录");
             case BaseResp.ErrCode.ERR_USER_CANCEL:
                 //用户取消
-                Log.e("result","用户取消");
                 String message = "";
                 if (type == RETURN_MSG_TYPE_LOGIN) {
                     message = "取消了微信登录";
@@ -153,14 +160,14 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 if (type == RETURN_MSG_TYPE_LOGIN) {
                     //用户换取access_token的code，仅在ErrCode为0时有效
                     final String code = ((SendAuth.Resp) baseResp).code;
-                    Log.e("result", "登录" + code);
                     final Dialog dialog = showProgress(getString(R.string.wx_loading_login));
                     Observable.create(new ObservableOnSubscribe<Response>() {
                         @Override
                         public void subscribe(ObservableEmitter<Response> emitter) throws Exception {
                             OkHttpClient client = new OkHttpClient.Builder().readTimeout(30, TimeUnit.SECONDS).build();
                             FormBody.Builder d = new FormBody.Builder().add("code", code).add("type", "app");
-                            Request request = new Request.Builder().addHeader("content-type", "application/json; charset=UTF-8").url(Base_URL + "AmoskiActivity/memberUser/getUserAuthInfo").post(d.build()).build();
+                            Request request = new Request.Builder().addHeader("content-type", "application/json; charset=UTF-8")
+                                    .url(Base_URL + "AmoskiActivity/memberUser/getUserAuthInfo").post(d.build()).build();
                             Call call = client.newCall(request);
                             emitter.onNext(call.execute());
                         }
@@ -177,67 +184,53 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
                         @Override
                         public void onNext(String s) {
-                            final BaseResponse res = new Gson().fromJson(s, BaseResponse.class);
-                            Log.e("result", "登录返回数据"+s);
-                            if (res.getCode() == 0) {
-                                PreferenceUtils.putString(WXEntryActivity.this, USERID, res.getMsg());
+                            final WXLoginBean wxLoginBean = new Gson().fromJson(s, WXLoginBean.class);
+                            if (wxLoginBean.getCode() == 0) {
+                                PreferenceUtils.putString(WXEntryActivity.this, USER_TOKEN, wxLoginBean.getData().getAppToken());
+                                PreferenceUtils.putString(WXEntryActivity.this, UNIONID, wxLoginBean.getData().getUnionId());
+                                PreferenceUtils.putString(WXEntryActivity.this, OPENID, wxLoginBean.getData().getOpenId());
                                 dialog.dismiss();
                                 if (type == 0) {
-                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(WXEntryActivity.this, new NavCallback() {
-                                        @Override
-                                        public void onArrival(Postcard postcard) {
-                                            PreferenceUtils.putString(WXEntryActivity.this, USER_TOKEN, res.getData().toString());
-                                            Stack<Activity> activities = AppManager.Companion.getActivityStack();
-                                            activities.get(0).finish();
-                                            activities.get(1).finish();
-                                        }
-                                    });
+                                    go2Home();
                                 } else if (type == 1) {
-                                    if (checkDriverStatus()) {
-                                        ArrayList<DriverDataStatus> statuses = DataBaseUtilsKt.queryDriverStatus(res.getMsg());
+                                    if (checkDriverStatus()) {//骑行状态
+                                        ArrayList<DriverDataStatus> statuses = DataBaseUtilsKt.queryDriverStatus(wxLoginBean.getMsg());
                                         if (statuses.size() != 0 && statuses.get(0).getStartDriver().get() != 2) {
                                             final NormalDialog dialog = DialogUtils.Companion.createNomalDialog(WXEntryActivity.this, UtilsKt.getString(R.string.checked_exception_out), UtilsKt.getString(R.string.setting_permisstion), UtilsKt.getString(R.string.continue_driving));
                                             dialog.setOnBtnClickL(new OnBtnClickL() {
                                                 @Override
                                                 public void onBtnClick() {
-                                                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING).withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 0).navigation();
+                                                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING)
+                                                            .withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 0)
+                                                            .navigation();
                                                 }
                                             }, new OnBtnClickL() {
                                                 @Override
                                                 public void onBtnClick() {
                                                     dialog.dismiss();
-                                                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(WXEntryActivity.this, new NavCallback() {
-                                                        @Override
-                                                        public void onArrival(Postcard postcard) {
-                                                            PreferenceUtils.putString(WXEntryActivity.this, USER_TOKEN, res.getData().toString());
-                                                            Stack<Activity> activities = AppManager.Companion.getActivityStack();
-                                                            activities.get(0).finish();
-                                                            activities.get(1).finish();
-                                                        }
-                                                    });
+                                                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY)
+                                                            .withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue")
+                                                            .navigation(WXEntryActivity.this, new NavCallback() {
+                                                                @Override
+                                                                public void onArrival(Postcard postcard) {
+                                                                    Stack<Activity> activities = AppManager.Companion.getActivityStack();
+                                                                    activities.get(0).finish();
+                                                                    activities.get(1).finish();
+                                                                }
+                                                            });
                                                 }
                                             });
                                         } else {
-                                            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(WXEntryActivity.this, new NavCallback() {
-                                                @Override
-                                                public void onArrival(Postcard postcard) {
-                                                    PreferenceUtils.putString(WXEntryActivity.this, USER_TOKEN, res.getData().toString());
-                                                    Stack<Activity> activities = AppManager.Companion.getActivityStack();
-                                                    activities.get(0).finish();
-                                                    activities.get(1).finish();
-                                                }
-                                            });
+                                            go2Home();
                                         }
-                                    } else {
-                                        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(WXEntryActivity.this, new NavCallback() {
-                                            @Override
-                                            public void onArrival(Postcard postcard) {
-                                                PreferenceUtils.putString(WXEntryActivity.this, USER_TOKEN, res.getData().toString());
-                                                Stack<Activity> activities = AppManager.Companion.getActivityStack();
-                                                activities.get(0).finish();
-                                                activities.get(1).finish();
-                                            }
-                                        });
+                                    } else {//没在骑行状态
+                                        if (wxLoginBean.getData().getTel().isEmpty()) {//未绑定手机
+                                            TelephoneBinder from = TelephoneBinder.Companion.from(WXEntryActivity.this);
+                                            TelephoneBinderDialogFragment show = from.show();
+                                            show.setFunctionDismiss(WXEntryActivity.this);
+                                        } else {//已绑定手机
+                                            go2Home();
+                                        }
                                     }
                                 }
                             } else {
@@ -248,30 +241,39 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.e("result", "登录2");
+                            Log.e(LOG_TAG, "登录2");
                             finish();
                         }
 
                         @Override
                         public void onComplete() {
-                            Log.e("result", "登录3");
+                            Log.e(LOG_TAG, "登录3");
                             dialog.dismiss();
                         }
                     });
-//                    Log.i(TAG, "code:------>" + code);
-//                    NetworkUtil.sendWxAPI(handler, String.format("https://api.weixin.qq.com/sns/oauth2/access_token?" +
-//                                    "appid=%s&secret=%s&code=%s&grant_type=authorization_code", "wx941dc5dccc68dee3",
-//                            "cecfaae035206e45a332f271a788650e", code), NetworkUtil.GET_TOKEN);
-                    //这里拿到了这个code，去做2次网络请求获取access_token和用户个人信息
-//                    WXLoginUtils().getWXLoginResult(code, this);
-
                 } else if (type == RETURN_MSG_TYPE_SHARE) {
-//                    ToastUtils.showToast(mContext, "微信分享成功");
                     RxBus.Companion.getDefault().post("ShareSuccess");
                     finish();
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onDismiss() {//绑定手机成功
+        this.go2Home();
+    }
+
+    private void go2Home() {
+        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME)
+                .navigation(WXEntryActivity.this, new NavCallback() {
+                    @Override
+                    public void onArrival(Postcard postcard) {
+                        Stack<Activity> activities = AppManager.Companion.getActivityStack();
+                        activities.get(0).finish();
+                        activities.get(1).finish();
+                    }
+                });
     }
 
     public ProgressDialog showProgress(String text) {
@@ -285,11 +287,10 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         return progressDialog;
     }
 
+    @Override
+    public void onBack() {
+        //返回
+        finish();
+    }
 
-//    NavCallback callback = new NavCallback() {
-//        @Override
-//        public void onArrival(Postcard postcard) {
-
-//        }
-//    };
 }

@@ -77,6 +77,9 @@ class RoadBookFirstActivity : BaseActivity<ActivityRoadbookFirstBinding, RoadBoo
     @JvmField
     var data: HotData? = null
 
+    @Autowired(name = "type")
+    @JvmField
+    var type: String? = null
 
     override fun initVariableId(): Int {
         return BR.roadbook_first_model

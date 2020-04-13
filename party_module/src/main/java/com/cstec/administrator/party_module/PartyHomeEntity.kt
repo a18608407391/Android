@@ -1,7 +1,5 @@
 package com.cstec.administrator.party_module
 
-import android.arch.lifecycle.LiveData
-import android.databinding.ObservableArrayList
 import java.io.Serializable
 
 

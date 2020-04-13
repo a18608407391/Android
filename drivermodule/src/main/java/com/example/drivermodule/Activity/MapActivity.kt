@@ -31,11 +31,13 @@ import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.Marker
 import com.amap.api.maps.model.MyLocationStyle
+import com.elder.zcommonmodule.DataBases.queryUserInfo
 import com.elder.zcommonmodule.Entity.DriverDataStatus
 import com.elder.zcommonmodule.REQUEST_CREATE_JOIN
 import com.elder.zcommonmodule.REQUEST_LOAD_ROADBOOK
 import com.elder.zcommonmodule.RESULT_POINT
 import com.elder.zcommonmodule.Entity.HotData
+import com.elder.zcommonmodule.Entity.UserInfo
 import com.zk.library.Bus.ServiceEven
 import com.example.drivermodule.Ui.DriverFragment
 import com.example.drivermodule.Ui.MapPointFragment
@@ -44,10 +46,12 @@ import com.example.drivermodule.Ui.TeamFragment
 import com.example.drivermodule.Utils.MapUtils
 import com.example.drivermodule.ViewModel.TeamViewModel
 import com.zk.library.Base.BaseApplication
+import com.zk.library.Utils.PreferenceUtils
 import kotlinx.android.synthetic.main.activity_map.*
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
+import org.cs.tec.library.USERID
 
 
 @Route(path = RouterUtils.MapModuleConfig.MAP_ACTIVITY)
@@ -202,7 +206,11 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(), LocationSo
     @JvmField
     var hotData: HotData? = null
 
+    @Autowired(name = "type")
+    @JvmField
+    var type: String? = null
 
+    lateinit var user : UserInfo
     override fun initVariableId(): Int {
         return BR.mapViewModel
     }
@@ -212,6 +220,8 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(), LocationSo
     override fun initMap(savedInstanceState: Bundle?) {
         super.initMap(savedInstanceState)
         map_view.onCreate(savedInstanceState)
+        user = queryUserInfo(PreferenceUtils.getString(context, USERID))[0]
+
         mAmap = map_view.map
         setUpMap()
         mAmap.moveCamera(CameraUpdateFactory.zoomTo(15F))
@@ -285,6 +295,7 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(), LocationSo
         return mViewModel?.mFragments!![3] as RoadBookFragment
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.e("result", "requestCode" + requestCode + "resultCode" + resultCode)
         if (resultCode == REQUEST_CREATE_JOIN) {
@@ -296,10 +307,11 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(), LocationSo
             } else {
                 if (requestCode == REQUEST_LOAD_ROADBOOK) {
                     if (data != null) {
+                        Log.e("debug", "data不为Null")
                         mViewModel?.changerFragment(3)
                         getRoadBookFragment().viewModel?.doLoadDatas(data!!)
                     } else {
-                        Log.e("result", "data为Null")
+                        Log.e("debug", "data为Null")
                         if (mViewModel?.currentPosition != 3) {
                             mViewModel?.selectTab(mViewModel?.currentPosition!!)
                         }
@@ -322,12 +334,33 @@ class MapActivity : BaseActivity<ActivityMapBinding, MapViewModel>(), LocationSo
         super.doPressBack()
         mViewModel?.onComponentClick(View(this))
     }
+
     override fun onResume() {
         super.onResume()
         map_view.onResume()
         onStart = true
         BaseApplication.getInstance().curActivity = 2
+        Log.e("debug", "onResume;type:${type}")
+        if (type == "discover2RoodBook") {
+            Log.e("debug", "onResume;${getRoadBookFragment().viewModel};${hotData!!.title}")
+            mViewModel?.changerFragment(3)
+            mViewModel?.selectTab(2)
+            getRoadBookFragment().viewModel?.doLoadDatas(hotData!!)
+            type = null
+        }
     }
+
+    override fun onNewIntent(intent: Intent?) {//第二次进入
+        super.onNewIntent(intent)
+        Log.e("debug", "onNewIntent;$type;${intent!!.getStringExtra("type")}")
+        if (intent!!.getStringExtra("type") == "discover2RoodBook") {
+            Log.e("debug", "onNewIntent;${(intent!!.getSerializableExtra(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY_ROAD) as HotData).title};${intent!!.getStringExtra("type")}")
+            mViewModel?.changerFragment(3)
+            mViewModel?.selectTab(2)
+            getRoadBookFragment().viewModel?.doLoadDatas((intent!!.getSerializableExtra(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY_ROAD) as HotData))
+        }
+    }
+
     override fun onDestroy() {
         map_view.onDestroy()
         dismissProgressDialog()

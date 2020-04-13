@@ -3,7 +3,6 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="social_item_model"
             type="com.cstec.administrator.social.ItemViewModel.SocialItemModel"></variable>

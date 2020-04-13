@@ -12,8 +12,8 @@ android {
         applicationId "com.elder.amoski"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 22
-        versionName "1.2.5"
+        versionCode 23
+        versionName "3.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
         packagingOptions {
@@ -24,9 +24,9 @@ android {
             exclude 'assets/location_map_gps_3d.png'
         }
         manifestPlaceholders = [
-                JPUSH_PKGNAME : "com.elder.amoski",
+                JPUSH_PKGNAME: "com.elder.amoski",
                 JPUSH_APPKEY : "35e2033d379dabfde25d9321", //JPush上注册的包名对应的appkey.
-                JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
         ]
         javaCompileOptions {
             annotationProcessorOptions {
@@ -42,6 +42,15 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('D:/androidProject/Android/amoski.jks')
+            storePassword "amoski"
+            keyAlias "爱摩帮"
+            keyPassword "amoski"
         }
     }
 //    aaptOptions.cruncherEnabled = false

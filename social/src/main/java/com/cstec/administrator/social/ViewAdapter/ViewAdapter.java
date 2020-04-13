@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -22,7 +23,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.cstec.administrator.social.Entity.GridClickEntity;
+import com.cstec.administrator.social.ItemViewModel.SocialNearRoadItemModel;
+import com.elder.zcommonmodule.Entity.HotData;
 import com.elder.zcommonmodule.Entity.PhotoEntitiy;
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity;
 import com.elder.zcommonmodule.Entity.DynamicsSimple;
@@ -357,5 +361,30 @@ public class ViewAdapter {
             drawable.stop();
             img.setVisibility(View.GONE);
         }
+    }
+
+
+    @BindingAdapter("StrategySettingNear")
+    public static void StrategySettingNear(final RecyclerView recy, SocialNearRoadItemModel url) {
+        if (recy == null) {
+            return;
+        }
+        StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) recy.getLayoutManager();
+        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+    }
+
+    @BindingAdapter("StrageImageLoad")
+    public static void StrageImageLoad(final ImageView relativeLayout, HotData url) {
+        int width = url.getWidth();
+        int height = url.getHeight();
+        int realWidth = (BaseApplication.Companion.getInstance().getGetWidthPixels() - ConvertUtils.Companion.dp2px(10)) / 2;
+        float scale = realWidth * 1F / width;
+        String s = LocalUtilsKt.getRoadImgUrl(url.getBill());
+        RoundedCorners corners = new RoundedCorners(ConvertUtils.Companion.dp2px(8));
+        RequestOptions options = new RequestOptions().transform(corners).error(R.drawable.nomal_img).timeout(3000).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        Glide.with(relativeLayout.getContext()).asBitmap().load(s).apply(options).into(relativeLayout);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) relativeLayout.getLayoutParams();
+        params.height = (int) (height * scale);
+        relativeLayout.setLayoutParams(params);
     }
 }

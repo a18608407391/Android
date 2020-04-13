@@ -211,21 +211,35 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
         when (v?.id) {
             R.id.sys_click -> {
                 //跳转到系统通知界面
-                ARouter.getInstance().build(RouterUtils.Chat_Module.SysNotify_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REQUEST)
+                ARouter.getInstance()
+                        .build(RouterUtils.Chat_Module.SysNotify_AC)
+                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                        .navigation(activity, MSG_RETURN_REQUEST)
             }
             R.id.active_click -> {
                 //跳转到活动列表界面
                 ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).navigation()
             }
             R.id.at_click -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.Atme_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REFRESH_REQUEST)
+                ARouter.getInstance()
+                        .build(RouterUtils.PrivateModuleConfig.Atme_AC)
+                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                        .navigation(activity, MSG_RETURN_REFRESH_REQUEST)
             }
             R.id.command_click -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REFRESH_REQUEST)
+                ARouter.getInstance()
+                        .build(RouterUtils.PrivateModuleConfig.COMMAND_AC)
+                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                        .navigation(activity, MSG_RETURN_REFRESH_REQUEST)
             }
             R.id.get_like_click -> {
                 var id = PreferenceUtils.getString(context, USERID)
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, MSG_RETURN_REFRESH_REQUEST)
+                ARouter.getInstance()
+                        .build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE)
+                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8)
+                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id)
+                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                        .navigation(activity, MSG_RETURN_REFRESH_REQUEST)
             }
         }
     }

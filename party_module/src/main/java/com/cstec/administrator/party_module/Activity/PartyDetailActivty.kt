@@ -33,16 +33,11 @@ import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
 
-
+/**
+ * 摩旅推荐详情页
+ * */
 @Route(path = RouterUtils.PartyConfig.PARTY_DETAIL)
-class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailViewModel>(), AppBarLayout.OnOffsetChangedListener {
-    override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
-        if (p1 >= -ConvertUtils.dp2px(300F)) {
-            mViewModel?.visible!!.set(false)
-        } else {
-            mViewModel?.visible!!.set(true)
-        }
-    }
+class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailViewModel>() {
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)
     @JvmField
@@ -60,11 +55,9 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
     @JvmField
     var city: String = ""
 
-
     @Autowired(name = RouterUtils.PartyConfig.NavigationType)
     @JvmField
     var navigation: Int = 0
-
 
     override fun initVariableId(): Int {
         return BR.party_detail_model
@@ -84,13 +77,11 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
         returnBack()
     }
 
-
     var flag = false
 
     var downx = 0F
     var downy = 0F
     var onScroll = false
-
 
     var mScrollY = 0;
     var lastScrollY = 0;
@@ -105,15 +96,13 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
         mPartyDetailMagicTabLayout.setupWithViewPager(mPartyDetailViewPager)
 //        party_subject_appbar_layout.addOnOffsetChangedListener(this)
         mPartyDetailTabLayout.addOnTabSelectedListener(mViewModel!!)
-
-
         initTrans(true)
         detail_toolbar.post {
             var height = detail_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailViewPager.layoutParams
-            var flag = hasDeviceNavigationBar(this@PartyDetailActivty)
-            var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights() - getStatusBarHeight(context)
+            var flag = Utils.checkDeviceHasNavigationBar(context)
+            var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights()
             if (flag && values != 0) {
                 if (values == org.cs.tec.library.Base.Utils.getStatusBarHeight()) {
                     params.height = getScreenHeightPx() - height - mPartyDetailTabLayout.height + 1
@@ -151,15 +140,9 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
             }
         })
 
-
         nest.setOnScrollChangeListener(FixNestedScrollView.OnScrollChangeListener { p0, scrollX, scrollY, oldScrollX, oldScrollY ->
 
             var y = scrollY
-
-            //            Log.e("LocationP", "Location2" + p2)
-//            Log.e("LocationP", "Location4" + p4)
-//            fling = Math.abs(p4 - p2) > ConvertUtils.dp2px(20F)
-
 
             Log.e("result", "当前H值" + h + "最小高度" + ConvertUtils.px2dp(912F))
             var location = IntArray(2)
@@ -205,7 +188,9 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
 
             if (scrollY == 0) {
                 detail_iv_back.setImageResource(R.drawable.arrow_white);
+                ivPartyDetailTrans.setImageResource(R.drawable.more_white)
             } else {
+                ivPartyDetailTrans.setImageResource(R.drawable.more_black)
                 detail_iv_back.setImageResource(R.drawable.arrow_black);
             }
             lastScrollY = y
@@ -222,12 +207,14 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
     }
 
     fun returnBack() {
+        Log.e("party", "$navigation")
         if (navigation == 0) {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this@PartyDetailActivty, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME)
+                    .navigation(this@PartyDetailActivty, object : NavCallback() {
+                        override fun onArrival(postcard: Postcard?) {
+                            finish()
+                        }
+                    })
         } else if (navigation == 1) {
             if (mViewModel?.destroyList!!.contains("SubjectPartyActivity")) {
                 ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY).withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, 1)

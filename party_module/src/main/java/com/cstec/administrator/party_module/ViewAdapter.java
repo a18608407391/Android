@@ -29,6 +29,7 @@ import com.elder.zcommonmodule.ConfigKt;
 import com.elder.zcommonmodule.LocalUtilsKt;
 import com.elder.zcommonmodule.Widget.RichEditText.RichEditText;
 import com.elder.zcommonmodule.Widget.RichEditText.RichTextView;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -48,7 +49,10 @@ public class ViewAdapter {
 
 
     @BindingAdapter({"setPartyLinearLayout", "setPartyChildClick"})
-    public static void setPartyLinearLayout(LinearLayout layout, final PartyHotRecommand datas, final BindingCommand<PartyHomeEntity.HotRecommend> command) {
+    public static void setPartyLinearLayout(LinearLayout layout,
+                                            final PartyHotRecommand datas,
+                                            final BindingCommand<PartyHomeEntity.HotRecommend> command) {
+        Log.e("partyLayout", "-->" + new Gson().toJson(datas));
         layout.removeAllViews();
         for (int i = 0; i < datas.getList().size(); i++) {
             LayoutInflater inflater = (LayoutInflater) layout.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -147,7 +151,7 @@ public class ViewAdapter {
 //            public void onClick(View v) {
 //                if (text.isCollapsed()) {
 //                    text.setCollapsed(false);
-//                    visible.setBackground(visible.getContext().getDrawable(R.color.trans));
+//                    visible.setBackground(visible.getContext().getDrawable(R.color.trans_bg));
 //                    visible.setText("收起");
 //                } else {
 //                    visible.setBackground(visible.getContext().getDrawable(R.drawable.gradient_bg));

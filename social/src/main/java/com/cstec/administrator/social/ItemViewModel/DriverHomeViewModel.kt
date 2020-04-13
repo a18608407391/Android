@@ -44,6 +44,7 @@ import java.util.*
 
 
 class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, DialogUtils.Companion.IconUriCallBack, SwipeRefreshLayout.OnRefreshListener, HttpInteface.SocialDynamicsFocus {
+
     override fun ResultFocusSuccess(it: String) {
 
         LoadChildData(activity.nViewPager.currentItem)
@@ -283,10 +284,12 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
 
         when (view.id) {
             R.id.msg_click -> {
+                Log.e(this.javaClass.name,"${Gson().toJson(entity)}")
                 if (entity?.Member?.tel.isNullOrEmpty()) {
                     Toast.makeText(context, "未绑定手机号", Toast.LENGTH_SHORT).show()
                     return
                 }
+                Log.e(this.javaClass.name,"${activity.navigationType}")
                 if (activity.navigationType == 10) {
                     finish()
                 } else {

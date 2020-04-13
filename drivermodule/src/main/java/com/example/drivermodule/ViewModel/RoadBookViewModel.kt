@@ -203,6 +203,7 @@ class RoadBookViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, RouteSea
         mRoutePath = RouteSearch(activity)
         mRoutePath!!.setRouteSearchListener(this)
         d = RxBus.default?.toObservable(HotData::class.java)?.subscribe {
+            Log.e("debug", "HotData-->subscribe")
             if (System.currentTimeMillis() - time > 1000) {
                 var ho = PreferenceUtils.getString(activity, PreferenceUtils.getString(context, USERID) + "hot")
                 var s = Gson().fromJson<HotData>(ho, HotData::class.java)
@@ -309,7 +310,6 @@ class RoadBookViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, RouteSea
         var map = HashMap<String, String>()
         map["guideId"] = data!!.id.toString()
         HttpRequest.instance.getRoadBookDetail(map)
-
     }
 
     fun customView(maker: Marker, view: View?) {

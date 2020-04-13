@@ -731,7 +731,10 @@ class HttpRequest {
 
     fun getHome(map: HashMap<String, String>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
-        NetWorkManager.instance.getOkHttpRetrofit()?.create(PrivateService::class.java)?.Home(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+        Log.e("token","$token")
+        NetWorkManager
+                .instance
+                .getOkHttpRetrofit()?.create(PrivateService::class.java)?.Home(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
             homeResult?.ResultHomeError(ExceptionEngine.handleException(it))
         }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
             override fun onComplete() {
@@ -1096,7 +1099,7 @@ class HttpRequest {
 
 
     var partySign: HttpInteface.PartySign? = null
-    fun getPartySign(map: HashMap<String, String>) {
+    fun getPartySign(map: HashMap<String, String>) {//请求报列表
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         NetWorkManager.instance.getOkHttpRetrofit()?.create(PartyService::class.java)?.partySignList(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
             partySign?.getPartySignError(ExceptionEngine.handleException(it))

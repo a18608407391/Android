@@ -18,15 +18,17 @@ import com.elder.zcommonmodule.DataBases.queryDriverStatus
 import com.zk.library.Utils.PreferenceUtils
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.USERID
-//const val Base_URL = "http://ly532915135.vicp.cc/"
 
+//const val Base_URL = "http://ly532915135.vicp.cc/"
+//const val Base_URL = "http://yomoy.com.cn/"
+//https://wusiyao22.uicp.io/
 const val Base_URL = "http://yomoy.com.cn/"
 
 //const val Base_URL = "http://192.168.5.242/"
 //const val Base_URL = "http://192.168.5.253/"
 //const val Base_URL = "http://192.168.5.155/"
 //const val Base_URL = "http://192.168.5.178/"
-//
+
 const val USER_PHONE = "user_phone"
 const val USER_PASS = "user_pass"
 const val USER_TOKEN = "user_token"
@@ -46,6 +48,9 @@ const val REAL_CODE = "real_code"
 const val HISTORY_TABLE = "history_table"
 const val TEAM_CODE = "team_code"
 const val TEAM_ID = "team_id"
+
+const val UNIONID = "unionId"
+const val OPENID = "openId"
 
 const val MSG_RETURN_REQUEST = 125
 const val MSG_RETURN_REFRESH_REQUEST = 12
@@ -87,6 +92,8 @@ const val SHARE_PICTURE = 121
 const val REQUEST_CREATE_JOIN = 120
 
 const val REQUEST_LOAD_ROADBOOK = 121
+
+const val REQUEST_DISCOVER_LOAD_ROADBOOK = 1221
 
 const val REQUEST_MY_ROADBOOK = 123
 
@@ -148,6 +155,7 @@ fun gotoSettingIgnoringBatteryOptimizations(context: Activity) {
         }
     }
 }
+
 fun getNavigationBarHeight(context: Context): Int {
     var result = 0
     if (hasNavBar(context)) {
@@ -193,6 +201,7 @@ fun getNavBarOverride(): String {
     }
     return sNavBarOverride;
 }
+
 fun checkDriverStatus(): Boolean {
     var uid = PreferenceUtils.getString(context, USERID)
     return if (uid == null) {

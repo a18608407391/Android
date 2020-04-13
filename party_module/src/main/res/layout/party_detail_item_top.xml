@@ -162,7 +162,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.dis}"
+                    android:text="@{data.dis == null ? @string/none : data.dis}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>

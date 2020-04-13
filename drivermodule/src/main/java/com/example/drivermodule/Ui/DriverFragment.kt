@@ -223,6 +223,7 @@ class DriverFragment : BaseFragment<FragmentDriverBinding, DriverViewModel>() {
 
     fun initResume() {
         var t: DriverDataStatus? = null
+
         var list = queryDriverStatus(PreferenceUtils.getString(context, USERID))
         if (list.size != 0) {
             t = list[0]
@@ -231,7 +232,6 @@ class DriverFragment : BaseFragment<FragmentDriverBinding, DriverViewModel>() {
         pos.type = "HomeDriver"
         RxBus.default?.post(pos)
 //        context!!.startService(Intent(context, LowLocationService::class.java).setAction("driver"))
-
 
         if (mapActivity?.resume == "nomal") {
             if (t == null) {

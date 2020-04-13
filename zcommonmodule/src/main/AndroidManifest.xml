@@ -14,9 +14,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-
-
-
         <service android:name=".Service.Screen.ScreenRecordService"></service>
 
         <activity android:name=".ErrorLoadingActivity"></activity>

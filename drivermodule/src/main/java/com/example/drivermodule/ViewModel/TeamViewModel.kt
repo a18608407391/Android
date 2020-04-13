@@ -157,7 +157,7 @@ class TeamViewModel : BaseViewModel() {
             var n = Soket()
             n.teamCode = teamCode.get()
             n.teamId = teamId
-            n.userId = user.data?.memberId
+            n.userId = mapActivity.user.data?.memberId
             n.type = SocketDealType.SENDPOINT.code
             n.body = Soket.SocketRequest()
             n.body!!.longitude = it.longitude
@@ -255,7 +255,7 @@ class TeamViewModel : BaseViewModel() {
     lateinit var teamFragment: TeamFragment
     lateinit var mapActivity: MapActivity
     lateinit var driverModel: DriverViewModel
-    lateinit var user: UserInfo
+
     var startTime: Long = 0
     var token: String? = null
 
@@ -270,77 +270,8 @@ class TeamViewModel : BaseViewModel() {
         setMina()
         this.token = PreferenceUtils.getString(context, USER_TOKEN)
         driverModel = mapActivity.getDrverFragment().viewModel!!
-        user = queryUserInfo(PreferenceUtils.getString(context, USERID))[0]
-//        teamFragment.long_press_btn.setOnFinishListener {
-//            if (MinaConnected) {
-//                if (driverModel?.status.startDriver.get() != DriverCancle) {
-//                    if (driverModel?.status.distance < 1000) {
-//                        //小于一公里
-//                        //是否是队长  //成员人数
-//                        if (user?.data?.memberId == teamer.toString()) {
-//                            //是队长
-//                            if (TeamInfo?.redisData?.dtoList?.size == 1) {
-//                                //只有自己一人
-//                                driverModel.dontHaveOneMetre(org.cs.tec.library.Base.Utils.getString(R.string.TeamnotEnoughOneKm), org.cs.tec.library.Base.Utils.getString(R.string.release_team), org.cs.tec.library.Base.Utils.getString(R.string.continue_driving), 0)
-//                            } else {
-//                                //多人
-//                                driverModel.dontHaveOneMetre(org.cs.tec.library.Base.Utils.getString(R.string.TeamernotEnoughOneKmAndOther), org.cs.tec.library.Base.Utils.getString(R.string.release_team), org.cs.tec.library.Base.Utils.getString(R.string.pass_timer), 1)
-//                            }
-//                        } else {
-//                            //不是队长
-//                            //直接退出队伍
-//                            driverModel.dontHaveOneMetre(org.cs.tec.library.Base.Utils.getString(R.string.TeamnotEnoughOneKmBymember), org.cs.tec.library.Base.Utils.getString(R.string.leave_team), org.cs.tec.library.Base.Utils.getString(R.string.continue_driving), 2)
-//                        }
-//                    } else {
-//                        //超过一公里
-//                        if (user?.data?.memberId == teamer.toString()) {
-//                            //队长
-//                            if (TeamInfo?.redisData?.dtoList?.size == 1) {
-//                                //只有自己一人
-//                                driverModel.dontHaveOneMetre(org.cs.tec.library.Base.Utils.getString(R.string.EnoughOneKmByTeamerAndOne), org.cs.tec.library.Base.Utils.getString(R.string.leave_team), org.cs.tec.library.Base.Utils.getString(R.string.continue_driving), 3)
-//                            } else {
-//                                //多人
-//                                driverModel.dontHaveOneMetre(org.cs.tec.library.Base.Utils.getString(R.string.EnoughOneKmByTeamerAndPass), org.cs.tec.library.Base.Utils.getString(R.string.release_team), org.cs.tec.library.Base.Utils.getString(R.string.pass_timer), 4)
-//                            }
-//                        } else {
-//                            //不是队长
-//                            driverModel.dontHaveOneMetre(org.cs.tec.library.Base.Utils.getString(R.string.EnoughOneKmByTeam), org.cs.tec.library.Base.Utils.getString(R.string.leave_team), org.cs.tec.library.Base.Utils.getString(R.string.continue_driving), 5)
-//                        }
-//                    }
-//                }
-//            } else {
-//                if (driverModel?.status.curModel == 0) {
-//                    if (driverModel?.status.startDriver.get() != DriverCancle) {
-//                        //取消骑行
-////                        mapActivity.queryTrack()
-//                        //结束骑行
-//                        if (driverModel?.status.distance < 1000) {
-//                            driverModel.dontHaveOneMetre(org.cs.tec.library.Base.Utils.getString(R.string.notEnoughOneKm), org.cs.tec.library.Base.Utils.getString(R.string.cancle_riding), org.cs.tec.library.Base.Utils.getString(R.string.continue_driving), 0)
-//                        } else {
-//                            driverModel?.driverController.driverOver()
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        Log.e("team", "${Gson().toJson(queryUserInfo(PreferenceUtils.getString(context, USERID)))}")
     }
-
-//
-//    fun dontHaveOneMetre(cotent: String, leftBtnTv: String, rightBtnTv: String) {
-//        var dia = DialogUtils.createNomalDialog(mapActivity, cotent, leftBtnTv, rightBtnTv)
-//        dia.setOnBtnClickL(OnBtnClickL {
-//            dia.dismiss()
-//            driverModel.driverController.driverOver()
-//            endTeam(true)
-//        }, OnBtnClickL {
-//            if (user.data?.memberId == teamer.toString()) {
-//                ARouter.getInstance().build(RouterUtils.TeamModule.TEAMER_PASS).withSerializable(RouterUtils.TeamModule.TEAM_INFO, TeamInfo).navigation()
-//            }
-//            dia.dismiss()
-//        })
-//        dia.show()
-//    }
-
 
     var teamCode = ObservableField<String>()
     var teamId: String? = null
@@ -509,7 +440,7 @@ class TeamViewModel : BaseViewModel() {
             SocketDealType.SENDPOINT.code -> {
                 //发送点
                 var local = Gson().fromJson<LatLonLocal>(it.body, LatLonLocal::class.java)
-                if (it.userId.toString() != user.data?.memberId) {
+                if (it.userId.toString() != mapActivity.user.data?.memberId) {
                     if (location != null) {
                         if (markerList.containsKey(it.userId.toString())) {
                             var marker = markerList[it.userId.toString()]
@@ -543,7 +474,7 @@ class TeamViewModel : BaseViewModel() {
             SocketDealType.LEAVETEAM.code -> {
                 //离开队伍
 //                TeamInfo = Gson().fromJson<TeamPersonInfo>(it.body, TeamPersonInfo::class.java)
-                if (it.userId.toString() == user.data?.memberId) {
+                if (it.userId.toString() == mapActivity.user.data?.memberId) {
                     CoroutineScope(uiContext).launch {
                         Toast.makeText(context, "已离开队伍！", Toast.LENGTH_SHORT).show()
                     }
@@ -570,7 +501,7 @@ class TeamViewModel : BaseViewModel() {
             SocketDealType.REJECTTEAM.code -> {
                 var remove = Gson().fromJson<RemoveBody>(it.body, RemoveBody::class.java)
                 var body = remove.userIds?.split(",")
-                if (body?.contains(user.data?.memberId)!!) {
+                if (body?.contains(mapActivity.user.data?.memberId)!!) {
                     //判断自己是否在内
                     CoroutineScope(uiContext).launch {
                         Toast.makeText(mapActivity, getString(R.string.remove_by_team), Toast.LENGTH_SHORT).show()
@@ -607,7 +538,7 @@ class TeamViewModel : BaseViewModel() {
                             TeamInfo?.redisData?.navigationPoint = TeamInfo?.redisData?.navigationPoint?.replace("\\", "", true)
                         }
                         soketNavigation = Gson().fromJson<SoketNavigation>(TeamInfo?.redisData?.navigationPoint, SoketNavigation::class.java)
-                        if (teamer.toString() == user.data?.id) {
+                        if (teamer.toString() == mapActivity.user.data?.id) {
                             teamNavigation.set(false)
                             districtTv.set("")
                         } else {
@@ -615,7 +546,7 @@ class TeamViewModel : BaseViewModel() {
                             districtTv.set(soketNavigation!!.navigation_end?.aoiName)
                         }
                     } else {
-                        if (driverModel?.status?.navigationType == 1 && teamer.toString() == user.data?.id) {
+                        if (driverModel?.status?.navigationType == 1 && teamer.toString() == mapActivity.user.data?.id) {
                             sendNavigationNotify()
                         }
                         districtTv.set("")
@@ -659,7 +590,7 @@ class TeamViewModel : BaseViewModel() {
                 var obj = JSONObject(it.body)
                 var nav = obj.getString("navigationPoint")
                 soketNavigation = Gson().fromJson<SoketNavigation>(nav, SoketNavigation::class.java)
-                if (mapActivity.onStart && teamer.toString() != user.data?.id && driverModel?.status?.navigationType == 1) {
+                if (mapActivity.onStart && teamer.toString() != mapActivity.user.data?.id && driverModel?.status?.navigationType == 1) {
                     CoroutineScope(uiContext).launch {
                         createDistrictDialog()
 //                        {"navigationPoint":"{\"wayPoint\":[],\"navigation_end\":{\"aoiName\":\"长沙县人民政府\",\"longitude\":113.07891494372052,\"latitude\":28.247158541709886}}"}
@@ -689,7 +620,7 @@ class TeamViewModel : BaseViewModel() {
         so.type = SocketDealType.NAVIGATION_START.code
         so.teamCode = teamCode.get()
         so.teamId = teamId
-        so.userId = user.data?.memberId
+        so.userId = mapActivity.user.data?.memberId
         var sos = SoketNavigation()
         if (driverModel.status.passPointDatas != null) {
             driverModel.status.passPointDatas.forEach {
@@ -733,12 +664,12 @@ class TeamViewModel : BaseViewModel() {
 
 
         if (flag) {
-            if (user.data?.id == teamer.toString()) {
+            if (mapActivity.user.data?.id == teamer.toString()) {
                 var so = Soket()
                 so.type = SocketDealType.DISMISSTEAM.code
                 so.teamCode = teamCode.get()
                 so.teamId = teamId
-                so.userId = user.data?.id
+                so.userId = mapActivity.user.data?.id
                 var pos = ServiceEven()
                 pos.type = "sendData"
                 pos.gson = Gson().toJson(so) + "\\r\\n"
@@ -748,7 +679,7 @@ class TeamViewModel : BaseViewModel() {
                 so.type = SocketDealType.LEAVETEAM.code
                 so.teamCode = teamCode.get()
                 so.teamId = teamId
-                so.userId = user.data?.memberId
+                so.userId = mapActivity.user.data?.memberId
                 var pos = ServiceEven()
                 pos.type = "sendData"
                 pos.gson = Gson().toJson(so) + "\\r\\n"
@@ -846,7 +777,7 @@ class TeamViewModel : BaseViewModel() {
 //        mapActivity.getTeamFragment()?.viewModel?.backToDriver()
 //        driverModel?.backStatus = true
 
-        if (teamer.toString() == user.data?.id) {
+        if (teamer.toString() == mapActivity.user.data?.id) {
             var list = ArrayList<LatLng>()
             if (!driverModel?.status.passPointDatas.isEmpty()) {
                 driverModel?.status.passPointDatas.forEach {
@@ -932,7 +863,7 @@ class TeamViewModel : BaseViewModel() {
                     markerList.set(it.memberId.toString(), maker)
 //                    maker.showInfoWindow()
                 } else {
-                    if (it.memberId.toString() != user.data?.id) {
+                    if (it.memberId.toString() != mapActivity.user.data?.id) {
                         createImageMarker(it)
 
                     } else {
@@ -990,7 +921,7 @@ class TeamViewModel : BaseViewModel() {
                             override fun onCancel() {
                             }
                         })
-                    } else if (user?.data?.memberId == entity.memberId.toString()) {
+                    } else if (mapActivity.user?.data?.memberId == entity.memberId.toString()) {
                         if (mapActivity.getDrverFragment().curPoint != null) {
                             mapActivity.mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(mapActivity.getDrverFragment().curPoint!!.latitude, mapActivity.getDrverFragment()!!.curPoint!!.longitude), 15F), 1000, object : AMap.CancelableCallback {
                                 override fun onFinish() {
@@ -1030,7 +961,7 @@ class TeamViewModel : BaseViewModel() {
                 var corners = CircleCrop()
                 var options = RequestOptions().transform(corners).error(R.drawable.default_avatar).timeout(3000).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.dp2px(55F), ConvertUtils.dp2px(55F))
                 Glide.with(img.context).asBitmap().load(getImageUrl(entity?.memberHeaderUrl)).apply(options).into(img)
-                if (user.data!!.memberId == entity?.memberId.toString()) {
+                if (mapActivity.user.data!!.memberId == entity?.memberId.toString()) {
                     card.setCardBackgroundColor(getColor(R.color.line_color))
                 } else {
                     card.setCardBackgroundColor(getColor(R.color.TenpercentBlackColor))

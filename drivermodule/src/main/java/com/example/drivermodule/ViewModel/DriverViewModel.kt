@@ -237,7 +237,9 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
             R.id.road_book -> {
 //                recycleComponent.initDatas(mapActivity.getRoadBookFragment().road_book_hori_linear)
                 if (fr.curPosition != null) {
-                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_CURRENT_POINT, fr.curPosition).navigation(mapActivity, REQUEST_LOAD_ROADBOOK)
+                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_ACTIVITY)
+                            .withSerializable(RouterUtils.MapModuleConfig.ROAD_CURRENT_POINT, fr.curPosition)
+                            .navigation(mapActivity, REQUEST_LOAD_ROADBOOK)
                 }
             }
         }
@@ -464,7 +466,7 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
                         if (status.distance < 1000) {
                             //小于一公里
                             //是否是队长  //成员人数
-                            if (model?.user?.data?.memberId == model?.teamer.toString()) {
+                            if (mapActivity.user?.data?.memberId == model?.teamer.toString()) {
                                 //是队长
                                 if (model?.TeamInfo?.redisData?.dtoList?.size == 1) {
                                     //只有自己一人
@@ -480,7 +482,7 @@ class DriverViewModel : BaseViewModel, DriverComponent.onFiveClickListener, Http
                             }
                         } else {
                             //超过一公里
-                            if (model?.user?.data?.memberId == model?.teamer.toString()) {
+                            if (mapActivity.user?.data?.memberId == model?.teamer.toString()) {
                                 //队长
                                 if (model?.TeamInfo?.redisData?.dtoList?.size == 1) {
                                     //只有自己一人

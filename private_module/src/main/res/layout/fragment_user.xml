@@ -43,8 +43,8 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/d_20"
                             android:layout_marginTop="@dimen/d_50"
+                            android:layout_marginRight="@dimen/d_20"
                             android:gravity="right|center_vertical"
                             android:orientation="horizontal">
 
@@ -56,31 +56,31 @@
                                 android:src="@drawable/setting_icon" />
 
 
-                            <RelativeLayout
-                                android:layout_width="@dimen/d_35"
-                                android:layout_height="@dimen/d_35"
-                                android:layout_marginLeft="@dimen/d_20">
+                            <!--                            <RelativeLayout-->
+                            <!--                                android:layout_width="@dimen/d_35"-->
+                            <!--                                android:layout_height="@dimen/d_35"-->
+                            <!--                                android:layout_marginLeft="@dimen/d_20">-->
 
 
-                                <ImageView
-                                    android:id="@+id/notify_icon"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:onClick="@{user_fr_viewModel::onClick}"
-                                    android:src="@drawable/warm_icon" />
+                            <!--                                <ImageView-->
+                            <!--                                    android:id="@+id/notify_icon"-->
+                            <!--                                    android:layout_width="wrap_content"-->
+                            <!--                                    android:layout_height="wrap_content"-->
+                            <!--                                    android:layout_centerInParent="true"-->
+                            <!--                                    android:onClick="@{user_fr_viewModel::onClick}"-->
+                            <!--                                    android:src="@drawable/warm_icon" />-->
 
-                                <TextView
-                                    android:layout_width="@dimen/d_12"
-                                    android:layout_height="@dimen/d_12"
-                                    android:layout_alignParentRight="true"
-                                    android:background="@drawable/red_circle"
-                                    android:gravity="center"
-                                    android:visibility="@{user_fr_viewModel.msgCount==0?View.GONE:View.VISIBLE}"
-                                    android:text="@{user_fr_viewModel.msgCount.toString()}"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/s_08" />
-                            </RelativeLayout>
+                            <!--                                <TextView-->
+                            <!--                                    android:layout_width="@dimen/d_12"-->
+                            <!--                                    android:layout_height="@dimen/d_12"-->
+                            <!--                                    android:layout_alignParentRight="true"-->
+                            <!--                                    android:background="@drawable/red_circle"-->
+                            <!--                                    android:gravity="center"-->
+                            <!--                                    android:visibility="@{user_fr_viewModel.msgCount==0?View.GONE:View.VISIBLE}"-->
+                            <!--                                    android:text="@{user_fr_viewModel.msgCount.toString()}"-->
+                            <!--                                    android:textColor="@color/white"-->
+                            <!--                                    android:textSize="@dimen/s_08" />-->
+                            <!--                            </RelativeLayout>-->
 
 
                         </LinearLayout>
@@ -112,6 +112,7 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         app:addcar_local="@{user_fr_viewModel.fr_avatar}" />
+
                                 </android.support.v7.widget.CardView>
                             </LinearLayout>
 
@@ -124,24 +125,24 @@
                                 android:textColor="#121212"
                                 android:textSize="@dimen/s_22" />
 
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="right">
+                            <ImageView
+                                android:layout_width="@dimen/d_27"
+                                android:layout_height="@dimen/d_30"
+                                android:layout_marginLeft="@dimen/d_9"
+                                android:src="@{user_fr_viewModel.lvImgSrc}" />
 
-                                <ImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginRight="@dimen/d_10"
-                                    android:src="@drawable/arrow_right" />
-                            </LinearLayout>
+
                         </LinearLayout>
+
+
                     </LinearLayout>
+
+
                 </RelativeLayout>
 
 
                 <LinearLayout
+                    android:id="@+id/llMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/img_layout"
@@ -258,6 +259,55 @@
                 </LinearLayout>
 
 
+                <!--勋章-->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_135"
+                    android:layout_below="@+id/llMessage"
+                    android:layout_marginLeft="@dimen/d_15"
+                    android:layout_marginTop="@dimen/d_20"
+                    android:layout_marginRight="@dimen/d_15"
+                    android:background="@drawable/medal_bg">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/d_16"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="勋章"
+                            android:textColor="#FFE1B4"
+                            android:textSize="@dimen/s_17" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/d_11"
+                            android:text="@{@string/elderCount + user_fr_viewModel.elderCount + @string/count}"
+                            android:textColor="#FFEFD4"
+                            android:textSize="@dimen/s_17" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/iv2MineElder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/d_11"
+                        android:layout_marginRight="@dimen/d_15"
+                        android:onClick="@{user_fr_viewModel::onClick}"
+                        android:src="@drawable/arrow" />
+
+
+                </RelativeLayout>
+                <!--勋章-->
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/d_55"
@@ -343,6 +393,7 @@
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
+
             </RelativeLayout>
 
 
@@ -350,8 +401,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/d_135"
                 android:layout_marginLeft="@dimen/d_15"
-                android:layout_marginRight="@dimen/d_15"
                 android:layout_marginTop="@dimen/d_20"
+                android:layout_marginRight="@dimen/d_15"
                 android:background="@drawable/corner_dialog"
                 android:orientation="horizontal">
 
@@ -524,8 +575,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/d_135"
                 android:layout_marginLeft="@dimen/d_15"
-                android:layout_marginRight="@dimen/d_15"
                 android:layout_marginTop="@dimen/d_20"
+                android:layout_marginRight="@dimen/d_15"
                 android:background="@drawable/corner_dialog"
                 android:gravity="center"
                 android:orientation="horizontal">

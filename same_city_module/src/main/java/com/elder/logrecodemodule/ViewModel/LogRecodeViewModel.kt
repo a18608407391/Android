@@ -64,6 +64,10 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
         mapFragment.loadDatas(location!!)
     }
 
+    override fun onBack() {
+
+    }
+
     override fun onRegeocodeSearched(p0: RegeocodeResult?, p1: Int) {
 
         Log.e("result", "这里执行了onRegeocodeSearched")
@@ -271,6 +275,7 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
         mapFragment.loadDatas(location!!)
         city?.setLocatedCity(LocatedCity(loc, provice, cityCode))
     }
+
     var week = ObservableField<String>()
     var tem = ObservableField<String>()
     var loacation = ObservableField<String>()
@@ -281,6 +286,7 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
         var geocodeQuery = GeocodeQuery(data!!.name, data.pinyin)
         geocodeSearch.getFromLocationNameAsyn(geocodeQuery)
     }
+
     fun initCity() {
         city = CityPicker.from(mapFragment).setLocatedCity(null).setOnPickListener(object : OnPickListener {
             override fun onPick(position: Int, data: City?) {
@@ -301,7 +307,10 @@ class LogRecodeViewModel : BaseViewModel(), WeatherSearch.OnWeatherSearchListene
     fun onClick(view: View) {
         when (view.id) {
             R.id.log_et -> {
-                ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SEARCH_MEMBER).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation()
+                ARouter.getInstance()
+                        .build(RouterUtils.LogRecodeConfig.SEARCH_MEMBER)
+                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                        .navigation()
             }
             R.id.log_enter -> {
 

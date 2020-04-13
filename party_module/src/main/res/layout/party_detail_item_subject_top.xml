@@ -14,8 +14,8 @@
         android:id="@+id/subject_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/d_15"
         android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/d_15"
         android:layout_marginTop="@dimen/d_350"
         android:orientation="vertical">
 
@@ -49,8 +49,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_68"
-            android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_15"
             android:background="#FAFAFA"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -93,7 +93,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.dis}"
+                    android:text="@{data.dis == null ? @string/none : data.dis}"
                     android:textColor="@color/black_12"
                     android:textSize="@dimen/s_15"
                     android:textStyle="bold"></TextView>
@@ -139,8 +139,8 @@
             android:id="@+id/subject_members_click"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
-            android:layout_marginRight="@dimen/d_15"
             android:layout_marginTop="@dimen/d_20"
+            android:layout_marginRight="@dimen/d_15"
             android:gravity="center_vertical"
             android:onClick="@{data::onClick}"
             android:orientation="horizontal"
@@ -187,10 +187,11 @@
                 android:textSize="@dimen/s_12"
                 android:textStyle="bold"></TextView>
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="人报名 / 不限"
+                android:text="@{data.data.NUMBER_LIMITATION>0?@string/impose + data.data.NUMBER_LIMITATION + @string/persion : @string/noImpose}"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_12"
                 android:textStyle="bold"></TextView>
@@ -201,6 +202,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_17"
                 android:src="@drawable/arrow_right_gray"></ImageView>
+
         </LinearLayout>
 
 

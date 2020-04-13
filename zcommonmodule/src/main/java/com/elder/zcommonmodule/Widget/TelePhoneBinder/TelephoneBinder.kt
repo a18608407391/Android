@@ -4,6 +4,8 @@ import android.support.annotation.StyleRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import java.lang.ref.WeakReference
 
 
@@ -16,21 +18,22 @@ class TelephoneBinder {
     var enableAnim: Boolean = true
     var mAnimStyle: Int = 0
 
-
     constructor(fragment: Fragment) {
         mFragmentManager = WeakReference(fragment.childFragmentManager)
     }
 
-    constructor(activity: FragmentActivity, fragment: Fragment) {
+    constructor(activity: FragmentActivity, fragment: Fragment?) {
         mContext = WeakReference(activity)
-        mFragment = WeakReference(fragment)
+        if (fragment != null) {
+            mFragment = WeakReference(fragment!!)
+        }
     }
 
     constructor(activity: FragmentActivity) {
-        TelephoneBinder(activity, null!!)
+        Log.e(this.javaClass.name, activity.toString())
+        TelephoneBinder(activity, null)
         mFragmentManager = WeakReference(activity.supportFragmentManager)
     }
-
 
     companion object {
         var TAG = "TelephoneBinder"
@@ -39,7 +42,7 @@ class TelephoneBinder {
             return TelephoneBinder(fragment)
         }
 
-        fun from(activity: FragmentActivity): TelephoneBinder {
+        fun from(activity: AppCompatActivity): TelephoneBinder {
             return TelephoneBinder(activity)
         }
     }

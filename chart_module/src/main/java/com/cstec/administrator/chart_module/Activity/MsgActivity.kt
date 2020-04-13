@@ -40,10 +40,11 @@ import com.elder.zcommonmodule.MSG_RETURN_REQUEST
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 
-
+/**
+ * 消息页
+ * */
 @Route(path = RouterUtils.Chat_Module.MSG_AC)
 class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
-
 
     @Autowired(name = RouterUtils.SocialConfig.SOCIAL_LOCATION)
     @JvmField
@@ -67,11 +68,9 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
         return R.layout.activity_msg
     }
 
-
     override fun initViewModel(): MsgViewModel? {
         return ViewModelProviders.of(this)[MsgViewModel::class.java]
     }
-
 
     override fun initData() {
         super.initData()
@@ -79,21 +78,20 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
         mViewModel?.inject(this)
     }
 
-
     override fun doPressBack() {
         super.doPressBack()
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
-            override fun onArrival(postcard: Postcard?) {
-                finish()
-            }
-        })
+        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME)
+                .navigation(this, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
     }
 
     override fun onResume() {
         super.onResume()
         mViewModel?.initReceiver()
     }
-
 
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
@@ -104,7 +102,6 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
         super.onPause()
         unregisterReceiver(mViewModel?.mReceiver)
     }
-
 
     private fun initView() {
         mHeader = layoutInflater.inflate(R.layout.conv_list_head_view, conv_list_view, false) as LinearLayout

@@ -44,6 +44,7 @@ class RouterUtils() {
             const val Chat_Room_ID = "/chat/roomId"
             const val Chat_Room_Name = "/chat/roomName"
             const val Chat_GROUP_NAME = "/chat/groupName"
+            const val MESSAGE_FRAGMENT = "/chat/messageFragment"
         }
     }
 
@@ -76,7 +77,7 @@ class RouterUtils() {
             const val USER_AUTH = "/user/auth"
             const val CHANGEPASS = "/user/pass"
             const val SETTING_CATEGORY = "/setting/category"
-
+            const val MINE_ELDER ="/user/mine_elder"
 
             //            const val
             const val ADD_MARKER_URL = "/private/addmakerurl"
@@ -90,6 +91,8 @@ class RouterUtils() {
             const val MY_LIKE_AC = "/private/mylike"
             const val MY_FANS_AC = "/private/myfans"
             const val MY_RESTORE_AC = "/private/myrestore"
+
+
 
         }
     }
@@ -163,6 +166,8 @@ class RouterUtils() {
             const val SAME_CITY_RANKING = "/activity/ranking"
             const val SEARCH_MEMBER = "/activity/searchmember"
             const val LOCATION_SIDE = "/activity/locationside"
+
+            const val ACTIVITY_FRAGMENT = "/log/activity"
         }
     }
 
@@ -179,6 +184,8 @@ class RouterUtils() {
             const val IMPAGE = "${IM}/im"
             const val MYSELF = "/bmyself"
             const val MYSELFPAGE = "${MYSELF}/Myself"
+            const val MINE = "/mineModule/mine"
+
         }
     }
 

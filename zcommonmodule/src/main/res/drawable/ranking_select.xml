@@ -3,5 +3,5 @@
 
     <item android:drawable="@drawable/local_and_city_select" android:state_checked="true"></item>
 
-    <item android:drawable="@drawable/trans"></item>
+    <item android:drawable="@drawable/trans_bg"></item>
 </selector>

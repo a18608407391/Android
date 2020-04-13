@@ -64,8 +64,11 @@ class NearRoadItemModle : ItemViewModel<AcRoadBookViewModel>, HttpInteface.getRo
         acRoadBookViewModel.roadHomeActivity.swipe.isRefreshing = false
     }
 
-    fun ItemClickCommand(data: HotData) {
-        ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data).navigation(acRoadBookViewModel.roadHomeActivity, REQUEST_LOAD_ROADBOOK)
+    fun ItemClickCommand(data: HotData) {//路书点击
+        ARouter.getInstance()
+                .build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY)
+                .withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data)
+                .navigation(acRoadBookViewModel.roadHomeActivity, REQUEST_LOAD_ROADBOOK)
 
 //        var intent = Intent()
 //        intent.putExtra("hotdata", data)
@@ -99,7 +102,8 @@ class NearRoadItemModle : ItemViewModel<AcRoadBookViewModel>, HttpInteface.getRo
     var items = ObservableArrayList<HotData>()
 
     var itemBinding = ItemBinding.of<HotData> { itemBinding, position, item ->
-        itemBinding.set(BR.hot_data, R.layout.near_recy_item_layout).bindExtra(BR.near_item_model, this@NearRoadItemModle)
+        itemBinding.set(BR.hot_data, R.layout.near_recy_item_layout)
+                .bindExtra(BR.near_item_model, this@NearRoadItemModle)
     }
 
     var listDatas = ObservableArrayList<HotBannerData>()

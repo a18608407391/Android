@@ -37,8 +37,8 @@ import org.cs.tec.library.USERID
 
 
 class MapViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarkerDragListener, AMap.OnCameraChangeListener, TitleComponent.titleComponentCallBack, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, DriverComponent.onFiveClickListener {
-    override fun FiveBtnClick(view: View) {
 
+    override fun FiveBtnClick(view: View) {
         mapActivity.getDrverFragment().viewModel?.FiveBtnClick(view)
         if (currentPosition == 0) {
         } else if (currentPosition == 2) {
@@ -55,7 +55,6 @@ class MapViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarkerD
     }
 
     override fun onTabSelected(p0: TabLayout.Tab?) {
-        Log.e("result", currentPosition.toString() + "当前位置" + p0?.position)
         if (p0!!.position == currentPosition) {
             return
         }
@@ -108,7 +107,8 @@ class MapViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarkerD
                         if (mapActivity.getRoadBookFragment().road_tab.selectedTabPosition != 0) {
                             mapActivity.getRoadBookFragment().viewModel!!.selectTab(0)
                         } else {
-                            mapActivity.getDrverFragment()?.viewModel?.recycleComponent?.initDatas(mapActivity.getRoadBookFragment().viewModel?.netWorkData!!, mapActivity.getRoadBookFragment().viewModel?.data, 0)
+                            mapActivity
+                                    .getDrverFragment()?.viewModel?.recycleComponent?.initDatas(mapActivity.getRoadBookFragment().viewModel?.netWorkData!!, mapActivity.getRoadBookFragment().viewModel?.data, 0)
                         }
                     }
                 }
@@ -120,8 +120,6 @@ class MapViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarkerD
     var cur = 0L
 
     override fun onComponentClick(view: View) {
-
-
 
 
         if (currentPosition == 0) {
@@ -189,6 +187,8 @@ class MapViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarkerD
         mFragments.add(team)
         mFragments.add(point)
         mFragments.add(ro)
+        mFragments.forEach {
+        }
         var tans = mapActivity.supportFragmentManager.beginTransaction()
         tans.add(R.id.main_rootlay, fr)
         tans.add(R.id.main_rootlay, team)
@@ -213,7 +213,6 @@ class MapViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarkerD
         tab.addTab(tab.newTab().setText(getString(R.string.road_book_nomal_title)))
         tab.addOnTabSelectedListener(this)
     }
-
 
     fun selectTab(position: Int) {
         var tabs = tab.getTabAt(position)

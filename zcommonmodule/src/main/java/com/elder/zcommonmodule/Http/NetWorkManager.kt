@@ -82,12 +82,13 @@ class NetWorkManager {
                     }
                 })
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build()
     }
 
     fun getOkHttpRetrofit(): Retrofit? {
+        Log.e("enroll",Base_URL)
         return Retrofit.Builder().client(getOkHttpClient()).baseUrl(Base_URL).addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build()
     }
 
@@ -102,7 +103,5 @@ class NetWorkManager {
     fun getBaseRequestBodyAny(map: HashMap<String, Any>): RequestBody? {
         return RequestBody.create(MediaType.parse("application/json;charset=utf-8"), Gson().toJson(map))
     }
-
-
 
 }

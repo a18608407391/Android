@@ -50,8 +50,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:drawablePadding="@dimen/d_15"
                         android:drawableTop="@drawable/like_msg"
+                        android:drawablePadding="@dimen/d_15"
                         android:gravity="center"
                         android:onClick="@{msg_model::onClick}"
                         android:text="收到的赞"
@@ -82,8 +82,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:drawablePadding="@dimen/d_15"
                         android:drawableTop="@drawable/command_msg"
+                        android:drawablePadding="@dimen/d_15"
                         android:gravity="center"
                         android:onClick="@{msg_model::onClick}"
                         android:text="评论"
@@ -114,8 +114,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:drawablePadding="@dimen/d_15"
                         android:drawableTop="@drawable/at_msg"
+                        android:drawablePadding="@dimen/d_15"
                         android:gravity="center"
                         android:onClick="@{msg_model::onClick}"
                         android:text="@string/atmse"
@@ -164,8 +164,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/d_64"
                         android:layout_marginLeft="@dimen/d_15"
-                        android:layout_marginRight="@dimen/d_15"
                         android:layout_marginTop="@dimen/d_10"
+                        android:layout_marginRight="@dimen/d_15"
                         android:orientation="vertical">
 
 
@@ -249,6 +249,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/d_01"
                             android:background="@color/FivepercentBlackColor"></View>
+
+
                     </LinearLayout>
 
                     <LinearLayout

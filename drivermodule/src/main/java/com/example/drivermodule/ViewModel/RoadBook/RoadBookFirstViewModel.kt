@@ -32,6 +32,7 @@ import com.example.drivermodule.Activity.RoadBookFirstActivity
 import com.example.drivermodule.BR
 import com.example.drivermodule.Component.SimpleRecycleComponent
 import com.elder.zcommonmodule.Entity.HotData
+import com.elder.zcommonmodule.REQUEST_DISCOVER_LOAD_ROADBOOK
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.getRoadImgUrl
@@ -72,15 +73,20 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
     }
 
     override fun DownLoadRoadBookSuccess(resp: BaseResponse) {
-        Log.e("result", "DownLoadRoadBookSuccess")
+        Log.e("debug", "DownLoadRoadBookSuccess--->${activity.type}")
         activity.dismissProgressDialog()
         if (resp.code == 0) {
             var ho = PreferenceUtils.getString(activity, PreferenceUtils.getString(context, USERID) + "hot")
             var s = Gson().fromJson<HotData>(ho, HotData::class.java)
+            Log.e("debug", "${Gson().toJson(s)}")
             if (s == null || s.id == activity.data!!.id) {
                 var intent = Intent()
                 intent.putExtra("hotdata", activity.data)
-                activity.setResult(REQUEST_LOAD_ROADBOOK, intent)
+                if(activity.type=="discover2RoadBook"){
+                    activity.setResult(REQUEST_DISCOVER_LOAD_ROADBOOK, intent)
+                }else{
+                    activity.setResult(REQUEST_LOAD_ROADBOOK, intent)
+                }
                 finish()
             } else {
                 var dialog = DialogUtils.createNomalDialog(activity, getString(R.string.isExChangeLine), getString(R.string.cancle), getString(R.string.confirm))
@@ -90,7 +96,11 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
                     dialog.dismiss()
                     var intent = Intent()
                     intent.putExtra("hotdata", activity.data)
-                    activity.setResult(REQUEST_LOAD_ROADBOOK, intent)
+                    if(activity.type=="discover2RoadBook"){
+                        activity.setResult(REQUEST_DISCOVER_LOAD_ROADBOOK, intent)
+                    }else{
+                        activity.setResult(REQUEST_LOAD_ROADBOOK, intent)
+                    }
                     finish()
                 })
                 dialog.show()

@@ -4,10 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.design.widget.TabLayout
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.cstec.administrator.party_module.Activity.PartyDetailActivty
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItemModel
@@ -15,22 +21,49 @@ import com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailIn
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.PartyDetailPhotoItemModel
 import com.cstec.administrator.party_module.PartyDetailEntity
 import com.cstec.administrator.party_module.R
+import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Inteface.TitleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
+import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
+import io.reactivex.functions.Function
 import com.zk.library.Utils.RouterUtils
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_party_clock_detail.*
 import kotlinx.android.synthetic.main.activity_party_detail.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
+import org.cs.tec.library.Base.Utils.ioContext
+import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
+import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 
 
 class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.PartyDetail, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, HttpInteface.PartyRestore_inf {
+
+
     override fun PartyRestoreSucccess(it: String) {
         partyDetailActivty.dismissProgressDialog()
         if (collection.get() == 0) {
@@ -96,8 +129,13 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
                 }
             }
         }
+        if(entity.DISTANCE == null){
+            dis.set("0")
+        }else{
+            dis.set((entity.DISTANCE).toString())
+        }
 
-        dis.set((entity.DISTANCE).toString())
+        Log.e(this.javaClass.name, "${entity.DISTANCE};$dis")
         collection.set(entity.IS_COLLECTION)
         state.set(entity.ACTIVITY_STATUS)
         restoreTime.set(entity.ACTIVITY_START + "至" + entity.ACTIVITY_STOP)
@@ -107,6 +145,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
             entity.TICKET_PRICE = getString(R.string.rmb) + entity.TICKET_PRICE
         }
         data.set(entity)
+        Log.e("party", "${Gson().toJson(data)}")
         if (partyDetailActivty.mPartyDetailViewPager.currentItem == 0) {
             var t = items[0] as PartyDetailIntroduceItemModel
             t.initData()
@@ -178,6 +217,10 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
             R.id.detail_members_click -> {
                 ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, partyDetailActivty.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
             }
+            R.id.ivPartyDetailTrans -> {
+                //分享
+                shareToWxSmallProgram(data.get()!!.CODE, data.get()!!.TITLE, data.get()!!.FILE_NAME_URL)
+            }
         }
     }
 
@@ -194,6 +237,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
     var items = ObservableArrayList<BasePartyItemModel>().apply {
 
     }
+
     var itemBinding = ItemBinding.of<BasePartyItemModel> { itemBinding, position, item ->
         when (position) {
             0 -> {
@@ -204,4 +248,36 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
             }
         }
     }
+
+    private fun shareToWxSmallProgram(id: Int, title: String?, url: String?) {
+        // 小程序消息desc
+        CoroutineScope(ioContext).async {
+            var str = url!!.replace("/home/uploadFile/images", "")
+            var url = Base_URL + "AmoskiActivity/userCenterManage/getImg?appToken=activeImg&imgUrl=" + str
+            var file = Glide.with(context)
+                    .load(url)
+                    .downloadOnly(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+            var files = file.get()
+            if (files != null) {
+                var bitmap = BitmapFactory.decodeFile(files.path)
+                var newBitmap = ConvertUtils.compressByQuality(bitmap, 32000, true)
+                var wxMiniProgramObject = WXMiniProgramObject()
+                wxMiniProgramObject.webpageUrl = "www.amoski.net" // 兼容低版本的网页链接
+                wxMiniProgramObject.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;// 正式版:0，测试版:1，体验版:2
+                wxMiniProgramObject.userName = "gh_3fdce548de72";     // 小程序原始id
+                wxMiniProgramObject.path = "/pages/userCenter-activityview/userCenter-activityview?aId=$id"
+
+                var wxMediaMessage = WXMediaMessage(wxMiniProgramObject)
+                wxMediaMessage.title = title;                   // 小程序消息title
+                wxMediaMessage.description = "";
+                wxMediaMessage.thumbData = newBitmap                // 小程序消息封面图片，小于128k
+                var req = SendMessageToWX.Req()
+                req.transaction = ""
+                req.message = wxMediaMessage
+                req.scene = SendMessageToWX.Req.WXSceneSession  // 目前只支持会话
+                BaseApplication.getInstance().mWxApi.sendReq(req)
+            }
+        }
+    }
+
 }

@@ -41,11 +41,11 @@ class CommandViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
     fun returnBack() {
-        if (!destroyList!!.contains("MsgActivity")) {
-            ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, commandActivity.location).navigation()
-        } else {
+//        if (!destroyList!!.contains("MsgActivity")) {
+//            ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, commandActivity.location).navigation()
+//        } else {
             finish()
-        }
+//        }
     }
 
     override fun ResultSDListSuccess(it: String) {

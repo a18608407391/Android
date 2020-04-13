@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.elder.logrecodemodule.ViewModel.ActivityViewModel" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="activityViewModel"
+            type="ActivityViewModel" />
+    </data>
+
+    <com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/poketSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/appBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                <android.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/collapsingToolbarLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:contentScrim="@color/white"
+                    app:expandedTitleMarginEnd="60dp"
+                    app:expandedTitleMarginStart="60dp"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/party_top_bg"
+                            app:layout_collapseMode="parallax" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/d_40"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/d_44"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <!--天气-->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="4"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/d_15"
+                                        android:drawableLeft="@drawable/weather_icon"
+                                        android:drawablePadding="@dimen/d_05"
+                                        android:gravity="center"
+                                        android:text="@{activityViewModel.tvWeather}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_12" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/d_8"
+                                        android:text="@{activityViewModel.tvDegree}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_12" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/d_8"
+                                        android:text="@{activityViewModel.tvWeek}"
+                                        android:textColor="@color/white"
+                                        android:textSize="@dimen/s_12" />
+
+                                </LinearLayout>
+
+                                <!--搜索活动-->
+
+                                <LinearLayout
+                                    android:id="@+id/llSearch"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/d_34"
+                                    android:layout_marginRight="@dimen/d_15"
+                                    android:layout_weight="5"
+                                    android:background="@drawable/white_circle"
+                                    android:clickable="true"
+                                    android:gravity="center_vertical"
+                                    android:onClick="@{activityViewModel::onClick}"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/d_16"
+                                        android:layout_height="@dimen/d_16"
+                                        android:layout_marginLeft="@dimen/d_15"
+                                        android:clickable="true"
+                                        android:src="@drawable/search_icon" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginLeft="@dimen/d_10"
+                                        android:background="@color/trans"
+                                        android:clickable="true"
+                                        android:gravity="center_vertical"
+                                        android:singleLine="true"
+                                        android:text="搜索活动名称/活动类型"
+                                        android:textColor="#A4A4A4"
+                                        android:textSize="@dimen/s_15" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <!--城市选择-->
+                            <TextView
+                                android:id="@+id/tvSelectLocation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/d_15"
+                                android:layout_marginTop="@dimen/d_15"
+                                android:drawableRight="@drawable/arrow_right"
+                                android:drawablePadding="@dimen/d_05"
+                                android:onClick="@{activityViewModel::onClick}"
+                                android:text="@{activityViewModel.tvCity}"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/s_20" />
+
+                            <LinearLayout
+                                android:id="@+id/llTopDivLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/d_15"
+                                android:layout_marginTop="@dimen/d_15"
+                                android:orientation="horizontal">
+
+                                <com.elder.zcommonmodule.Widget.PileLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                </com.elder.zcommonmodule.Widget.PileLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/d_15"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/s_15" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/d_20"
+                            android:layout_alignParentBottom="true"
+                            android:background="@drawable/half_corner_dialog"
+                            android:orientation="vertical"></LinearLayout>
+                    </RelativeLayout>
+
+
+                    <!--toolbar搜索-->
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/d_100"
+                        android:fitsSystemWindows="true"
+                        app:contentInsetStart="0dp"
+                        app:layout_collapseMode="pin"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                        <LinearLayout
+                            android:id="@+id/llToolbarSearch"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/d_15"
+                            android:layout_marginTop="@dimen/d_20"
+                            android:layout_marginRight="@dimen/d_15"
+                            android:background="@drawable/corner_gray_bg"
+                            android:gravity="center_vertical"
+                            android:onClick="@{activityViewModel::onClick}"
+                            android:visibility="@{activityViewModel.vIsField?View.VISIBLE:View.GONE}">
+
+                            <ImageView
+                                android:layout_width="@dimen/d_15"
+                                android:layout_height="@dimen/d_15"
+                                android:layout_marginLeft="@dimen/d_15"
+                                android:src="@drawable/search_icon" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="@dimen/d_10"
+                                android:background="@color/trans"
+                                android:gravity="center_vertical"
+                                android:singleLine="true"
+                                android:text="搜索活动名称/活动类型"
+                                android:textColor="#A4A4A4"
+                                android:textSize="@dimen/s_15" />
+                        </LinearLayout>
+                    </android.support.v7.widget.Toolbar>
+
+                </android.support.design.widget.CollapsingToolbarLayout>
+
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:fillViewport="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/d_15"
+                    android:descendantFocusability="blocksDescendants"
+                    app:adapter="@{activityViewModel.adapter}"
+                    app:itemBinding="@{activityViewModel.itemBinding}"
+                    app:items="@{activityViewModel.activityPartyItems}"
+                    app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                    app:spanCount="2"></android.support.v7.widget.RecyclerView>
+
+
+            </android.support.v4.widget.NestedScrollView>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+
+    </com.elder.zcommonmodule.Widget.PoketSwipeRefreshLayout>
+</layout>

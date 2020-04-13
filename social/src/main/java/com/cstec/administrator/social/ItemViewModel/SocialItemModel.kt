@@ -40,7 +40,6 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
 
     var type = 0
 
-
     constructor(type: Int, model: SocialViewModel) {
         this.viewModel = model
         this.type = type

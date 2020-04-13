@@ -121,7 +121,6 @@
                 app:layout_collapseMode="pin">
 
                 <RelativeLayout
-
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
@@ -132,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:onClick="@{party_detail_model::onClick}"
-                        android:src="@drawable/arrow_black" />
+                        android:src="@drawable/arrow_white" />
 
                     <TextView
                         android:id="@+id/detail_buttonBarLayout"
@@ -145,11 +144,23 @@
                         android:textColor="@color/black_12"
                         android:textSize="@dimen/s_16" />
 
+                    <ImageView
+                        android:layout_marginRight="@dimen/d_15"
+                        android:id="@+id/ivPartyDetailTrans"
+                        android:layout_width="@dimen/d_10"
+                        android:layout_height="@dimen/d_15"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:onClick="@{party_detail_model::onClick}"
+                        android:src="@drawable/more_white" />
+
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/d_01"
                         android:layout_alignParentBottom="true"
                         android:background="@color/FivepercentBlackColor"></View>
+
                 </RelativeLayout>
 
             </android.support.v7.widget.Toolbar>

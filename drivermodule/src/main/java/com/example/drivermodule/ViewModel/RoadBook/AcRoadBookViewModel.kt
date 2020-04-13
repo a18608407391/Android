@@ -95,7 +95,7 @@ class AcRoadBookViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
 
     var items = ObservableArrayList<ItemViewModel<AcRoadBookViewModel>>().apply {
         this.add(HotRoadItemModle(this@AcRoadBookViewModel, 0))
-        this.add(NearRoadItemModle(this@AcRoadBookViewModel, 1))
+        this.add(NearRoadItemModle(this@AcRoadBookViewModel, 1))//附近路书
     }
 
     var pagerSelectCommand = BindingCommand(object : BindingConsumer<Int> {

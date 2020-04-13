@@ -38,7 +38,9 @@ import org.cs.tec.library.Base.Utils.getScreenHeightPx
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
-
+/**
+ * 打开活动详情
+ * */
 @Route(path = RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL)
 class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, PartyClockDetailViewModel>(), AppBarLayout.OnOffsetChangedListener {
 
@@ -245,8 +247,10 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
 
             if (scrollY == 0) {
                 clock_iv_back.setImageResource(R.drawable.arrow_white);
+                ivClockDetailTrans.setImageResource(R.drawable.more_white)
             } else {
-                clock_iv_back.setImageResource(R.drawable.arrow_black);
+                clock_iv_back.setImageResource(R.drawable.arrow_black)
+                ivClockDetailTrans.setImageResource(R.drawable.more_black)
             }
             lastScrollY = y
         })

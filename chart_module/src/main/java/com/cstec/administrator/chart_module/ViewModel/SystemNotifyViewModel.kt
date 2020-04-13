@@ -83,11 +83,14 @@ class SystemNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
     }
 
     fun returnBack() {
-        if (!destroyList!!.contains("MsgActivity")) {
-            ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, systemNotifyListActivity.location).navigation()
-        } else {
+        Log.e("systemNotify","returnBack")
+//        if (!destroyList!!.contains("MsgActivity")) {
+//            ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC)
+//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, systemNotifyListActivity.location)
+//                    .navigation()
+//        } else {
             finish()
-        }
+//        }
     }
 
 

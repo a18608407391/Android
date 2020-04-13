@@ -26,7 +26,6 @@ class SocialFragment : BaseFragment<FragmentSocialBinding, SocialViewModel>() {
         return BR.social_model
     }
 
-
     override fun initData() {
         super.initData()
         social_viewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(mTabLayout))
