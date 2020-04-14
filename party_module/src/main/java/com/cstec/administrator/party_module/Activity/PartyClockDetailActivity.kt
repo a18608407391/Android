@@ -159,8 +159,9 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
         clock_toolbar.post {
             var height = clock_toolbar.height
             toolBarPositionY = height
+            var flag = Utils.isNavigationBarExist(this)
             var params = mPartyDetailClockViewPager.layoutParams
-            var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights() - Utils.getStatusBarHeight(context)
+            var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights()
             if (flag && values != 0) {
                 if (values == org.cs.tec.library.Base.Utils.getStatusBarHeight()) {
                     params.height = getScreenHeightPx() - height - mPartyDetailClockTabLayout.height + 1
@@ -231,9 +232,6 @@ class PartyClockDetailActivity : BaseActivity<ActivityPartyClockDetailBinding, P
                 } else {
                     y
                 }
-                Log.e("result", "h=" + h)
-                Log.e("result", "y=" + y)
-                Log.e("result", "mScrollY= " + mScrollY)
 //                Log.e("result", "mScrollY" + mScrollY)
 //                Log.e("result", "mScrollH" + h)
 //                if (mScrollY == 900) {

@@ -101,7 +101,7 @@ class PartyDetailActivty : BaseActivity<ActivityPartyDetailBinding, PartyDetailV
             var height = detail_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailViewPager.layoutParams
-            var flag = Utils.checkDeviceHasNavigationBar(context)
+            var flag = Utils.isNavigationBarExist(this)
             var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights()
             if (flag && values != 0) {
                 if (values == org.cs.tec.library.Base.Utils.getStatusBarHeight()) {

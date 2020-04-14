@@ -111,30 +111,35 @@ class PartySubjectDetailActivity : BaseActivity<ActivityPartyClockDetailBinding,
             var height = subject_toolbar.height
             toolBarPositionY = height
             var params = mPartyDetailSubjectViewPager.layoutParams
-            var flag = Utils.checkDeviceHasNavigationBar(context)
+            var flag = Utils.isNavigationBarExist(this)
             var values = getScreenHeightPx() - BaseApplication.getInstance().getScreenHights()
-//            Log.e("result", "values" + values)
-//            Log.e("result", "navigation" + getNavigationBarHeight(context) + flag)
-//            Log.e("result", "statusbar" + getStatusBarHeight())
-//            Log.e("result", "realHeight" + getScreenHeightPx())
-//            Log.e("result", "hight" + BaseApplication.getInstance().getScreenHights())
-//            Log.e("result", "toolbar" + height + "yPosition" + subject_toolbar.y)
-//            Log.e("result", "TabLayout" + mPartyDetailSubjectTabLayout.height)
-//            Log.e("result", "70DP=" + ConvertUtils.dp2px(70F))
-//            Log.e("result", "mPartyDetailSubjectTabLayout" + mPartyDetailSubjectTabLayout.y)
-//            getScreenRelatedInformation()
-//            getRealScreenRelatedInformation(this@PartySubjectDetailActivity)
+            Log.e("result", "values" + values)
+            Log.e("result", "navigation" + getNavigationBarHeight(context) + flag)
+            Log.e("result", "statusbar" + getStatusBarHeight())
+            Log.e("result", "realHeight" + getScreenHeightPx())
+            Log.e("result", "hight" + BaseApplication.getInstance().getScreenHights())
+            Log.e("result", "toolbar" + height + "yPosition" + subject_toolbar.y)
+            Log.e("result", "TabLayout" + mPartyDetailSubjectTabLayout.height)
+            Log.e("result", "70DP=" + ConvertUtils.dp2px(70F))
+            Log.e("result", "mPartyDetailSubjectTabLayout" + mPartyDetailSubjectTabLayout.y)
+            getScreenRelatedInformation()
+            getRealScreenRelatedInformation(this@PartySubjectDetailActivity)
             if (flag && values != 0) {
                 if (values == getStatusBarHeight()) {
+                    Log.e("result","执行这里3")
                     params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1
                 } else {
                     if (values > getNavigationBarHeight(this@PartySubjectDetailActivity) && values < getStatusBarHeight() + getNavigationBarHeight(context)) {
+                        Log.e("result","执行这里2")
                         params.height = BaseApplication.getInstance().getHightPixels - ConvertUtils.dp2pxValue(125F, this@PartySubjectDetailActivity)
                     } else {
+                        Log.e("result","执行这里1")
                         params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1 - values     //适配全面屏
                     }
                 }
             } else {
+
+                Log.e("result","执行这里")
                 params.height = getScreenHeightPx() - height - mPartyDetailSubjectTabLayout.height + 1
             }
             mPartyDetailSubjectViewPager.layoutParams = params
