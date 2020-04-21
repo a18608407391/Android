@@ -21,6 +21,9 @@ public class SystemTTS extends UtteranceProgressListener implements TTS, OnUtter
     private TextToSpeech textToSpeech; // 系统语音播报类
     private boolean isSuccess = true;
 
+
+
+
     public static SystemTTS getInstance(Context context) {
         if (singleton == null) {
             synchronized (SystemTTS.class) {
