@@ -9,7 +9,7 @@
 
         <variable
             name="child_road_book_model"
-            type="com.example.drivermodule.Component.SimpleRecycleComponent"></variable>
+            type="com.example.drivermodule.Component.SimpleItemRecycleComponent"></variable>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

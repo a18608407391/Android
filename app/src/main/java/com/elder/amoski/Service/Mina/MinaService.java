@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Binder;
 import android.os.Build;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -26,11 +27,19 @@ import com.iflytek.speech.UtilityConfig;
 public class MinaService extends Service {
 
     private ConnectionHandlerThread thread;
+    private LocalBinder mBinder = new LocalBinder();
+
+
+    public class LocalBinder extends Binder {
+        public MinaService getService() {
+            return MinaService.this;
+        }
+    }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
@@ -43,7 +52,7 @@ public class MinaService extends Service {
         if (android.os.Build.VERSION.SDK_INT >= 26) {
             createNotifyCation();
         }
-        Log.e("result","CREATE_MINA");
+        Log.e("result", "CREATE_MINA");
         if (intent != null && intent.getAction() != null) {
             String opition = intent.getAction();
             if (opition != null && opition.equalsIgnoreCase("on")) {
@@ -60,6 +69,19 @@ public class MinaService extends Service {
             }
         }
         return Service.START_STICKY;
+    }
+
+    public void start() {
+        thread = new ConnectionHandlerThread("mina", getApplicationContext());
+        thread.start();
+    }
+
+    public void stop() {
+        if (thread != null) {
+            thread.disConnection();
+            thread.interrupt();
+            thread = null;
+        }
     }
 
 

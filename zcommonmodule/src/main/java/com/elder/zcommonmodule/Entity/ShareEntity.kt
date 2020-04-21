@@ -29,9 +29,9 @@ class ShareEntity:Serializable {
 
     var userInfo = ObservableField<UserInfo>()
 
-    var shareIcon  :Bitmap ? = null
+    var shareIcon  :String ? = null
 
-    var secondBitmap :Bitmap ? = null
+    var secondBitmap :String ? = null
 
 
 }

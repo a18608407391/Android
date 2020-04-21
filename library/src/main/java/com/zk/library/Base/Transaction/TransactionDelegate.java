@@ -298,6 +298,9 @@ class TransactionDelegate {
      * Dispatch the pop-event. Priority of the top of the stack of Fragment
      */
     boolean dispatchBackPressedEvent(ISupportFragment activeFragment) {
+
+
+        Log.e("result","dispatchBackPressedEvent");
         if (activeFragment != null) {
             boolean result = activeFragment.onBackPressedSupport();
             if (result) {

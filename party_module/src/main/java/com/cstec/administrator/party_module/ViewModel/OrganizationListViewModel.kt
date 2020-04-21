@@ -18,7 +18,7 @@ import java.io.Serializable
 
 class OrganizationListViewModel : BaseViewModel(), HttpInteface.PartyOrganization, TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        activity.returnBack()
+        activity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -105,7 +105,7 @@ class OrganizationListViewModel : BaseViewModel(), HttpInteface.PartyOrganizatio
 
     private fun initData() {
         var map = HashMap<String, String>()
-        map["id"] = activity.id.toString()
+        map["id"] = activity.ids.toString()
         HttpRequest.instance.partyOrganization = this
         HttpRequest.instance.getPartyOrganization(map)
     }

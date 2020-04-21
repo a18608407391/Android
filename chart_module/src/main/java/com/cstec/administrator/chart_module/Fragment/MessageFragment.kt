@@ -16,6 +16,7 @@ import cn.jpush.im.android.api.model.UserInfo
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.amap.api.location.AMapLocation
 import com.cstec.administrator.chart_module.R
 import com.cstec.administrator.chart_module.ViewModel.MessageViewModel
 import com.cstec.administrator.chart_module.databinding.FragmentMessageBinding
@@ -63,6 +64,7 @@ class MessageFragment : CharBaseFragment<FragmentMessageBinding, MessageViewMode
     override fun initData() {
         super.initData()
         initView()
+        viewModel!!.aMapLocation = arguments!!.getParcelable("location")
         viewModel!!.inject(this)
     }
 
@@ -79,7 +81,27 @@ class MessageFragment : CharBaseFragment<FragmentMessageBinding, MessageViewMode
         Log.e("message", "onResume")
         viewModel?.initReceiver()
         viewModel!!.initConvListAdapter()
+    }
 
+    override fun onStart() {
+        super.onStart()
+        Log.e("message", "onStart")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("message", "onStop")
+    }
+
+    override fun onSupportVisible() {
+        super.onSupportVisible()
+        viewModel!!.initConvListAdapter()
+        Log.e("result", "onSupportVisible")
+    }
+
+    override fun onSupportInvisible() {
+        super.onSupportInvisible()
+        Log.e("result", "onSupportInvisible")
     }
 
     override fun onDestroy() {
@@ -92,7 +114,6 @@ class MessageFragment : CharBaseFragment<FragmentMessageBinding, MessageViewMode
         super.onPause()
         activity!!.unregisterReceiver(viewModel?.mReceiver)
     }
-
 
     private fun initView() {
         mHeader = layoutInflater.inflate(R.layout.conv_list_head_view, conv_list_view, false) as LinearLayout
@@ -235,4 +256,15 @@ class MessageFragment : CharBaseFragment<FragmentMessageBinding, MessageViewMode
         viewModel?.mListAdapter?.notifyDataSetChanged()
     }
 
+    private var WAIT_TIME = 2000L
+    private var TOUCH_TIME: Long = 0
+    override fun onBackPressedSupport(): Boolean {
+        if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
+            _mActivity!!.finish()
+        } else {
+            TOUCH_TIME = System.currentTimeMillis()
+            Toast.makeText(_mActivity, "再次点击退出App", Toast.LENGTH_SHORT).show()
+        }
+        return true
+    }
 }

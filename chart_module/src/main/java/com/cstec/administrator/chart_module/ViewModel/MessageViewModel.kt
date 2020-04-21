@@ -7,13 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.databinding.ObservableField
+import android.databinding.ViewDataBinding
 import android.net.ConnectivityManager
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
+import android.widget.Toast
 import cn.jpush.im.android.api.JMessageClient
 import cn.jpush.im.android.api.enums.ConversationType
 import cn.jpush.im.android.api.event.MessageReceiptStatusChangeEvent
@@ -41,6 +44,7 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.zk.library.Base.BaseApplication
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
@@ -104,18 +108,18 @@ class MessageViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnIt
         component.titleTextVisible.set(false)
         initConvListAdapter()
         initNet()
+        location = Location(aMapLocation!!.latitude, aMapLocation!!.longitude, System.currentTimeMillis().toString(), aMapLocation!!.speed, aMapLocation!!.altitude, aMapLocation!!.bearing, aMapLocation!!.city, aMapLocation!!.aoiName)
 
-        RxSubscriptions.add(RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
-            this.aMapLocation = it
-            location = Location(aMapLocation!!.latitude, aMapLocation!!.longitude, System.currentTimeMillis().toString(), aMapLocation!!.speed, aMapLocation!!.altitude, aMapLocation!!.bearing, aMapLocation!!.city, aMapLocation!!.aoiName)
-        })
+//        RxSubscriptions.add(RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
+//            this.aMapLocation = it
+//            location = Location(aMapLocation!!.latitude, aMapLocation!!.longitude, System.currentTimeMillis().toString(), aMapLocation!!.speed, aMapLocation!!.altitude, aMapLocation!!.bearing, aMapLocation!!.city, aMapLocation!!.aoiName)
+//        })
     }
 
     fun initNet() {//未读消息
         HttpRequest.instance.getMsgCount = this
         HttpRequest.instance.getMsgNotifyCount(HashMap())
     }
-
 
     fun initConvListAdapter() {
         forCurrent.clear()
@@ -187,27 +191,66 @@ class MessageViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnIt
         when (v?.id) {
             R.id.messageLlSys -> {
                 //跳转到系统通知界面
-                ARouter.getInstance()
-                        .build(RouterUtils.Chat_Module.SysNotify_AC)
-                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
-                        .navigation()
+//                ARouter.getInstance()
+//                        .build(RouterUtils.Chat_Module.SysNotify_AC)
+//                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+//                        .navigation()
+                if(location==null){
+                    Toast.makeText(messageFragment!!.activity,"定位信息异常！请重试",Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                startFragment(messageFragment!!.parentFragment!!, RouterUtils.Chat_Module.SysNotify_AC, bundle)
             }
             R.id.messageLlActive -> {
+                if(location==null){
+                    Toast.makeText(messageFragment!!.activity,"定位信息异常！请重试",Toast.LENGTH_SHORT).show()
+                    return
+                }
                 //跳转到活动列表界面
-                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, location)
+                startFragment(messageFragment!!.parentFragment!!, RouterUtils.Chat_Module.SysNotify_AC, bundle)
+//                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).navigation()
             }
             R.id.messageTvAt -> {//@我的
-                ARouter.getInstance()
-                        .build(RouterUtils.PrivateModuleConfig.Atme_AC)
-                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
-                        .navigation(messageFragment!!.activity, MSG_RETURN_REFRESH_REQUEST)
+                if(location==null){
+                    Toast.makeText(messageFragment!!.activity,"定位信息异常！请重试",Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                startFragment(messageFragment!!.parentFragment!!, RouterUtils.PrivateModuleConfig.Atme_AC, bundle, MSG_RETURN_REFRESH_REQUEST)
+
+//                ARouter.getInstance()
+//                        .build(RouterUtils.PrivateModuleConfig.Atme_AC)
+//                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+//                        .navigation(messageFragment!!.activity, MSG_RETURN_REFRESH_REQUEST)
             }
             R.id.messgaeTvCommand -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(messageFragment!!.activity, MSG_RETURN_REFRESH_REQUEST)
+                if(location==null){
+                    Toast.makeText(messageFragment!!.activity,"定位信息异常！请重试",Toast.LENGTH_SHORT).show()
+                    return
+                }
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                startFragment(messageFragment!!.parentFragment!!, RouterUtils.PrivateModuleConfig.COMMAND_AC, bundle, MSG_RETURN_REFRESH_REQUEST)
+
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(messageFragment!!.activity, MSG_RETURN_REFRESH_REQUEST)
             }
             R.id.messageTvGetLike -> {
+                if(location==null){
+                    Toast.makeText(messageFragment!!.activity,"定位信息异常！请重试",Toast.LENGTH_SHORT).show()
+                    return
+                }
                 var id = PreferenceUtils.getString(org.cs.tec.library.Base.Utils.context, USERID)
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(messageFragment!!.activity, MSG_RETURN_REFRESH_REQUEST)
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location)
+                bundle.putString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id)
+                startFragment(messageFragment!!.parentFragment!!, RouterUtils.SocialConfig.SOCIAL_GET_LIKE, bundle, MSG_RETURN_REFRESH_REQUEST)
+
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, location).navigation(messageFragment!!.activity, MSG_RETURN_REFRESH_REQUEST)
             }
         }
     }
@@ -243,7 +286,6 @@ class MessageViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnIt
 
             }
         }
-
     }
 
 
@@ -290,6 +332,7 @@ class MessageViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnIt
                             .withInt(RouterUtils.Chat_Module.Chat_AtAllId, mListAdapter!!.getatAllMsgId(conv)!!)
                             .withString(RouterUtils.Chat_Module.Chat_DRAFT, mListAdapter!!.getDraft(conv.id))
                             .navigation()
+
                 }
 
 //                intent.putExtra(JGApplication.GROUP_ID, groupId)
@@ -306,12 +349,22 @@ class MessageViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnIt
 //                intent.putExtra(JGApplication.DRAFT, getAdapter().getDraft(conv.id))
 
 
-                ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
-                        .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, conv.title)
-                        .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, targetId)
-                        .withString(RouterUtils.Chat_Module.Chat_App_Key, conv.targetAppKey)
-                        .withString(RouterUtils.Chat_Module.Chat_DRAFT, mListAdapter!!.getDraft(conv.id))
-                        .navigation()
+                var mes = messageFragment!!.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+                var fr = ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                var bundle = Bundle()
+                bundle.putString(RouterUtils.Chat_Module.Chat_CONV_TITLE, conv.title)
+                bundle.putString(RouterUtils.Chat_Module.Chat_TARGET_ID, targetId)
+                bundle.putString(RouterUtils.Chat_Module.Chat_App_Key, conv.targetAppKey)
+                bundle.putString(RouterUtils.Chat_Module.Chat_DRAFT, mListAdapter!!.getDraft(conv.id))
+                fr.arguments = bundle
+                mes.start(fr)
+//                ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
+//                        .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, conv.title)
+//                        .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, targetId)
+//                        .withString(RouterUtils.Chat_Module.Chat_App_Key, conv.targetAppKey)
+//                        .withString(RouterUtils.Chat_Module.Chat_DRAFT, mListAdapter!!.getDraft(conv.id))
+//                        .navigation()
+
             }
 
 

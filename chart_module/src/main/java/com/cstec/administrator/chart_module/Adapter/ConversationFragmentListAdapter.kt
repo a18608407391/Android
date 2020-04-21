@@ -8,7 +8,6 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
@@ -16,19 +15,14 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-
-import com.cstec.administrator.chart_module.View.ConversationListView
 import com.cstec.administrator.chart_module.View.SharePreferenceManager
-
 import java.lang.ref.WeakReference
 import java.util.ArrayList
 import java.util.Collections
 import java.util.HashMap
-
 import cn.jpush.im.android.api.JMessageClient
 import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback
 import cn.jpush.im.android.api.content.CustomContent
-import cn.jpush.im.android.api.content.MessageContent
 import cn.jpush.im.android.api.content.PromptContent
 import cn.jpush.im.android.api.content.TextContent
 import cn.jpush.im.android.api.enums.ContentType
@@ -37,14 +31,7 @@ import cn.jpush.im.android.api.enums.MessageDirect
 import cn.jpush.im.android.api.enums.MessageStatus
 import cn.jpush.im.android.api.model.Conversation
 import cn.jpush.im.android.api.model.GroupInfo
-import cn.jpush.im.android.api.model.Message
 import cn.jpush.im.android.api.model.UserInfo
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.RequestOptions
-import com.cstec.administrator.chart_module.Activity.MsgActivity
-import com.cstec.administrator.chart_module.Activity.pickImage.BitmapUtil
 import com.cstec.administrator.chart_module.Fragment.MessageFragment
 import com.cstec.administrator.chart_module.R
 import com.cstec.administrator.chart_module.Utils.CircleTransform
@@ -397,7 +384,6 @@ class ConversationFragmentListAdapter(private val mContext: Activity, private va
             mUserInfo = convItem.targetInfo as UserInfo
             if (mUserInfo != null) {
                 if (mUserInfo!!.avatar != null) {
-                    Log.e("result","当前聊天室图片链接" + getImageUrl(mUserInfo!!.getAvatar()))
                     Picasso.with(mContext).load(getImageUrl(mUserInfo!!.getAvatar())).transform(CircleTransform(mContext)).resize(ConvertUtils.dp2px(47.33f), ConvertUtils.dp2px(47.33f)).centerCrop().placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).into(headIcon)
 //                    var crop = CircleCrop()
 //                    var options = RequestOptions().transform(crop).placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.dp2px(47.33F), ConvertUtils.dp2px(47.33F))

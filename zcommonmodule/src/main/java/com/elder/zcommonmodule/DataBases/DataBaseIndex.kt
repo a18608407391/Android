@@ -155,6 +155,12 @@ class DataBaseIndex {
             const val NAVIGATION_TOTAL_DISTANCE = "navigation_distance"
             const val NAVIGATION_TOTAL_TIME = "navigation_time"
             const val ON_DESTROYSTATUS = "onDestroyStatus"
+
+
+            const val MAX_SPEED = "max_speed"
+            const val MAX_HEIGHT = "max_height"
+            const val UP_COUNT = "up_count"
+            const val UP_VALUE = "up_value"
         }
     }
 

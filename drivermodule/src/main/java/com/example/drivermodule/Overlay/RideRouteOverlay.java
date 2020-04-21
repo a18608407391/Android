@@ -13,8 +13,8 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.RidePath;
 import com.amap.api.services.route.RideStep;
-import com.example.drivermodule.AMapUtil;
 import com.example.drivermodule.R;
+import com.example.drivermodule.Utils.AMapUtil;
 
 /**
  * 骑行路线图层类。在高德地图API里，如果要显示步行路线规划，可以用此类来创建骑行路线图层。如不满足需求，也可以自己创建自定义的骑行路线图层。

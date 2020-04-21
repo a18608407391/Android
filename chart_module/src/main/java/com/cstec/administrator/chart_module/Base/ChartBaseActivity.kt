@@ -15,6 +15,7 @@ import com.cstec.administrator.chart_module.Base.Swipe.SwipeUtils
 import android.view.inputmethod.InputMethodManager
 import cn.jpush.im.android.api.JMessageClient
 import android.util.DisplayMetrics
+import android.view.KeyEvent
 import android.widget.TextView
 import android.widget.ImageButton
 import android.widget.Button
@@ -57,6 +58,10 @@ abstract class ChartBaseActivity<V : ViewDataBinding, VM : BaseViewModel> : Base
 
     override fun ExitLoginError(ex: Throwable) {
         Toast.makeText(context, "退出登录错误", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+        return super.dispatchKeyEvent(event)
     }
 
     protected var mWidth: Int = 0

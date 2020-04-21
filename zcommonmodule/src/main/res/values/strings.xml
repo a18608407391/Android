@@ -17,10 +17,13 @@
     <string name="register_error">注册失败，请重新输入</string>
     <string name="all_picture">所有相片</string>
     <string name="finish">完成</string>
+    <string name="password_login">密码登录</string>
     <string name="cancle">取消</string>
+    <string name="cong">从 </string>
     <string name="choice_birthday">选择出生年月日</string>
     <string name="male">男</string>
     <string name="atmse">\@我的</string>
+    <string name="arrive_end">到达终点 </string>
     <string name="remale">女</string>
     <string name="choice_gender">选择性别</string>
     <string name="choice_city">选择城市</string>

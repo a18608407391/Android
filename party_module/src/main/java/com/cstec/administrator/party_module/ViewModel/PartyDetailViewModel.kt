@@ -4,13 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
-import android.graphics.Bitmap
+import android.databinding.ViewDataBinding
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
@@ -26,39 +26,24 @@ import com.elder.zcommonmodule.Inteface.TitleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
-import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
 import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject
-import com.tencent.mm.opensdk.modelmsg.WXWebpageObject
-import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.zk.library.Base.BaseApplication
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
-import io.reactivex.functions.Function
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_party_clock_detail.*
-import kotlinx.android.synthetic.main.activity_party_detail.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Base.Utils.ioContext
 import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
-import java.text.SimpleDateFormat
-import java.util.concurrent.TimeUnit
 
 
 class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.PartyDetail, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, HttpInteface.PartyRestore_inf {
@@ -129,9 +114,9 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
                 }
             }
         }
-        if(entity.DISTANCE == null){
+        if (entity.DISTANCE == null) {
             dis.set("0")
-        }else{
+        } else {
             dis.set((entity.DISTANCE).toString())
         }
 
@@ -168,7 +153,16 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
     fun inject(partyDetailActivty: PartyDetailActivty) {
         this.partyDetailActivty = partyDetailActivty
         items.add(PartyDetailIntroduceItemModel().ItemViewModel(this@PartyDetailViewModel))
-        items.add(PartyDetailPhotoItemModel().setActivity(partyDetailActivty).setPartyId(partyDetailActivty!!.code).ItemViewModel(this@PartyDetailViewModel))
+        items.add(PartyDetailPhotoItemModel().setActivity(partyDetailActivty.activity!!).setPartyId(partyDetailActivty!!.code).ItemViewModel(this@PartyDetailViewModel))
+    }
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                partyDetailActivty._mActivity!!.onBackPressedSupport()
+            }
+        }
     }
 
     fun initData() {
@@ -190,7 +184,7 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
     fun onClick(view: View) {
         when (view.id) {
             R.id.detail_iv_back -> {
-                partyDetailActivty.returnBack()
+                partyDetailActivty._mActivity!!.onBackPressedSupport()
             }
             R.id.tel_phone -> {
                 var intent = Intent(Intent.ACTION_CALL)
@@ -208,18 +202,33 @@ class PartyDetailViewModel : BaseViewModel(), TitleClickListener, HttpInteface.P
             }
             R.id.right_now -> {
                 if (state.get() == 1) {
+
                     ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
                             .withString(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID, data.get()!!.ID.toString())
                             .withString(RouterUtils.PartyConfig.PARTY_CODE, data.get()!!.CODE.toString())
                             .withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 5).navigation()
+
                 }
             }
             R.id.detail_members_click -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, partyDetailActivty.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, partyDetailActivty.location)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE)
+                startFragment(partyDetailActivty, RouterUtils.PartyConfig.ENROLL, bundle)
             }
             R.id.ivPartyDetailTrans -> {
                 //分享
                 shareToWxSmallProgram(data.get()!!.CODE, data.get()!!.TITLE, data.get()!!.FILE_NAME_URL)
+            }
+            R.id.avatar_click -> {
+                if (!data.get()!!.NAME.isNullOrEmpty()) {
+                    var bundle = Bundle()
+                    bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, partyDetailActivty.location)
+                    bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, data.get()?.RIDING_OFFICER_MEMBER_ID)
+                    var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                    model.arguments = bundle
+                    partyDetailActivty.start(model)
+                }
             }
         }
     }

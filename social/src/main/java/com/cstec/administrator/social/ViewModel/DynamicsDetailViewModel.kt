@@ -6,16 +6,15 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.databinding.ViewDataBinding
 import android.graphics.Color
+import android.os.Bundle
 import com.cstec.administrator.social.Activity.DynamicsDetailActivity
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.zk.library.Base.BaseViewModel
-import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import com.cstec.administrator.social.Entity.CommentBean
 import com.cstec.administrator.social.ViewAdapter.CommentExpandAdapter
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_dynamicsdetail.*
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -26,21 +25,21 @@ import com.cstec.administrator.social.R
 import android.support.design.widget.BottomSheetBehavior
 import android.util.Log
 import android.widget.*
-import com.alibaba.android.arouter.facade.Postcard
-import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cstec.administrator.social.Activity.ReleaseDynamicsActivity
 import com.cstec.administrator.social.BR
 import com.cstec.administrator.social.Entity.GridClickEntity
+import com.elder.zcommonmodule.DETAIL_RESULT
 import com.elder.zcommonmodule.DataBases.queryUserInfo
 import com.elder.zcommonmodule.Entity.*
+import com.elder.zcommonmodule.RELEASE_RESULT
 import com.elder.zcommonmodule.Utils.DialogUtils
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
-import org.cs.tec.library.Base.Utils.uiContext
+import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.USERID
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
@@ -50,12 +49,20 @@ import java.util.*
 
 class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsCommentList, HttpInteface.SocialDynamicsComment, CommentExpandAdapter.ClickNetListener, CommentExpandAdapter.GroupClickNetListener, CommentExpandAdapter.GroupImgClickNetListener {
     override fun GroupImgNetWork(bean: CommentDetailBean?) {
-        ARouter.getInstance()
-                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, bean?.memberId)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 3)
-                .navigation()
+//        ARouter.getInstance()
+//                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, bean?.memberId)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 3)
+//                .navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, bean?.memberId)
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        dynamicsDetailActivity.start(model)
+
     }
 
 
@@ -104,7 +111,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
             commentCount.set(d!!.commentCount)
             commentText.set("全部评论(" + d!!.commentCount + ")")
             field.set(d)
-            Toast.makeText(dynamicsDetailActivity, "评论成功", Toast.LENGTH_SHORT).show()
+            Toast.makeText(dynamicsDetailActivity.activity, "评论成功", Toast.LENGTH_SHORT).show()
         }
         if (replyCommonDialog != null && replyCommonDialog!!.isShowing) {
             replyCommonDialog!!.dismiss()
@@ -125,8 +132,8 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
 
             }
             adapterEx.addTheReplyData(detailBean, replyPosition)
-            dynamicsDetailActivity.commonlist.expandGroup(replyPosition)
-            Toast.makeText(dynamicsDetailActivity, "回复成功", Toast.LENGTH_SHORT).show()
+            dynamicsDetailActivity.mCommentList!!.expandGroup(replyPosition)
+            Toast.makeText(dynamicsDetailActivity.activity, "回复成功", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -136,12 +143,20 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
 
     var spanclick = BindingCommand(object : BindingConsumer<DynamicsSimple> {
         override fun call(t: DynamicsSimple) {
-            ARouter.getInstance()
-                    .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
-                    .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t.memberId)
-                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 3)
-                    .navigation()
+
+            var bundle = Bundle()
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location)
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t.memberId)
+            var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+            model.arguments = bundle
+            dynamicsDetailActivity.start(model)
+//            ARouter.getInstance()
+//                    .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
+//                    .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t.memberId)
+//                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 3)
+//                    .navigation()
+
         }
     })
 
@@ -154,7 +169,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
             data = bean.data
             adapterEx.setLoadData(data)
             for (i in 0 until data!!.size) {
-                dynamicsDetailActivity.commonlist.expandGroup(i)
+                dynamicsDetailActivity.mCommentList!!.expandGroup(i)
             }
         }
         getChildList = false
@@ -169,7 +184,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
             t.urlList!!.forEach {
                 list.add(it)
             }
-            DialogUtils.createBigPicShow(dynamicsDetailActivity, list, t.childPosition)
+            DialogUtils.createBigPicShow(dynamicsDetailActivity.activity!!, list, t.childPosition)
         }
     })
 
@@ -184,95 +199,95 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
     var CurrentClickTime = 0L
 
 
-    fun toNav() {
-        if (dynamicsDetailActivity.navigationType == 1) {
-            if (destroyList!!.contains("GetLikeActivity")) {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else if (dynamicsDetailActivity.navigationType == 2) {
-            if (destroyList!!.contains("MyDynamicsActivity")) {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.MY_DYNAMIC_AC).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else if (dynamicsDetailActivity.navigationType == 3) {
-            if (destroyList!!.contains("DriverHomeActivity")) {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, dynamicsDetailActivity.detail!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else if (dynamicsDetailActivity.navigationType == 4) {
-            if (destroyList!!.contains("MyLikeActivity")) {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_LIKE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else if (dynamicsDetailActivity.navigationType == 5) {
-            if (destroyList!!.contains("CommandActivity")) {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else if (dynamicsDetailActivity.navigationType == 6) {
-            if (destroyList!!.contains("AtmeActivity")) {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.Atme_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else if (dynamicsDetailActivity.navigationType == 7) {
-            if (destroyList!!.contains("SystemNotifyListActivity")) {
-                ARouter.getInstance().build(RouterUtils.Chat_Module.SysNotify_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else if (dynamicsDetailActivity.navigationType == 8) {
-            if (destroyList!!.contains("MyRestoreActivity")) {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else {
-                finish()
-            }
-        } else {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(dynamicsDetailActivity, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
-        }
-    }
+//    fun toNav() {
+//        if (dynamicsDetailActivity.navigationType == 1) {
+//            if (destroyList!!.contains("GetLikeActivity")) {
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }
+//        } else if (dynamicsDetailActivity.navigationType == 2) {
+//            if (destroyList!!.contains("MyDynamicsActivity")) {
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.MY_DYNAMIC_AC).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }
+//        } else if (dynamicsDetailActivity.navigationType == 3) {
+//            if (destroyList!!.contains("DriverHomeActivity")) {
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, dynamicsDetailActivity.detail!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }
+//        } else if (dynamicsDetailActivity.navigationType == 4) {
+//            if (destroyList!!.contains("MyLikeActivity")) {
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_LIKE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }
+//        } else if (dynamicsDetailActivity.navigationType == 5) {
+//            if (destroyList!!.contains("CommandActivity")) {
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.COMMAND_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }
+//        } else if (dynamicsDetailActivity.navigationType == 6) {
+//            if (destroyList!!.contains("AtmeActivity")) {
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.Atme_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }
+//        } else if (dynamicsDetailActivity.navigationType == 7) {
+//            if (destroyList!!.contains("SystemNotifyListActivity")) {
+//                ARouter.getInstance().build(RouterUtils.Chat_Module.SysNotify_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }
+//        } else if (dynamicsDetailActivity.navigationType == 8) {
+//            if (destroyList!!.contains("MyRestoreActivity")) {
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_RESTORE_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            } else {
+//                finish()
+//            }vn
+//        } else {
+//            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(dynamicsDetailActivity, object : NavCallback() {
+//                override fun onArrival(postcard: Postcard?) {
+//                    finish()
+//                }
+//            })
+//        }
+//    }
 
     fun onClick(view: View) {
         if (System.currentTimeMillis() - CurrentClickTime < 1000) {
@@ -295,7 +310,6 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                 }
                 detialBean.collectionCount = count.toString()
                 collectionCount.set(count.toString())
-
                 field.set(detialBean)
                 var map = java.util.HashMap<String, String>()
                 map["dynamicId"] = field.get()!!.id!!
@@ -309,12 +323,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                 if (detialBean.isLike == 0) {
                     detialBean.isLike = 1
                     count++
-                    var entity = SocialHoriEntity()
-                    entity.memberImages = user!!.data?.headImgFile
-                    entity.memberId = Integer.valueOf(user!!.data?.id)
-                    entity.memberName = user!!.data?.name
-                    entity.createDate = detialBean.createDate
-                    detialBean.dynamicSpotFabulousList!!.add(entity)
+                    addBeanSpot()
                     like.set(1)
                 } else {
                     detialBean.isLike = 0
@@ -322,7 +331,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                     like.set(0)
                     removeBeanSpot()
                 }
-                initLinear(dynamicsDetailActivity.social_linear, detialBean)
+                initLinear(dynamicsDetailActivity.mLinear!!, detialBean)
                 detialBean.fabulousCount = count.toString()
                 field.set(detialBean)
                 likeCount.set(detialBean.fabulousCount)
@@ -346,19 +355,37 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                     Toast.makeText(context, "获取定位信息异常，请重试!", Toast.LENGTH_SHORT).show()
                     return
                 }
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName)).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, field.get()).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location)
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, field.get())
+                var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).navigation() as ReleaseDynamicsActivity
+                model.arguments = bundle
+                dynamicsDetailActivity.startForResult(model, RELEASE_RESULT)
+
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName)).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, field.get()).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
             }
             R.id.back_arrow -> {
-                toNav()
-                RxBus.default?.post(field.get()!!)
+//                toNav()
+//                RxBus.default?.post(field.get()!!)
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, field.get())
+                dynamicsDetailActivity.setFragmentResult(DETAIL_RESULT, bundle)
+                dynamicsDetailActivity!!._mActivity!!.onBackPressedSupport()
             }
             R.id.avatar_click -> {
-                ARouter.getInstance()
-                        .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
-                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, dynamicsDetailActivity.detail?.memberId)
-                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 3)
-                        .navigation()
+
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location)
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, dynamicsDetailActivity.detail?.memberId)
+                var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                model.arguments = bundle
+                dynamicsDetailActivity.start(model)
+//                ARouter.getInstance()
+//                        .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
+//                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, dynamicsDetailActivity.detail?.memberId)
+//                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 3)
+//                        .navigation()
             }
         }
     }
@@ -366,6 +393,15 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
 
     var commentText = ObservableField<String>("全部评论(0)")
 
+
+    fun addBeanSpot() {
+        var entity = SocialHoriEntity()
+        entity.memberImages = user!!.data?.headImgFile
+        entity.memberId = Integer.valueOf(user!!.data?.id)
+        entity.memberName = user!!.data?.name
+        entity.createDate = detialBean.createDate
+        detialBean.dynamicSpotFabulousList!!.add(entity)
+    }
 
     fun removeBeanSpot() {
         if (detialBean.dynamicSpotFabulousList.isNullOrEmpty()) {
@@ -397,7 +433,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
         var id = PreferenceUtils.getString(context, USERID)
         user = queryUserInfo(id)[0]
         initEx()
-        initLinear(dynamicsDetailActivity.social_linear, dynamicsDetailActivity.detail)
+        initLinear(dynamicsDetailActivity.mLinear!!, dynamicsDetailActivity.detail)
         likeCount.set(dynamicsDetailActivity.detail?.fabulousCount)
         field.set(dynamicsDetailActivity.detail)
         this.detialBean = dynamicsDetailActivity.detail!!
@@ -436,9 +472,17 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
             social_linear?.addView(binding.root)
         }
         social_linear?.setOnClickListener {
-            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_FOCUS_LIST)
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dynamicsDetailActivity.detail).navigation()
+            var bundle = Bundle()
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, dynamicsDetailActivity.location)
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dynamicsDetailActivity.detail)
+            var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_FOCUS_LIST).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+            model.arguments = bundle
+            dynamicsDetailActivity.start(model)
+
+//            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_FOCUS_LIST)
+//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(dynamicsDetailActivity.location?.latitude!!, dynamicsDetailActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, dynamicsDetailActivity.location?.aoiName!!, dynamicsDetailActivity.location!!.poiName))
+//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dynamicsDetailActivity.detail).navigation()
+
         }
         social_linear?.invalidate()
     }
@@ -449,17 +493,17 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
     var data: ArrayList<CommentDetailBean>? = null
     lateinit var adapterEx: CommentExpandAdapter
     private fun initEx() {
-        adapterEx = CommentExpandAdapter(dynamicsDetailActivity)
-        dynamicsDetailActivity.commonlist.setGroupIndicator(null)
-        dynamicsDetailActivity.commonlist.setAdapter(adapterEx)
+        adapterEx = CommentExpandAdapter(dynamicsDetailActivity.activity)
+        dynamicsDetailActivity.mCommentList!!.setGroupIndicator(null)
+        dynamicsDetailActivity.mCommentList!!.setAdapter(adapterEx)
         adapterEx.childNet = this
         adapterEx.groupNet = this
         adapterEx.groupImgNet = this
-        dynamicsDetailActivity.commonlist.setOnGroupClickListener { parent, v, groupPosition, id ->
+        dynamicsDetailActivity.mCommentList!!.setOnGroupClickListener { parent, v, groupPosition, id ->
             showReplyDialog(groupPosition, 0, 0)
             return@setOnGroupClickListener true
         }
-        dynamicsDetailActivity.commonlist.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
+        dynamicsDetailActivity.mCommentList!!.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
             if (data!!.get(groupPosition).dynamicCommentList.get(childPosition).id == -1) {
                 LoadMoreClickPosition = groupPosition
                 var map = HashMap<String, String>()
@@ -474,7 +518,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
             }
             return@setOnChildClickListener true
         }
-        dynamicsDetailActivity.commonlist.setOnGroupExpandListener {
+        dynamicsDetailActivity.mCommentList!!.setOnGroupExpandListener {
 
         }
 
@@ -493,8 +537,8 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
         this.replyPosition = position
         this.curType = i
         replyChildPosition = type
-        replyCommonDialog = BottomSheetDialog(dynamicsDetailActivity)
-        val commentView = LayoutInflater.from(dynamicsDetailActivity).inflate(R.layout.comment_dialog_layout, null)
+        replyCommonDialog = BottomSheetDialog(dynamicsDetailActivity.activity!!)
+        val commentView = LayoutInflater.from(dynamicsDetailActivity.activity).inflate(R.layout.comment_dialog_layout, null)
         val commentText = commentView.findViewById(R.id.dialog_comment_et) as EditText
         val bt_comment = commentView.findViewById(R.id.dialog_comment_bt) as Button
         replyChangeText = commentView.findViewById(R.id.change_word)
@@ -522,7 +566,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
                 HttpRequest.instance.getDynamicsCommon(map)
 
             } else {
-                Toast.makeText(dynamicsDetailActivity, "回复内容不能为空", Toast.LENGTH_SHORT).show()
+                Toast.makeText(dynamicsDetailActivity.activity, "回复内容不能为空", Toast.LENGTH_SHORT).show()
             }
         }
         commentText.addTextChangedListener(object : TextWatcher {
@@ -565,8 +609,8 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
     var commentChangeText: TextView? = null
 
     private fun showCommentDialog() {
-        commontDialog = BottomSheetDialog(dynamicsDetailActivity)
-        val commentView = LayoutInflater.from(dynamicsDetailActivity).inflate(R.layout.comment_dialog_layout, null)
+        commontDialog = BottomSheetDialog(dynamicsDetailActivity.activity!!)
+        val commentView = LayoutInflater.from(dynamicsDetailActivity.activity!!).inflate(R.layout.comment_dialog_layout, null)
         val commentText = commentView.findViewById<View>(R.id.dialog_comment_et) as EditText
         val bt_comment = commentView.findViewById<View>(R.id.dialog_comment_bt) as Button
 //        commentText.filters = arrayOf(NameLengthFilter(140))
@@ -592,7 +636,7 @@ class DynamicsDetailViewModel : BaseViewModel(), HttpInteface.SocialDynamicsComm
 
                 HttpRequest.instance.getDynamicsCommon(map)
             } else {
-                Toast.makeText(dynamicsDetailActivity, "评论内容不能为空", Toast.LENGTH_SHORT).show()
+                Toast.makeText(dynamicsDetailActivity.activity, "评论内容不能为空", Toast.LENGTH_SHORT).show()
             }
         }
         commentText.addTextChangedListener(object : TextWatcher {

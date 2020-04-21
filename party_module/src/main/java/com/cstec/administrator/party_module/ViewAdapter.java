@@ -29,6 +29,7 @@ import com.elder.zcommonmodule.ConfigKt;
 import com.elder.zcommonmodule.LocalUtilsKt;
 import com.elder.zcommonmodule.Widget.RichEditText.RichEditText;
 import com.elder.zcommonmodule.Widget.RichEditText.RichTextView;
+import com.github.mikephil.charting.formatter.IFillFormatter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -123,19 +124,67 @@ public class ViewAdapter {
 
     @BindingAdapter("setViewHeight")
     public static void setViewHeight(LinearLayout view, PartyDetailEntity.PartyDetailRoadListItem detailRoadListItem) {
+
+        TextView start = view.findViewById(R.id.startTime);
         View view1 = view.findViewById(R.id.mesure);
-        view.measure(0, 0);
-        if (detailRoadListItem.getItemtype() == 0) {
-            view1.setMinimumHeight(view.getMeasuredHeight());
-        } else if (detailRoadListItem.getItemtype() == 1) {
+        TextView point = view.findViewById(R.id.point_name);
+        TextView time_required = view.findViewById(R.id.time_required);
+        LinearLayout linearLayout = view.findViewById(R.id.img_layout);
+        ImageView img1 = view.findViewById(R.id.img1);
+        ImageView img2 = view.findViewById(R.id.img2);
+        TextView bottomAddress = view.findViewById(R.id.address_bottom);
+        start.setText(detailRoadListItem.getSTART_TIME());
+        point.setText(detailRoadListItem.getPATH_POINT_NAME());
+        time_required.setText(detailRoadListItem.getTIME_REQUIRED());
+        if (detailRoadListItem.getIMAGE1().size() == 0) {
+            linearLayout.setVisibility(View.GONE);
+        } else {
+            linearLayout.setVisibility(View.VISIBLE);
+            if (detailRoadListItem.getIMAGE1().size() == 1) {
+                LoadItemImge(img1, detailRoadListItem.getIMAGE1().get(0));
+                img2.setImageResource(R.drawable.trans_bg);
+            } else {
+                LoadItemImge(img1, detailRoadListItem.getIMAGE1().get(0));
+                LoadItemImge(img2, detailRoadListItem.getIMAGE1().get(1));
+            }
+        }
+        String tag = detailRoadListItem.getADDRESS() + detailRoadListItem.getPATH_POINT_NAME() + detailRoadListItem.getDISTANCE() + detailRoadListItem.getDESCRIBE();
+        initHtml(bottomAddress, detailRoadListItem.getADDRESS());
+        if (view1.getTag() == null && view.getTag() == null) {
+            view1.setTag(tag);
+            view.setTag(tag);
+            view.measure(0, 0);
             view1.setMinimumHeight(view.getMeasuredHeight() - ConvertUtils.Companion.dp2px(15F));
+        } else {
+            if (view1.getTag() != tag || view.getTag() != tag || view1.getTag() != view.getTag()) {
+                view.requestLayout();
+                view1.setMinimumHeight(0);
+                if (view.getTag() != view1.getTag()) {
+                    Log.e("Error", view.getTag().toString());
+                    Log.e("Error", "tag错乱");
+                }
+                view1.setTag(tag);
+                view.setTag(tag);
+
+                view.measure(0, 0);
+                view1.setMinimumHeight(view.getMeasuredHeight());
+            }
         }
     }
 
 
     @BindingAdapter("initHtml")
     public static void initHtml(TextView tv, String str) {
-        if (str != null) {
+        if (str == null) {
+            str = "";
+        }
+        if (tv.getTag() == null) {
+            tv.setTag(str);
+            tv.setText(Html.fromHtml(str));
+        } else {
+            if (tv.getTag() != str) {
+                tv.setTag(str);
+            }
             tv.setText(Html.fromHtml(str));
         }
     }
@@ -261,7 +310,6 @@ public class ViewAdapter {
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
-
     }
 
     @BindingAdapter("PartyHtmlText")
@@ -270,17 +318,13 @@ public class ViewAdapter {
             return;
         }
 
-        if (html.contains("\n")) {
-            html.replace("\n", "");
-        }
 
-        if (html.contains(".jpg")) {
 //            HtmlSpanner spanner = new HtmlSpanner();
 ////            spanner.registerHandler("img",new ImageHandler());
 //            Spannable spannable =  spanner.fromHtml(html);
 //            tv.setText(spannable);
 
-            tv.setHtml(html, new HtmlHttpImageGetter(tv, ConfigKt.Base_URL, true));
+        tv.setHtml(html, new HtmlHttpImageGetter(tv, ConfigKt.Base_URL, true));
 
 //            tv.setMovementMethod(LinkMovementMethodExt.getInstance(handler, ImageSpan.class));
 
@@ -290,9 +334,31 @@ public class ViewAdapter {
 //
 //                }
 //            }));
-        } else {
-            tv.setText(Html.fromHtml(html));
-        }
+//            tv.setText(Html.fromHtml(html));
+
+
+//        String head = "&lt;head&gt;" +
+//                "&lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\"&gt; " +
+//                "&lt;style&gt;html{padding:15px;} body{word-wrap:break-word;font-size:13px;padding:0px;margin:0px} p{padding:0px;margin:0px;font-size:13px;color:#222222;line-height:1.3;} img{padding:0px,margin:0px;max-width:100%; width:auto; height:auto;}&lt;/style&gt;" +
+//                "&lt;/head&gt;";
+//        String content = "&lt;html&gt;" + head + "&lt;body&gt;" + html + "&lt;/body&gt;&lt;/html&gt;";
+//            HtmlSpanner spanner = new HtmlSpanner();
+////            spanner.registerHandler("img",new ImageHandler());
+//            Spannable spannable =  spanner.fromHtml(html);
+//            tv.setText(spannable);
+
+//        tv.loadData(Html.fromHtml(content).toString(), "text/html", "UTF-8");
+//            tv.setHtml(html, new HtmlHttpImageGetter(tv, ConfigKt.Base_URL, true));
+
+//            tv.setMovementMethod(LinkMovementMethodExt.getInstance(handler, ImageSpan.class));
+
+//            tv.setText(Html.fromHtml(html, new URLImageParser(tv), new Html.TagHandler() {
+//                @Override
+//                public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+//
+//                }
+//            }));
+//            tv.setText(Html.fromHtml(html));
     }
 
 

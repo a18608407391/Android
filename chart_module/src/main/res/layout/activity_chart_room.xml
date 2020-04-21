@@ -31,22 +31,23 @@
                 <RelativeLayout
                     android:id="@+id/jmui_menu_title_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/d_60"
+                    android:layout_height="68.5dp"
                     android:background="@color/jmui_jpush_blue"
                     android:elevation="5dp">
 
                     <ImageButton
                         android:id="@+id/jmui_return_btn"
                         android:layout_width="@dimen/title_bar_height"
-                        android:layout_height="match_parent"
+                        android:layout_height="@dimen/d_50"
+                        android:layout_alignParentBottom="true"
                         android:background="@color/white"
                         android:src="@drawable/arrow_black" />
 
-
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
+                        android:layout_height="@dimen/d_50"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center_vertical"
                         android:layout_toRightOf="@id/jmui_return_btn"
                         android:orientation="horizontal">
 
@@ -74,8 +75,7 @@
                         android:layout_height="match_parent"
                         android:layout_alignParentRight="true"
                         android:background="@drawable/jmui_back_btn_bg"
-                        android:src="@drawable/jmui_chat_detail"
-                        android:visibility="gone" />
+                        android:src="@drawable/jmui_chat_detail" />
                 </RelativeLayout>
 
                 <FrameLayout

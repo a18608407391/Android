@@ -1,24 +1,22 @@
 package com.example.drivermodule.ItemModel
 
 import android.databinding.ObservableArrayList
-import android.util.Log
+import android.os.Bundle
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.REQUEST_LOAD_ROADBOOK
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.example.drivermodule.BR
-import com.example.drivermodule.Entity.RoadBook.HotBannerData
 import com.elder.zcommonmodule.Entity.HotData
 import com.example.drivermodule.Adapter.StrageAdapter
 import com.example.drivermodule.R
 import com.example.drivermodule.ViewModel.RoadBook.AcRoadBookViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.zk.library.Base.BaseViewModel
-import com.zk.library.Base.ItemViewModel
+import com.elder.zcommonmodule.Component.ItemViewModel
+import com.elder.zcommonmodule.Widget.RoadBook.HotBannerData
+import com.example.drivermodule.Fragment.RoadBookFirstActivity
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.activity_roadbook.*
-import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.binding.command.BindingCommand
@@ -58,7 +56,11 @@ class HotRoadItemModle : ItemViewModel<AcRoadBookViewModel>, HttpInteface.getRoa
 
 
     fun ItemClickCommand(date: HotData) {
-        ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, date).navigation(acRoadBookViewModel.roadHomeActivity, REQUEST_LOAD_ROADBOOK)
+//        ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, date).navigation(acRoadBookViewModel.roadHomeActivity.activity, REQUEST_LOAD_ROADBOOK)
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY,date)
+        acRoadBookViewModel.startFragment(acRoadBookViewModel.roadHomeActivity,RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY,bundle,REQUEST_LOAD_ROADBOOK)
+//        acRoadBookViewModel.roadHomeActivity._mActivity!!.startForResult((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).navigation() as RoadBookFirstActivity).setHotData(date),REQUEST_LOAD_ROADBOOK)
 
 //        ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY,date).navigation(acRoadBookViewModel.roadHomeActivity,REQUEST_LOAD_ROADBOOK)
 

@@ -83,7 +83,7 @@ class PlayerViewModel : BaseViewModel(), MediaPlayer.OnCompletionListener, Sport
             if (!file) {
                 cservice!!.setFilePath(uiDevice!!.id.get()!!)
                 ScreenUtil.setScreenService(cservice!!)
-                var mediaProjectionManager = playerActivity.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                var mediaProjectionManager = playerActivity.activity!!.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 if (mediaProjectionManager != null) {
                     val intent = mediaProjectionManager.createScreenCaptureIntent()
                     playerActivity.startActivityForResult(intent, REQUEST_SCREEN)
@@ -134,27 +134,27 @@ class PlayerViewModel : BaseViewModel(), MediaPlayer.OnCompletionListener, Sport
         var info = queryUserInfo(id)[0]
         name.set(info.data!!.name)
         player_avatar.set(getImageUrl(info.data?.headImgFile))
-        d = RxBus.default?.toObservableSticky(NomalPostStickyEven::class.java)?.subscribe {
-            if (it.type == 106) {
-                Observable.just(it).subscribeOn(Schedulers.io()).map(Function<NomalPostStickyEven, UpDataDriverEntitiy> {
-                    point = ArrayList()
-                    uiDevice = it.list as UIdeviceInfo
-                    var localFile = FileUtils.getStorageFile(uiDevice!!.id.get()!!)
-                    data = Gson().fromJson<UpDataDriverEntitiy>(localFile, UpDataDriverEntitiy::class.java)
-                    datas = data.locationArray!!
-                    datas?.forEach {
-                        point.add(LatLng(it.latitude, it.longitude))
-                    }
-                    return@Function data
-                }).observeOn(AndroidSchedulers.mainThread()).subscribe {
-                    onTime.set(ConvertUtils.formatTimeS(data.totalTime))
-                    onSpeed.set(DecimalFormat("0.0").format((data.mileage!! * 3.6 / data.totalTime)) + " KM/H")
-                    pre()
-                }
+//        d = RxBus.default?.toObservableSticky(NomalPostStickyEven::class.java)?.subscribe {
+//            if (it.type == 106) {
+        Observable.just("").subscribeOn(Schedulers.io()).map(Function<String, UpDataDriverEntitiy> {
+            point = ArrayList()
+            uiDevice = playerActivity.imgs
+            var localFile = FileUtils.getStorageFile(uiDevice!!.id.get()!!)
+            data = Gson().fromJson<UpDataDriverEntitiy>(localFile, UpDataDriverEntitiy::class.java)
+            datas = data.locationArray!!
+            datas?.forEach {
+                point.add(LatLng(it.latitude, it.longitude))
             }
+            return@Function data
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe {
+            onTime.set(ConvertUtils.formatTimeS(data.totalTime))
+            onSpeed.set(DecimalFormat("0.0").format((data.mileage!! * 3.6 / data.totalTime)) + " KM/H")
+            pre()
         }
-        RxSubscriptions.add(d)
-        playerActivity.bindService(Intent(playerActivity, ScreenRecordService::class.java), connect, Service.BIND_AUTO_CREATE)
+//            }
+//        }
+//        RxSubscriptions.add(d)
+        playerActivity.activity!!.bindService(Intent(playerActivity.activity, ScreenRecordService::class.java), connect, Service.BIND_AUTO_CREATE)
 // videoView.post(new Runnable() {
 //            @Override
 //            public void run() {
@@ -294,7 +294,7 @@ class PlayerViewModel : BaseViewModel(), MediaPlayer.OnCompletionListener, Sport
                 marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.select_point))
                 ObjectAnimator.ofFloat(playerActivity.scroll_view, "translationY", 0F, playerActivity.acse.y - playerActivity.scroll_view.y + ConvertUtils.dp2px(300f)).setDuration(1000).start()
                 delay(1000)
-                ScreenUtil.stopScreenRecord(playerActivity)
+                ScreenUtil.stopScreenRecord(playerActivity.activity)
 //                upload.set(true)
             }
         }
@@ -338,7 +338,7 @@ class PlayerViewModel : BaseViewModel(), MediaPlayer.OnCompletionListener, Sport
         when (view.id) {
             R.id.upload -> {
                 if (shareDialog == null) {
-                    shareDialog = DialogUtils.createShareDialog(playerActivity, "", "")
+                    shareDialog = DialogUtils.createShareDialog(playerActivity.activity!!, "", "")
                 }
                 shareDialog!!.show()
                 shareDialog?.findViewById<TextView>(R.id.share_frend)?.setOnClickListener {
@@ -374,7 +374,8 @@ class PlayerViewModel : BaseViewModel(), MediaPlayer.OnCompletionListener, Sport
                 }
             }
             R.id.player_back -> {
-                finish()
+//                finish()
+                playerActivity._mActivity!!.onBackPressedSupport()
             }
             R.id.player_start -> {
                 playerActivity.player_mapview.map.clear()

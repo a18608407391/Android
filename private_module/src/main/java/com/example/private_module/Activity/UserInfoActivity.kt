@@ -16,18 +16,20 @@ import com.elder.zcommonmodule.Entity.UserInfo
 import com.example.private_module.R
 import com.example.private_module.ViewModel.AcUserInfoViewModel
 import com.example.private_module.databinding.ActivityUserinfoBinding
-import com.zk.library.Base.BaseActivity
 import com.zk.library.Utils.RouterUtils
-import com.zk.library.Utils.StatusbarUtils
 import android.os.Build
 import android.util.Log
-import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.Utils.getRealPathFromUri
+import com.zk.library.Base.BaseFragment
 
 
 @Route(path = RouterUtils.PrivateModuleConfig.USER_INFO_EDIT)
-class UserInfoActivity : BaseActivity<ActivityUserinfoBinding, AcUserInfoViewModel>() {
+class UserInfoActivity : BaseFragment<ActivityUserinfoBinding, AcUserInfoViewModel>() {
+    override fun initContentView(): Int {
+        return R.layout.activity_userinfo
+    }
+
     @Autowired(name = RouterUtils.PrivateModuleConfig.USER_INFO)
     @JvmField
     var userInfo: UserInfo? = null
@@ -37,41 +39,37 @@ class UserInfoActivity : BaseActivity<ActivityUserinfoBinding, AcUserInfoViewMod
     override fun initVariableId(): Int {
         return BR.AcUserInfo_Model
     }
-
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
-        return R.layout.activity_userinfo
-    }
-
-    override fun doPressBack() {
-        super.doPressBack()
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-        finish()
-    }
-
-    override fun initViewModel(): AcUserInfoViewModel? {
-        return ViewModelProviders.of(this)[AcUserInfoViewModel::class.java]
-    }
+//
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
+//        return R.layout.activity_userinfo
+//    }
+//
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+//        finish()
+//    }
+//
+//    override fun initViewModel(): AcUserInfoViewModel? {
+//        return ViewModelProviders.of(this)[AcUserInfoViewModel::class.java]
+//    }
 
     override fun initData() {
         super.initData()
-        mViewModel?.inject(this)
+      userInfo = arguments!!.getSerializable(RouterUtils.PrivateModuleConfig.USER_INFO) as UserInfo?
+        viewModel?.inject(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == GET_NICKNAME) {
-            var nickname = data?.getStringExtra("nickname")
-            if(!nickname.isNullOrEmpty()){
-                mViewModel?.nickname?.set(nickname)
-            }
-        }
+
         if (requestCode == PICK_IMAGE_ACTIVITY_REQUEST_CODE) {
             //选择照片
             if (data != null) {
-                Log.e("result", mViewModel!!.iconUri.toString() + "当前3")
-                var u = getRealPathFromUri(this, data?.data!!)
+                Log.e("result", viewModel!!.iconUri.toString() + "当前3")
+                var u = getRealPathFromUri(activity!!, data?.data!!)
                 var path: Uri
                 if (Build.VERSION.SDK_INT >= 24) {
                     path = data?.data!!
@@ -79,23 +77,33 @@ class UserInfoActivity : BaseActivity<ActivityUserinfoBinding, AcUserInfoViewMod
                     u = "file://$u"
                     path = Uri.parse(u)
                 }
-                realPath = DialogUtils.startCrop(this, path, 300, 300)
+                realPath = DialogUtils.startCropFragment(this, path, 300, 300)
             }
         } else if (requestCode == REQUEST_CODE_CROP_IMAGE) {
             //照片裁剪回调
 
             if (realPath != null || !realPath?.isEmpty()!!) {
-                Log.e("result", mViewModel!!.iconUri.toString() + "当前1")
-                mViewModel?.avatars!!.set(realPath)
+                Log.e("result", viewModel!!.iconUri.toString() + "当前1")
+                viewModel?.avatars!!.set(realPath)
             }
         } else if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                if (mViewModel?.iconUri != null) {
-                    Log.e("result", mViewModel!!.iconUri.toString() + "当前2")
-                    realPath = DialogUtils.startCrop(this, mViewModel!!.iconUri!!, 300, 300)
+                if (viewModel?.iconUri != null) {
+                    Log.e("result", viewModel!!.iconUri.toString() + "当前2")
+                    realPath = DialogUtils.startCropFragment(this, viewModel!!.iconUri!!, 300, 300)
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onFragmentResult(requestCode: Int, resultCode: Int, data: Bundle?) {
+        super.onFragmentResult(requestCode, resultCode, data)
+        if (requestCode == GET_NICKNAME) {
+            var nickname = data?.getString("nickname")
+            if (!nickname.isNullOrEmpty()) {
+                viewModel?.nickname?.set(nickname)
+            }
+        }
     }
 }

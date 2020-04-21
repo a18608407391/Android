@@ -2,6 +2,8 @@ package com.example.private_module.ViewModel.NewVession
 
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -23,6 +25,7 @@ import com.example.private_module.BR
 import com.example.private_module.R
 import com.google.gson.Gson
 import com.zk.library.Base.AppManager
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_myfans.*
@@ -41,7 +44,7 @@ import org.cs.tec.library.binding.command.BindingConsumer
 class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleComponent.titleComponentCallBack, FansItemClick, HttpInteface.SocialDynamicsFocus, SwipeRefreshLayout.OnRefreshListener, DoubleClickListener {
     override fun onItemClick(en: Any) {
         var entity = en as FansEntity.FansBean
-        var dialog = DialogUtils.createNomalDialog(myFocusActivity, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
+        var dialog = DialogUtils.createNomalDialog(myFocusActivity.activity!!, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
         dialog.setOnBtnClickL(OnBtnClickL {
             dialog.dismiss()
         }, OnBtnClickL {
@@ -57,13 +60,23 @@ class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleCo
 
     override fun onImgClick(en: Any) {
         var entity = en as FansEntity.FansBean
-        ARouter.getInstance()
-                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(myFocusActivity.location?.latitude!!, myFocusActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, myFocusActivity.location?.aoiName!!, myFocusActivity.location!!.poiName))
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.fansMemberId)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 6)
-                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                .navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, myFocusActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID,  entity.fansMemberId)
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        myFocusActivity.start(model)
+
+//
+//        ARouter.getInstance()
+//                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(myFocusActivity.location?.latitude!!, myFocusActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, myFocusActivity.location?.aoiName!!, myFocusActivity.location!!.poiName))
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.fansMemberId)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 6)
+//                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+//                .navigation()
+
+
     }
 
     override fun onRefresh() {
@@ -73,7 +86,7 @@ class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleCo
 
         CoroutineScope(uiContext).launch {
             delay(10000)
-            myFocusActivity.focus_swipe.isRefreshing = false
+            myFocusActivity.swp!!.isRefreshing = false
         }
     }
 
@@ -88,7 +101,7 @@ class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleCo
 
     var cur: FansEntity.FansBean? = null
     override fun FansClick(entity: FansEntity.FansBean) {
-        var dialog = DialogUtils.createNomalDialog(myFocusActivity, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
+        var dialog = DialogUtils.createNomalDialog(myFocusActivity.activity!!, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
         dialog.setOnBtnClickL(OnBtnClickL {
             dialog.dismiss()
         }, OnBtnClickL {
@@ -103,27 +116,28 @@ class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleCo
     }
 
     override fun onComponentClick(view: View) {
-        if (myFocusActivity.type == 1) {
-            if (destroyList!!.contains("DriverHomeActivity")) {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, myFocusActivity.id)
-                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, myFocusActivity.location)
-                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
-                        .navigation(myFocusActivity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-            } else {
-                finish()
-            }
-        } else {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(myFocusActivity, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
-        }
+        myFocusActivity._mActivity!!.onBackPressedSupport()
+//        if (myFocusActivity.type == 1) {
+//            if (destroyList!!.contains("DriverHomeActivity")) {
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, myFocusActivity.id)
+//                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, myFocusActivity.location)
+//                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
+//                        .navigation(myFocusActivity.activity!!, object : NavCallback() {
+//                            override fun onArrival(postcard: Postcard?) {
+//                                finish()
+//                            }
+//                        })
+//            } else {
+//                finish()
+//            }
+//        } else {
+//            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(myFocusActivity.activity!!, object : NavCallback() {
+//                override fun onArrival(postcard: Postcard?) {
+//                    finish()
+//                }
+//            })
+//        }
     }
 
     override fun onComponentFinish(view: View) {
@@ -139,7 +153,7 @@ class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleCo
         fans.data!!.forEach {
             items.add(it)
         }
-        myFocusActivity.focus_swipe.isRefreshing = false
+        myFocusActivity.swp!!.isRefreshing = false
     }
 
     override fun ResultPrivateFocusError(ex: Throwable) {
@@ -171,7 +185,6 @@ class MyFocusViewModel : BaseViewModel(), HttpInteface.PrivateFocusList, TitleCo
 
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-            Log.e("result", "加载更多" + t)
             if (t <lenth*pageSize) {
                 return
             }else{

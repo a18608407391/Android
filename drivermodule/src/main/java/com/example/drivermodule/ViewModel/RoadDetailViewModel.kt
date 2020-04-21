@@ -4,6 +4,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -18,6 +19,7 @@ import com.amap.api.services.geocoder.RegeocodeQuery
 import com.amap.api.services.geocoder.RegeocodeResult
 import com.amap.api.services.road.Road
 import com.elder.zcommonmodule.Component.TitleComponent
+import com.elder.zcommonmodule.ROAD_DETAIL_RETURN_VALUE
 import com.example.drivermodule.Activity.RoadDetailActivity
 import com.example.drivermodule.BR
 import com.example.drivermodule.Entity.RoadDetailEntity
@@ -44,7 +46,7 @@ import java.util.ArrayList
 
 class RoadDetailViewModel : BaseViewModel(), GeocodeSearch.OnGeocodeSearchListener, TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        finish()
+        roadDetailActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -62,7 +64,7 @@ class RoadDetailViewModel : BaseViewModel(), GeocodeSearch.OnGeocodeSearchListen
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun inject(roadDetailActivity: RoadDetailActivity) {
         this.roadDetailActivity = roadDetailActivity
-        var geocoderSearch = GeocodeSearch(roadDetailActivity)
+        var geocoderSearch = GeocodeSearch(roadDetailActivity.activity)
         component.title.set(getString(R.string.road_detail))
         component.arrowVisible.set(false)
         component.rightText.set("")
@@ -188,8 +190,15 @@ class RoadDetailViewModel : BaseViewModel(), GeocodeSearch.OnGeocodeSearchListen
     var distance = ObservableField<String>()
 
     fun onClick(view: View) {
-        RxBus.default?.post("startNavigation")
-        finish()
+//        RxBus.default?.post("startNavigation")
+//        finish()
+
+        var bundle = Bundle()
+        bundle.putInt("navigation", 1)
+        roadDetailActivity.setFragmentResult(ROAD_DETAIL_RETURN_VALUE, bundle)
+        roadDetailActivity._mActivity!!.onBackPressedSupport()
     }
+
+
 
 }

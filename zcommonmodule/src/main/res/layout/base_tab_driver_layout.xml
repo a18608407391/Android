@@ -13,7 +13,7 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d_44"
+        android:layout_height="@dimen/d_70"
         android:background="@color/white">
 
         <ImageView

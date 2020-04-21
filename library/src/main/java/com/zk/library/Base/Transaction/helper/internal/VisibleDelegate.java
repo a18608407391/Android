@@ -126,6 +126,9 @@ public class VisibleDelegate {
     }
 
     private void dispatchChildOnFragmentShownWhenNotResumed() {
+        if (!mFragment.isAdded()) {
+            return;
+        }
         FragmentManager fragmentManager = mFragment.getChildFragmentManager();
         List<Fragment> childFragments = FragmentationMagician.getActiveFragments(fragmentManager);
         if (childFragments != null) {

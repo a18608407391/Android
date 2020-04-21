@@ -6,11 +6,10 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.provider.MediaStore
+import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
@@ -26,18 +25,15 @@ import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
-import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
 import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject
-import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.activity_party_clock_detail.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.context
@@ -120,9 +116,20 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
         var sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         var start = sdf.parse(entity.ACTIVITY_START).time
         var stop = sdf.parse(entity.ACTIVITY_STOP).time
-        var m = (stop - start) / 1000 / 3600
-        day.set(m.toString())
-        Log.e("result", "时间" + m)
+//        if(start){
+//
+//        }
+
+        if (start < System.currentTimeMillis()) {
+            //活动还没开始
+            day.set(entity.DAY)
+        } else if (stop < System.currentTimeMillis()) {
+            day.set("0")
+        } else {
+            var m = (stop - System.currentTimeMillis()) / 1000 / 3600
+            day.set(m.toString())
+        }
+
         if (party.mPartyDetailClockViewPager.currentItem == 0) {
             var t = items[0] as PartyDetailIntroduceItemModel
             t.initDataClock()
@@ -146,10 +153,17 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
     fun inject(partyClockDetailActivity: PartyClockDetailActivity) {
         this.party = partyClockDetailActivity
         items.add(PartyDetailIntroduceItemModel().ItemViewModel(this@PartyClockDetailViewModel))
-        items.add(PartyDetailPhotoItemModel().setActivity(partyClockDetailActivity).setPartyId(party.code).ItemViewModel(this@PartyClockDetailViewModel))
+        items.add(PartyDetailPhotoItemModel().setActivity(partyClockDetailActivity.activity!!).setPartyId(party.code).ItemViewModel(this@PartyClockDetailViewModel))
         items.add(PartyDetailRankingItemModel().setCode(party.code).ItemViewModel(this@PartyClockDetailViewModel))
     }
-
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                party._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
     var collection = ObservableField(0)
 
     var visible = ObservableField<Boolean>(false)
@@ -206,7 +220,8 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
     fun onClick(view: View) {
         when (view.id) {
             R.id.clock_iv_back -> {
-                party.returnBack()
+                party._mActivity!!.onBackPressedSupport()
+//                party.returnBack()
             }
             R.id.tel_phone -> {
                 var intent = Intent(Intent.ACTION_CALL)
@@ -224,6 +239,7 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
             }
             R.id.right_now -> {
                 if (state.get() == 1) {
+
                     ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC)
                             .withString(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_ID, data.get()!!.ID.toString())
                             .withString(RouterUtils.PartyConfig.PARTY_CODE, data.get()!!.CODE.toString())
@@ -231,10 +247,17 @@ class PartyClockDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Tab
                 }
             }
             R.id.members_click -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, party.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, party.location)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE)
+                startFragment(party, RouterUtils.PartyConfig.ENROLL, bundle)
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, party.location).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE).navigation()
             }
             R.id.sponsor_click -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ORGANIZATION).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID).navigation()
+                var bundle = Bundle()
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID)
+                startFragment(party , RouterUtils.PartyConfig.ORGANIZATION, bundle)
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.ORGANIZATION).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID).navigation()
             }
             R.id.ivClockDetailTrans -> {
 

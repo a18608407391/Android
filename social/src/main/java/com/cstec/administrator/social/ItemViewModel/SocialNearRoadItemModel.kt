@@ -1,6 +1,8 @@
 package com.cstec.administrator.social.ItemViewModel
 
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.util.Log
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.maps.AMapUtils
@@ -15,6 +17,8 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zk.library.Base.BaseFragment
+import com.zk.library.Base.BaseViewModel
 import com.zk.library.Base.ItemViewModel
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.ItemBinding
@@ -67,11 +71,11 @@ class SocialNearRoadItemModel : ItemViewModel<SocialViewModel>, HttpInteface.get
     }
 
     override fun getRoadBookSuccess(it: String) {
-        Log.e(this.javaClass.name,"$it")
+        Log.e(this.javaClass.name, "$it")
         socialViewModel.socialFragment.dismissProgressDialog()
         socialViewModel.refreshLayout.finishRefresh(true)
         var list = Gson().fromJson<ArrayList<HotData>>(it, object : TypeToken<ArrayList<HotData>>() {}.type)
-        Log.e(this.javaClass.name,"$list")
+        Log.e(this.javaClass.name, "$list")
         if (list.isNullOrEmpty()) {
             return
         }
@@ -100,11 +104,18 @@ class SocialNearRoadItemModel : ItemViewModel<SocialViewModel>, HttpInteface.get
     }
 
     fun ItemClickCommand(data: HotData) {
-        ARouter.getInstance()
-                .build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY)
-                .withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data)
-                .withString("type", "discover2RoadBook")
-                .navigation(socialViewModel.socialFragment.activity, REQUEST_DISCOVER_LOAD_ROADBOOK)
+
+        var fr = socialViewModel?.socialFragment.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+        var enter = ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data)
+        enter.arguments = bundle
+        fr.startForResult(enter, REQUEST_LOAD_ROADBOOK)
+//        ARouter.getInstance()
+//                .build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY)
+//                .withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data)
+//                .withString("type", "discover2RoadBook")
+//                .navigation(socialViewModel.socialFragment.activity, REQUEST_DISCOVER_LOAD_ROADBOOK)
     }
 
 }

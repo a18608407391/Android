@@ -209,6 +209,10 @@ class AmoskiDataBase(mContext: Context = context) : ManagedSQLiteOpenHelper(mCon
             DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_TIME + " INTEGER," +             //是否是新设备
             DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_DISTANCE + " REAL," +             //是否是新设备
             DataBaseIndex.DriverContinue.START_POINT + " BLOB," +             //是否是新设备
+
+
+
+
             DataBaseIndex.DriverContinue.NAVIGATION_END_POINT + " VARCHAR(255))"
 
     var location = "CREATE TABLE " + LOCATION_TABLE + "(_id integer primary KEY AUTOINCREMENT," +
@@ -332,6 +336,12 @@ class AmoskiDataBase(mContext: Context = context) : ManagedSQLiteOpenHelper(mCon
         valuse.put(DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_DISTANCE, status.navigationDistance)
 
         valuse.put(DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_TIME, status.navigationTime)
+
+
+        valuse.put(DataBaseIndex.DriverContinue.MAX_HEIGHT ,status.maxHeight)
+        valuse.put(DataBaseIndex.DriverContinue.MAX_SPEED,status.maxSpeed)
+        valuse.put(DataBaseIndex.DriverContinue.UP_COUNT,status.UpCount)
+        valuse.put(DataBaseIndex.DriverContinue.UP_VALUE,status.UpValue)
         return valuse
     }
 

@@ -5,58 +5,11 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application>
-        <activity
-            android:name=".Activity.MapActivity"
-            android:launchMode="singleInstance"
-            android:theme="@style/ActivityTheme"></activity>
-        <activity android:name="com.amap.api.maps.offlinemap.OfflineMapActivity" />
-        <activity
-            android:name=".Activity.SearchActivity"
-            android:screenOrientation="portrait"></activity>
-
-        <activity
-            android:name=".Activity.RoadDetailActivity"
-            android:screenOrientation="portrait"></activity>
-
-        <activity
-            android:name=".Activity.ShareDriverActivity"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".Activity.Team.DeleteActivity"></activity>
-
-        <activity
-            android:name=".Activity.NavigationActivity"
-            android:launchMode="singleInstance"></activity>
-
-        <activity android:name=".Activity.Team.TeamerPassActivity"></activity>
-
-        <activity
-            android:name=".Activity.SmoothActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".Activity.CountDownActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
-
-        <activity android:name=".Activity.Team.CreateTeamActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
-
-        <activity android:name=".Activity.Team.TeamManagerActivity"></activity>
-
-        <activity android:name=".Activity.Team.TeamSettingActivity"></activity>
-
-        <activity android:name=".Activity.DriverSettingActivity"></activity>
-
-        <activity android:name=".Activity.Team.TeamChangeNameActivity"></activity>
-
-        <activity android:name=".Activity.RoadHomeActivity"></activity>
 
         <activity android:name=".Activity.RoadWebActivity"></activity>
 
-        <activity android:name=".Activity.RoadBookSearchActivity"></activity>
-        <activity android:name=".Activity.MyRoadBookActivity"></activity>
-
-        <activity android:name=".Activity.RoadBookFirstActivity"></activity>
+        <activity android:name=".Activity.NavigationActivity"
+            android:launchMode="singleInstance"></activity>
     </application>
 
 

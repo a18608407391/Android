@@ -6,7 +6,6 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.view.animation.LinearInterpolator;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -18,16 +17,12 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
-import com.amap.api.maps.model.animation.AlphaAnimation;
-import com.amap.api.maps.model.animation.Animation;
-import com.amap.api.maps.model.animation.AnimationSet;
-import com.amap.api.maps.model.animation.ScaleAnimation;
 import com.example.drivermodule.R;
 
 public class RouteOverlay {
     protected List<Marker> stationMarkers = new ArrayList<Marker>();
     protected List<Polyline> allPolyLines = new ArrayList<Polyline>();
-    protected Marker startMarker;
+    public Marker startMarker;
     public Marker endMarker;
     protected LatLng startPoint;
     protected LatLng endPoint;
@@ -227,7 +222,9 @@ public class RouteOverlay {
     protected int getDriveColor() {
         return Color.parseColor("#62B297");
     }
-
+    protected BitmapDescriptor getDes() {
+        return BitmapDescriptorFactory.fromResource(R.drawable.custtexture_green);
+    }
     // protected int getShowRouteZoom() {
     // return 15;
     // }

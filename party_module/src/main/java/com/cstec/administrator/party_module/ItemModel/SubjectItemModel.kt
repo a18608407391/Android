@@ -2,6 +2,7 @@ package com.cstec.administrator.party_module.ItemModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.os.Bundle
 import android.util.Log
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.*
@@ -34,11 +35,18 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
 
     override fun onSubjectItemClick(entity: SubjectEntity) {
 
+//        var model = viewModel as SubjectPartyViewModel
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
         var model = viewModel as SubjectPartyViewModel
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
-
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                model.subject.location)
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, model.city.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE)
+        model.startFragment(model.subject, RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
     }
 
     override fun PartySubjectSucccess(it: String) {
@@ -53,7 +61,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
                 if (item.DISTANCE == null) {
                     item.DISTANCE = "0"
                 }
-                item.ACTIVITY_START = start + "至" + stop + " 距离" + item.SQRTVALUE + "km"
+                item.ACTIVITY_START = start + "至" + stop + " \n距离" + item.SQRTVALUE + "km"
                 if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
                     item.TICKET_PRICE = "免费"
                 } else {
@@ -74,8 +82,11 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
                         }
                     }
                 }
+                Log.e("result","当前title"+item.TITLE)
                 items.add(item)
             }
+
+
         }
         if (!model.onCreate) {
             getUnRead()
@@ -153,7 +164,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
     var cur = 0L
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-            Log.e("result", "加载更多" + t)
+
             var model = viewModel as SubjectPartyViewModel
             if (!model.onCreate) {
                 return
@@ -162,6 +173,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
                 if (t < start * pageSize) {
                     return
                 } else {
+                    Log.e("result", "加载更多" + t)
                     start++
                     load(false)
                 }

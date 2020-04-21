@@ -13,40 +13,47 @@ import com.elder.logrecodemodule.BR
 import com.elder.logrecodemodule.R
 import com.elder.logrecodemodule.ViewModel.PlayerViewModel
 import com.elder.logrecodemodule.databinding.ActivityPlayerBinding
+import com.elder.zcommonmodule.Entity.UIdeviceInfo
 import com.elder.zcommonmodule.Service.Screen.ScreenUtil
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
+import com.zk.library.Base.Transaction.ISupportFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_player.*
 import org.cs.tec.library.Bus.RxSubscriptions
 
 
-
-
-
 @Route(path = RouterUtils.LogRecodeConfig.PLAYER)
-class PlayerActivity : BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
+class PlayerActivity : BaseFragment<ActivityPlayerBinding, PlayerViewModel>() {
+    override fun initContentView(): Int {
+        return R.layout.activity_player
+    }
+
     override fun initVariableId(): Int {
         return BR.player
     }
 
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, false, 0x00000000)
-        return R.layout.activity_player
-    }
 
-    override fun initViewModel(): PlayerViewModel? {
-        return ViewModelProviders.of(this).get(PlayerViewModel::class.java)
-    }
+    var imgs: UIdeviceInfo? = null
+
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, false, 0x00000000)
+//        return R.layout.activity_player
+//    }
+
+//    override fun initViewModel(): PlayerViewModel? {
+//        return ViewModelProviders.of(this).get(PlayerViewModel::class.java)
+//    }
 
     override fun initData() {
         super.initData()
-        mViewModel?.inject(this)
+        viewModel?.inject(this)
     }
 
-    override fun setMap(savedInstanceState: Bundle?) {
-        super.setMap(savedInstanceState)
+    override fun initMap(savedInstanceState: Bundle?) {
+        super.initMap(savedInstanceState)
         player_mapview.onCreate(savedInstanceState)
         player_mapview.map.reloadMap()
         player_mapview.map.isTrafficEnabled = false
@@ -56,9 +63,19 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
         player_mapview.map.setMapCustomEnable(true)
         player_mapview.map.mapType = AMap.MAP_TYPE_SATELLITE
     }
+//    override fun setMap(savedInstanceState: Bundle?) {
+//        super.setMap(savedInstanceState)
 
-    @SuppressLint("MissingSuperCall")
-    override fun onSaveInstanceState(outState: Bundle?) {
+//    }
+
+//    @SuppressLint("MissingSuperCall")
+//    override fun onSaveInstanceState(outState: Bundle?) {
+//        player_mapview.onSaveInstanceState(outState)
+//    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         player_mapview.onSaveInstanceState(outState)
     }
 
@@ -69,12 +86,14 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(mViewModel?.connect!=null){
-            this.unbindService(mViewModel?.connect)
+        if (viewModel?.connect != null) {
+            this.activity!!.unbindService(viewModel?.connect)
         }
-        player_mapview.onDestroy()
-        if (mViewModel?.d != null) {
-            RxSubscriptions.remove(mViewModel?.d)
+        if(player_mapview!=null){
+            player_mapview.onDestroy()
+        }
+        if (viewModel?.d != null) {
+            RxSubscriptions.remove(viewModel?.d)
         }
     }
 
@@ -83,21 +102,27 @@ class PlayerActivity : BaseActivity<ActivityPlayerBinding, PlayerViewModel>() {
         player_mapview.onResume()
     }
 
-    override fun doPressBack() {
-        super.doPressBack()
-        finish()
-    }
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        finish()
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == mViewModel?.REQUEST_SCREEN) {
+        if (requestCode == viewModel?.REQUEST_SCREEN) {
             if (resultCode == Activity.RESULT_OK) {
                 ScreenUtil.setUpData(resultCode, data)
-                mViewModel?.start()
+                viewModel?.start()
 
             } else {
                 Log.e("result", "请求失败")
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun setValue(imgs: UIdeviceInfo): ISupportFragment {
+        this.imgs = imgs
+
+        return this@PlayerActivity
     }
 }

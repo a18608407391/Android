@@ -2,12 +2,15 @@ package com.example.private_module.ViewModel.NewVession
 
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Component.TitleComponent
+import com.elder.zcommonmodule.DETAIL_RESULT
 import com.elder.zcommonmodule.Entity.*
 import com.elder.zcommonmodule.Inteface.DoubleClickListener
 import com.elder.zcommonmodule.Inteface.SimpleClickListener
@@ -18,6 +21,7 @@ import com.example.private_module.BR
 import com.example.private_module.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_myfans.*
@@ -61,18 +65,36 @@ class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, Htt
             cur = System.currentTimeMillis()
         }
         var entity = entity as AtmeData
+
         Log.e("result", "当前数据" + Gson().toJson(entity))
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.MEMBER_ID)
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location)
-                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID,  entity.MEMBER_ID)
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        atmeActivity.start(model)
+
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.MEMBER_ID)
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location)
+//                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+
+
     }
 
     override fun ResultSDListSuccess(it: String) {
         atmeActivity.dismissProgressDialog()
+        atmeActivity.swp!!.isRefreshing = false
         var dyna = Gson().fromJson<DynamicsCategoryEntity>(it, DynamicsCategoryEntity::class.java)
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 6).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION,atmeActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0])
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        atmeActivity.startForResult(model, DETAIL_RESULT)
+
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, atmeActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 6).navigation()
     }
 
     override fun ResultSDListError(ex: Throwable) {
@@ -80,7 +102,9 @@ class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, Htt
     }
 
     override fun onComponentClick(view: View) {
-        returnBack()
+//        returnBack()
+        atmeActivity._mActivity!!.onBackPressedSupport()
+
     }
 
     override fun onComponentFinish(view: View) {
@@ -120,7 +144,7 @@ class AtmeViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, Htt
         initDatas()
         CoroutineScope(uiContext).launch {
             delay(10000)
-            atmeActivity.at_swipe.isRefreshing = false
+            atmeActivity.swp!!.isRefreshing = false
         }
     }
 

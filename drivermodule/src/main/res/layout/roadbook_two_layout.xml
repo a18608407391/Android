@@ -11,7 +11,7 @@
 
         <variable
             name="re_child_road_book_model"
-            type="com.example.drivermodule.Component.SimpleRecycleComponent"></variable>
+            type="com.example.drivermodule.Component.SimpleItemRecycleComponent"></variable>
 
         <variable
             name="road_book_two_entity"

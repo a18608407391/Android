@@ -1,0 +1,62 @@
+<layout>
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="route_deteal_list"
+            type="com.example.drivermodule.Entity.RouteDetailEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_50"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_49"
+            android:layout_marginLeft="@dimen/d_15"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@{route_deteal_list.position==0?@drawable/action_start:@drawable/action_end}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/d_15"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{route_deteal_list.position==0?@string/cong:@string/arrive_end}"
+                    android:textColor="#99000000"
+                    android:textSize="@dimen/s_14" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{route_deteal_list.roadName}"
+                    android:textColor="@color/black_12"
+                    android:textSize="@dimen/s_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 出发"
+                    android:textColor="#99000000"
+                    android:textSize="@dimen/s_14"
+                    android:visibility="@{route_deteal_list.position==0?View.VISIBLE:View.GONE}" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

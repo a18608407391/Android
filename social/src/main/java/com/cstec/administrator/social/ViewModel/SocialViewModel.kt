@@ -2,6 +2,8 @@ package com.cstec.administrator.social.ViewModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +14,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.location.AMapLocation
 import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.model.LatLng
+import com.cstec.administrator.social.Activity.ReleaseDynamicsActivity
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity
 import com.cstec.administrator.social.Fragment.SocialFragment
 import com.cstec.administrator.social.ItemViewModel.SocialItemModel
@@ -19,17 +22,18 @@ import com.cstec.administrator.social.ItemViewModel.SocialNearRoadItemModel
 import com.cstec.administrator.social.R
 import com.elder.zcommonmodule.Entity.CanalierHomeEntity
 import com.elder.zcommonmodule.Entity.Location
+import com.elder.zcommonmodule.RELEASE_RESULT
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Base.ItemViewModel
 import com.zk.library.Bus.ServiceEven
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.RouterUtils.SocialConfig.Companion.SOCIAL_LOCATION
-import kotlinx.android.synthetic.main.fragment_social.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -51,18 +55,18 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
 
     override fun onRefresh(refreshLayout: RefreshLayout) {//下拉刷新
         if (curItem == 3) {
-            var ite = items[socialFragment.social_viewpager.currentItem] as SocialNearRoadItemModel
+            var ite = items[socialFragment.SocialViewPger!!.currentItem] as SocialNearRoadItemModel
             ite.page = 1
             ite.initDatas(ite.page)
             refreshLayout.finishRefresh(10000)
         } else {
-        var itemmodel = items[socialFragment.social_viewpager.currentItem] as SocialItemModel
-        itemmodel.curLoad = 0
-        itemmodel.page = 20
-        itemmodel.pageSize = 1
-        itemmodel.initDatas(socialFragment.social_viewpager.currentItem)
-        refreshLayout.finishRefresh(10000)
-    }
+            var itemmodel = items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel
+            itemmodel.curLoad = 0
+            itemmodel.page = 20
+            itemmodel.pageSize = 1
+            itemmodel.initDatas(socialFragment.SocialViewPger!!.currentItem)
+            refreshLayout.finishRefresh(10000)
+        }
     }
 
     override fun onTabSelected(p0: TabLayout.Tab?) {
@@ -85,7 +89,7 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
     }
 
     override fun deleteSocialSuccess(it: String) {
-        var cur = items[socialFragment.social_viewpager.currentItem] as SocialItemModel
+        var cur = items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel
         if (cur.deleteItem != null) {
             cur.items.remove(cur.deleteItem)
             cur.adapter.initDatas(cur.items)
@@ -107,12 +111,12 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
 
 
     override fun ResultFocusSuccess(it: String) {
-        var cur = items[socialFragment.social_viewpager.currentItem] as SocialItemModel
+        var cur = items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel
         var entity = cur.items[cur.focusClickPosition]
         entity.followed = 1
         cur.items[cur.focusClickPosition] = entity
         cur.adapter.notifyItemRangeChanged(0, cur.adapter.itemCount, "focusClick")
-        Toast.makeText(socialFragment.activity, getString(R.string.focused_success), Toast.LENGTH_SHORT).show()
+        Toast.makeText(socialFragment.activity!!, getString(R.string.focused_success), Toast.LENGTH_SHORT).show()
     }
 
     override fun ResultFocusError(ex: Throwable) {
@@ -147,15 +151,15 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
 //        if (progress != null && progress!!.isShowing!!) {
 //            progress!!.dismiss()
 //        }
-        if(socialFragment.social_viewpager.currentItem!=3){
+        if (socialFragment.SocialViewPger!!.currentItem != 3) {
             refreshLayout.finishRefresh(true)
             if (it.length < 10) {
                 return
             }
-            if ((items[socialFragment.social_viewpager.currentItem] as SocialItemModel).pageSize != 1) {
+            if ((items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel).pageSize != 1) {
 
             } else {
-                (items[socialFragment.social_viewpager.currentItem] as SocialItemModel).items.clear()
+                (items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel).items.clear()
             }
 //        if (model.socialFragment.social_viewpager.currentItem == type) {
 //            var json = JSONObject(it).getString("data")
@@ -171,10 +175,10 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
 
                     var dis = AMapUtils.calculateLineDistance(LatLng(location!!.latitude, location!!.longitude), LatLng(it.xAxis!!.toDouble(), it.yAxis!!.toDouble()))
                     it.distance = DecimalFormat("0.00").format(dis / 1000) + "KM"
-                    (items[socialFragment.social_viewpager.currentItem] as SocialItemModel).items.add(it)
+                    (items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel).items.add(it)
                 }
             }
-            (items[socialFragment.social_viewpager.currentItem] as SocialItemModel).adapter.initDatas((items[socialFragment.social_viewpager.currentItem] as SocialItemModel).items)
+            (items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel).adapter.initDatas((items[socialFragment.SocialViewPger!!.currentItem] as SocialItemModel).items)
 //        socialFragment.social_swipe.isRefreshing = false
             socialFragment.initSecond()
         }
@@ -204,7 +208,7 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
         this.add(SocialNearRoadItemModel(this@SocialViewModel))
     }
     var itemBinding = ItemBinding.of<ItemViewModel<SocialViewModel>> { itemBinding, position, item ->
-        Log.e("roadbook:",position.toString())
+        Log.e("roadbook:", position.toString())
         if (position == 3) {
             itemBinding.set(BR.social_near_item_model, R.layout.social_near_item_model_layout)
         } else {
@@ -218,17 +222,24 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
     fun onClick(view: View) {
         when (view.id) {
             R.id.release_photo -> {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).withSerializable(SOCIAL_LOCATION, Location(location?.latitude!!, location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, location?.aoiName!!, location!!.poiName)).navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(SOCIAL_LOCATION, Location(location?.latitude!!, location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, location?.aoiName!!, location!!.poiName))
+                var fr = socialFragment.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+                var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).navigation() as ReleaseDynamicsActivity
+                model.arguments = bundle
+                fr.startForResult(model, RELEASE_RESULT)
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).withSerializable(SOCIAL_LOCATION, Location(location?.latitude!!, location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, location?.aoiName!!, location!!.poiName)).navigation()
+
             }
         }
     }
 
     private fun initTabLayoutChangeUI() {
-        for (i in 0..socialFragment.mTabLayout.tabCount) {
-            val tab = socialFragment.mTabLayout.getTabAt(i)
+        for (i in 0..socialFragment.SocialTabLayout!!.tabCount) {
+            val tab = socialFragment.SocialTabLayout!!.getTabAt(i)
             tab?.customView = getTabView(i)
         }
-        socialFragment.mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        socialFragment.SocialTabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
             }
 
@@ -266,43 +277,43 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
     lateinit var socialFragment: SocialFragment
     fun inject(socialFragment: SocialFragment) {
         this.socialFragment = socialFragment
-        this.refreshLayout = socialFragment.social_swipe
+        this.refreshLayout = socialFragment.SocialSwipe!!
         first = true
-        var pos = ServiceEven()
-        pos.type = "HomeStart"
-        RxBus.default?.post(pos)
         HttpRequest.instance.DynamicListResult = this
         RxSubscriptions.add(RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
             invoke(it)
         })
-        RxSubscriptions.add(RxBus.default?.toObservable(String::class.java)?.subscribe {
-            if (it == "ResultReleaseDynamicsSuccess") {
-                if (socialFragment.isAdded) {
-                    socialFragment.social_viewpager.currentItem = 0
-                    var itemmodel = items[0] as SocialItemModel
-                    itemmodel.page = 20
-                    itemmodel.pageSize = 1
-                    itemmodel.initDatas(0)
-                    CoroutineScope(uiContext).launch {
-                        delay(10000)
-//                        socialFragment.social_swipe.isRefreshing = false
-                    }
-                }
-            }
-        })
-        RxSubscriptions.add(RxBus.default?.toObservable(DynamicsCategoryEntity.Dynamics::class.java)?.subscribe {
-            var m = it
-            var its = items[curItem] as SocialItemModel
-            its.items.forEachIndexed { index, dynamics ->
-                if (dynamics.id == m.id) {
-                    its.items[index] = m
-                } else if (dynamics.memberId == m.memberId && dynamics.followed != m.followed) {
-                    dynamics.followed = m.followed
-                    its.items.set(index, dynamics)
-                }
-            }
-            its.adapter.initDatas(its.items)
-        })
+        load(socialFragment.arguments!!.getParcelable<AMapLocation>("location"))
+//        RxSubscriptions.add(RxBus.default?.toObservable(String::class.java)?.subscribe {
+//            if (it == "ResultReleaseDynamicsSuccess") {
+//                if (socialFragment.isAdded) {
+//                    socialFragment.SocialViewPger.currentItem = 0
+//                    var itemmodel = items[0] as SocialItemModel
+//                    itemmodel.page = 20
+//                    itemmodel.pageSize = 1
+//                    itemmodel.initDatas(0)
+//                    CoroutineScope(uiContext).launch {
+//                        delay(10000)
+////                        socialFragment.social_swipe.isRefreshing = false
+//                    }
+//                }
+//            }
+//        })
+
+//        RxSubscriptions.add(RxBus.default?.toObservable(DynamicsCategoryEntity.Dynamics::class.java)?.subscribe {
+//            var m = it
+//            var its = items[curItem] as SocialItemModel
+//            its.items.forEachIndexed { index, dynamics ->
+//                if (dynamics.id == m.id) {
+//                    its.items[index] = m
+//                } else if (dynamics.memberId == m.memberId && dynamics.followed != m.followed) {
+//                    dynamics.followed = m.followed
+//                    its.items.set(index, dynamics)
+//                }
+//            }
+//            its.adapter.initDatas(its.items)
+//        })
+
         CoroutineScope(uiContext).launch {
             initTabLayoutChangeUI()
         }
@@ -321,16 +332,13 @@ class SocialViewModel : BaseViewModel(), HttpInteface.SocialDynamicsList, HttpIn
 
     var location: AMapLocation? = null
     private fun invoke(it: AMapLocation?) {
-        if (location == null) {
-//            if (progress != null && progress!!.isShowing) {
-//                progress?.dismiss()
-//            }
-            refreshLayout.finishRefresh(true)
-            location = it
-            var mo = items[0]
-            mo.initDatas(0)
-        } else {
-            location = it
-        }
+        location = it
+    }
+
+    fun load(it: AMapLocation?) {
+        refreshLayout.finishRefresh(true)
+        location = it
+        var mo = items[0]
+        mo.initDatas(0)
     }
 }

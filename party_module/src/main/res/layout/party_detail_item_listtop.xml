@@ -54,6 +54,7 @@
                 android:src="@drawable/gray_stroke_circle"></ImageView>
 
             <View
+
                 android:layout_width="@dimen/d_02"
                 android:layout_height="wrap_content"
                 android:background="@color/FivepercentBlackColor"></View>
@@ -80,15 +81,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d_15"
-                android:src="@drawable/party_list_driver_icon"></ImageView>
+                android:src="@drawable/driver_nomal_icon"></ImageView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{party_detail_item_list.ADDRESS}"
                 android:layout_marginLeft="@dimen/d_13"
+                android:text="@{party_detail_item_list.ADDRESS}"
                 android:textColor="@color/black_12"
-                android:textSize="@dimen/s_18"
+                android:singleLine="true"
+                android:textSize="@dimen/s_16"
                 android:textStyle="bold"></TextView>
 
         </LinearLayout>

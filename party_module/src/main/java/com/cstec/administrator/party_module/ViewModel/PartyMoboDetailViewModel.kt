@@ -4,15 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.databinding.ViewDataBinding
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.util.Log
 import android.view.View
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
-import com.cstec.administrator.party_module.Activity.PartyDetailActivty
 import com.cstec.administrator.party_module.Activity.PartySubjectDetailActivity
 import com.cstec.administrator.party_module.BR
 import com.cstec.administrator.party_module.ItemModel.ActiveDetail.BasePartyItemModel
@@ -25,16 +26,14 @@ import com.elder.zcommonmodule.Inteface.TitleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
-import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
 import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject
-import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import com.zk.library.Base.BaseApplication
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.activity_party_mobo_detail.*
-import kotlinx.android.synthetic.main.party_detail_item_subject_top.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
@@ -42,8 +41,6 @@ import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Base.Utils.ioContext
-import org.cs.tec.library.Bus.RxBus
-import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
@@ -112,7 +109,7 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
         }
         collection.set(entity.IS_COLLECTION)
         state.set(entity.ACTIVITY_STATUS)
-        Log.e(this.javaClass.name,"${entity.SQRTVALUE};${(entity.SQRTVALUE).toString()}")
+        Log.e(this.javaClass.name, "${entity.SQRTVALUE};${(entity.SQRTVALUE).toString()}")
         dis.set((entity.SQRTVALUE).toString())
         restoreTime.set(entity.ACTIVITY_START + "至" + entity.ACTIVITY_STOP)
 
@@ -122,14 +119,14 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
             entity.TICKET_PRICE = getString(R.string.rmb) + entity.TICKET_PRICE
         }
         data.set(entity)
-        if (partyDetailActivty.mPartyDetailSubjectViewPager.currentItem == 0) {
+        if (partyDetailActivty.mViewPager.currentItem == 0) {
             var t = items[0] as PartyDetailIntroduceItemModel
             t.initDataSubject()
-        } else if (partyDetailActivty.mPartyDetailSubjectViewPager.currentItem == 1) {
+        } else if (partyDetailActivty.mViewPager.currentItem == 1) {
             var t = items[1] as PartyDetailPhotoItemModel
             t.initData(true)
         }
-        partyDetailActivty.refreshLayout.finishRefresh()
+        partyDetailActivty.mRefreshLayout.finishRefresh()
         // 772
     }
 
@@ -146,10 +143,17 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
         this.partyDetailActivty = partyDetailActivty
 
         items.add(PartyDetailIntroduceItemModel().ItemViewModel(this@PartyMoboDetailViewModel))
-        items.add(PartyDetailPhotoItemModel().setActivity(partyDetailActivty).setPartyId(partyDetailActivty!!.code).ItemViewModel(this@PartyMoboDetailViewModel))
+        items.add(PartyDetailPhotoItemModel().setActivity(partyDetailActivty.activity!!).setPartyId(partyDetailActivty!!.code).ItemViewModel(this@PartyMoboDetailViewModel))
 
     }
-
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                partyDetailActivty._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
     fun initData() {
         HttpRequest.instance.partyDetail = this
         var map = HashMap<String, String>()
@@ -170,7 +174,7 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
     fun onClick(view: View) {
         when (view.id) {
             R.id.iv_back -> {
-                partyDetailActivty.returnBack()
+                partyDetailActivty._mActivity!!.onBackPressedSupport()
             }
             R.id.tel_phone -> {
                 var intent = Intent(Intent.ACTION_CALL)
@@ -196,14 +200,20 @@ class PartyMoboDetailViewModel : BaseViewModel(), HttpInteface.PartyDetail, Titl
             }
             R.id.sponsor_click -> {
                 //主办方点击事件
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ORGANIZATION).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID).navigation()
+                var bundle = Bundle()
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID)
+                startFragment(partyDetailActivty as BaseFragment<ViewDataBinding, BaseViewModel>, RouterUtils.PartyConfig.ORGANIZATION, bundle)
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.ORGANIZATION).withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.ID).navigation()
             }
             R.id.subject_members_click -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, partyDetailActivty.location)
-                        .withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE)
-                        .navigation()
-
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.ENROLL)
+//                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, partyDetailActivty.location)
+//                        .withInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE)
+//                        .navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, partyDetailActivty.location)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, data.get()!!.CODE)
+                startFragment(partyDetailActivty as BaseFragment<ViewDataBinding, BaseViewModel>, RouterUtils.PartyConfig.ENROLL, bundle)
             }
             R.id.ivPartyMoBoTrans -> {
                 //分享

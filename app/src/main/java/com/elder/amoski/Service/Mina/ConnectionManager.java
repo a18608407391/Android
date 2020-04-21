@@ -6,6 +6,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.elder.zcommonmodule.Entity.SoketBody.BasePacketReceive;
 import com.google.gson.Gson;
+import com.zk.library.Bus.event.RxBusEven;
 
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoHandlerAdapter;
@@ -90,31 +91,26 @@ public class ConnectionManager {
         @Override
         public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
             super.sessionIdle(session, status);
-            Log.e("result", "idle");
         }
 
         @Override
         public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
             super.exceptionCaught(session, cause);
-            Log.e("result", "异常" + cause.getMessage() + session.toString());
         }
 
         @Override
         public void inputClosed(IoSession session) throws Exception {
             super.inputClosed(session);
-            Log.e("result", "输入关闭");
         }
 
         @Override
         public void sessionCreated(IoSession session) throws Exception {
             super.sessionCreated(session);
-            Log.e("result", "创建");
         }
 
         @Override
         public void sessionOpened(IoSession session) throws Exception {
             super.sessionOpened(session);
-            RxBus.Companion.getDefault().post("MinaConnected");
             SessionManager.getInstance().setSeesion(session);
             //将我们的session保存到我们的session manager类中， 从而可以发送消息到服务器
 //            SessionManager.getInstance().writeToServer("AMC" + BaseApplication.getmApp().getMesh().name);
@@ -124,25 +120,17 @@ public class ConnectionManager {
         @Override
         public void sessionClosed(IoSession session) throws Exception {
             super.sessionClosed(session);
-
-//            if (NetworkUtil.INSTANCE.isNetworkAvailable(UtilsKt.getContext())) {
-//                Log.e("result","执行了这里1");
-//            } else {
-//                Log.e("result","执行了这里");
             RxBus.Companion.getDefault().post("MINA_FORCE_CLOSE");
-//            }
-
-
-            Log.e("result", "关闭");
         }
 
         @Override
         public void messageReceived(IoSession session, Object message) throws Exception {
-            Log.e("result", "当前数据" + message.toString());
             if (message.toString().isEmpty() || message.toString() == null) {
                 return;
             }
 
+            RxBusEven even = new RxBusEven();
+            even.setType(RxBusEven.Companion.getMinaDataReceive());
             if (message.toString().split("body").length > 2 && message.toString().split("type").length > 2) {
                 BasePacketReceive receive = null;
                 if (message.toString().contains("redisData")) {
@@ -155,7 +143,8 @@ public class ConnectionManager {
                     receive = JSON.parseObject(sp[0] + "}" + sp[1] + "}", BasePacketReceive.class);
                 }
                 if (receive != null) {
-                    RxBus.Companion.getDefault().post(receive);
+                    even.setValue(receive);
+                    RxBus.Companion.getDefault().post(even);
                 }
                 if (receive.getCode() == 0) {
                     if (receive != null) {
@@ -171,7 +160,8 @@ public class ConnectionManager {
             } else {
                 BasePacketReceive receive = JSON.parseObject(message.toString(), BasePacketReceive.class);
                 if (receive != null) {
-                    RxBus.Companion.getDefault().post(receive);
+                    even.setValue(receive);
+                    RxBus.Companion.getDefault().post(even);
                 }
                 if (receive.getCode() == 0) {
                     if (receive != null) {

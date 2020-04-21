@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="route_deteal_list"
+            type="com.example.drivermodule.Entity.RouteDetailEntity"></variable>
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d_60"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_59"
+            android:orientation="horizontal">
+
+            <com.example.drivermodule.Overlay.NextTurnTipView
+                android:layout_width="@dimen/d_40"
+                android:layout_height="@dimen/d_40"
+                android:padding="@dimen/d_10"
+                app:setNextTureImage="@{route_deteal_list.iconType}" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d_59"
+                android:layout_marginLeft="@dimen/d_10"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{route_deteal_list.roadName}"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_14" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/d_05"
+                        android:text="@{route_deteal_list.distance}"
+                        android:textColor="#A4A4A4"
+                        android:textSize="@dimen/s_12" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_01"
+                    android:background="@color/FivepercentBlackColor"></View>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

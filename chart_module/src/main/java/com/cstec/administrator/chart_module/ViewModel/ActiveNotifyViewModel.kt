@@ -1,6 +1,7 @@
 package com.cstec.administrator.chart_module.ViewModel
 
 import android.databinding.ObservableArrayList
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -23,6 +24,7 @@ import com.elder.zcommonmodule.Utils.DialogUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_active_notify.*
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +40,7 @@ import org.cs.tec.library.binding.command.BindingConsumer
 
 class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener, HttpInteface.queryActiveNotifyList, TitleComponent.titleComponentCallBack, SimpleClickListener, HttpInteface.deleteSystemNotifyList {
     override fun SystemNotifyDeleteListSuccess(response: String) {
+        activeNotifyListActivity.swip.isRefreshing = false
         items.clear()
     }
 
@@ -52,31 +55,61 @@ class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
         var bigType = data.msg_title!!.split(":")[2]
         when (Integer.valueOf(bigType)) {
             1 -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                activeNotifyListActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, code).navigation()
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
+//                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                                activeNotifyListActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, code).navigation()
+
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                       activeNotifyListActivity.location)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE,code)
+                startFragment(activeNotifyListActivity, RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL, bundle)
             }
             2 -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                activeNotifyListActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, code).navigation()
+
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        activeNotifyListActivity.location)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE,code)
+                startFragment(activeNotifyListActivity, RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+//                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity.activity, object : NavCallback() {
+//                            override fun onArrival(postcard: Postcard?) {
+//                                finish()
+//                            }
+//                        })
             }
             3 -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                activeNotifyListActivity.location).withInt(RouterUtils.PartyConfig.PARTY_CODE, code).navigation()
+
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        activeNotifyListActivity.location)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.msgTargetId)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE,code)
+                startFragment(activeNotifyListActivity, RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
             }
         }
     }
 
     override fun onComponentClick(view: View) {
-        finish()
+//        finish()
+        activeNotifyListActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
         showDialog()
     }
-
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                activeNotifyListActivity._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
     override fun ActiveNotifyListSuccess(response: String) {
         if (response.isNullOrEmpty()) {
             return
@@ -98,7 +131,7 @@ class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
         initDatas()
         CoroutineScope(uiContext).launch {
             delay(10000)
-            activeNotifyListActivity.active_swipe.isRefreshing = false
+            activeNotifyListActivity.swip.isRefreshing = false
         }
     }
 
@@ -130,7 +163,7 @@ class ActiveNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
     }
 
     fun showDialog() {
-        var dialog = DialogUtils.createNomalDialog(activeNotifyListActivity, "是否清除所有活动消息", "取消", "清除")
+        var dialog = DialogUtils.createNomalDialog(activeNotifyListActivity.activity!!, "是否清除所有活动消息", "取消", "清除")
         dialog.setOnBtnClickL(OnBtnClickL {
             dialog.dismiss()
         }, OnBtnClickL {

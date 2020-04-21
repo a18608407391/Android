@@ -11,6 +11,7 @@
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/detail_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -48,11 +49,13 @@
 
 
             <LinearLayout
+
                 android:layout_width="@dimen/d_75"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
+
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -60,8 +63,10 @@
                     android:layout_height="@dimen/d_75">
 
                     <ImageView
+                        android:id="@+id/avatar_click"
                         android:layout_width="@dimen/d_75"
                         android:layout_height="@dimen/d_75"
+                        android:onClick="@{data::onClick}"
                         android:layout_centerHorizontal="true"
                         app:setPartyAvatar="@{data.data.HEAD_IMG_FILE}" />
 
@@ -69,8 +74,8 @@
                         android:id="@+id/team_name"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/d_15"
-                        android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
                         android:layout_gravity="bottom|right"
                         android:layout_marginRight="@dimen/d_05"
                         android:background="@drawable/little_tv_color_corner"
@@ -79,7 +84,8 @@
                         android:paddingRight="@dimen/d_04"
                         android:text="骑行官"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/s_08" />
+                        android:textSize="@dimen/s_08"
+                        android:visibility="@{data.data.NAME==null?View.GONE:View.VISIBLE}" />
                 </RelativeLayout>
 
 
@@ -95,8 +101,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:layout_marginTop="@dimen/d_10"
+            android:singleLine="true"
             android:text="@{data.data.TITLE}"
             android:textColor="@color/black_12"
             android:textSize="@dimen/s_18"></TextView>
@@ -118,8 +124,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_68"
-            android:layout_marginTop="@dimen/d_20"
             android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
             android:background="#FAFAFA"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -222,8 +228,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_44"
-            android:layout_marginTop="@dimen/d_20"
             android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
             android:background="@drawable/path_point_bg"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -245,8 +251,8 @@
             android:id="@+id/detail_members_click"
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_60"
-            android:layout_marginTop="@dimen/d_20"
             android:layout_marginRight="@dimen/d_15"
+            android:layout_marginTop="@dimen/d_20"
             android:gravity="center_vertical"
             android:onClick="@{data::onClick}"
             android:orientation="horizontal"

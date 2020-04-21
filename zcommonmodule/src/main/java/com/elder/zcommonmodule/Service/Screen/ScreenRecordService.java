@@ -206,8 +206,13 @@ public class ScreenRecordService extends Service implements Handler.Callback {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void createVirtualDisplay() {
         if (mMediaProjection != null && mMediaRecorder != null) {
-            mVirtualDisplay = mMediaProjection.createVirtualDisplay("MainScreen", mRecordWidth, mRecordHeight, mScreenDpi,
-                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mMediaRecorder.getSurface(), null, null);
+            try {
+                mMediaRecorder.getSurface();
+                mVirtualDisplay = mMediaProjection.createVirtualDisplay("MainScreen", mRecordWidth, mRecordHeight, mScreenDpi,
+                        DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mMediaRecorder.getSurface(), null, null);
+            } catch (IllegalStateException ex) {
+
+            }
         }
     }
 

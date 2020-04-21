@@ -2,6 +2,7 @@ package com.cstec.administrator.social.ViewModel
 
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.cstec.administrator.social.Activity.AiteActivity
@@ -42,7 +43,8 @@ class AiteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack, Ht
     }
 
     override fun onComponentClick(view: View) {
-        finish()
+//        finish()
+        aiteActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -53,7 +55,6 @@ class AiteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack, Ht
                 co += it.name!!.length
                 strList.add(it)
             }
-
         }
         configItems.forEach {
             if (it.check) {
@@ -62,11 +63,13 @@ class AiteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack, Ht
             }
         }
 
-        var intent = Intent()
-        intent.putExtra("array", Gson().toJson(strList))
-        intent.putExtra("Count", co + strList.size)
-        aiteActivity.setResult(SELECT_USER_CALLBACK, intent)
-        finish()
+        var bundle = Bundle()
+        bundle.putString("array", Gson().toJson(strList))
+        bundle.putInt("Count", co + strList.size)
+        aiteActivity.setFragmentResult(SELECT_USER_CALLBACK, bundle)
+        aiteActivity._mActivity!!.onBackPressedSupport()
+//        aiteActivity.setResult(SELECT_USER_CALLBACK, intent)
+//        finish()
     }
 
 

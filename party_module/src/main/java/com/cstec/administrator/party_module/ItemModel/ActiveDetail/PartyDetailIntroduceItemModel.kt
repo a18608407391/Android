@@ -80,7 +80,7 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                 schedules.HISTORY?.forEachIndexed { index1, partyDetailRoadListItem ->
                     var k = PartyDetailEntity.PartyDetailRoadListItem()
                     k.type = 1
-                    if (index1 == schedules.HISTORY!!.size - 1) {
+                    if (index1 == 0) {
                         k.itemtype = 2
                     } else {
                         k.itemtype = 1
@@ -149,11 +149,8 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                     var model = viewModel as PartyClockDetailViewModel
                     model.party.nest_clock.setNeedScroll(true)
                 }
-
-
             }
             Log.e("result", "到底底部或者顶部" + t)
-
         }
     })
 
@@ -236,6 +233,7 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
             items.insertItem(notice)
         }
     }
+
     fun initDataSubject() {
         items.removeAll()
         if (!lists.isEmpty() || !list.isEmpty()) {

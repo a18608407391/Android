@@ -2,6 +2,8 @@ package com.cstec.administrator.social.ViewModel
 
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -20,10 +22,15 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.zk.library.Base.AppManager
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
@@ -32,7 +39,11 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
     override fun ResultSDListSuccess(it: String) {
         activity.dismissProgressDialog()
         var dyna = Gson().fromJson<DynamicsCategoryEntity>(it, DynamicsCategoryEntity::class.java)
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0])
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+        startFragment(activity, RouterUtils.SocialConfig.SOCIAL_DETAIL, bundle)
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
     }
 
     override fun ResultSDListError(ex: Throwable) {
@@ -40,7 +51,13 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
     }
 
     override fun onRefresh() {
+        pageSize = 1
+        length = 10
         initData()
+        CoroutineScope(uiContext).launch {
+            delay(10000)
+            activity.swip.isRefreshing = false
+        }
     }
 
     var cur = 0L
@@ -53,10 +70,14 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
         }
         var entity = entity as LikesEntity.LikeBean
         if (entity.releaseDynamicParent != null) {
-            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL)
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, entity.releaseDynamicParent)
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
+            var bundle = Bundle()
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, entity.releaseDynamicParent)
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+            startFragment(activity, RouterUtils.SocialConfig.SOCIAL_DETAIL, bundle)
+//            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL)
+//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, entity.releaseDynamicParent)
+//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+//                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).navigation()
         } else {
             Log.e("result", "动态id" + entity.dynamicId)
             activity.showProgressDialog("加载中......")
@@ -74,16 +95,23 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
 
     override fun onImgClick(entity: Any) {
         var entity = entity as LikesEntity.LikeBean
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 4).navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        activity.start(model)
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+//                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 4).navigation()
     }
 
     override fun onComponentClick(view: View) {
-
-        activity.doback()
+        activity._mActivity!!.onBackPressedSupport()
+//        activity.doback()
     }
 
     override fun onComponentFinish(view: View) {
@@ -92,7 +120,10 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
     override fun GetLikeSuccess(it: String) {
         activity.dismissProgressDialog()
         var entity = Gson().fromJson<LikesEntity>(it, LikesEntity::class.java)
-
+        activity.swip.isRefreshing = false
+        if (pageSize == 1) {
+            items.clear()
+        }
         entity?.data!!.forEach {
             items.add(it)
         }
@@ -101,12 +132,12 @@ class GetLikeViewModel : BaseViewModel(), HttpInteface.GetLikeResult, TitleCompo
     override fun getLikeError(it: Throwable) {
         activity.dismissProgressDialog()
     }
+
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-            Log.e("result", "加载更多" + t)
-            if (t <length*pageSize) {
+            if (t < length * pageSize) {
                 return
-            }else{
+            } else {
                 pageSize++
                 initData()
             }

@@ -1,9 +1,11 @@
 package com.elder.zcommonmodule.Service
 
+import android.util.Base64
 import android.util.Log
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Entity.SoketBody.CreateTeamInfoDto
 import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonnelInfoDto
+import com.elder.zcommonmodule.Http.BaseObserver
 import com.elder.zcommonmodule.Http.NetWorkManager
 import com.elder.zcommonmodule.Service.Error.ExceptionEngine
 import com.elder.zcommonmodule.Service.Error.HttpServerResponseError
@@ -15,15 +17,21 @@ import com.elder.zcommonmodule.Service.Party.PartyService
 import com.elder.zcommonmodule.Service.Team.RoadBookService
 import com.elder.zcommonmodule.Service.Team.TeamService
 import com.elder.zcommonmodule.USER_TOKEN
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Bus.RxBus
+import java.io.UnsupportedEncodingException
+import java.lang.StringBuilder
+import java.nio.charset.Charset
 
 
 class HttpRequest {
@@ -31,6 +39,30 @@ class HttpRequest {
         val instance: HttpRequest by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
             HttpRequest()
         }
+    }
+
+    var startDriver: HttpInteface.startDriverResult? = null
+
+    fun startDriver(map: HashMap<String, String>) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(TeamService::class.java)?.startDriver(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
+            startDriver?.startDriverError(it)
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                startDriver?.startDriverSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                startDriver?.startDriverError(e)
+            }
+
+        })
     }
 
     var CreateResult: HttpInteface.CreateTeamResult? = null
@@ -179,6 +211,40 @@ class HttpRequest {
         })
     }
 
+    fun relogin(phone: HashMap<String,String>) {
+//        val aesPhone = String(StringBuilder(Base64.encodeToString(phone.tob(Charset.forName("UTF-8")), Base64.DEFAULT)))
+//        var map = HashMap<String, String>()
+//        map.put("phoneNumber", aesPhone)
+        NetWorkManager.instance.getOkHttpRetrofit()!!.create(LoginService::class.java).reLogin(NetWorkManager.instance.getBaseRequestBody(phone)!!).map { baseResponse -> baseResponse.data.toString() }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.RELOGIN))
+                PreferenceUtils.putString(context, USER_TOKEN, t)
+            }
+
+            //            override fun onSubscribe(d: Disposable) {
+//
+//            }
+//
+//            override fun onNext(o: Any) {
+//                RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.RELOGIN))
+//                PreferenceUtils.putString(context, USER_TOKEN, o.toString())
+//            }
+//
+            override fun onError(e: Throwable) {
+                RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.RELOGIN))
+            }
+//
+//            override fun onComplete() {
+//
+//            }
+        })
+    }
 
     fun checkTeamStatus(map: HashMap<String, String>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
@@ -731,27 +797,27 @@ class HttpRequest {
 
     fun getHome(map: HashMap<String, String>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
-        Log.e("token","$token")
+        Log.e("token", "$token")
         NetWorkManager
                 .instance
                 .getOkHttpRetrofit()?.create(PrivateService::class.java)?.Home(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
-            homeResult?.ResultHomeError(ExceptionEngine.handleException(it))
-        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
-            override fun onComplete() {
-            }
+                    homeResult?.ResultHomeError(ExceptionEngine.handleException(it))
+                }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+                    override fun onComplete() {
+                    }
 
-            override fun onSubscribe(d: Disposable) {
-            }
+                    override fun onSubscribe(d: Disposable) {
+                    }
 
-            override fun onNext(t: String) {
-                homeResult?.ResultHomeSuccess(t)
-            }
+                    override fun onNext(t: String) {
+                        homeResult?.ResultHomeSuccess(t)
+                    }
 
-            override fun onError(e: Throwable) {
-                homeResult?.ResultHomeError(e)
+                    override fun onError(e: Throwable) {
+                        homeResult?.ResultHomeError(e)
 
-            }
-        })
+                    }
+                })
     }
 
 

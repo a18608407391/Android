@@ -29,11 +29,16 @@ import com.zk.library.Bus.ServiceEven
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
 import android.content.ClipData
+import android.util.Base64
 import cn.jpush.im.android.api.JMessageClient
 import cn.jpush.im.android.api.event.LoginStateChangeEvent
 import com.alibaba.android.arouter.facade.Postcard
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.cstec.administrator.chart_module.Fragment.MessageFragment
+import com.cstec.administrator.chart_module.Utils.Extras
+import com.cstec.administrator.chart_module.Utils.RequestCode
+import com.elder.amoski.Fragment.HomeFragment
 import com.elder.zcommonmodule.*
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Even.RequestErrorEven
@@ -42,9 +47,13 @@ import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.Utils
 import com.example.private_module.UI.UserInfoFragment
 import com.google.gson.Gson
+import com.zk.library.Base.Transaction.anim.DefaultHorizontalAnimator
+import com.zk.library.Bus.event.RxBusEven
+import com.zk.library.Bus.event.RxBusEven.Companion.CHAT_ROOM_ACTIVITY_RETURN
 import kotlinx.android.synthetic.main.activity_home.*
 import org.cs.tec.library.Bus.RxSubscriptions
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
+import java.nio.charset.Charset
 
 
 @Route(path = RouterUtils.ActivityPath.HOME)
@@ -54,15 +63,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     }
 
     override fun ExitLoginError(ex: Throwable) {
-        Toast.makeText(context, "退出登录错误", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, "退出登录错误", Toast.LENGTH_SHORT).show()
     }
 
     override fun initVariableId(): Int {
         return BR.HomeViewModel
     }
 
+    @Autowired(name = RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY)
+    @JvmField
+    var resume: String? = null
+
     override fun initContentView(savedInstanceState: Bundle?): Int {
-        Log.e("home", "HomeCreated")
         Utils.setStatusBar(this, false, false)
         return R.layout.activity_home
     }
@@ -77,7 +89,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
         BaseApplication.getInstance().curActivity = 1
         var key = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         var clip = key.primaryClip
-        Log.e("home", "$clip")
         if (clip != null && clip.itemCount > 0 && clip.getItemAt(0).text != null) {
             var tv = clip.getItemAt(0).text.toString()
             if (!tv.isNullOrEmpty() && tv.contains("Amoski:HDID=")) {
@@ -95,24 +106,30 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
                 })
             }
         }
+
+        if (homeFr!!.viewModel!!.returnPrivate) {
+            homeFr!!.viewModel?.mRadioGroup!!.check(R.id.main_right)
+            homeFr!!.viewModel?.returnPrivate = false
+        }
     }
 
+    var homeFr: HomeFragment? = null
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initData() {
         super.initData()
-        Log.e("home", "initData")
+        //这里处理所有Fragment跳转动画
+        fragmentAnimator = DefaultHorizontalAnimator()
         JMessageClient.registerEventReceiver(this)
-        var pos = ServiceEven()
-        pos.type = "HomeStart"
-        RxBus.default?.post(pos)
+        homeFr = HomeFragment.newInstance()
+        loadRootFragment(R.id.home_main_layout, homeFr!!)
         StatusbarUtils.setTranslucentStatus(this)
         StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
         mViewModel?.inject(this)
-        main_bottom_bg.setOnCheckedChangeListener(mViewModel)
+//        main_bottom_bg.setOnCheckedChangeListener(mViewModel)
         RxSubscriptions.add(RxBus.default?.toObservable(RequestErrorEven::class.java)?.subscribe {
             Log.e(this.javaClass.name, "${it.errorCode}")
             if (it.errorCode == 10009) {
-                exitForce()
+//                exitForce()
             }
         })
     }
@@ -123,7 +140,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
             GET_USERINFO -> {
                 if (data != null) {
                     var info = data?.extras!!["userInfo"] as UserInfo
-                    var fr = mViewModel?.myself as UserInfoFragment
+                    var fr = homeFr!!.viewModel?.myself as UserInfoFragment
                     fr.callback(info)
 //                    var even = ActivityResultEven(requestCode, )
 //                    RxBus.default?.post(even)
@@ -167,11 +184,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
 
             SOCIAL_DETAIL_RETURN -> {
                 if (data != null) {
-                    mViewModel?.social!!.initResult(data)
+                    homeFr!!.viewModel?.social!!.initResult(data)
                 }
             }
             PRIVATE_DATA_RETURN -> {
-                var fr = mViewModel?.myself as UserInfoFragment
+                var fr = homeFr!!.viewModel?.myself as UserInfoFragment
                 fr.getUserInfo(false)
             }
             MSG_RETURN_REQUEST -> {//从消息界面返回
@@ -184,8 +201,17 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
 
             }
             MSG_RETURN_REFRESH_REQUEST -> {//@我的界面返回
-                var fr = mViewModel?.messageFragment as MessageFragment
+                var fr = homeFr!!.viewModel?.messageFragment as MessageFragment
                 fr.viewModel!!.initNet()
+            }
+            RequestCode.PICK_IMAGE -> {
+                if (data == null) {
+                    return
+                }
+                var flag = data.getBooleanExtra(Extras.EXTRA_FROM_LOCAL, false)
+                if (flag) {
+                    RxBus.default!!.post(RxBusEven.getInstance(CHAT_ROOM_ACTIVITY_RETURN, data))
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -236,4 +262,11 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
             }
         }
     }
+
+
+    override fun onBackPressedSupport() {
+        Log.e("result","onBackPressedSupport")
+        super.onBackPressedSupport()
+    }
+
 }

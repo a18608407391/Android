@@ -8,6 +8,10 @@ import com.elder.zcommonmodule.Service.Error.ApiException
 
 class HttpInteface {
 
+    interface startDriverResult {
+        fun startDriverSuccess(it: String)
+        fun startDriverError(error: Throwable)
+    }
 
     interface getMsgNotifyCount {
         fun getNotifyCountSuccess(it: String)

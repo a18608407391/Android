@@ -2,7 +2,6 @@ package com.zk.library.Base
 
 import android.app.Activity
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
@@ -16,15 +15,20 @@ import android.graphics.drawable.AnimationDrawable
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.support.annotation.DrawableRes
+import android.support.annotation.NonNull
 import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.launcher.ARouter
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
+import com.zk.library.Base.Transaction.*
+import com.zk.library.Base.Transaction.anim.FragmentAnimator
 import com.zk.library.Bus.Messenger
 import com.zk.library.Bus.event.ActivityDestroyEven
 import com.zk.library.R
@@ -34,7 +38,7 @@ import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.http.NetworkUtil
 
 
-abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppCompatActivity(), IBaseActivity {
+abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppCompatActivity(), IBaseActivity, ISupportActivity {
     var mViewModel: VM? = null
     //    var mImmersionBar: ImmersionBar? = null
 //    var flagImmersionBar: Boolean = true
@@ -44,8 +48,13 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //页面接受的参数方法
+        mDelegate.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            Log.e("result", "不为空")
+        }
         window.setBackgroundDrawable(null)
         initParam()
+
         ARouter.getInstance().inject(this)
         //私有的初始化Databinding和ViewModel方法
         initViewDataBinding(savedInstanceState)
@@ -62,7 +71,6 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
 
 //        }
         initData()
-
         initMap(savedInstanceState)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -96,7 +104,7 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
                 return false
             }
         }
-        return super.dispatchTouchEvent(ev)
+        return mDelegate.dispatchTouchEvent(ev) || super.dispatchTouchEvent(ev);
     }
 
 
@@ -154,10 +162,6 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         var audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            doPressBack()
-            return true
-        }
         when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FX_FOCUS_NAVIGATION_UP)
@@ -185,13 +189,15 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
     }
 
     open fun doPressBack() {
-
+        mDelegate.onBackPressedSupport()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.e("result", "onDestroy")
-        //接触Messenger注册
+        //接触Messenger注册.  mDelegate.onDestroy();
+        mDelegate.onDestroy();
+
         RxBus.default?.post(ActivityDestroyEven(this.componentName.className))
         Messenger.get()!!.unregister(mViewModel!!)
         lifecycle.removeObserver(mViewModel!!)
@@ -252,6 +258,9 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
         mViewModel!!.getUC().getFinishEven().observe(this, Observer { finish() })
         //关闭上一层
         mViewModel!!.getUC().getonBackPressEvent().observe(this, Observer { onBackPressed() })
+        mViewModel!!.getUC().showToastEven().observe(this, Observer {
+            Toast.makeText(this@BaseActivity, it, Toast.LENGTH_SHORT).show()
+        })
     }
 
     fun showDialog(title: String) {
@@ -297,6 +306,8 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
     override fun initParam() {
     }
 
+    var mDelegate = SupportActivityDelegate(this)
+
     abstract fun initVariableId(): Int
     abstract fun initContentView(savedInstanceState: Bundle?): Int
     open fun initViewModel(): VM? {
@@ -311,5 +322,192 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
 
     fun <T : ViewModel> createViewModel(fragment: FragmentActivity, cls: Class<T>): T {
         return ViewModelProviders.of(fragment).get(cls)
+    }
+
+
+    fun <T : ISupportFragment> findFragment(fragmentClass: Class<T>): T {
+        return SupportHelper.findFragment(getSupportFragmentManager(), fragmentClass)
+    }
+
+    fun setDefaultFragmentBackground(@DrawableRes backgroundRes: Int) {
+        mDelegate.setDefaultFragmentBackground(backgroundRes)
+    }
+
+    /**
+     * 加载根Fragment, 即Activity内的第一个Fragment 或 Fragment内的第一个子Fragment
+     *
+     * @param containerId 容器id
+     * @param toFragment  目标Fragment
+     */
+    fun loadRootFragment(containerId: Int, @NonNull toFragment: ISupportFragment) {
+        mDelegate.loadRootFragment(containerId, toFragment)
+    }
+
+    fun loadRootFragment(containerId: Int, toFragment: ISupportFragment, addToBackStack: Boolean, allowAnimation: Boolean) {
+        mDelegate.loadRootFragment(containerId, toFragment, addToBackStack, allowAnimation);
+    }
+
+    /**
+     * 加载多个同级根Fragment,类似Wechat, QQ主页的场景
+     */
+    fun loadMultipleRootFragment(containerId: Int, showPosition: Int, vararg toFragments: ISupportFragment) {
+        mDelegate.loadMultipleRootFragment(containerId, showPosition, *toFragments)
+    }
+
+    /**
+     * show一个Fragment,hide其他同栈所有Fragment
+     * 使用该方法时，要确保同级栈内无多余的Fragment,(只有通过loadMultipleRootFragment()载入的Fragment)
+     * <p>
+     * 建议使用更明确的{@link #showHideFragment(ISupportFragment, ISupportFragment)}
+     *
+     * @param showFragment 需要show的Fragment
+     */
+    fun showHideFragment(showFragment: ISupportFragment) {
+        mDelegate.showHideFragment(showFragment);
+    }
+
+    /**
+     * show一个Fragment,hide一个Fragment ; 主要用于类似微信主页那种 切换tab的情况
+     */
+    fun showHideFragment(showFragment: ISupportFragment, hideFragment: ISupportFragment) {
+        mDelegate.showHideFragment(showFragment, hideFragment)
+    }
+
+    /**
+     * It is recommended to use {@link SupportFragment#start(ISupportFragment)}.
+     */
+    fun start(toFragment: ISupportFragment) {
+        mDelegate.start(toFragment)
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        MobclickAgent.onPause(this)
+    }
+
+    /**
+     * It is recommended to use {@link SupportFragment#start(ISupportFragment, int)}.
+     *
+     * @param launchMode Similar to Activity's LaunchMode.
+     */
+    fun start(toFragment: ISupportFragment, @ISupportFragment.LaunchMode launchMode: Int) {
+        mDelegate.start(toFragment, launchMode);
+    }
+
+    /**
+     * It is recommended to use {@link SupportFragment#startForResult(ISupportFragment, int)}.
+     * Launch an fragment for which you would like a result when it poped.
+     */
+    fun startForResult(toFragment: ISupportFragment, requestCode: Int) {
+        mDelegate.startForResult(toFragment, requestCode)
+    }
+
+    /**
+     * It is recommended to use {@link SupportFragment#startWithPop(ISupportFragment)}.
+     * Start the target Fragment and pop itself
+     */
+    fun startWithPop(toFragment: ISupportFragment) {
+        mDelegate.startWithPop(toFragment)
+    }
+
+    /**
+     * It is recommended to use {@link SupportFragment#startWithPopTo(ISupportFragment, Class, boolean)}.
+     *
+     * @see #popTo(Class, boolean)
+     * +
+     * @see #start(ISupportFragment)
+     */
+    fun startWithPopTo(toFragment: ISupportFragment, targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
+        mDelegate.startWithPopTo(toFragment, targetFragmentClass, includeTargetFragment);
+    }
+
+    /**
+     * It is recommended to use {@link SupportFragment#replaceFragment(ISupportFragment, boolean)}.
+     */
+    fun replaceFragment(toFragment: ISupportFragment, addToBackStack: Boolean) {
+        mDelegate.replaceFragment(toFragment, addToBackStack);
+    }
+
+    /**
+     * Pop the fragment.
+     */
+    fun pop() {
+        mDelegate.pop()
+    }
+
+    /**
+     * Pop the last fragment transition from the manager's fragment
+     * back stack.
+     * <p>
+     * 出栈到目标fragment
+     *
+     * @param targetFragmentClass   目标fragment
+     * @param includeTargetFragment 是否包含该fragment
+     */
+    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean) {
+        mDelegate.popTo(targetFragmentClass, includeTargetFragment);
+    }
+
+    /**
+     * If you want to begin another FragmentTransaction immediately after popTo(), use this method.
+     * 如果你想在出栈后, 立刻进行FragmentTransaction操作，请使用该方法
+     */
+    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean, afterPopTransactionRunnable: Runnable) {
+        mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable);
+    }
+
+    fun popTo(targetFragmentClass: Class<*>, includeTargetFragment: Boolean, afterPopTransactionRunnable: Runnable, popAnim: Int) {
+        mDelegate.popTo(targetFragmentClass, includeTargetFragment, afterPopTransactionRunnable, popAnim);
+    }
+
+
+    fun getTopFragment(): ISupportFragment {
+        return SupportHelper.getTopFragment(getSupportFragmentManager());
+    }
+
+    override fun getSupportDelegate(): SupportActivityDelegate {
+        return mDelegate
+    }
+
+    override fun extraTransaction(): ExtraTransaction {
+        return mDelegate.extraTransaction();
+
+    }
+
+    override fun getFragmentAnimator(): FragmentAnimator {
+        return mDelegate.getFragmentAnimator()
+    }
+
+    override fun setFragmentAnimator(fragmentAnimator: FragmentAnimator?) {
+        mDelegate.setFragmentAnimator(fragmentAnimator)
+    }
+
+    override fun onCreateFragmentAnimator(): FragmentAnimator {
+        return mDelegate.onCreateFragmentAnimator()
+    }
+
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        mDelegate.onPostCreate(savedInstanceState);
+
+    }
+
+    override fun post(runnable: Runnable?) {
+        mDelegate.post(runnable)
+    }
+
+    override fun onBackPressed() {
+
+        mDelegate.onBackPressed()
+    }
+
+    override fun onBackPressedSupport() {
+        mDelegate.onBackPressedSupport()
     }
 }

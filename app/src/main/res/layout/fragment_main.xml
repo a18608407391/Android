@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="main_fr_viewmodel"
+            type="com.elder.amoski.ViewModel.MainFragmentViewModel"></variable>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/app_theme_white"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/main_rootlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></FrameLayout>
+
+        <RadioGroup
+            android:id="@+id/main_bottom_bg"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d_55"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:checkedButton="@id/same_city"
+            android:elevation="@dimen/d_5"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="@{main_fr_viewmodel.bottomVisible?View.VISIBLE:View.GONE}">
+
+            <RadioButton
+                android:id="@+id/same_city"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@drawable/active_select"
+                android:gravity="center"
+                android:text="@string/active"
+                android:textColor="@color/radio_buttom_color_selector"
+                android:textSize="@dimen/s_11" />
+
+
+            <RadioButton
+                android:id="@+id/main_left"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@drawable/dyma_select"
+                android:gravity="center"
+                android:text="@string/discover"
+                android:textColor="@color/radio_buttom_color_selector"
+                android:textSize="@dimen/s_11" />
+
+            <RadioButton
+                android:id="@+id/driver_middle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@{main_fr_viewmodel.driverSelected}"
+                android:gravity="center"
+                android:text="骑行"
+                android:textColor="@color/nomalTextColor"
+                android:textSize="@dimen/s_11" />
+
+            <RadioButton
+                android:id="@+id/dynamics"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@drawable/message_selector"
+                android:gravity="center"
+                android:text="@string/message"
+                android:textColor="@color/radio_buttom_color_selector"
+                android:textSize="@dimen/s_11" />
+
+            <RadioButton
+                android:id="@+id/main_right"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableTop="@drawable/private_select"
+                android:gravity="center"
+                android:text="@string/privateTitle"
+                android:textColor="@color/radio_buttom_color_selector"
+                android:textSize="@dimen/s_11" />
+        </RadioGroup>
+    </RelativeLayout>
+</layout>

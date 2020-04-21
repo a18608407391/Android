@@ -6,9 +6,10 @@
 
 
         <import type="android.view.View"></import>
+
         <variable
             name="simple_model"
-            type="com.example.drivermodule.Component.SimpleRecycleComponent"></variable>
+            type="com.example.drivermodule.Component.SimpleItemRecycleComponent"></variable>
 
         <variable
             name="road_book_one_entity"

@@ -20,8 +20,12 @@ import com.zk.library.Bus.ServiceEven
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.getImageUrl
-import com.example.drivermodule.Activity.Team.TeamSettingActivity
+import com.example.drivermodule.Activity.Team.*
 import com.example.drivermodule.BR
+import com.example.drivermodule.Fragment.Team.DeleteActivity
+import com.example.drivermodule.Fragment.Team.TeamChangeNameActivity
+import com.example.drivermodule.Fragment.Team.TeamManagerActivity
+import com.example.drivermodule.Fragment.Team.TeamerPassActivity
 import com.example.drivermodule.R
 import com.google.gson.Gson
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX
@@ -29,6 +33,7 @@ import com.tencent.mm.opensdk.modelmsg.WXMediaMessage
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import io.reactivex.disposables.Disposable
@@ -53,8 +58,17 @@ import java.util.*
 
 class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).navigation()
-        finish()
+        back()
+    }
+
+    fun back() {
+
+        teamSettingActivity!!._mActivity!!.onBackPressedSupport()
+//        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(teamSettingActivity.activity, object : NavCallback() {
+//            override fun onArrival(postcard: Postcard?) {
+//                finish()
+//            }
+//        })
     }
 
     override fun onComponentFinish(view: View) {
@@ -98,6 +112,15 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         validate()
     }
 
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.Team_reject_even -> {
+                back()
+            }
+        }
+    }
+
     fun validate() {
         id = PreferenceUtils.getString(context, USERID)
         if (teamSettingActivity.info?.redisData?.teamer.toString() == id) {
@@ -119,13 +142,13 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
                 date.set(simple.format(d))
             }
             items.apply {
-                this?.add(PersonDatas(ObservableField("0"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.invite)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT), 0))
+                this?.add(PersonDatas(ObservableField("0"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.invite)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT)))
                 if (teamSettingActivity.info?.redisData?.teamer.toString() == id) {
-                    this?.add(PersonDatas(ObservableField("1"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.remove)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT), 1))
+                    this?.add(PersonDatas(ObservableField("1"), ObservableField(org.cs.tec.library.Base.Utils.getString(R.string.remove)), ObservableField(""), ObservableField(""), ObservableField(false), ObservableField(Color.TRANSPARENT)))
                 }
             }
             teamName.set(teamSettingActivity.info?.redisData?.teamName)
-            teamSettingActivity?.info?.redisData?.dtoList?.forEachIndexed { index, it ->
+            teamSettingActivity?.info?.redisData?.dtoList?.forEach {
                 var name = ""
                 if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                     it.teamRoleColor = "2D3138"
@@ -138,13 +161,10 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
                 if (it.memberId.toString() == id) {
                     roleName.set(it.teamRoleName)
                     teamerName.set(it.memberName)
-                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(true), ObservableField(Color.parseColor("#" + it.teamRoleColor)), index+2))
+                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(true), ObservableField(Color.parseColor("#" + it.teamRoleColor))))
                 } else {
-                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)), index+2))
+                    items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor))))
                 }
-            }
-            items.sortBy {
-                it.position
             }
         }
     }
@@ -170,14 +190,14 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         if (position == 1) {
             var id = PreferenceUtils.getString(context, USERID)
             if (teamSettingActivity.info?.redisData?.teamer.toString() == id) {
-                ARouter.getInstance().build(RouterUtils.TeamModule.DELETE).withSerializable(RouterUtils.TeamModule.TEAM_INFO, teamSettingActivity.info).navigation(teamSettingActivity, REQUEST_TEAM_DELETE)
+                teamSettingActivity.startForResult((ARouter.getInstance().build(RouterUtils.TeamModule.DELETE).navigation() as DeleteActivity).setValue(teamSettingActivity.info!!), REQUEST_TEAM_DELETE)
             }
         } else if (position == 0) {
             if (teamSettingActivity?.info?.redisData?.dtoList?.size == teamSettingActivity?.info?.redisData?.teamMaxCount) {
                 Toast.makeText(context, getString(R.string.max_member) + teamSettingActivity?.info?.redisData?.teamMaxCount + "人", Toast.LENGTH_SHORT).show()
             } else {
                 if (shareDialog == null) {
-                    shareDialog = DialogUtils.createShareDialog(teamSettingActivity, "", "")
+                    shareDialog = DialogUtils.createShareDialog(teamSettingActivity.activity!!, "", "")
                 } else if (shareDialog != null && !shareDialog!!.isShowing) {
                     shareDialog!!.show()
                 }
@@ -239,66 +259,41 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         }
         when (view.id) {
             R.id.teamer_setting_click -> {
-                ARouter.getInstance().build(RouterUtils.TeamModule.TEAMER_PASS).withSerializable(RouterUtils.TeamModule.TEAM_INFO, teamSettingActivity.info).navigation(teamSettingActivity, REQUEST_TEAM_PASS)
+                teamSettingActivity.startForResult((ARouter.getInstance().build(RouterUtils.TeamModule.TEAMER_PASS).navigation() as TeamerPassActivity).setValue(teamSettingActivity.info!!), REQUEST_TEAM_PASS)
             }
             R.id.manager_click -> {
                 if (teamSettingActivity.info?.redisData?.teamer.toString() == id) {
-                    ARouter.getInstance().build(RouterUtils.TeamModule.MANAGER).withSerializable(RouterUtils.TeamModule.TEAM_INFO, teamSettingActivity.info).navigation(teamSettingActivity, REQUEST_TEAM_MANAGER)
+                    teamSettingActivity.startForResult((ARouter.getInstance().build(RouterUtils.TeamModule.MANAGER).navigation() as TeamManagerActivity).setValue(teamSettingActivity.info!!), REQUEST_TEAM_MANAGER)
                 }
             }
             R.id.team_name_click -> {
                 if (teamSettingActivity.info?.redisData?.teamer.toString() == id) {
-                    ARouter.getInstance().build(RouterUtils.TeamModule.CHANGE_NAME).withSerializable(RouterUtils.TeamModule.TEAM_INFO, teamSettingActivity.info).navigation(teamSettingActivity, REQUEST_TEAM_NAME)
+                    teamSettingActivity.startForResult((ARouter.getInstance().build(RouterUtils.TeamModule.CHANGE_NAME).navigation() as TeamChangeNameActivity).setValue(teamSettingActivity.info!!), REQUEST_TEAM_NAME)
                 }
             }
             R.id.exit_team -> {
-                if (NetworkUtil.isNetworkAvailable(teamSettingActivity)) {
+                if (NetworkUtil.isNetworkAvailable(teamSettingActivity.activity!!)) {
                     if (teamSettingActivity.info?.redisData?.teamer.toString() == id) {
-                        var dialog = DialogUtils.createNomalDialog(teamSettingActivity, getString(R.string.exit_team_warm), getString(R.string.cancle), getString(R.string.confirm))
+                        var dialog = DialogUtils.createNomalDialog(teamSettingActivity.activity!!, getString(R.string.exit_team_warm), getString(R.string.cancle), getString(R.string.confirm))
                         dialog.setOnBtnClickL(OnBtnClickL {
                             dialog.dismiss()
                         }, OnBtnClickL {
-                            var so = Soket()
-                            so.type = SocketDealType.DISMISSTEAM.code
-                            so.teamCode = teamSettingActivity.info?.redisData?.teamCode
-                            so.teamId = teamSettingActivity.info?.redisData?.id.toString()
-                            so.userId = id
                             dialog.dismiss()
                             CoroutineScope(uiContext).launch {
                                 delay(1000)
-                                RxBus.default?.post("showProgress")
-//                                com.elder.amoski.Service.Mina.SessionManager.getInstance().writeToServer(Gson().toJson(so) + "\\r\\n")
-                                var pos = ServiceEven()
-                                pos.type = "sendData"
-                                pos.gson = Gson().toJson(so) + "\\r\\n"
-                                RxBus.default?.post(pos)
-                                ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).navigation()
-                                teamSettingActivity.finish()
+                                sendOrder(SocketDealType.DISMISSTEAM.code)
                             }
                         })
                         dialog.show()
                     } else {
-                        var dialog = DialogUtils.createNomalDialog(teamSettingActivity, getString(R.string.single_exit_team_warm), getString(R.string.cancle), getString(R.string.confirm))
+                        var dialog = DialogUtils.createNomalDialog(teamSettingActivity.activity!!, getString(R.string.single_exit_team_warm), getString(R.string.cancle), getString(R.string.confirm))
                         dialog.setOnBtnClickL(OnBtnClickL {
                             dialog.dismiss()
                         }, OnBtnClickL {
                             dialog.dismiss()
-                            var so = Soket()
-                            so.type = SocketDealType.LEAVETEAM.code
-                            so.teamCode = teamSettingActivity.info?.redisData?.teamCode
-                            so.teamId = teamSettingActivity.info?.redisData?.id.toString()
-                            so.userId = id
-                            dialog.dismiss()
                             CoroutineScope(uiContext).launch {
                                 delay(1000)
-                                RxBus.default?.post("showProgress")
-                                var pos = ServiceEven()
-                                pos.type = "sendData"
-                                pos.gson = Gson().toJson(so) + "\\r\\n"
-                                RxBus.default?.post(pos)
-//                                com.elder.amoski.Service.Mina.SessionManager.getInstance().writeToServer(Gson().toJson(so) + "\\r\\n")
-                                ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).navigation()
-                                teamSettingActivity.finish()
+                                sendOrder(SocketDealType.LEAVETEAM.code)
                             }
                         })
                         dialog.show()
@@ -306,5 +301,22 @@ class TeamSettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
                 }
             }
         }
+    }
+
+    fun sendOrder(type: Int) {
+        back()
+        CoroutineScope(uiContext).launch {
+            delay(200)
+            var so = Soket()
+            so.type = type
+            so.teamCode = teamSettingActivity.info?.redisData?.teamCode
+            so.teamId = teamSettingActivity.info?.redisData?.id.toString()
+            so.userId = id
+            var pos = ServiceEven()
+            pos.type = "sendData"
+            pos.gson = Gson().toJson(so) + "\\r\\n"
+            RxBus.default?.post(pos)
+        }
+
     }
 }

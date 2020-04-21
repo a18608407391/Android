@@ -7,13 +7,20 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.content.Context
+import android.databinding.ViewDataBinding
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.util.Log
+import android.view.ViewDebug
 import android.view.Window
+import android.widget.Toast
 import com.afollestad.materialdialogs.util.DialogUtils
+import com.alibaba.android.arouter.launcher.ARouter
 import com.trello.rxlifecycle2.LifecycleProvider
 import com.zk.library.Bus.event.SingleLiveEvent
 import com.zk.library.Base.ContainerActivity.Companion.BUNDLE
 import com.zk.library.Bus.event.ActivityDestroyEven
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.R
 import com.zk.library.Utils.CANONICAL_NAME
 import com.zk.library.Utils.CLASS
@@ -110,18 +117,43 @@ open class BaseViewModel : ViewModel(), IBaseViewModel {
     override fun onStop() {
     }
 
+
+    open fun doRelogin() {
+
+    }
+
     var destroyList = ArrayList<String>()
     var destroyEven: Disposable? = null
+    var disposable: Disposable? = null
     override fun registerRxBus() {
         destroyEven = RxBus.default?.toObservable(ActivityDestroyEven::class.java)?.subscribe {
             destroyList.add(it.name!!)
         }
+        disposable = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
+            doRxEven(it)
+        }
+        RxSubscriptions.add(disposable)
         RxSubscriptions.add(destroyEven)
     }
 
+    open fun doRxEven(it: RxBusEven?) {
+        when (it!!.type) {
+            RxBusEven.RELOGIN -> {
+                uc!!.ToastEven!!.postValue("网络错误，请检查手机号是否已绑定")
+            }
+            RxBusEven.RELOGIN_SUCCESS -> {
+                doRelogin()
+                uc!!.ToastEven!!.postValue("网络错误，请重新获取请求！")
+            }
+        }
+    }
+
     override fun removeRxBus() {
+        RxSubscriptions.remove(disposable)
         RxSubscriptions.remove(destroyEven)
     }
+
+
 
 
     class UIChangeLiveData : SingleLiveEvent<Any>() {
@@ -131,6 +163,14 @@ open class BaseViewModel : ViewModel(), IBaseViewModel {
         var startContainerActivityEvent: SingleLiveEvent<Map<String, Any>>? = null
         var finishEvent: SingleLiveEvent<Void>? = null
         var onBackPressedEvent: SingleLiveEvent<Void>? = null
+        var ToastEven: SingleLiveEvent<String>? = null
+
+        fun showToastEven(): SingleLiveEvent<String> {
+            if (ToastEven == null) {
+                ToastEven = SingleLiveEvent()
+            }
+            return ToastEven!!
+        }
 
 
         fun getShowDialogEven(): SingleLiveEvent<String> {
@@ -179,5 +219,32 @@ open class BaseViewModel : ViewModel(), IBaseViewModel {
             super.observe(owner, observer)
         }
     }
+
+    fun startFragment(from: Fragment, to: String) {
+        startFragment(from, to, null, 0)
+    }
+
+
+    fun startFragment(from: Fragment, to: String, requestCode: Int) {
+        startFragment(from, to, null, requestCode)
+    }
+
+    fun startFragment(from: Fragment, to: String, bundle: Bundle?) {
+        startFragment(from, to, bundle, 0)
+    }
+
+    fun startFragment(from: Fragment, to: String, bundle: Bundle?, requestCode: Int) {
+        var fromFr = from as BaseFragment<ViewDataBinding, BaseViewModel>
+        var fr = ARouter.getInstance().build(to).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        if (bundle != null) {
+            fr.arguments = bundle
+        }
+        if (requestCode > 0) {
+            fromFr.startForResult(fr, requestCode)
+        } else {
+            fromFr.start(fr)
+        }
+    }
+
 
 }

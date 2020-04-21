@@ -64,14 +64,14 @@ public class HtmlHttpImageGetter implements ImageGetter {
         if (baseUrl != null) {
             String ur = baseUrl;
             this.baseUri = URI.create(ur.substring(0, ur.length() - 1));
+            Log.e("picBase","图片链接"+baseUri);
         }
-
     }
+
 
     public void enableCompressImage(boolean enable) {
         enableCompressImage(enable, 50);
     }
-
     public void enableCompressImage(boolean enable, int quality) {
         compressImage = enable;
         qualityImage = quality;
@@ -145,6 +145,8 @@ public class HtmlHttpImageGetter implements ImageGetter {
             if (urlDrawable == null) {
                 return;
             }
+
+
             // set the correct bound according to the result from HTTP call
             urlDrawable.setBounds(0, 0, (int) (result.getIntrinsicWidth() * scale), (int) (result.getIntrinsicHeight() * scale));
 
@@ -238,7 +240,7 @@ public class HtmlHttpImageGetter implements ImageGetter {
                 url = URI.create(urlString).toURL();
             }
 
-            Log.e("result","图片链接"+url.toString());
+            Log.e("pic","图片链接"+url.toString());
 
             return (InputStream) url.getContent();
         }

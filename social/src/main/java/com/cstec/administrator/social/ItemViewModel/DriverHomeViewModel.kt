@@ -2,7 +2,9 @@ package com.cstec.administrator.social.ItemViewModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.databinding.ViewDataBinding
 import android.net.Uri
+import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
@@ -10,8 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import com.alibaba.android.arouter.facade.Postcard
-import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.social.Activity.DriverHomeActivity
 import com.cstec.administrator.social.BR
@@ -23,12 +23,10 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.google.gson.Gson
-import com.zk.library.Base.AppManager
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.activity_driverhome.*
-import kotlinx.android.synthetic.main.activity_my_dynamics.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,8 +44,7 @@ import java.util.*
 class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, DialogUtils.Companion.IconUriCallBack, SwipeRefreshLayout.OnRefreshListener, HttpInteface.SocialDynamicsFocus {
 
     override fun ResultFocusSuccess(it: String) {
-
-        LoadChildData(activity.nViewPager.currentItem)
+        LoadChildData(activity.mViewPager!!.currentItem)
     }
 
     override fun ResultFocusError(ex: Throwable) {
@@ -55,14 +52,14 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
     }
 
     override fun onRefresh() {
-        if (activity.nViewPager.currentItem == 0) {
+        if (activity.mViewPager!!.currentItem == 0) {
             var item = items[0] as CavalierDynamicItem
             item.pageSize = 1
         }
         initData()
         CoroutineScope(uiContext).launch {
             delay(10000)
-            activity.driver_homes_swipe.isRefreshing = false
+            activity.mRefresh!!.isRefreshing = false
         }
     }
 
@@ -98,7 +95,7 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
             self.set(2)
         }
         bg.set(entity?.backgroundImages)
-        LoadChildData(activity.nViewPager.currentItem)
+        LoadChildData(activity.mViewPager!!.currentItem)
         if (entity.followed == 0) {
             follow.set(false)
         } else {
@@ -130,7 +127,7 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
         } else {
             fansCount.set((entity.FansCount).toString())
         }
-        activity.driver_homes_swipe.isRefreshing = false
+        activity.mRefresh!!.isRefreshing = false
     }
 
     var des = ObservableField<String>()
@@ -182,7 +179,7 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
             activity.id = PreferenceUtils.getString(context, USERID)
         }
         RxSubscriptions.add(RxBus.default?.toObservable(DynamicsCategoryEntity.Dynamics::class.java)?.subscribe {
-            if (activity.nViewPager.currentItem == 0) {
+            if (activity.mViewPager!!.currentItem == 0) {
                 var mmm = items[0] as CavalierDynamicItem
                 mmm.items.forEachIndexed { index, dynamics ->
                     if (dynamics.id == it.id) {
@@ -233,11 +230,11 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
     }
 
     private fun initTabLayoutChangeUI() {
-        for (i in 0..activity.mTab.tabCount) {
-            val tab = activity.mTab.getTabAt(i)
+        for (i in 0..activity.mTabLayout!!.tabCount) {
+            val tab = activity.mTabLayout!!.getTabAt(i)
             tab?.customView = getTabView(i)
         }
-        activity.mTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        activity.mTabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(p0: TabLayout.Tab?) {
             }
 
@@ -284,23 +281,20 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
 
         when (view.id) {
             R.id.msg_click -> {
-                Log.e(this.javaClass.name,"${Gson().toJson(entity)}")
+                Log.e(this.javaClass.name, "${Gson().toJson(entity)}")
                 if (entity?.Member?.tel.isNullOrEmpty()) {
                     Toast.makeText(context, "未绑定手机号", Toast.LENGTH_SHORT).show()
                     return
                 }
-                Log.e(this.javaClass.name,"${activity.navigationType}")
-                if (activity.navigationType == 10) {
-                    finish()
-                } else {
-                    ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC)
-                            .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, entity?.Member?.name)
-                            .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, entity?.Member?.tel)
-                            .withString(RouterUtils.Chat_Module.Chat_App_Key, "35e2033d379dabfde25d9321")
-                            .withString(RouterUtils.Chat_Module.Chat_DRAFT, "")
-                            .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                            .navigation()
-                }
+                var fr = ARouter.getInstance().build(RouterUtils.Chat_Module.Chat_AC).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                var bundle = Bundle()
+                bundle.putString(RouterUtils.Chat_Module.Chat_CONV_TITLE, entity?.Member?.name)
+                bundle.putString(RouterUtils.Chat_Module.Chat_TARGET_ID, entity?.Member?.tel)
+                bundle.putString(RouterUtils.Chat_Module.Chat_App_Key, "35e2033d379dabfde25d9321")
+                bundle.putString(RouterUtils.Chat_Module.Chat_DRAFT, "")
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                fr.arguments = bundle
+                activity.start(fr)
             }
             R.id.home_focus_click -> {
                 HttpRequest.instance.DynamicFocusResult = this
@@ -319,25 +313,48 @@ class DriverHomeViewModel : BaseViewModel(), HttpInteface.CanalierResult, TabLay
 
             R.id.bg_click -> {
                 if (activity?.id == PreferenceUtils.getString(context, USERID)) {
-                    DialogUtils.showAnim(activity, 0)
+                    DialogUtils.showFragmentAnim(activity!!, 0)
                     DialogUtils.lisentner = this@DriverHomeViewModel
                 }
             }
             R.id.like_click -> {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, PRIVATE_DATA_RETURN)
+
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity.activity, PRIVATE_DATA_RETURN)
+//                var fr = activity.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id)
+                var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_GET_LIKE).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                model.arguments = bundle
+                activity.start(model)
             }
             R.id.fans_home_click -> {
                 if (self.get() == 2) {
-                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FANS_AC).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, PRIVATE_DATA_RETURN)
+//                    var fr = activity.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+                    var bundle = Bundle()
+                    bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                    bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id)
+                    var model = ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FANS_AC).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                    model.arguments = bundle
+                    activity.start(model)
+//                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FANS_AC).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity.activity, PRIVATE_DATA_RETURN)
                 }
             }
             R.id.focus_home_click -> {
                 if (self.get() == 2) {
-                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FOCUS_AC).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, PRIVATE_DATA_RETURN)
+//                    var fr = activity.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+                    var bundle = Bundle()
+                    bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+                    bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id)
+                    var model = ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FOCUS_AC).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                    model.arguments = bundle
+                    activity.startForResult(model, PRIVATE_DATA_RETURN)
+//                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_FOCUS_AC).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity?.Member!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity.activity, PRIVATE_DATA_RETURN)
                 }
             }
             R.id.canalier_back -> {
-                activity.doback()
+//                activity.doback()
+                activity._mActivity!!.onBackPressedSupport()
             }
         }
     }

@@ -63,7 +63,7 @@ class CavalierPhotoItem : CavalierItemModel {
             }
         }
         var index = list.indexOf(item.path.get())
-        DialogUtils.createBigPicShow(viewModel.activity!!, list, index)
+        DialogUtils.createBigPicShow(viewModel.activity!!.activity!!, list, index)
     }
 
     fun init() {
@@ -118,7 +118,7 @@ class CavalierPhotoItem : CavalierItemModel {
             it.onNext(response)
         }).subscribeOn(Schedulers.io()).map(Function<Response, String> {
             return@Function it.body()?.string()
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(object : BaseObserver<String>(viewModel.activity) {
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(object : BaseObserver<String>(viewModel.activity.activity) {
             override fun onNext(t: String) {
                 super.onNext(t)
                 viewModel.activity.dismissProgressDialog()

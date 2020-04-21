@@ -59,6 +59,21 @@ public class PickImageActivity extends UIView {
         activity.startActivityForResult(intent, requestCode);
     }
 
+    public static void startFragment(Activity activity, int requestCode, int from,
+                             String outPath, boolean mutiSelectMode, int multiSelectLimitSize,
+                             boolean isSupportOrig, boolean crop, int outputX, int outputY) {
+        Intent intent = new Intent(activity, PickImageActivity.class);
+        intent.putExtra(Extras.EXTRA_FROM, from);
+        intent.putExtra(Extras.EXTRA_FILE_PATH, outPath);
+        intent.putExtra(Extras.EXTRA_MUTI_SELECT_MODE, mutiSelectMode);
+        intent.putExtra(Extras.EXTRA_MUTI_SELECT_SIZE_LIMIT, multiSelectLimitSize);
+        intent.putExtra(Extras.EXTRA_SUPPORT_ORIGINAL, isSupportOrig);
+        intent.putExtra(Extras.EXTRA_NEED_CROP, crop);
+        intent.putExtra(Extras.EXTRA_OUTPUTX, outputX);
+        intent.putExtra(Extras.EXTRA_OUTPUTY, outputY);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

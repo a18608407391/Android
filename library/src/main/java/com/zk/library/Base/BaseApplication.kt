@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit
 import android.content.Intent
 import cn.jpush.im.android.api.model.Message
 import cn.jpush.im.android.api.model.Conversation
+import com.zk.library.Bus.event.RxBusEven
 import me.jessyan.autosize.AutoSize
 import me.jessyan.autosize.AutoSizeConfig
 
@@ -163,8 +164,11 @@ open class BaseApplication : Application() {
         RxBus.default?.toObservable(String::class.java)?.subscribe {
             if (it == "MINA_FORCE_CLOSE") {
                 MinaConnected = false
-                RxBus.default!!.post("AppMINA_FORCE_CLOSE")
+                var even = RxBusEven()
+                even.type = RxBusEven.TeamSocketDisConnect
+                RxBus.default!!.post(even)
                 if (!isClose) {
+                    //非主动关闭Mina 開啟重連機制
                     var flag = NetworkUtil.isNetworkAvailable(context)
                     if (flag) {
                         if (!MinaConnected) {
@@ -191,7 +195,9 @@ open class BaseApplication : Application() {
             } else if (it == "MinaConnected") {
                 MinaConnected = true
                 isClose = false
-                RxBus.default!!.post("AppMinaConnected")
+                var even = RxBusEven()
+                even.type = RxBusEven.TeamSocketConnectSuccess
+                RxBus.default!!.post(even)
             }
         }
     }

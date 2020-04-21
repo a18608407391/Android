@@ -16,5 +16,6 @@ class RouteEntity : Serializable {
 
     var select  = ObservableField<Boolean>(false)
 
+    var id = ObservableField<Int>()
 
 }

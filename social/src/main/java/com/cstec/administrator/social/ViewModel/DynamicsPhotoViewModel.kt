@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -32,7 +33,7 @@ import java.io.File
 
 class DynamicsPhotoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        finish()
+        activity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -42,18 +43,23 @@ class DynamicsPhotoViewModel : BaseViewModel(), TitleComponent.titleComponentCal
                 list.add(it.path.get()!!)
             }
         }
-        var intent = Intent()
-        intent.putStringArrayListExtra("PhotoUrls", list)
-        activity.setResult(SOCIAL_SELECT_PHOTOS, intent)
-        finish()
+        var bundler = Bundle()
+        bundler.putStringArrayList("PhotoUrls", list)
+        activity.setFragmentResult(SOCIAL_SELECT_PHOTOS, bundler)
+        activity._mActivity!!.onBackPressedSupport()
+//        var intent = Intent()
+//        intent.putStringArrayListExtra("PhotoUrls", list)
+//        activity.setResult(SOCIAL_SELECT_PHOTOS, intent)
+//        finish()
     }
+
     var realPath: Uri? = null
 
-     fun onItemClick(info: PictureInfo, position: Int) {
-         if (position == 0) {
-             //开始拍摄  进行图片裁剪 水印添加等等
-             realPath = DialogUtils.startCamera(activity)
-         }
+    fun onItemClick(info: PictureInfo, position: Int) {
+        if (position == 0) {
+            //开始拍摄  进行图片裁剪 水印添加等等
+            realPath = DialogUtils.startCameraFragment(activity)
+        }
     }
 
 
@@ -118,7 +124,7 @@ class DynamicsPhotoViewModel : BaseViewModel(), TitleComponent.titleComponentCal
 
     fun onAdapterItemClick(item: PictureInfo, position: Int) {
         if (!item.isCheced.get()!!) {
-            if (selectCount > activity.count-1) {
+            if (selectCount > activity.count - 1) {
                 Toast.makeText(context, getString(R.string.photo_max), Toast.LENGTH_SHORT).show()
                 return
             }

@@ -1,6 +1,8 @@
 package com.cstec.administrator.party_module.ViewModel
 
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -19,7 +21,9 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_search_party.*
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
@@ -51,7 +55,17 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
     fun onClick(view: View) {
         when (view.id) {
             R.id.search_cancle -> {
-                finish()
+//                finish()
+                activity.pop()
+            }
+        }
+    }
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                activity._mActivity!!.onBackPressedSupport()
             }
         }
     }
@@ -63,31 +77,56 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
     fun itemClick(entity: PartySearchEntity) {
         when (entity.BIG_TYPE) {
             1 -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+//                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity.activity, object : NavCallback() {
+//                            override fun onArrival(postcard: Postcard?) {
+//                                finish()
+//                            }
+//                        })
+
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(activity.location!!.latitude, activity.location!!.longitude))
+                bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE)
+                startFragment(activity, RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL, bundle)
             }
             2 -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
+
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(activity.location!!.latitude, activity.location!!.longitude))
+                bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE)
+                startFragment(activity, RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+//                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity.activity, object : NavCallback() {
+//                            override fun onArrival(postcard: Postcard?) {
+//                                finish()
+//                            }
+//                        })
             }
             3 -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
+
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        Location(activity.location!!.latitude, activity.location!!.longitude))
+                bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+                bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE)
+                startFragment(activity, RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
+
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+//                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                                Location(activity.location!!.latitude, activity.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 3).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, activity.party_city).navigation(activity.activity, object : NavCallback() {
+//                            override fun onArrival(postcard: Postcard?) {
+//                                finish()
+//                            }
+//                        })
             }
         }
     }

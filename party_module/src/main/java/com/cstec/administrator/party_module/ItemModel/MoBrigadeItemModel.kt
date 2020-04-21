@@ -2,6 +2,7 @@ package com.cstec.administrator.party_module.ItemModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.os.Bundle
 import android.util.Log
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cstec.administrator.party_module.*
@@ -32,9 +33,16 @@ class MoBrigadeItemModel : BasePartyItemModel(), HttpInteface.PartyMoto_inf, Sub
     override fun onSubjectItemClick(entity: SubjectEntity) {
 
         var model = viewModel as SubjectPartyViewModel
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                model.subject.location)
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, model.city.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE)
+        model.startFragment(model.subject, RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
     }
 
     override fun PartyMotoSucccess(it: String) {

@@ -132,15 +132,22 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
     }
 
     var curOffset = 0
-
+    var lastColor = false
     override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
         curOffset = p1
-        if (p1 >= -ConvertUtils.dp2px(30F)) {
-            Utils.setStatusTextColor(false, activity)
+        if (p1 >= -ConvertUtils.dp2px(122F)) {
+            if (lastColor) {
+                Utils.setStatusTextColor(false, activity)
+                lastColor = false
+            }
             viewModel?.vIsField!!.set(false)
+
             poketSwipeRefreshLayout.isEnabled = p1 >= 0
         } else {
-            Utils.setStatusTextColor(true, activity)
+            if (!lastColor) {
+                Utils.setStatusTextColor(true, activity)
+                lastColor = true
+            }
             poketSwipeRefreshLayout.isEnabled = false
             viewModel?.vIsField!!.set(true)
         }
@@ -196,5 +203,17 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
     override fun ResultHomeError(it: Throwable) {
     }
 
+    private var WAIT_TIME = 2000L
+    private var TOUCH_TIME: Long = 0
+
+    override fun onBackPressedSupport(): Boolean {
+        if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
+            _mActivity!!.finish()
+        } else {
+            TOUCH_TIME = System.currentTimeMillis()
+            Toast.makeText(_mActivity, "再次点击退出App", Toast.LENGTH_SHORT).show()
+        }
+        return true
+    }
 
 }

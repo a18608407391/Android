@@ -21,8 +21,8 @@ import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.DrivePath;
 import com.amap.api.services.route.DriveStep;
 import com.amap.api.services.route.TMC;
-import com.example.drivermodule.AMapUtil;
 import com.example.drivermodule.R;
+import com.example.drivermodule.Utils.AMapUtil;
 
 import org.cs.tec.library.Base.Utils.UtilsKt;
 import org.cs.tec.library.Utils.ConvertUtils;

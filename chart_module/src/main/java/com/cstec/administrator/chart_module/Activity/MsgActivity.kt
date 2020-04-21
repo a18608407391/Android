@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.*
 import cn.jpush.im.android.api.JMessageClient
@@ -198,6 +199,7 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
 
 
     fun onEvent(event: MessageEvent) {
+        Log.e("result", "MessageEvent" + event.message)
         setUnReadMsg(JMessageClient.getAllUnReadMsgCount())
         var msg = event.message
         if (msg.targetType === ConversationType.group) {
@@ -219,14 +221,14 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
             var userInfo = msg.targetInfo as UserInfo
             var targetId = userInfo.userName
             var conv = JMessageClient.getSingleConversation(targetId, userInfo.appKey)
+
+
             CoroutineScope(uiContext).launch {
                 if (conv != null) {
                     if (TextUtils.isEmpty(userInfo.avatar)) {
                         userInfo.getAvatarBitmap(object : GetAvatarBitmapCallback() {
                             override fun gotResult(responseCode: Int, responseMessage: String, avatarBitmap: Bitmap) {
-                                if (responseCode == 0) {
-                                    mViewModel?.mListAdapter?.notifyDataSetChanged()
-                                }
+                                mViewModel?.mListAdapter?.notifyDataSetChanged()
                             }
                         })
                     }
@@ -240,6 +242,7 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
 
 
     fun onEven(event: OfflineMessageEvent) {
+        Log.e("result", "OfflineMessageEvent" + event.conversation.id)
         var conv = event.getConversation();
         if (!conv.getTargetId().equals("feedback_Android") && conv.getType() != ConversationType.chatroom) {
             mViewModel?.refresh(conv)
@@ -248,11 +251,15 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
     }
 
     fun onEven(event: MessageRetractEvent) {
+        Log.e("result", "MessageRetractEvent" + event.conversation.id)
         var conv = event.getConversation();
         mViewModel?.refresh(conv)
     }
 
     fun onEven(event: ConversationRefreshEvent) {
+        Log.e("result", "ConversationRefreshEvent" + event.conversation.id)
+
+
         var conv = event.getConversation();
         if (!conv.getTargetId().equals("feedback_Android") && conv.getType() != ConversationType.chatroom) {
             mViewModel?.refresh(conv)
@@ -266,6 +273,7 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
     }
 
     fun onEventMainThread(event: MessageReceiptStatusChangeEvent) {
+        Log.e("result", "MessageReceiptStatusChangeEvent" + event.conversation.id)
         mViewModel?.mListAdapter?.notifyDataSetChanged()
     }
 

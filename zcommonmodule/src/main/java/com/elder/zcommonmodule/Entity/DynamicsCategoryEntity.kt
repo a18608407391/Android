@@ -36,18 +36,18 @@ class DynamicsCategoryEntity : Serializable {
         var parentDynaminId: String? = null
         var parentDynamin: DynamicsSimple? = null
         var publishContent: String? = null
-        var relationTypeId: String? = null
+//        var relationTypeId: String? = null
         var releaseAddress: String? = null
-        var saveAlbum: String? = null
-        var score: String? = null
+//        var saveAlbum: String? = null
+//        var score: String? = null
         var state: String? = null
         var type: String? = null
 
 
-        var typeDesc: String? = null
-        var typeImage: String? = null
-        var typeTitle: String? = null
-        var updateDate: String? = null
+//        var typeDesc: String? = null
+//        var typeImage: String? = null
+//        var typeTitle: String? = null
+//        var updateDate: String? = null
         var xAxis: String? = null
         var yAxis: String? = null
     }

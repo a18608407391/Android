@@ -17,11 +17,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
 import android.graphics.drawable.AnimationDrawable
 import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
 import com.elder.zcommonmodule.Utils.Dialog.ActionSheetDialog
 import android.provider.MediaStore
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.FileProvider
 import android.support.v4.view.PagerAdapter
@@ -37,6 +40,9 @@ import com.elder.zcommonmodule.Entity.AllCarsEntity
 import com.elder.zcommonmodule.Utils.Dialog.NormalDialog
 import com.elder.zcommonmodule.Utils.Dialog.NormalDialog.STYLE_ONE
 import com.elder.zcommonmodule.Utils.Dialog.NormalDialog.STYLE_TWO
+import com.zk.library.Base.BaseFragment
+import com.zk.library.Base.BaseViewModel
+import com.zk.library.Base.Transaction.ISupportFragment
 import com.zk.library.Utils.RouterUtils
 import org.cs.tec.library.Base.Utils.*
 import org.cs.tec.library.binding.command.BindingCommand
@@ -136,7 +142,7 @@ class DialogUtils() {
             return alertDialog
         }
 
-        fun getRealPathFromURI(activity: AppCompatActivity, contentUri: Uri): String {
+        fun getRealPathFromURI(activity: Activity, contentUri: Uri): String {
             try {
                 val proj = arrayOf(MediaStore.MediaColumns.DATA)
                 val cursor = activity.managedQuery(contentUri, proj, null, null, null)
@@ -148,7 +154,39 @@ class DialogUtils() {
             }
         }
 
-        fun startCrop(activity: AppCompatActivity, uri: Uri, width: Int, hight: Int): String {
+        fun startCropFragment(activity: Fragment, uri: Uri, width: Int, hight: Int): String {
+            var intent = Intent("com.android.camera.action.CROP")
+            intent.setDataAndType(uri, "image/*")
+            // 图片处于可裁剪状态
+            intent.putExtra("crop", "true")
+            // aspectX aspectY 是宽高的比例
+            if (Build.MODEL.contains("HUAWEI")) {
+                intent.putExtra("aspectX", 9998)
+                intent.putExtra("aspectY", 9999)
+            } else {
+                intent.putExtra("aspectX", width)
+                intent.putExtra("aspectY", hight)
+            }
+            // 是否之处缩放
+            intent.putExtra("scale", true)
+            intent.putExtra("outputX", width)
+            intent.putExtra("outputY", hight)
+            val outDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            var cropFile = File(outDir, System.currentTimeMillis().toString() + ".jpg")
+            val cropImageUri: Uri
+            if (Build.VERSION.SDK_INT >= 24) {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            cropImageUri = Uri.fromFile(cropFile)
+            var realPathFromURI = getRealPathFromURI(activity.activity!!, cropImageUri)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, cropImageUri)
+            // 设置图片输出格式
+            // 关闭人脸识别
+            activity.startActivityForResult(intent, REQUEST_CODE_CROP_IMAGE)
+            return realPathFromURI
+        }
+
+        fun startCrop(activity: Activity, uri: Uri, width: Int, hight: Int): String {
             var intent = Intent("com.android.camera.action.CROP")
             intent.setDataAndType(uri, "image/*")
             // 图片处于可裁剪状态
@@ -181,7 +219,7 @@ class DialogUtils() {
         }
 
 
-        fun showYearDialog(activity: AppCompatActivity, birthdayCommand: BindingCommand<String>): DatePickerView? {
+        fun showYearDialog(activity: Activity, birthdayCommand: BindingCommand<String>): DatePickerView? {
             var buidler = AlertDialog.Builder(activity, R.style.PopupAnimation)
             var alertDialog = buidler.create()
             alertDialog!!.setCanceledOnTouchOutside(true)
@@ -228,7 +266,7 @@ class DialogUtils() {
         }
 
 
-        fun showBirthdayDialog(activity: AppCompatActivity, birthdayCommand: BindingCommand<String>): DatePickerView? {
+        fun showBirthdayDialog(activity: Activity, birthdayCommand: BindingCommand<String>): DatePickerView? {
             var buidler = AlertDialog.Builder(activity, R.style.PopupAnimation)
             var alertDialog = buidler.create()
             alertDialog!!.setCanceledOnTouchOutside(true)
@@ -272,7 +310,7 @@ class DialogUtils() {
         }
 
 
-        fun showGenderDialog(activity: AppCompatActivity, genderCommand: BindingCommand<String>, list: ArrayList<String>, title: String): WheelView<String>? {
+        fun showGenderDialog(activity: Activity, genderCommand: BindingCommand<String>, list: ArrayList<String>, title: String): WheelView<String>? {
             var buidler = AlertDialog.Builder(activity, R.style.PopupAnimation)
             var alertDialog = buidler.create()
             alertDialog!!.setCanceledOnTouchOutside(true)
@@ -307,7 +345,7 @@ class DialogUtils() {
             return year
         }
 
-        fun showCityDialog(activity: AppCompatActivity, cityCommand: BindingCommand<String>): OptionsPickerView<CityEntity>? {
+        fun showCityDialog(activity: Activity, cityCommand: BindingCommand<String>): OptionsPickerView<CityEntity>? {
             var buidler = AlertDialog.Builder(activity, R.style.PopupAnimation)
             var alertDialog = buidler.create()
             alertDialog!!.setCanceledOnTouchOutside(true)
@@ -432,7 +470,7 @@ class DialogUtils() {
             return year
         }
 
-        fun showAnimSelect(activity: AppCompatActivity): ActionSheetDialog {
+        fun showAnimSelect(activity: Activity): ActionSheetDialog {
             val cs = arrayOf(getString(R.string.publicStr), //
                     getString(R.string.privateSelf_Str)//
             )
@@ -464,7 +502,57 @@ class DialogUtils() {
             return dialog
         }
 
-        fun showAnim(activity: AppCompatActivity, type: Int): ActionSheetDialog {
+        fun showFragmentAnim(activity: Fragment, type: Int): ActionSheetDialog {
+            val cs = arrayOf(getString(R.string.localImg), //
+                    getString(R.string.opencamera)//
+            )
+            val itemList = ArrayList<String>()
+            for (string in cs) {
+                itemList.add(string)
+            }
+            val contents = arrayOfNulls<String>(itemList.size)
+            var dialog = ActionSheetDialog(activity.activity, //
+                    cs, null)
+//            dialog.show()
+            dialog.isTitleShow(false)
+                    .itemTextColor(getColor(R.color.blackTextColor))
+                    .layoutAnimation(null)//
+                    .show()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setOnOperItemClickL { parent, view, position, id ->
+                when (position) {
+                    0 -> {
+                        // 打开本地相册
+                        if (type == 0) {
+                            val intent = Intent()
+                            intent.type = "image/*"
+                            intent.action = Intent.ACTION_GET_CONTENT
+                            activity.startActivityForResult(intent, PICK_IMAGE_ACTIVITY_REQUEST_CODE)
+                        } else {
+                            var bundler = Bundle()
+                            bundler.putInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT, type)
+                            var fr = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_PHOTO).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+                            fr.arguments = bundler
+                            (activity as BaseFragment<ViewDataBinding, BaseViewModel>).startForResult(fr, SOCIAL_SELECT_PHOTOS)
+//                            ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_PHOTO).withInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT, type).navigation(activity.activity, SOCIAL_SELECT_PHOTOS)
+                        }
+                        dialog.dismiss()
+                    }
+                    1 -> {           // 访问照相机
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && (activity as BaseFragment<ViewDataBinding, BaseViewModel>).activity!!
+                                        .checkSelfPermission(Manifest.permission.CAMERA) !== PackageManager.PERMISSION_GRANTED) {
+                            activity.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+                            activity.requestPermissions(arrayOf(Manifest.permission.CAMERA), CHECK_PERMISSION)
+                        } else {
+                            openCFragment(dialog, activity)
+                        }
+                    }
+                }
+            }
+            return dialog
+        }
+
+        fun showAnim(activity: Activity, type: Int): ActionSheetDialog {
             val cs = arrayOf(getString(R.string.localImg), //
                     getString(R.string.opencamera)//
             )
@@ -509,12 +597,46 @@ class DialogUtils() {
             return dialog
         }
 
-        private fun openC(dialog: ActionSheetDialog, context: AppCompatActivity) {
+        private fun openCFragment(dialog: ActionSheetDialog, context: Fragment) {
+            dialog.dismiss()
+            startCameraFragment(context)
+        }
+
+        private fun openC(dialog: ActionSheetDialog, context: Activity) {
             dialog.dismiss()
             startCamera(context)
         }
 
-        fun startCamera(context: AppCompatActivity): Uri {
+        fun startCameraFragment(context: Fragment): Uri {
+            val state = Environment.getExternalStorageState()
+            if (state == Environment.MEDIA_MOUNTED) {
+                val intent1 = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                val outDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                if (!outDir.exists()) {
+                    outDir.mkdirs()
+                }
+                val outFile = File(outDir, System.currentTimeMillis().toString() + ".jpg")
+                var picFileFullName = outFile.absolutePath
+                var iconuri: Uri
+                if (Build.VERSION.SDK_INT >= 24) {
+                    iconuri = FileProvider.getUriForFile(context.activity!!, "com.elder.zcommonmodule.fileprovider", outFile)
+                    intent1.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                } else {
+                    iconuri = Uri.fromFile(outFile)
+                }
+                if (lisentner != null) {
+                    lisentner!!.getIcon(iconuri)
+                }
+                intent1.putExtra(MediaStore.EXTRA_OUTPUT, iconuri)
+                intent1.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
+                context!!.startActivityForResult(intent1, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+                return iconuri
+            } else {
+                return null!!
+            }
+        }
+
+        fun startCamera(context: Activity): Uri {
             val state = Environment.getExternalStorageState()
             if (state == Environment.MEDIA_MOUNTED) {
                 val intent1 = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -545,7 +667,7 @@ class DialogUtils() {
 
 
         @SuppressLint("SetTextI18n")
-        fun createBigPicShow(activity: FragmentActivity, s: ObservableArrayList<String>, position: Int): AlertDialog {
+        fun createBigPicShow(activity: Activity, s: ObservableArrayList<String>, position: Int): AlertDialog {
             var list = ArrayList<String>()
             s.forEach {
                 if (!it.isNullOrEmpty()) {

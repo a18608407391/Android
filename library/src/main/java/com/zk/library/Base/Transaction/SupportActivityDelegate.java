@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentationMagician;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.zk.library.Base.Transaction.anim.DefaultVerticalAnimator;
@@ -152,10 +153,10 @@ public class SupportActivityDelegate {
                     mFragmentClickable = true;
                 }
 
+                Log.e("result","onBackPressed");
                 // 获取activeFragment:即从栈顶开始 状态为show的那个Fragment
                 ISupportFragment activeFragment = SupportHelper.getActiveFragment(getSupportFragmentManager());
                 if (mTransactionDelegate.dispatchBackPressedEvent(activeFragment)) return;
-
                 mSupport.onBackPressedSupport();
             }
         });
@@ -166,9 +167,13 @@ public class SupportActivityDelegate {
      * 请尽量复写该方法,避免复写onBackPress(),以保证SupportFragment内的onBackPressedSupport()回退事件正常执行
      */
     public void onBackPressedSupport() {
+
+        Log.e("result","onBackPressedSupport");
         if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+            Log.e("result","onBackPressedSupport"+getSupportFragmentManager().getBackStackEntryCount());
             pop();
         } else {
+            Log.e("result","onBackPressedSupportActivity");
             ActivityCompat.finishAfterTransition(mActivity);
         }
     }

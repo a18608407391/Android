@@ -1,6 +1,8 @@
 package com.cstec.administrator.social.ViewModel
 
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -15,6 +17,7 @@ import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
@@ -26,11 +29,17 @@ class FocusListViewModel : BaseViewModel(), HttpInteface.SocialDynamicsFocuserLi
     override fun onSimpleClick(entity: Any) {
         var so = entity as SocialHoriEntity
 
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, so.memberId.toString())
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, focusListActivity.location)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 7).navigation()
-
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, focusListActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID,so.memberId.toString())
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        focusListActivity.start(model)
+//
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, so.memberId.toString())
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, focusListActivity.location)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 7).navigation()
 
     }
 
@@ -42,15 +51,13 @@ class FocusListViewModel : BaseViewModel(), HttpInteface.SocialDynamicsFocuserLi
     }
 
     override fun ResultLikerError(ex: Throwable) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onRefresh() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onComponentClick(view: View) {
-        finish()
+      focusListActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {

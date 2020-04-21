@@ -1,9 +1,9 @@
 package com.example.drivermodule.ViewModel
 
-import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.graphics.Color
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -13,11 +13,12 @@ import com.elder.zcommonmodule.Entity.SoketBody.BasePacketReceive
 import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonInfo
 import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonnelInfoDto
 import com.elder.zcommonmodule.getImageUrl
-import com.example.drivermodule.Activity.Team.DeleteActivity
+import com.example.drivermodule.Fragment.Team.DeleteActivity
 import com.example.drivermodule.BR
 import com.example.drivermodule.R
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +34,7 @@ import org.cs.tec.library.USERID
 
 class TeamDeleteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        finish()
+        deleteActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -48,16 +49,25 @@ class TeamDeleteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 }
             }
             if (!flag) {
-                var intent = Intent()
-                intent.putExtra("info", deleteList)
-                deleteActivity.setResult(TeamSettingViewModel.REQUEST_TEAM_DELETE, intent)
-                finish()
+                var intent = Bundle()
+                intent.putSerializable("info", deleteList)
+                deleteActivity.setFragmentResult(TeamSettingViewModel.REQUEST_TEAM_DELETE, intent)
+                deleteActivity._mActivity!!.onBackPressedSupport()
             } else {
                 Toast.makeText(context, getString(R.string.can_not_delete_myself), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.Team_reject_even -> {
+                deleteActivity._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
 
     var deleteList = ArrayList<TeamPersonnelInfoDto>()
     var dispose: Disposable? = null
@@ -86,7 +96,7 @@ class TeamDeleteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         if (deleteActivity.info != null) {
             items.clear()
             deleteList.clear()
-            deleteActivity.info?.redisData?.dtoList?.forEachIndexed { index, it ->
+            deleteActivity.info?.redisData?.dtoList?.forEach {
                 if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                     it.teamRoleColor = "2D3138"
                 }
@@ -96,7 +106,7 @@ class TeamDeleteViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 } else {
                     name = it.memberName
                 }
-                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)),index)
+                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)))
                 if (it.memberId.toString() != id) {
                     da.isTeamer.set(false)
                 } else {

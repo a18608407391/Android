@@ -2,6 +2,8 @@ package com.elder.logrecodemodule.ViewModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -43,6 +45,7 @@ import com.elder.zcommonmodule.Widget.CityPicker.model.City
 import com.elder.zcommonmodule.Widget.CityPicker.model.LocatedCity
 import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinderDialogFragment
 import com.google.gson.Gson
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
@@ -147,13 +150,15 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
      * @param cityName 城市名
      * * */
     fun requestWeatherDataForCity(cityName: String?) {
-        var mquery: WeatherSearchQuery = if (cityName!!.endsWith("省")) {//省
-            Log.e("activity", "省${cityName}")
-            WeatherSearchQuery(curLocation!!.city, WeatherSearchQuery.WEATHER_TYPE_LIVE)
-        } else {//市
-            Log.e("activity", "市${cityName.substring(0, cityName.indexOf("市"))}")
-            WeatherSearchQuery(cityName.substring(0, cityName.indexOf("市") - 1), WeatherSearchQuery.WEATHER_TYPE_LIVE)
-        }
+        var mquery =  WeatherSearchQuery(cityName, WeatherSearchQuery.WEATHER_TYPE_LIVE)
+//        if (cityName!!.endsWith("省")) {//省
+//            Log.e("activity", "省${cityName}")
+//
+//        } else {//市
+//
+//            Log.e("activity", "市${cityName.substring(0, cityName.indexOf("市"))}")
+//            WeatherSearchQuery(cityName.substring(0, cityName.indexOf("市") - 1), WeatherSearchQuery.WEATHER_TYPE_LIVE)
+//        }
         mweathersearch!!.setQuery(mquery);
         mweathersearch!!.searchWeatherAsyn(); //异步搜索
     }
@@ -177,6 +182,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
             R.id.llSearch -> {
                 Log.e("activity", "顶部搜索")
                 //顶部搜索
+//                startSearchPartyActivity()
             }
             R.id.llToolbarSearch -> {
                 Log.e("activity", "toolbar搜索")
@@ -192,9 +198,15 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     fun startSearchPartyActivity() {
-        ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, Location(curLocation!!.latitude, curLocation!!.longitude))
-                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(curLocation!!.latitude, curLocation!!.longitude))
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+        startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.SEARCH_PARTY, bundle)
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, Location(curLocation!!.latitude, curLocation!!.longitude))
+//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
     }
 
     override fun onRefresh() {//下拉刷新
@@ -373,12 +385,19 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
         } else if (title == "精彩活动") {
             type = 0
         }
-        ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY)
-                .withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(curLocation!!.latitude, curLocation!!.longitude))
-                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
-                .navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(curLocation!!.latitude, curLocation!!.longitude))
+        bundle.putInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+        startFragment(activityFragment.parentFragment!!,RouterUtils.PartyConfig.SUBJECT_PARTY,bundle)
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY)
+//                .withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                        Location(curLocation!!.latitude, curLocation!!.longitude))
+//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+//                .navigation()
+
     }
 
     var activityPartyHotRecommendCommand = BindingCommand(object : BindingConsumer<ActivityPartyEntity.HotRecommend> {
@@ -388,44 +407,74 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
             if (t.ID == 0) {
                 return
             }
-            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
-                    .withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
-                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                            Location(curLocation!!.latitude, curLocation!!.longitude))
-                    .withInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE)
-                    .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
-                    .navigation()
+//            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
+//                    .withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
+//                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                            Location(curLocation!!.latitude, curLocation!!.longitude))
+//                    .withInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE)
+//                    .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+//                    .navigation()
+
+            var bundle = Bundle()
+            bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                    Location(curLocation!!.latitude, curLocation!!.longitude))
+            bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+            bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
+            bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE)
+            startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
         }
     })
 
     override fun onMBcommandClick(entity: Any) {//摩旅推荐点击
         var en = entity as ActivityPartyEntity.MBRecommend
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL)
-                .withInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(curLocation!!.latitude, curLocation!!.longitude))
-                .withInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE)
-                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(curLocation!!.latitude, curLocation!!.longitude))
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE)
+        startFragment(activityFragment.parentFragment!! , RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL)
+//                .withInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                        Location(curLocation!!.latitude, curLocation!!.longitude))
+//                .withInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE)
+//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
     }
 
     override fun onWonderfulClick(entity: Any) {//精彩活动点击
         var ac = entity as ActivityPartyEntity.WonderfulActive
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
-                .withInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(curLocation!!.latitude, curLocation!!.longitude))
-                .withInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE)
-                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
-                .navigation()
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
+//                .withInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                        Location(curLocation!!.latitude, curLocation!!.longitude))
+//                .withInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE)
+//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+//                .navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(curLocation!!.latitude, curLocation!!.longitude))
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE)
+        startFragment(activityFragment.parentFragment!! , RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
     }
 
     override fun onClockActiveClick(entity: Any) {
         var clock = entity as ActivityPartyEntity.ClockActive
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, clock.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(curLocation!!.latitude, curLocation!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, clock.CODE)
-                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
-
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, clock.ID)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                        Location(curLocation!!.latitude, curLocation!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, clock.CODE)
+//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(curLocation!!.latitude, curLocation!!.longitude))
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, clock.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, clock.CODE)
+        startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL, bundle)
     }
 
     override fun onDismiss() {

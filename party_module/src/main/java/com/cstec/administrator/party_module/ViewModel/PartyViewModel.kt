@@ -2,6 +2,9 @@ package com.cstec.administrator.party_module.ViewModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.databinding.ViewDataBinding
+import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -22,6 +25,7 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.google.gson.Gson
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.collections.MergeObservableList
@@ -36,35 +40,28 @@ import org.cs.tec.library.binding.command.BindingConsumer
 class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickListener, WonderfulClickListener, MBCommandClickListener, HttpInteface.PartyHome, HttpInteface.PartyUnReadNotify_inf {
     var itemBinding = OnItemBindClass<Any>()
             .map(String::class.java) { itemBinding, position, item ->
-                Log.e("activity","itemBinding111-->$position--${Gson().toJson(item)}")
                 itemBinding.set(BR.title, R.layout.base_item_title)
                         .bindExtra(BR.title_listener, titlelistener)
                         .bindExtra(BR.position, position)
             }
             .map(PartyHotRecommand::class.java) { itemBinding, position, item ->
-                Log.e("activity","itemBinding222-->$position")
                 itemBinding.set(BR.hot_recommend, R.layout.hot_recommend_item_layout)
                         .bindExtra(BR.model, this@PartyViewModel)
             }
             .map(PartyHomeEntity.ClockActive::class.java) { itemBinding, position, item ->
-                Log.e("activity","itemBinding333-->$position")
                 itemBinding.set(BR.clock_active_item_data,
                         R.layout.clock_item_layout)
                         .bindExtra(BR.listener, activeListener)
             }
             .map(PartyHomeEntity.HotDistination::class.java) { itemBinding, position, item ->
-                Log.e("activity","itemBinding444-->$position")
             }
             .map(PartyHomeEntity.MBRecommend::class.java) { itemBinding, position, item ->
-                Log.e("activity","itemBinding555-->$position")
                 itemBinding.set(BR.mb_recommand, R.layout.mb_recommand_item_layout)
                         .bindExtra(BR.mb_listener, mb_click)
             }.map(PartyHomeEntity.WonderfulActive::class.java) { itemBinding, position, item ->
-                Log.e("activity","itemBindin666-->$position")
                 itemBinding.set(BR.wonderful, R.layout.wonderful_item_layout)
                         .bindExtra(BR.wonderful_listener, wonderfulListener)
             }
-
 
 
     override fun PartyUnReadNotifySucccess(it: String) {
@@ -91,16 +88,23 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
     fun onClick(view: View) {
         when (view.id) {
             R.id.notify_icon -> {
+
                 ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, Location(location!!.latitude, location!!.longitude)).navigation()
+
             }
             R.id.title_ev -> {
                 DialogUtils.showProviceDialog(partyFragment.activity!!, province, "选择城市")
             }
             R.id.search_address -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY)
-                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                         Location(location!!.latitude, location!!.longitude))
-                        .withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+                bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
+                startFragment(partyFragment.parentFragment!! as BaseFragment<ViewDataBinding, BaseViewModel>, RouterUtils.PartyConfig.SEARCH_PARTY, bundle)
+//                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY)
+//                        .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                                Location(location!!.latitude, location!!.longitude))
+//                        .withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
             }
         }
     }
@@ -172,7 +176,7 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 //                item.DISTANCE = "全长" + item.DISTANCE + "km" + " 距离" + it.SQRTVALUE / 1000 + "km"
                 var start = item.ACTIVITY_START!!.split(" ")[0]
                 var stop = item.ACTIVITY_STOP!!.split(" ")[0]
-                item.ACTIVITY_START = start + "至" + stop + " 距离" + item.SQRTVALUE + "km"
+                item.ACTIVITY_START = start + "至" + stop + " \n距离" + item.SQRTVALUE + "km"
                 if (item.TICKET_PRICE.isNullOrEmpty() || item.TICKET_PRICE!!.toDouble() <= 0) {
                     item.TICKET_PRICE = "免费"
                 } else {
@@ -210,11 +214,11 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         items.insertItem(ObservableField("精彩活动").get())
         items.insertList(select)
 
-        Log.e("activity","================================")
+        Log.e("activity", "================================")
         items.forEach {
-            Log.e("activity","${Gson().toJson(it)}")
+            Log.e("activity", "${Gson().toJson(it)}")
         }
-        Log.e("activity","================================")
+        Log.e("activity", "================================")
 //        getUnRead()
     }
 
@@ -231,23 +235,35 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
 
     override fun onMBcommandClick(entity: Any) {
         var en = entity as PartyHomeEntity.MBRecommend
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(location!!.latitude, location!!.longitude))
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE)
+        startFragment(partyFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
     }
 
     override fun onWonderfulClick(entity: Any) {
         var ac = entity as PartyHomeEntity.WonderfulActive
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(location!!.latitude, location!!.longitude))
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE)
+        startFragment(partyFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
     }
 
     override fun onClockActiveClick(entity: Any) {
         var clock = entity as PartyHomeEntity.ClockActive
-        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, clock.ID)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, clock.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(location!!.latitude, location!!.longitude))
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, clock.ID)
+        bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, clock.CODE)
+        startFragment(partyFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL, bundle)
     }
 
 
@@ -262,9 +278,18 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         } else if (title == "精彩活动") {
             type = 0
         }
-        ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY).withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
-                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                Location(location!!.latitude, location!!.longitude))
+        bundle.putInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
+        bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
+        startFragment(partyFragment.parentFragment!!,RouterUtils.PartyConfig.SUBJECT_PARTY,bundle)
+//        ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY).withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
+//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                        Location(location!!.latitude, location!!.longitude)).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+
+
     }
 
     var hotRecommendCommand = BindingCommand(object : BindingConsumer<PartyHomeEntity.HotRecommend> {
@@ -273,9 +298,16 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
             if (t.ID == 0) {
                 return
             }
-            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
-                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                            Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+            var bundle = Bundle()
+            bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                    Location(location!!.latitude, location!!.longitude))
+            bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
+            bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
+            bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE)
+            startFragment(partyFragment.parentFragment!! as BaseFragment<ViewDataBinding, BaseViewModel>, RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
+//            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
+//                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+//                            Location(location!!.latitude, location!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
         }
     })
     lateinit var partyFragment: PartyFragment
@@ -303,7 +335,6 @@ class PartyViewModel : BaseViewModel(), TitleClickListener, ClockActiveClickList
         map["y"] = location!!.latitude.toString()
         HttpRequest.instance.getPartyHome(map)
     }
-
 
 
     var titlelistener: TitleClickListener = this

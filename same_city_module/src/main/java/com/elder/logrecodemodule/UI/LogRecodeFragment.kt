@@ -105,6 +105,7 @@ class LogRecodeFragment : BaseFragment<FragmentLogrecodeBinding, LogRecodeViewMo
         viewModel?.cityPartyitems!!.clear()
         home?.queryGuideList?.forEach {
             viewModel?.Staggereditems!!.add(it)
+
         }
         if (local_rg.checkedRadioButtonId == R.id.local_rb) {
             home?.sameCityMember?.forEach {

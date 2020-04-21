@@ -19,13 +19,6 @@
         app:setViewHeight="@{party_detail_item_list}">
 
 
-        <View
-            android:layout_width="@dimen/d_02"
-            android:layout_height="@dimen/d_21"
-            android:layout_marginLeft="@dimen/d_78"
-            android:background="@color/FivepercentBlackColor"
-            android:visibility="@{party_detail_item_list.itemtype==1?View.GONE:View.VISIBLE}"></View>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,11 +26,11 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/startTime"
                 android:layout_width="@dimen/d_35"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/d_05"
                 android:gravity="center_horizontal"
-                android:text="@{party_detail_item_list.START_TIME}"
                 android:textColor="@color/black_12"
                 android:textSize="@dimen/s_12"></TextView>
 
@@ -58,8 +51,7 @@
                     android:id="@+id/mesure"
                     android:layout_width="@dimen/d_02"
                     android:layout_height="match_parent"
-                    android:background="@color/FivepercentBlackColor"
-                    android:visibility="@{party_detail_item_list.itemtype==2?View.GONE:View.VISIBLE}" />
+                    android:background="@color/FivepercentBlackColor" />
             </LinearLayout>
 
             <LinearLayout
@@ -75,53 +67,53 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/point_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{party_detail_item_list.PATH_POINT_NAME}"
                         android:textColor="@color/black_12"
                         android:textSize="@dimen/s_15"
                         android:textStyle="bold"></TextView>
 
                     <TextView
+                        android:id="@+id/time_required"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/d_10"
-                        android:text="@{party_detail_item_list.TIME_REQUIRED}"
                         android:textColor="#A4A4A4"
                         android:textSize="@dimen/s_12"></TextView>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/img_layout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/d_85"
                     android:layout_marginTop="@dimen/d_8"
-                    android:orientation="horizontal"
-                    android:visibility="@{party_detail_item_list.IMAGE1.isEmpty?View.GONE:View.VISIBLE}">
+                    android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/img1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:scaleType="centerCrop"
-                        app:LoadItemImge="@{party_detail_item_list.IMAGE1.size==0?@string/space:party_detail_item_list.IMAGE1[1]}"></ImageView>
+                        android:scaleType="centerCrop"></ImageView>
 
                     <ImageView
+                        android:id="@+id/img2"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/d_02"
                         android:layout_weight="1"
-                        android:scaleType="centerCrop"
-                        android:visibility="@{party_detail_item_list.IMAGE1.size==2?View.VISIBLE:View.GONE}"
-                        app:LoadItemImge="@{party_detail_item_list.IMAGE1.size==2?party_detail_item_list.IMAGE1[1]:@string/space}"></ImageView>
+                        android:scaleType="centerCrop"></ImageView>
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/address_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/d_10"
                     android:textColor="@color/black_12"
-                    android:textSize="@dimen/s_14"
-                    app:initHtml="@{party_detail_item_list.ADDRESS}"></TextView>
+                    android:layout_marginBottom="@dimen/d_20"
+                    android:textSize="@dimen/s_14"></TextView>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

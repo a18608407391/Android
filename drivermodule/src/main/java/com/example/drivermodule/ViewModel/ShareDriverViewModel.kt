@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_share_driver.*
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import com.zk.library.Base.BaseApplication
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
@@ -72,37 +73,28 @@ class ShareDriverViewModel : BaseViewModel(), ShareAdapter.AddCarItemClickCallBa
     fun inject(shareDriverActivity: ShareDriverActivity) {
         this.shareDriverActivity = shareDriverActivity
         initRecycleView()
-        var t = RxBus.default?.toObservableSticky(ShareEntity::class.java)?.subscribe {
-            var list = ArrayList<ShareEntity>()
-            for (i in 0..2) {
-                if (i == 0) {
-                    list.add(it)
-                } else if (i == 1) {
-                    it.secondBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.share_second_bg)
-                    list.add(it)
-                }
-            }
-            adapter?.setCarDatas(list)
-//            bitmapcrop.set(it.shareIcon.get())
-//            distance.set(it.Totaldistance.get())
-//            peisu.set(it.averageRate.get())
-//            time.set(it.Totaltime.get())
-//            nickname.set(it.userInfo.get()!!.data?.name)
-//            avatar.set(it.userInfo.get()?.data?.headImgFile)
-//            var simple = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-//            var d = Date(System.currentTimeMillis())
-//            date.set(simple.format(d))
-        }
-        RxSubscriptions.add(t)
-        var m = RxBus.default?.toObservable(String::class.java)?.subscribe {
-            if (it == "ShareSuccess") {
-                if (shareDriverActivity.type == null) {
-                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-                    RxBus.default?.post("ShareFinish")
-                }
+        var list = ArrayList<ShareEntity>()
+        for (i in 0..2) {
+            if (i == 0) {
+                list.add(shareDriverActivity.entity!!)
+            } else if (i == 1) {
+                shareDriverActivity.entity!!.secondBitmap = "default"
+                list.add(shareDriverActivity.entity!!)
             }
         }
-        RxSubscriptions.add(m)
+        adapter?.setCarDatas(list)
+    }
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.SHARE_SUCCESS -> {
+                shareDriverActivity._mActivity!!.onBackPressedSupport()
+            }
+            RxBusEven.SHARE_CANCLE -> {
+
+            }
+        }
     }
 
     var adapter: ShareAdapter? = null
@@ -135,13 +127,8 @@ class ShareDriverViewModel : BaseViewModel(), ShareAdapter.AddCarItemClickCallBa
     fun onClick(view: View) {
         when (view.id) {
             R.id.share_back -> {
-                if (shareDriverActivity.type == null) {
-                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-                    RxBus.default?.post("ShareFinish")
-                }
-                finish()
+                shareDriverActivity._mActivity!!.onBackPressedSupport()
             }
-
             R.id.share_frend -> {
                 if (!BaseApplication.getInstance().mWxApi.isWXAppInstalled) {
                     Toast.makeText(context, "您手机尚未安装微信，请安装后再登录", Toast.LENGTH_SHORT).show()
@@ -150,8 +137,6 @@ class ShareDriverViewModel : BaseViewModel(), ShareAdapter.AddCarItemClickCallBa
                     var hold = shareDriverActivity.share_recycle.findViewHolderForAdapterPosition(i)
                     var layout = hold?.itemView
                     var bitmap = ConvertUtils.view2Bitmap(layout)
-
-
                     var newBitmap = Bitmap.createBitmap(bitmap, 0, 0, ConvertUtils.dp2px(28F), ConvertUtils.dp2px(50F))
                     var imgobj = WXImageObject(bitmap)
                     var msg = WXMediaMessage()
@@ -209,13 +194,13 @@ class ShareDriverViewModel : BaseViewModel(), ShareAdapter.AddCarItemClickCallBa
             R.id.share_left_tv -> {
                 var date = adapter?.mListDatas?.get(1)
                 var bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.share_second_bg)
-                date?.secondBitmap = bitmap
+                date?.secondBitmap = "default"
                 adapter?.mListDatas?.set(1, date!!)
                 adapter?.setCarDatas(adapter?.mListDatas!!)
             }
 
             R.id.share_right_tv -> {
-                DialogUtils.showAnim(shareDriverActivity,0)
+                DialogUtils.showFragmentAnim(shareDriverActivity!!, 0)
                 DialogUtils.lisentner = this@ShareDriverViewModel
             }
         }

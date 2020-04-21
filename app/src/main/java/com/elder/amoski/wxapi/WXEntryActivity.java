@@ -41,6 +41,7 @@ import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.zk.library.Base.AppManager;
 import com.zk.library.Base.BaseApplication;
+import com.zk.library.Bus.event.RxBusEven;
 import com.zk.library.Utils.PreferenceUtils;
 import com.zk.library.Utils.RouterUtils;
 
@@ -150,7 +151,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                     Toast.makeText(this, "已取消微信登录!!!", Toast.LENGTH_SHORT).show();
                 } else if (type == RETURN_MSG_TYPE_SHARE) {
                     message = "取消了微信分享";
-                    RxBus.Companion.getDefault().post("ShareSuccess");
+                    RxBus.Companion.getDefault().post(RxBusEven.Companion.getInstance(RxBusEven.Companion.getSHARE_CANCLE()));
                 }
                 finish();
 //                ToastUtils.showToast(mContext, message);
@@ -252,7 +253,8 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                         }
                     });
                 } else if (type == RETURN_MSG_TYPE_SHARE) {
-                    RxBus.Companion.getDefault().post("ShareSuccess");
+                    RxBus.Companion.getDefault().post(RxBusEven.Companion.getInstance(RxBusEven.Companion.getSHARE_SUCCESS()));
+//                    RxBus.Companion.getDefault().post("ShareSuccess");
                     finish();
                 }
                 break;

@@ -5,6 +5,7 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.util.Log
 import android.view.View
@@ -16,6 +17,7 @@ import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.core.PoiItem
 import com.amap.api.services.poisearch.PoiResult
 import com.amap.api.services.poisearch.PoiSearch
+import com.cstec.administrator.social.Activity.DynamicsPhotoActivity
 import com.cstec.administrator.social.Activity.ReleaseDynamicsActivity
 import com.cstec.administrator.social.BR
 import com.cstec.administrator.social.Entity.NearlyAdressEntity
@@ -23,6 +25,7 @@ import com.elder.zcommonmodule.Entity.SocialPhotoEntity
 import com.cstec.administrator.social.R
 import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Component.TitleComponent
+import com.elder.zcommonmodule.RELEASE_RESULT
 import com.elder.zcommonmodule.SOCIAL_SELECT_PHOTOS
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
@@ -84,28 +87,20 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
     }
 
     override fun ResultReleaseDynamicsSuccess(it: String) {
-        if (it == "系统繁忙") {
-            Toast.makeText(context, "系统繁忙", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        Log.e("result", "ResultReleaseDynamicsSuccess" + it)
-
-
         activity.dismissProgressDialog()
-        RxBus.default?.post("ResultReleaseDynamicsSuccess")
+        var bundle = Bundle()
+        bundle.putBoolean("ResultReleaseDynamicsSuccess",true)
+        activity.setFragmentResult(RELEASE_RESULT,bundle)
         Toast.makeText(context, getString(R.string.send_dynamics_success), Toast.LENGTH_SHORT).show()
-        toNav()
+        activity._mActivity!!.onBackPressedSupport()
     }
 
     override fun ResultReleaseDynamicsError(ex: Throwable) {
         activity.dismissProgressDialog()
-        Log.e("result", "ResultReleaseDynamicsError" + ex.message)
     }
 
     override fun postPhotoSuccess(it: String) {
 //       var resp =  Gson().fromJson<BaseResponse>(it,BaseResponse::class.java)
-        Log.e("result", it)
         var list = Gson().fromJson<ArrayList<SocialPhotoEntity>>(it, object : TypeToken<ArrayList<SocialPhotoEntity>>() {}.type)
         items.forEachIndexed { index, s ->
             if (!s.isNullOrEmpty()) {
@@ -145,10 +140,6 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
         map["saveAlbum"] = saveAlbum.toString()
         map["dynamicImageList"] = list
         var str = ""
-
-//        activity.et.realUserList.forEach {
-//            str += it.user_id + ","
-//        }
         activity.et.realUserList.forEachIndexed { index, userModel ->
             if (activity.et.realUserList.size - 1 == index) {
                 str += userModel.user_id
@@ -158,7 +149,6 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
         }
 
         map["mentionList"] = str
-        Log.e("result", "发布动态" + Gson().toJson(map))
         HttpRequest.instance.postReleaseDynamics(map)
     }
 
@@ -175,71 +165,21 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
     })
 
     override fun postPhotoError(ex: Throwable) {
-        Log.e("result", ex.message + "当前错误")
     }
 
     override fun onComponentClick(view: View) {
         if (activity.et.text!!.isEmpty() && items.size == 1) {
-            toNav()
+            activity._mActivity!!.onBackPressedSupport()
         } else {
-            var dialog = DialogUtils.createNomalDialog(activity, getString(R.string.exit_edit), getString(R.string.cancle), getString(R.string.confirm))
+            var dialog = DialogUtils.createNomalDialog(activity.activity!!, getString(R.string.exit_edit), getString(R.string.cancle), getString(R.string.confirm))
             dialog.setOnBtnClickL(OnBtnClickL {
                 dialog.dismiss()
             }, OnBtnClickL {
-                toNav()
+                activity._mActivity!!.onBackPressedSupport()
             })
             dialog.show()
         }
 
-    }
-
-
-    fun toNav() {
-        if (activity.type == 0) {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(activity, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
-        } else {
-            if (activity.type == 1) {
-                if (destroyList!!.contains("DynamicsDetailActivity")) {
-                    ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, activity.entity).navigation(activity, object : NavCallback() {
-                        override fun onArrival(postcard: Postcard?) {
-                            finish()
-                        }
-                    })
-                } else {
-                    finish()
-                }
-            } else if (activity.type == 2) {
-                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(activity, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            } else if (activity.type == 3) {
-                if (destroyList!!.contains("MyDynamicsActivity")) {
-                    ARouter.getInstance().build(RouterUtils.SocialConfig.MY_DYNAMIC_AC).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).navigation(activity, object : NavCallback() {
-                        override fun onArrival(postcard: Postcard?) {
-                            finish()
-                        }
-                    })
-                } else {
-                    finish()
-                }
-            } else if (activity.type == 5) {
-                if (destroyList!!.contains("DriverHomeActivity")) {
-                    ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location).withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, activity.entity!!.id).withSerializable(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation(activity, object : NavCallback() {
-                        override fun onArrival(postcard: Postcard?) {
-                            finish()
-                        }
-                    })
-                } else {
-                    finish()
-                }
-            }
-        }
     }
 
     override fun onComponentFinish(view: View) {
@@ -264,7 +204,7 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
                     }
                 }
 
-                Log.e("result", "发布图片")
+//                Log.e("result", "发布图片")
                 HttpRequest.instance.postMuiltyPhoto(mult.build())
             } else {
                 sendNoPhoto(ArrayList())
@@ -295,7 +235,7 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
 
     var titleCommand = TitleComponent()
     fun openPhotos() {
-        DialogUtils.showAnim(activity, 10 - items.size)
+        DialogUtils.showFragmentAnim(this.activity!!, 10 - items.size)
     }
 
     fun startPhotos() {
@@ -303,11 +243,16 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
             Toast.makeText(context, getString(R.string.photo_max), Toast.LENGTH_SHORT).show()
             return
         }
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_PHOTO).withInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT, 10 - items.size).navigation(activity, SOCIAL_SELECT_PHOTOS)
+        var bundler = Bundle()
+        bundler.putInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT, 10 - items.size)
+        var fr = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_PHOTO).navigation() as DynamicsPhotoActivity
+        fr.arguments = bundler
+        activity.startForResult(fr, SOCIAL_SELECT_PHOTOS)
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_PHOTO).withInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT, 10 - items.size).navigation(activity, SOCIAL_SELECT_PHOTOS)
     }
 
     fun startCamera() {
-        realPath = DialogUtils.startCamera(activity)
+        realPath = DialogUtils.startCameraFragment(activity)
     }
 
 
@@ -322,10 +267,10 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
     lateinit var activity: ReleaseDynamicsActivity
     fun inject(releaseDynamicsActivity: ReleaseDynamicsActivity) {
         this.activity = releaseDynamicsActivity
-        Log.e("result", "当前的动态" + Gson().toJson(this.activity.entity))
+//        Log.e("result", "当前的动态" + Gson().toJson(this.activity.entity))
         if (this.activity.entity != null) {
             if (activity.entity?.parentDynamin != null) {
-                Log.e("result", "含父级动态" + activity.entity?.parentDynamin!!.publishContent)
+//                Log.e("result", "含父级动态" + activity.entity?.parentDynamin!!.publishContent)
                 transTitle.set(activity?.entity!!.parentDynamin?.memberName + " 发布的动态")
                 transDesc.set(activity.entity?.parentDynamin!!.publishContent)
                 if (!activity.entity?.parentDynamin!!.dynamicImageList.isNullOrEmpty()) {
@@ -333,7 +278,7 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
                     transImage.set(Base_URL + img.projectUrl + img.filePathUrl + img.filePath)
                 }
             } else {
-                Log.e("result", "不含父级动态" + activity.entity!!.publishContent)
+//                Log.e("result", "不含父级动态" + activity.entity!!.publishContent)
                 transTitle.set(activity.entity?.memberName + " 发布的动态")
                 transDesc.set(activity.entity?.publishContent)
                 if (!activity.entity?.dynamicImageList.isNullOrEmpty()) {
@@ -365,12 +310,12 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
                 startPhotos()
             }
             R.id.public_click -> {
-                DialogUtils.showAnimSelect(activity)
+                DialogUtils.showAnimSelect(activity.activity!!)
             }
             R.id.location_click -> {
                 var poi = PoiSearch.Query("", "小区", "")
                 poi.pageSize = 10
-                var search = PoiSearch(activity, poi)
+                var search = PoiSearch(activity.activity, poi)
                 var bond = PoiSearch.SearchBound(LatLonPoint(activity.location!!.latitude, activity.location!!.longitude), 1000)
                 search.bound = bond
                 search.setOnPoiSearchListener(this)
@@ -413,7 +358,7 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
         if (url.isEmpty()) {
             openPhotos()
         } else {
-            alertDialog = DialogUtils.createBigPicShow(activity, items, position)
+            alertDialog = DialogUtils.createBigPicShow(activity.activity!!, items, position)
         }
     }
 

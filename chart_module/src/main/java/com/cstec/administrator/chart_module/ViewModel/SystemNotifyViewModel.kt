@@ -57,8 +57,10 @@ class SystemNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
         var data = entity as SystemNotifyData
         when (data.msgTargetIdType) {
             0 -> {
-                systemNotifyListActivity.setResult(MSG_RETURN_REQUEST)
-                finish()
+
+                systemNotifyListActivity.setFragmentResult(MSG_RETURN_REQUEST,null)
+//                finish()
+                systemNotifyListActivity._mActivity!!.onBackPressedSupport()
             }
             2 -> {
 //                ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SAME_CITY_RANKING).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, systemNotifyListActivity.location).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 1).withSerializable(RouterUtils.LogRecodeConfig.LOCATION_SIDE, "local").navigation()
@@ -79,23 +81,24 @@ class SystemNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
     }
 
     override fun onComponentClick(view: View) {
-        returnBack()
+//        returnBack()
+        systemNotifyListActivity._mActivity!!.onBackPressedSupport()
     }
 
-    fun returnBack() {
-        Log.e("systemNotify","returnBack")
-//        if (!destroyList!!.contains("MsgActivity")) {
-//            ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC)
-//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, systemNotifyListActivity.location)
-//                    .navigation()
-//        } else {
-            finish()
-//        }
-    }
+//    fun returnBack() {
+//        Log.e("systemNotify","returnBack")
+////        if (!destroyList!!.contains("MsgActivity")) {
+////            ARouter.getInstance().build(RouterUtils.Chat_Module.MSG_AC)
+////                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, systemNotifyListActivity.location)
+////                    .navigation()
+////        } else {
+//            finish()
+////        }
+//    }
 
 
     fun showDialog() {
-        var dialog = DialogUtils.createNomalDialog(systemNotifyListActivity, "是否清除所有系统消息", "取消", "清除")
+        var dialog = DialogUtils.createNomalDialog(systemNotifyListActivity.activity!!, "是否清除所有系统消息", "取消", "清除")
         dialog.setOnBtnClickL(OnBtnClickL {
             dialog.dismiss()
         }, OnBtnClickL {
@@ -132,7 +135,7 @@ class SystemNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
         initDatas()
         CoroutineScope(uiContext).launch {
             delay(10000)
-            systemNotifyListActivity.sys_swipe.isRefreshing = false
+            systemNotifyListActivity.swip.isRefreshing = false
         }
     }
 

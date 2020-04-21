@@ -37,7 +37,7 @@ class ChooseAtMemberActivity : ChartBaseActivity<ActivityChooseAtMemberBinding, 
                 textParentLinkedHolder = holder.addParent(textParentLinkedHolder)
             }
 
-            val intent = Intent(textWatcher, ChooseAtMemberActivity::class.java)
+            val intent = Intent(textWatcher.activity, ChooseAtMemberActivity::class.java)
             intent.putExtra(RouterUtils.Chat_Module.Chat_GROUP_ID, java.lang.Long.parseLong(id))
             textWatcher.startActivityForResult(intent, BaseApplication
                     .REQUEST_CODE_AT_MEMBER)

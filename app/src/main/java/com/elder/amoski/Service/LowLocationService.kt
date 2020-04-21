@@ -10,17 +10,14 @@ import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
-import android.os.RemoteException
 import android.support.annotation.RequiresApi
 import android.util.Log
-import android.widget.Toast
 import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
 import com.elder.zcommonmodule.DataBases.insertLocation
 import com.elder.zcommonmodule.Entity.Location
-import com.elder.zcommonmodule.IMyAidlInterface
 import com.elder.zcommonmodule.R
 import com.elder.zcommonmodule.Service.*
 import com.elder.amoski.Service.Mina.MinaService
@@ -58,19 +55,21 @@ class LowLocationService : IntentService, AMapLocationListener {
         }
     }
 
+
+    var minaService: MinaService? = null
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val iMyAidlInterface = IMyAidlInterface.Stub.asInterface(service)
-            try {
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-            }
+            Log.e("result", "MINA启动")
+            var binder = service as MinaService.LocalBinder
+            minaService = binder.service
+            minaService!!.start()
+
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            PreferenceUtils.putString(context, "FinishTimeRemote", System.currentTimeMillis().toString())
-            startService(Intent(this@LowLocationService, RemoteService::class.java))
-            bindService(Intent(this@LowLocationService, RemoteService::class.java), this, Context.BIND_IMPORTANT)
+//            PreferenceUtils.putString(context, "FinishTimeRemote", System.currentTimeMillis().toString())
+//            startService(Intent(this@LowLocationService, RemoteService::class.java))
+//            bindService(Intent(this@LowLocationService, RemoteService::class.java), this, Context.BIND_IMPORTANT)
         }
     }
 
@@ -81,13 +80,10 @@ class LowLocationService : IntentService, AMapLocationListener {
 //                MainService.start(context)
             }
             "start" -> {
-                Log.e("result", "start")
             }
             "stop" -> {
-                Log.e("result", "stop")
             }
             "driver" -> {
-                Log.e("result", "driver")
             }
         }
     }
@@ -106,12 +102,12 @@ class LowLocationService : IntentService, AMapLocationListener {
         when (intent?.action) {
             SERVICE_CREATE -> {
                 lastTime = System.currentTimeMillis()
-                if (android.os.Build.VERSION.SDK_INT >= 26) {
-                    context.startForegroundService(Intent(this@LowLocationService, RemoteService::class.java))
-                } else {
-                    startService(Intent(this@LowLocationService, RemoteService::class.java))
-                }
-                bindService(Intent(this, RemoteService::class.java), connection, Context.BIND_IMPORTANT)
+//                if (android.os.Build.VERSION.SDK_INT >= 26) {
+//                    context.startForegroundService(Intent(this@LowLocationService, RemoteService::class.java))
+//                } else {
+//                    startService(Intent(this@LowLocationService, RemoteService::class.java))
+//                }
+
                 if (mediaPlayer == null) {
                     if (android.os.Build.VERSION.SDK_INT >= 26) {
                         createNotifyCation()
@@ -145,23 +141,19 @@ class LowLocationService : IntentService, AMapLocationListener {
                 if (mLocationClient != null) {
                     mLocationClient?.stopLocation()
                 }
-                Log.e("result", "driver4")
                 startLocation(false)
             }
             SERVICE_CREATE_MINA -> {
-                Log.e("result","SERVICE_CREATE_MINA")
-                if (android.os.Build.VERSION.SDK_INT >= 26) {
-                    context.startForegroundService(Intent(this@LowLocationService, MinaService::class.java).setAction("on"))
+                if (minaService == null) {
+                    bindService(Intent(this, MinaService::class.java), connection, Context.BIND_AUTO_CREATE)
                 } else {
-                    context.startService(Intent(this@LowLocationService, MinaService::class.java).setAction("on"))
+                    minaService!!.start()
                 }
             }
             SERVICE_CANCLE_MINA -> {
-//                if (android.os.Build.VERSION.SDK_INT >= 26) {
-//                    context.startForegroundService(Intent(this@LowLocationService, MinaService::class.java).setAction("off"))
-//                } else {
-                context.startService(Intent(this@LowLocationService, MinaService::class.java).setAction("off"))
-//                }
+                if (minaService != null) {
+                    minaService!!.stop()
+                }
             }
         }
         action = intent?.action
@@ -179,7 +171,7 @@ class LowLocationService : IntentService, AMapLocationListener {
         // 设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
         mLocationOption.locationMode = AMapLocationClientOption.AMapLocationMode.Hight_Accuracy;
         if (flag) {
-            mLocationOption.interval = 5000
+            mLocationOption.interval = 30000
         } else {
             mLocationOption.interval = 2000
         }
@@ -192,7 +184,6 @@ class LowLocationService : IntentService, AMapLocationListener {
         mLocationClient?.startLocation()
         return mLocationClient!!
     }
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun createNotifyCation() {
@@ -267,24 +258,11 @@ class LowLocationService : IntentService, AMapLocationListener {
         return mOption;
     }
 
-    private var mBinder: MyBinder? = null
 
     override fun onDestroy() {
         super.onDestroy()
         mLocationClient?.stopLocation()
         PreferenceUtils.putString(context, "FinishTimeLow", System.currentTimeMillis().toString())
-        Log.e("result", javaClass.canonicalName + "onDestroy")
-    }
-
-    override fun onBind(intent: Intent): IBinder? {
-        mBinder = MyBinder()
-        return mBinder
-    }
-
-    private inner class MyBinder : IMyAidlInterface.Stub() {
-        override fun getServiceName(): String {
-            return javaClass.name
-        }
     }
 
     private fun play() {

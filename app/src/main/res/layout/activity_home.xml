@@ -10,112 +10,118 @@
             name="HomeViewModel"
             type="com.elder.amoski.ViewModel.HomeViewModel"></variable>
     </data>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/main_layout"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/home_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/app_theme_white">
+        android:background="@color/app_theme_white"></FrameLayout>
+    <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/main_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@color/app_theme_white">-->
 
-        <FrameLayout
-            android:id="@+id/rootlayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/d_45"></FrameLayout>
+        <!--<FrameLayout-->
+            <!--android:id="@+id/rootlayout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginBottom="@dimen/d_45"></FrameLayout>-->
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="@dimen/d_5"
-            android:visibility="@{HomeViewModel.bottomVisible ?View.VISIBLE:View.GONE}">
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:elevation="@dimen/d_5"-->
+            <!--android:visibility="@{HomeViewModel.bottomVisible ?View.VISIBLE:View.GONE}">-->
 
-            <RadioGroup
-                android:id="@+id/main_bottom_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@{HomeViewModel.bottomBg}"
-                android:checkedButton="@id/same_city"
-                android:gravity="center"
-                android:orientation="horizontal">
+            <!--<RadioGroup-->
+                <!--android:id="@+id/main_bottom_bg"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:background="@{HomeViewModel.bottomBg}"-->
+                <!--android:checkedButton="@id/same_city"-->
+                <!--android:gravity="center"-->
+                <!--android:orientation="horizontal">-->
 
-                <RadioButton
-                    android:id="@+id/same_city"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_12"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:drawableTop="@drawable/active_select"
-                    android:gravity="center"
-                    android:text="@string/active"
-                    android:textColor="@color/radio_buttom_color_selector"
-                    android:textSize="@dimen/s_11" />
+                <!--<RadioButton-->
+                    <!--android:id="@+id/same_city"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="@dimen/d_12"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:button="@null"-->
+                    <!--android:drawableTop="@drawable/active_select"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="@string/active"-->
+                    <!--android:textColor="@color/radio_buttom_color_selector"-->
+                    <!--android:textSize="@dimen/s_11" />-->
 
-                <RadioButton
-                    android:id="@+id/main_left"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_12"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:drawableTop="@drawable/dyma_select"
-                    android:gravity="center"
-                    android:text="@string/discover"
-                    android:textColor="@color/radio_buttom_color_selector"
-                    android:textSize="@dimen/s_11" />
+                <!--<RadioButton-->
+                    <!--android:id="@+id/main_left"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="@dimen/d_12"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:button="@null"-->
+                    <!--android:drawableTop="@drawable/dyma_select"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="@string/discover"-->
+                    <!--android:textColor="@color/radio_buttom_color_selector"-->
+                    <!--android:textSize="@dimen/s_11" />-->
 
-                <RadioButton
-                    android:id="@+id/driver_middle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_02"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:drawableTop="@{HomeViewModel.driverSelected}"
-                    android:gravity="center"
-                    android:text="骑行"
-                    android:textColor="@color/nomalTextColor"
-                    android:textSize="@dimen/s_11" />
+                <!--<RadioButton-->
+                    <!--android:id="@+id/driver_middle"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="@dimen/d_02"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:button="@null"-->
+                    <!--android:drawableTop="@{HomeViewModel.driverSelected}"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="骑行"-->
+                    <!--android:textColor="@color/nomalTextColor"-->
+                    <!--android:textSize="@dimen/s_11" />-->
 
-                <RadioButton
-                    android:id="@+id/dynamics"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_12"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:drawableTop="@drawable/message_selector"
-                    android:gravity="center"
-                    android:text="@string/message"
-                    android:textColor="@color/radio_buttom_color_selector"
-                    android:textSize="@dimen/s_11" />
+                <!--<RadioButton-->
+                    <!--android:id="@+id/dynamics"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="@dimen/d_12"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:button="@null"-->
+                    <!--android:drawableTop="@drawable/message_selector"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="@string/message"-->
+                    <!--android:textColor="@color/radio_buttom_color_selector"-->
+                    <!--android:textSize="@dimen/s_11" />-->
 
-                <RadioButton
-                    android:id="@+id/main_right"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/d_12"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:drawableTop="@drawable/private_select"
-                    android:gravity="center"
-                    android:text="@string/privateTitle"
-                    android:textColor="@color/radio_buttom_color_selector"
-                    android:textSize="@dimen/s_11" />
-            </RadioGroup>
+                <!--<RadioButton-->
+                    <!--android:id="@+id/main_right"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginTop="@dimen/d_12"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:button="@null"-->
+                    <!--android:drawableTop="@drawable/private_select"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="@string/privateTitle"-->
+                    <!--android:textColor="@color/radio_buttom_color_selector"-->
+                    <!--android:textSize="@dimen/s_11" />-->
+            <!--</RadioGroup>-->
 
 
-            <ImageView
-                android:id="@+id/main_img_src"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:onClick="@{HomeViewModel::onClick}"
-                android:paddingBottom="@dimen/d_20"
-                android:src="@{HomeViewModel.driverSelected}"
-                android:visibility="gone" />
-        </RelativeLayout>
-    </RelativeLayout>
+            <!--<ImageView-->
+                <!--android:id="@+id/main_img_src"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:onClick="@{HomeViewModel::onClick}"-->
+                <!--android:paddingBottom="@dimen/d_20"-->
+                <!--android:src="@{HomeViewModel.driverSelected}"-->
+                <!--android:visibility="gone" />-->
+        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
+
+
 </layout>

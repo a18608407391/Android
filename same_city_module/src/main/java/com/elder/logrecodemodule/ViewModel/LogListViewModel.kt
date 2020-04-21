@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.logrecodemodule.Activity.LogListActivity
+import com.elder.logrecodemodule.Activity.LogShareActivity
 import com.elder.logrecodemodule.BR
 import com.elder.zcommonmodule.Utils.Douglas
 import com.elder.logrecodemodule.Entity.LogData
@@ -27,6 +28,7 @@ import com.elder.zcommonmodule.Entity.UpDataDriverEntitiy
 import com.elder.zcommonmodule.USER_TOKEN
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.Utils.FileUtils
+import com.elder.zcommonmodule.Utils.Utils
 import com.elder.zcommonmodule.getDriverImageUrl
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
@@ -156,7 +158,7 @@ class LogListViewModel : BaseViewModel() {
         var m = 0
         if (month - logRecodeFragment.type < 0) {
             m = month - logRecodeFragment.type + 12
-            years.set((calendar.get(Calendar.YEAR)-1).toString())
+            years.set((calendar.get(Calendar.YEAR) - 1).toString())
         } else {
             years.set(calendar.get(Calendar.YEAR).toString())
             m = month - logRecodeFragment.type
@@ -168,7 +170,7 @@ class LogListViewModel : BaseViewModel() {
         addChildView(logRecodeFragment.log_hori)
 
 //        initDatas(calendar.get(Calendar.MONTH) + 1 - logRecodeFragment.type)
-        initDatas(m+1)
+        initDatas(m + 1)
     }
 
     fun initDatas(month: Int) {
@@ -262,7 +264,8 @@ class LogListViewModel : BaseViewModel() {
                         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
                             logRecodeFragment.dismissProgressDialog()
                             if (it != null) {
-                                ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SHARE).withSerializable(RouterUtils.LogRecodeConfig.SHARE_ENTITY, item).navigation()
+                                logRecodeFragment.start((ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SHARE).navigation() as LogShareActivity).setValue(item))
+//                                ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SHARE).withSerializable(RouterUtils.LogRecodeConfig.SHARE_ENTITY, item).navigation()
                             } else {
                                 Toast.makeText(context, "数据异常", Toast.LENGTH_SHORT).show()
                             }
@@ -274,7 +277,8 @@ class LogListViewModel : BaseViewModel() {
                 }
             }
         } else {
-            ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SHARE).withSerializable(RouterUtils.LogRecodeConfig.SHARE_ENTITY, item).navigation()
+            logRecodeFragment.start((ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SHARE).navigation() as LogShareActivity).setValue(item))
+//            ARouter.getInstance().build(RouterUtils.LogRecodeConfig.SHARE).withSerializable(RouterUtils.LogRecodeConfig.SHARE_ENTITY, item).navigation()
         }
     }
 
@@ -296,13 +300,15 @@ class LogListViewModel : BaseViewModel() {
     }
 
     fun onImgClick(view: View) {
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-        finish()
+
+        logRecodeFragment._mActivity!!.onBackPressedSupport()
+//        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+//        finish()
     }
 
 
     fun onClick(view: View) {
-        var t = DialogUtils.showYearDialog(logRecodeFragment, command)
+        var t = DialogUtils.showYearDialog(logRecodeFragment.activity!!, command)
         t!!.setSelectedYear(Integer.valueOf(years.get()), true)
     }
 

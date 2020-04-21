@@ -1,8 +1,8 @@
 package com.example.drivermodule.ItemModel
 
 import android.databinding.ObservableArrayList
+import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.model.LatLng
@@ -10,20 +10,17 @@ import com.elder.zcommonmodule.REQUEST_LOAD_ROADBOOK
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.example.drivermodule.BR
-import com.example.drivermodule.Entity.RoadBook.HotBannerData
+import com.elder.zcommonmodule.Widget.RoadBook.HotBannerData
 import com.elder.zcommonmodule.Entity.HotData
 import com.example.drivermodule.Adapter.StrageAdapter
 import com.example.drivermodule.R
 import com.example.drivermodule.ViewModel.RoadBook.AcRoadBookViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.zk.library.Base.BaseViewModel
-import com.zk.library.Base.ItemViewModel
+import com.elder.zcommonmodule.Component.ItemViewModel
+import com.example.drivermodule.Fragment.RoadBookFirstActivity
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.activity_roadbook.*
-import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
-import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
@@ -35,7 +32,7 @@ class NearRoadItemModle : ItemViewModel<AcRoadBookViewModel>, HttpInteface.getRo
         acRoadBookViewModel.roadHomeActivity.swipe.isRefreshing = false
         acRoadBookViewModel?.roadHomeActivity.dismissProgressDialog()
         var list = Gson().fromJson<ArrayList<HotData>>(it, object : TypeToken<ArrayList<HotData>>() {}.type)
-        if(list.isNullOrEmpty()){
+        if (list.isNullOrEmpty()) {
             return
         }
         if (page == 1) {
@@ -64,11 +61,13 @@ class NearRoadItemModle : ItemViewModel<AcRoadBookViewModel>, HttpInteface.getRo
         acRoadBookViewModel.roadHomeActivity.swipe.isRefreshing = false
     }
 
-    fun ItemClickCommand(data: HotData) {//路书点击
-        ARouter.getInstance()
-                .build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY)
-                .withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data)
-                .navigation(acRoadBookViewModel.roadHomeActivity, REQUEST_LOAD_ROADBOOK)
+    fun ItemClickCommand(data: HotData) {
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY,data)
+        acRoadBookViewModel.startFragment(acRoadBookViewModel.roadHomeActivity,RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY,bundle,REQUEST_LOAD_ROADBOOK)
+
+//        acRoadBookViewModel.roadHomeActivity._mActivity!!.startForResult((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).navigation() as RoadBookFirstActivity).setHotData(data), REQUEST_LOAD_ROADBOOK)
+//        ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data).navigation(acRoadBookViewModel.roadHomeActivity.activity, REQUEST_LOAD_ROADBOOK)
 
 //        var intent = Intent()
 //        intent.putExtra("hotdata", data)
@@ -76,7 +75,7 @@ class NearRoadItemModle : ItemViewModel<AcRoadBookViewModel>, HttpInteface.getRo
 //        acRoadBookViewModel.roadHomeActivity.finish()
     }
 
-     var acRoadBookViewModel: AcRoadBookViewModel
+    var acRoadBookViewModel: AcRoadBookViewModel
 
     constructor(acRoadBookViewModel: AcRoadBookViewModel, i: Int) {
         this.acRoadBookViewModel = acRoadBookViewModel
@@ -102,8 +101,7 @@ class NearRoadItemModle : ItemViewModel<AcRoadBookViewModel>, HttpInteface.getRo
     var items = ObservableArrayList<HotData>()
 
     var itemBinding = ItemBinding.of<HotData> { itemBinding, position, item ->
-        itemBinding.set(BR.hot_data, R.layout.near_recy_item_layout)
-                .bindExtra(BR.near_item_model, this@NearRoadItemModle)
+        itemBinding.set(BR.hot_data, R.layout.near_recy_item_layout).bindExtra(BR.near_item_model, this@NearRoadItemModle)
     }
 
     var listDatas = ObservableArrayList<HotBannerData>()

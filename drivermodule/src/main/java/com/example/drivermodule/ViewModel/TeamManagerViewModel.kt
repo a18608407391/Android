@@ -1,11 +1,9 @@
 package com.example.drivermodule.ViewModel
 
-import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.graphics.Color
-import android.graphics.Typeface
-import android.util.Log
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.elder.zcommonmodule.Component.TitleComponent
@@ -13,18 +11,18 @@ import com.elder.zcommonmodule.Entity.PersonDatas
 import com.elder.zcommonmodule.Entity.Role
 import com.elder.zcommonmodule.Entity.SoketBody.BasePacketReceive
 import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonInfo
-import com.elder.zcommonmodule.Service.Error.ApiException
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.getImageUrl
-import com.example.drivermodule.Activity.Team.TeamManagerActivity
+import com.example.drivermodule.Fragment.Team.TeamManagerActivity
 import com.example.drivermodule.BR
 import com.example.drivermodule.R
 import com.example.drivermodule.ViewModel.TeamSettingViewModel.Companion.REQUEST_TEAM_MANAGER
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -51,20 +49,29 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         }
     }
 
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.Team_reject_even -> {
+                teamManagerActivity._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
     override fun QueryRollInfoError(ex: Throwable) {
         teamManagerActivity.dismissProgressDialog()
         Toast.makeText(context, getString(R.string.net_error), Toast.LENGTH_SHORT).show()
     }
 
     override fun onComponentClick(view: View) {
-        finish()
+        teamManagerActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
-        var intent = Intent()
-        intent.putExtra("info", teamManagerActivity.info)
-        teamManagerActivity.setResult(REQUEST_TEAM_MANAGER, intent)
-        finish()
+        var intent = Bundle()
+        intent.putSerializable("info", teamManagerActivity.info)
+        teamManagerActivity.setFragmentResult(REQUEST_TEAM_MANAGER, intent)
+        teamManagerActivity._mActivity!!.onBackPressedSupport()
+//        finish()
     }
 
     lateinit var teamManagerActivity: TeamManagerActivity
@@ -73,7 +80,6 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         this.teamManagerActivity = teamManagerActivity
         dispose = RxBus.default?.toObservable(BasePacketReceive::class.java)?.subscribe {
             if (it.type == 1006) {
-                Log.e("result",it.body)
                 teamManagerActivity.info = Gson().fromJson<TeamPersonInfo>(it.body, TeamPersonInfo::class.java)
                 CoroutineScope(uiContext).launch {
                     invalidate()
@@ -92,9 +98,8 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
         component.arrowVisible.set(false)
         component.setCallBack(this)
         currentItemPosition = 0
-        items.clear()
         HttpRequest.instance.setQueryRollInfoResult(this)
-        teamManagerActivity.info?.redisData?.dtoList?.forEachIndexed { index, it ->
+        teamManagerActivity.info?.redisData?.dtoList?.forEach {
             if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                 it.teamRoleColor = "2D3138"
             }
@@ -104,7 +109,7 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
             } else {
                 name = it.memberName
             }
-            items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)),index))
+            items.add(PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor))))
         }
     }
 
@@ -122,7 +127,7 @@ class TeamManagerViewModel : BaseViewModel(), TitleComponent.titleComponentCallB
     var currentItemPosition = 0
     fun onItemClick(position: Int, datas: PersonDatas) {
         currentItemPosition = position
-        DialogUtils.showGenderDialog(teamManagerActivity, genderCommand, list, getString(R.string.choice_role))
+        DialogUtils.showGenderDialog(teamManagerActivity.activity!!, genderCommand, list, getString(R.string.choice_role))
     }
 
     var list = ArrayList<String>()

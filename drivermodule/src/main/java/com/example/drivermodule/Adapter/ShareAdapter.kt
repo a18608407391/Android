@@ -2,6 +2,7 @@ package com.example.drivermodule.Adapter
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -17,8 +18,10 @@ import com.elder.zcommonmodule.getImageUrl
 import com.example.drivermodule.Activity.ShareDriverActivity
 import com.elder.zcommonmodule.Entity.ShareEntity
 import com.example.drivermodule.R
+import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getColor
 import org.cs.tec.library.Utils.ConvertUtils
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,7 +33,7 @@ class ShareAdapter : RecyclerView.Adapter<ShareAdapter.AddCarViewHolder> {
 
     constructor(activity: ShareDriverActivity) {
         this.activity = activity
-        this.mLayoutInflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        this.mLayoutInflater = activity.activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     }
 
     fun setCarDatas(list: ArrayList<ShareEntity>) {
@@ -48,7 +51,7 @@ class ShareAdapter : RecyclerView.Adapter<ShareAdapter.AddCarViewHolder> {
     }
 
     override fun onBindViewHolder(holder: AddCarViewHolder, p1: Int) {
-        var path: Bitmap? = null
+        var path: String? = null
         if (p1 == 0) {
             path = mListDatas!![p1].shareIcon
             holder.share_item_speed.setTextColor(getColor(R.color.blackTextColor))
@@ -79,8 +82,14 @@ class ShareAdapter : RecyclerView.Adapter<ShareAdapter.AddCarViewHolder> {
             holder.share_item_name.setOnClickListener(holder)
             holder.share_user_nomal_time.setOnClickListener(holder)
         }
-        var optionsd = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.dp2px(225F), ConvertUtils.dp2px(402F))
-        Glide.with(activity!!).asBitmap().load(path).apply(optionsd).into(holder.share_item_img)
+        if (path == "default") {
+            holder.share_item_img.setImageBitmap(BitmapFactory.decodeResource(context.resources, R.drawable.share_second_bg))
+        } else {
+            holder.share_item_img.setImageBitmap(BitmapFactory.decodeFile(path))
+        }
+
+//        var optionsd = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.share_second_bg).skipMemoryCache(true).override(ConvertUtils.dp2px(225F), ConvertUtils.dp2px(402F))
+//        Glide.with(activity!!).asBitmap().load(path).apply(optionsd).into(holder.share_item_img)
 
         val crop = CircleCrop()
         var options = RequestOptions().transform(crop).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true)

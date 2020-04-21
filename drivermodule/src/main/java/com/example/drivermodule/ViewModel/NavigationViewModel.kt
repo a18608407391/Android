@@ -2,39 +2,30 @@ package com.example.drivermodule.ViewModel
 
 import android.databinding.ObservableField
 import android.graphics.Color
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
-import com.amap.api.maps.model.LatLng
 import com.amap.api.navi.AMapNavi
 import com.amap.api.navi.AMapNaviView
 import com.amap.api.navi.model.NaviLatLng
-import com.amap.api.navi.view.TrafficBarView
-import com.amap.api.navi.view.TrafficButtonView
-import com.example.drivermodule.AMapNaviViewComponent
-import com.example.drivermodule.TTSController
 import com.zk.library.Base.BaseViewModel
 import org.cs.tec.library.Base.Utils.context
 import com.amap.api.services.route.RouteSearch
 import com.elder.zcommonmodule.*
 import com.elder.zcommonmodule.Component.DriverComponent
-import com.elder.zcommonmodule.DataBases.UpdateDriverStatus
-import com.elder.zcommonmodule.DataBases.queryDriverStatus
 import com.elder.zcommonmodule.Entity.SoketBody.SoketNavigation
 import com.elder.zcommonmodule.Utils.Dialog.NormalDialog
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
-import com.example.drivermodule.AMapUtil
-import com.example.drivermodule.Activity.MapActivity
+import com.example.drivermodule.AMapNaviViewComponent
 import com.example.drivermodule.Activity.NavigationActivity
 import com.example.drivermodule.R
-import com.zk.library.Base.AppManager
+import com.example.drivermodule.Utils.TTSController
 import com.zk.library.Base.BaseApplication
-import com.zk.library.Utils.PreferenceUtils
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.coroutines.CoroutineScope
@@ -43,8 +34,6 @@ import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
-import org.cs.tec.library.Bus.RxSubscriptions
-import org.cs.tec.library.USERID
 import java.lang.Exception
 import kotlin.collections.ArrayList
 
@@ -56,14 +45,13 @@ class NavigationViewModel : BaseViewModel() {
     var mStartLatlng: NaviLatLng? = null
     var isRecoverLockMode = 0
     var drivercomponent = DriverComponent()
-    var isStartNavigation = ObservableField<Boolean>(true)
     var totalTime = ObservableField<String>("00:00")
     var totalDistance = ObservableField<String>("0M")
     var nextAddress = ObservableField<String>("")
 
     var sList: MutableList<NaviLatLng> = ArrayList()
     var eList: MutableList<NaviLatLng> = ArrayList()
-    var mWayPointList: List<NaviLatLng>? = null
+    var mWayPointList: MutableList<NaviLatLng> = ArrayList()
     var component = AMapNaviViewComponent(this)
     lateinit var navigationActivity: NavigationActivity
     lateinit var mAMapNavi: AMapNavi
@@ -72,33 +60,10 @@ class NavigationViewModel : BaseViewModel() {
     fun inject(navigationActivity: NavigationActivity) {
         this.navigationActivity = navigationActivity
         mAMapNaviView = navigationActivity.anavi_view
-        RxSubscriptions.add(RxBus.default?.toObservable(String::class.java)?.subscribe {
-            if (it == "DriverCancle") {
-                mAMapNavi.stopNavi()
-                mAMapNaviView?.onDestroy()
-                mAMapNavi.destroy()
-                navigationActivity.finish()
-            }
-        })
         var opition = mAMapNaviView?.viewOptions
         opition?.isAutoLockCar = true
         mAMapNaviView?.viewOptions = opition
-        RxSubscriptions.add(RxBus.default?.toObservable(SoketNavigation::class.java)?.subscribe {
-            this.navigation = it
-            if (it.type == null) {
-                if (!navigationActivity.onStart) {
-                    changeRoute(it)
-                } else {
-                    CoroutineScope(uiContext).launch {
-                        createDistrictDialog()
-                    }
-                }
-            } else {
-                changeRoute(it)
-            }
-        })
         var viewOptions = mAMapNaviView?.viewOptions
-
 //主动隐藏蚯蚓线
         mAMapNaviView?.setOnMapTouchListener {
             if (MotionEvent.ACTION_UP == it.action) {
@@ -109,7 +74,6 @@ class NavigationViewModel : BaseViewModel() {
         }
         viewOptions?.isLayoutVisible = false
         viewOptions?.isTrafficBarEnabled = false
-//        navigationActivity.next_turn_view.setColorFilter(Color.WHITE)
         mAMapNaviView?.lazyNextTurnTipView = navigationActivity.anext_turn_view
         navigationActivity.progress.setUnknownTrafficColor(Color.BLUE)
         navigationActivity.progress.setSmoothTrafficColor(Color.GREEN)
@@ -123,9 +87,44 @@ class NavigationViewModel : BaseViewModel() {
         navigationActivity.anavi_view.setAMapNaviViewListener(component)
         mAMapNavi = AMapNavi.getInstance(context)
         mAMapNavi.addAMapNaviListener(component)
-        mAMapNavi.setEmulatorNaviSpeed(250)
         mAMapNavi.setUseInnerVoice(true)
+
+        mStartLatlng = NaviLatLng(navigationActivity.start!!.latitude, navigationActivity.start!!.longitude)
+        mEndLatlng = NaviLatLng(navigationActivity.end!!.latitude, navigationActivity.end!!.longitude)
+        navigationActivity.list?.forEach {
+            mWayPointList.add(NaviLatLng(it.latitude, it.longitude))
+        }
         startNavi()
+    }
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.DriverCancleByNavigation -> {
+                mAMapNavi.stopNavi()
+                mAMapNaviView?.onDestroy()
+                mAMapNavi.destroy()
+                navigationActivity.finish()
+            }
+            RxBusEven.DriverNavigationRouteChange -> {
+                var it = it.value as SoketNavigation
+                this.navigation = it
+                if (it.type == null) {
+                    if (!navigationActivity.onStart) {
+                        changeRoute(it)
+                    } else {
+                        CoroutineScope(uiContext).launch {
+                            createDistrictDialog()
+                        }
+                    }
+                } else {
+                    changeRoute(it)
+                }
+            }
+            RxBusEven.DriverNavigationChange -> {
+
+            }
+        }
     }
 
     fun startNavi() {
@@ -136,17 +135,8 @@ class NavigationViewModel : BaseViewModel() {
             component.CurDistance = 0
             component.NaviStartTime = System.currentTimeMillis()
         }
-        var wayPoint = ArrayList<NaviLatLng>()
-        navigationActivity.list?.forEachIndexed { index, latLng ->
-            if (index == 0) {
-                mStartLatlng = converNaviLatLngPoint(converLatPoint(latLng))
-            } else if (index == navigationActivity.list!!.size - 1) {
-                mEndLatlng = converNaviLatLngPoint(converLatPoint(latLng))
-            } else {
-                wayPoint.add(converNaviLatLngPoint(converLatPoint(latLng)))
-            }
-        }
-        mWayPointList = wayPoint
+        sList.clear()
+        eList.clear()
         sList.add(mStartLatlng!!)
         eList.add(mEndLatlng!!)
         var strategy = RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION
@@ -155,15 +145,15 @@ class NavigationViewModel : BaseViewModel() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        Log.e("result", "开始导航路径规划")
-        mAMapNavi.calculateDriveRoute(sList, eList, wayPoint, strategy)
+        mAMapNavi.calculateDriveRoute(sList, eList, mWayPointList, strategy)
     }
+
 
     fun onClick(view: View) {
         when (view.id) {
             R.id.navi_arrow -> {
-                ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).navigation()
-                if (navigationActivity.type != 1) {
+                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+                if (navigationActivity.type < 1) {
                     finish()
                 }
             }
@@ -184,17 +174,15 @@ class NavigationViewModel : BaseViewModel() {
     }
 
     var display = ObservableField<Boolean>()
-
-
     fun changeRoute(it: SoketNavigation) {
-        navigationActivity.list?.clear()
-        navigationActivity.list?.add(LatLng(component.location?.coord?.latitude!!, component.location?.coord!!.longitude))
+        mStartLatlng = NaviLatLng(component.location?.coord?.latitude!!, component.location?.coord!!.longitude)
+        mEndLatlng = NaviLatLng(it.navigation_end?.latitude!!, it.navigation_end?.longitude!!)
+        mWayPointList.clear()
         if (!it.wayPoint.isNullOrEmpty()) {
             it.wayPoint!!.forEach {
-                navigationActivity.list?.add(AMapUtil.convertToLatLng(it))
+                mWayPointList.add(NaviLatLng(it?.latitude!!, it?.longitude!!))
             }
         }
-        navigationActivity.list?.add(LatLng(it.navigation_end?.latitude!!, it.navigation_end?.longitude!!))
         startNavi()
     }
 
@@ -220,48 +208,13 @@ class NavigationViewModel : BaseViewModel() {
             mAMapNavi.stopNavi()
             mAMapNaviView?.onDestroy()
             mAMapNavi.destroy()
-            BaseApplication.getInstance().curActivity = 2
-            if (AppManager.get()?.getActivity(MapActivity::class.java) != null) {
-                RxBus.default?.post("NavigationFinish")
-                ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(navigationActivity,object :NavCallback(){
-                    override fun onArrival(postcard: Postcard?) {
-                        navigationActivity.finish()
-                    }
-                })
-            } else {
-                Log.e("result","MapActivity为空")
-             var status =  queryDriverStatus(PreferenceUtils.getString(context, USERID))[0]
-                status.navigationType = 0
-                status.passPointDatas.clear()
-                UpdateDriverStatus(status)
-                ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(navigationActivity,object :NavCallback(){
-                    override fun onArrival(postcard: Postcard?) {
-                        navigationActivity.finish()
-                    }
-                })
-            }
+            BaseApplication.getInstance().curActivity = 1
+            RxBus.default?.post(RxBusEven.getInstance(RxBusEven.NAVIGATION_FINISH))
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(navigationActivity, object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    navigationActivity.finish()
+                }
+            })
         }
-
-
-//        if (drive.viewModel?.status?.navigationType == Driver_Navigation) {
-//            drive.viewModel?.status?.startDriver?.set(Drivering)
-//            if (component.naviDatasPoint.size != 0) {
-//                drive.viewModel?.driverController?.naviDatasPoint?.clear()
-//                component.naviDatasPoint.forEach {
-//                    drive.viewModel?.driverController?.naviDatasPoint?.add(it)
-//                }
-//                if (component.CurDistance != 0) {
-//                    drive.viewModel?.status!!.distance = drive.viewModel?.status!!.distance + component.NaviDistance - component.CurDistance
-//                }
-//            }
-//        } else if (drive.viewModel?.status?.navigationType == Nomal_Navigation) {
-//            drive.viewModel?.status?.startDriver?.set(DriverCancle)
-//        }
-//        drive.viewModel?.UiChange(0)
-//        if (boolean) {
-//            drive.viewModel?.driverController?.driverOver()
-//        }
-//        drive.viewModel?.status!!.navigationType = 0
-//        drive.viewModel?.mapPointController?.endPoint = null
     }
 }

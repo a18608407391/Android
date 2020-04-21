@@ -2,6 +2,8 @@ package com.cstec.administrator.party_module.ViewModel
 
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.alibaba.android.arouter.launcher.ARouter
@@ -12,6 +14,7 @@ import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BR
@@ -27,16 +30,23 @@ class EnrollViewModel : BaseViewModel(), HttpInteface.PartySign, TitleComponent.
 
         var entity = entity as EnrollEntity.Enroll
 
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.ID.toString())
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .withInt(RouterUtils.Chat_Module.Chat_TARGET_ID, activity.id)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 11).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID,  entity.ID.toString())
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        activity.start(model)
+
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.ID.toString())
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+//                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                .withInt(RouterUtils.Chat_Module.Chat_TARGET_ID, activity.ids)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 11).navigation()
     }
 
     override fun onComponentClick(view: View) {
-        activity.returnBack()
+        activity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -71,7 +81,7 @@ class EnrollViewModel : BaseViewModel(), HttpInteface.PartySign, TitleComponent.
     private fun initData() {
         HttpRequest.instance.partySign = this
         var map = HashMap<String, String>()
-        map["id"] = activity.id.toString()
+        map["id"] = activity.ids.toString()
         map["start"] = start.toString()
         map["pageSize"] = pageSize.toString()
         HttpRequest.instance.getPartySign(map)

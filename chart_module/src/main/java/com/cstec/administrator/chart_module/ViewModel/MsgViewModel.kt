@@ -149,7 +149,6 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
         if (position >= 0) {
             //这里-3是减掉添加的三个headView
             var conv = mDatas[position]
-            Log.e("result", "当前Type" + Gson().toJson(conv))
 //            intent.putExtra(JGApplication.CONV_TITLE, conv.title)
             //群聊
             if (conv.type == ConversationType.group) {

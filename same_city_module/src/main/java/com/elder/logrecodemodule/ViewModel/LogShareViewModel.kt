@@ -4,6 +4,7 @@ import android.content.Context
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.graphics.BitmapFactory
+import android.os.Bundle
 import android.service.autofill.Dataset
 import android.support.design.widget.BottomSheetBehavior
 import android.util.Log
@@ -16,6 +17,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.elder.logrecodemodule.Activity.LogShareActivity
+import com.elder.logrecodemodule.Activity.PlayerActivity
 import com.elder.logrecodemodule.Entity.ShareIoData
 import com.elder.logrecodemodule.R
 import com.elder.zcommonmodule.Component.TitleComponent
@@ -57,7 +59,8 @@ import kotlin.collections.ArrayList
 
 class LogShareViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        finish()
+//        finish()
+        activity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -162,6 +165,8 @@ class LogShareViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack
                 bottomVisible.set(true)
             }
             R.id.toRoadLook -> {
+                activity.start((ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation() as PlayerActivity).setValue(activity.imgs!!))
+
                 var even = NomalPostStickyEven(106, activity.imgs!!)
                 ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation()
                 RxBus.default?.postSticky(even)
@@ -185,11 +190,16 @@ class LogShareViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack
                             .load(bigImg.get())
                             .downloadOnly(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     var files = file.get()
-                    var bit =  BitmapFactory.decodeFile(files.path)
+                    var bit = BitmapFactory.decodeFile(files.path)
                     launch {
-                        share.shareIcon = bit
-                        RxBus.default?.postSticky(share)
-                        ARouter.getInstance().build(RouterUtils.MapModuleConfig.SHARE_ACTIVITY).withString(RouterUtils.MapModuleConfig.SHARE_TYPE, "log").navigation()
+                        share.shareIcon = files.path
+//                        RxBus.default?.postSticky(share)
+                        var bundle = Bundle()
+                        bundle.putSerializable(RouterUtils.MapModuleConfig.SHARE_ENTITY, share)
+                        bundle.putString(RouterUtils.MapModuleConfig.SHARE_TYPE, "log")
+                        startFragment(activity, RouterUtils.MapModuleConfig.SHARE_ACTIVITY, bundle)
+//                        ARouter.getInstance().build(RouterUtils.MapModuleConfig.SHARE_ACTIVITY)
+//                        ARouter.getInstance().build(RouterUtils.MapModuleConfig.SHARE_ACTIVITY).withString(RouterUtils.MapModuleConfig.SHARE_TYPE, "log").navigation()
 
                     }
 //                    share.shareIcon = BitmapFactory.decodeFile(files.path)
@@ -206,7 +216,7 @@ class LogShareViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack
     }
 
 
-    fun doas(){
+    fun doas() {
 
     }
 
@@ -283,7 +293,7 @@ class LogShareViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack
 
     fun addChildView(layout: LinearLayout?) {
         weatherDatas.forEachIndexed { i, entity ->
-            var inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            var inflater = activity.activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             var view = inflater.inflate(R.layout.horizontal_weather_child, layout, false)
             var img = view.findViewById<ImageView>(R.id.weather_icon)
             var time = view.findViewById<TextView>(R.id.weather_time)

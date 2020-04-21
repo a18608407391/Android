@@ -12,6 +12,7 @@ import com.cstec.administrator.social.ViewModel.FocusListViewModel
 import com.cstec.administrator.social.databinding.ActivityFocusListBinding
 import com.elder.zcommonmodule.Entity.Location
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_driverhome.*
@@ -19,7 +20,10 @@ import kotlinx.android.synthetic.main.activity_focus_list.*
 
 
 @Route(path = RouterUtils.SocialConfig.SOCIAL_FOCUS_LIST)
-class FocusListActivity : BaseActivity<ActivityFocusListBinding, FocusListViewModel>() {
+class FocusListActivity : BaseFragment<ActivityFocusListBinding, FocusListViewModel>() {
+    override fun initContentView(): Int {
+        return R.layout.activity_focus_list
+    }
 
 
     @Autowired(name = RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY)
@@ -35,27 +39,29 @@ class FocusListActivity : BaseActivity<ActivityFocusListBinding, FocusListViewMo
         return BR.focus_list_model
     }
 
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, false)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
-        return R.layout.activity_focus_list
-    }
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, false)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
+//        return R.layout.activity_focus_list
+//    }
 
-    override fun initViewModel(): FocusListViewModel? {
-        return ViewModelProviders.of(this)[FocusListViewModel::class.java]
-    }
+//    override fun initViewModel(): FocusListViewModel? {
+//        return ViewModelProviders.of(this)[FocusListViewModel::class.java]
+//    }
 
 
-    override fun doPressBack() {
-        super.doPressBack()
-        finish()
-    }
+    //    override fun doPressBack() {
+//        super.doPressBack()
+//        finish()
+//    }
     override fun initData() {
         super.initData()
+        detail = arguments!!.getSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY) as DynamicsCategoryEntity.Dynamics?
+        location = arguments!!.getSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION) as Location
         focuslist_swipe.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)
-        focuslist_swipe.setOnRefreshListener(mViewModel!!)
-        mViewModel?.inject(this)
+        focuslist_swipe.setOnRefreshListener(viewModel!!)
+        viewModel?.inject(this)
     }
 
 }

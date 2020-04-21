@@ -6,12 +6,14 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -21,6 +23,8 @@ import com.elder.zcommonmodule.R;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import static android.view.View.NO_ID;
 
 /**
  * 工具类
@@ -76,6 +80,19 @@ public class Utils {
             return true;
         }
         // 有虚拟按键返回 false
+        return false;
+    }
+    private static final String NAVIGATION= "navigationBarBackground";
+    public static  boolean isNavigationBarExist(@NonNull Activity activity){
+        ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
+        if (vp != null) {
+            for (int i = 0; i < vp.getChildCount(); i++) {
+                vp.getChildAt(i).getContext().getPackageName();
+                if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -223,6 +240,9 @@ public class Utils {
      * @param activity
      */
     public static void setStatusTextColor(boolean useDart, Activity activity) {
+        if(activity==null ||activity.isDestroyed()){
+            return;
+        }
         if (isFlyme()) {
             processFlyMe(useDart, activity);
         } else if (isMIUI()) {

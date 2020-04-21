@@ -7,6 +7,7 @@ import org.apache.mina.core.service.IoServiceListener;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.cs.tec.library.Bus.RxBus;
 
 /**
  * Created by Administrator on 2018/1/10 0010.
@@ -36,7 +37,7 @@ public class HeartBeatListener implements IoServiceListener {
     @Override
     public void sessionCreated(IoSession ioSession) throws Exception {
         Log.e("result","创建Session");
-
+        RxBus.Companion.getDefault().post("MinaConnected");
     }
 
     @Override

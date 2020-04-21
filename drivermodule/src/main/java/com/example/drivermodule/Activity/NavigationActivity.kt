@@ -7,6 +7,7 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.maps.model.LatLng
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.example.drivermodule.BR
 import com.example.drivermodule.R
@@ -20,24 +21,25 @@ import kotlinx.android.synthetic.main.activity_navigation.*
 
 @Route(path = RouterUtils.MapModuleConfig.NAVIGATION)
 class NavigationActivity : BaseActivity<ActivityNavigationBinding, NavigationViewModel>() {
+
     @Autowired(name = RouterUtils.MapModuleConfig.NAVIGATION_DATA)
     @JvmField
     var list: ArrayList<LatLng>? = null
+
+    @Autowired(name = RouterUtils.MapModuleConfig.NAVIGATION_End)
+    @JvmField
+    var end: Location? = null
+
+    @Autowired(name = RouterUtils.MapModuleConfig.NAVIGATION_START)
+    @JvmField
+    var start: Location? = null
 
     @Autowired(name = RouterUtils.MapModuleConfig.NAVIGATION_TYPE)
     @JvmField
     var type: Int = 0
 
-    @Autowired(name = RouterUtils.MapModuleConfig.NAVIGATION_DISTANCE)
-    @JvmField
-    var distance: Float = 0F
 
-
-    @Autowired(name = RouterUtils.MapModuleConfig.NAVIGATION_TIME)
-    @JvmField
-    var duration: Long = 0L
-
-    var onStart:Boolean = false
+    var onStart: Boolean = false
     override fun initVariableId(): Int {
         return BR.navigation_model
     }
@@ -75,10 +77,8 @@ class NavigationActivity : BaseActivity<ActivityNavigationBinding, NavigationVie
     }
 
 
-
-
     fun createTeamerNotify() {
-        DialogUtils.createNomalDialog(this@NavigationActivity, getString(R.string.checkNavigation), getString(R.string.cover_navigation),getString(R.string.continue_navigation))
+        DialogUtils.createNomalDialog(this@NavigationActivity, getString(R.string.checkNavigation), getString(R.string.cover_navigation), getString(R.string.continue_navigation))
     }
 
 
@@ -94,6 +94,7 @@ class NavigationActivity : BaseActivity<ActivityNavigationBinding, NavigationVie
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.e("result", "导航页面死掉了")
         anavi_view.onDestroy()
         //since 1.6.0 不再在naviview destroy的时候自动执行AMapNavi.stopNavi();请自行执行
         mViewModel?.mAMapNavi?.stopNavi()
@@ -102,8 +103,8 @@ class NavigationActivity : BaseActivity<ActivityNavigationBinding, NavigationVie
 
     override fun doPressBack() {
         super.doPressBack()
-        ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).navigation()
-        if (type != 1) {
+        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+        if (type < 1) {
             finish()
         }
     }

@@ -2,6 +2,7 @@ package com.example.private_module.ViewModel
 
 import android.content.Intent
 import android.databinding.ObservableField
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
@@ -12,13 +13,17 @@ import com.example.private_module.Activity.ChangeNickNameActivity
 import com.example.private_module.R
 import com.zk.library.Base.BaseViewModel
 import kotlinx.android.synthetic.main.activity_change_nickname.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
+import org.cs.tec.library.Base.Utils.uiContext
 
 
 class ChangeNickNameViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        changeNickNameActivity.finish()
+        changeNickNameActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -27,10 +32,14 @@ class ChangeNickNameViewModel : BaseViewModel(), TitleComponent.titleComponentCa
             Toast.makeText(context, getString(R.string.nickname_no_empty), Toast.LENGTH_SHORT).show()
             return
         }
-        var intent = Intent()
-        intent.putExtra("nickname", changeNickNameActivity.nickname_et.text.toString())
-        changeNickNameActivity.setResult(GET_NICKNAME, intent)
-        finish()
+        changeNickNameActivity.hideSoftInput()
+        CoroutineScope(uiContext).launch {
+            delay(500)
+            var intent = Bundle()
+            intent.putString("nickname", changeNickNameActivity.nickname_et.text.toString())
+            changeNickNameActivity.setFragmentResult(GET_NICKNAME, intent)
+            changeNickNameActivity._mActivity!!.onBackPressedSupport()
+        }
     }
 
     var NickName = ObservableField<String>()

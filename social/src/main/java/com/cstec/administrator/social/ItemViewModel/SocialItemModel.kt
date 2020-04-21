@@ -1,38 +1,38 @@
 package com.cstec.administrator.social.ItemViewModel
 
-import android.app.Dialog
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cstec.administrator.social.Activity.ReleaseDynamicsActivity
 import com.cstec.administrator.social.Adapter.GridRecycleViewAdapter
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity
 import com.cstec.administrator.social.Entity.GridClickEntity
 import com.cstec.administrator.social.R
 import com.cstec.administrator.social.ViewModel.SocialViewModel
+import com.elder.zcommonmodule.DETAIL_RESULT
 import com.elder.zcommonmodule.DataBases.queryUserInfo
 import com.elder.zcommonmodule.Entity.DynamicsSimple
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Entity.SocialHoriEntity
-import com.elder.zcommonmodule.SOCIAL_DETAIL_RETURN
+import com.elder.zcommonmodule.RELEASE_RESULT
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
-import com.google.gson.Gson
+import com.zk.library.Base.BaseFragment
+import com.zk.library.Base.BaseViewModel
 import com.zk.library.Base.ItemViewModel
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
-import com.zk.library.Utils.RouterUtils.PrivateModuleConfig.Companion.USER_INFO
 import com.zk.library.Utils.RouterUtils.SocialConfig.Companion.SOCIAL_DETAIL_ENTITY
 import com.zk.library.Utils.RouterUtils.SocialConfig.Companion.SOCIAL_LOCATION
-import kotlinx.android.synthetic.main.fragment_social.*
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
-import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.USERID
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
-import java.util.*
 import kotlin.collections.HashMap
 
 
@@ -171,7 +171,16 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
         } else {
             CurrentClickTime = System.currentTimeMillis()
         }
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(SOCIAL_DETAIL_ENTITY, view).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName)).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F,viewModel. location?.aoiName!!, viewModel.location!!.poiName))
+        bundle.putSerializable(SOCIAL_DETAIL_ENTITY, view)
+        var fr = viewModel?.socialFragment.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).navigation() as BaseFragment<ViewDataBinding,BaseViewModel>
+        model.arguments = bundle
+        fr.startForResult(model, DETAIL_RESULT)
+
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(SOCIAL_DETAIL_ENTITY, view).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName)).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0).navigation()
     }
 
     fun retransClick(view: DynamicsCategoryEntity.Dynamics) {
@@ -184,7 +193,14 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
             Toast.makeText(context, "获取定位信息异常，请重试!", Toast.LENGTH_SHORT).show()
             return
         }
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).withSerializable(SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName)).withSerializable(SOCIAL_DETAIL_ENTITY, view).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 2).navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F,viewModel. location?.aoiName!!, viewModel.location!!.poiName))
+        bundle.putSerializable(SOCIAL_DETAIL_ENTITY, view)
+        var fr = viewModel?.socialFragment.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).navigation() as ReleaseDynamicsActivity
+        model.arguments = bundle
+        fr.startForResult(model, RELEASE_RESULT)
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_RELEASE).withSerializable(SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName)).withSerializable(SOCIAL_DETAIL_ENTITY, view).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 2).navigation()
     }
 
 
@@ -205,12 +221,25 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
     }
 
     fun avatarClick(view: DynamicsCategoryEntity.Dynamics) {
-        ARouter.getInstance()
-                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName))
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, view.memberId)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
-                .navigation()
+
+
+        var fr = viewModel?.socialFragment.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION,  Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName))
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, view.memberId)
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        fr.start(model)
+
+//        ARouter.getInstance()
+//                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName))
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, view.memberId)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
+//                .navigation()
+
+
+
         Log.e("result", "avatarClick" + view.memberId)
     }
 
@@ -235,7 +264,7 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
             Log.e("resulttttttttt", "加载更多" + t)
             if (t > curLoad) {
                 pageSize++
-                viewModel?.items[viewModel?.socialFragment.social_viewpager.currentItem].initDatas(0)
+                viewModel?.items[viewModel?.socialFragment.SocialViewPger!!.currentItem].initDatas(0)
                 curLoad = t
             }
         }
@@ -244,12 +273,21 @@ class SocialItemModel : ItemViewModel<SocialViewModel> {
 
     var spanclick = BindingCommand(object : BindingConsumer<DynamicsSimple> {
         override fun call(t: DynamicsSimple) {
-            ARouter.getInstance()
-                    .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName))
-                    .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t.memberId)
-                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
-                    .navigation()
+
+            var fr = viewModel?.socialFragment.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
+            var bundle = Bundle()
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION,  Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName))
+            bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID,t.memberId)
+            var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+            model.arguments = bundle
+            fr.start(model)
+//            ARouter.getInstance()
+//                    .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                    .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(viewModel.location?.latitude!!, viewModel.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, viewModel.location?.aoiName!!, viewModel.location!!.poiName))
+//                    .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t.memberId)
+//                    .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
+//                    .navigation()
+
         }
     })
 }

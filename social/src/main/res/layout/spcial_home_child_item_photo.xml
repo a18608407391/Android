@@ -247,6 +247,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/d_15"
+                android:visibility="@{photo_item_model.followed==2?View.GONE:View.VISIBLE}"
                 android:onClick="@{()->model.retransClick(photo_item_model)}"
                 android:src="@drawable/retransmission_icon" />
         </LinearLayout>

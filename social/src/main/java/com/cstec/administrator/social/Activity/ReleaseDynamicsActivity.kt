@@ -31,6 +31,7 @@ import com.elder.zcommonmodule.REQUEST_CODE_CROP_IMAGE
 import com.elder.zcommonmodule.SELECT_USER_CALLBACK
 import com.elder.zcommonmodule.SOCIAL_SELECT_PHOTOS
 import com.elder.zcommonmodule.Utils.DialogUtils
+import com.elder.zcommonmodule.Utils.Utils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.elder.zcommonmodule.Widget.RichEditText.RichEditBuilder
@@ -43,6 +44,7 @@ import com.elder.zcommonmodule.Widget.RichEditText.model.TopicModel
 import com.elder.zcommonmodule.Widget.RichEditText.model.UserModel
 import com.zk.library.Base.AppManager
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_releasedynamics.*
@@ -50,7 +52,11 @@ import org.cs.tec.library.Utils.ConvertUtils
 import java.io.File
 
 @Route(path = RouterUtils.SocialConfig.SOCIAL_RELEASE)
-class ReleaseDynamicsActivity : BaseActivity<ActivityReleasedynamicsBinding, ReleaseDynamicsViewModel>(), TextWatcher {
+class ReleaseDynamicsActivity : BaseFragment<ActivityReleasedynamicsBinding, ReleaseDynamicsViewModel>(), TextWatcher {
+    override fun initContentView(): Int {
+        return R.layout.activity_releasedynamics
+    }
+
     override fun afterTextChanged(s: Editable?) {
 
     }
@@ -93,17 +99,18 @@ class ReleaseDynamicsActivity : BaseActivity<ActivityReleasedynamicsBinding, Rel
         return BR.rd_model
     }
 
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, false)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
-        return R.layout.activity_releasedynamics
-    }
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, false)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
+//        return R.layout.activity_releasedynamics
+//    }
 
+//
+//    override fun initViewModel(): ReleaseDynamicsViewModel? {
+//        return ViewModelProviders.of(this)[ReleaseDynamicsViewModel::class.java]
+//    }
 
-    override fun initViewModel(): ReleaseDynamicsViewModel? {
-        return ViewModelProviders.of(this)[ReleaseDynamicsViewModel::class.java]
-    }
 
     var nameList = ArrayList<UserModel>()
     val nameListET = ArrayList<UserModel>()
@@ -132,19 +139,22 @@ class ReleaseDynamicsActivity : BaseActivity<ActivityReleasedynamicsBinding, Rel
         }
     }
 
-    override fun doPressBack() {
-        super.doPressBack()
-        mViewModel?.toNav()
-    }
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        mViewModel?.toNav()
+//    }
 
     var LastEt: RichEditText? = null
 
     lateinit var behaviors: BottomSheetBehavior<LinearLayout>
     override fun initData() {
         super.initData()
+        Utils.setStatusTextColor(true, this.activity)
+        location = arguments!!.getSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION) as Location?
+        entity = arguments!!.getSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY) as DynamicsCategoryEntity.Dynamics?
         behaviors = BottomSheetBehavior.from<LinearLayout>(behavior_by_release)
         behaviors.state = BottomSheetBehavior.STATE_HIDDEN
-        mViewModel?.inject(this)
+        viewModel?.inject(this)
         et.addTextChangedListener(this)
         var filter = InputFilter.LengthFilter(140)
         et.filters = arrayOf(filter)
@@ -156,8 +166,9 @@ class ReleaseDynamicsActivity : BaseActivity<ActivityReleasedynamicsBinding, Rel
                 .setColorTopic("#F0F0C0")
                 .setEditTextAtUtilJumpListener(object : OnEditTextUtilJumpListener {
                     override fun notifyAt() {
+                        startForResult(ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_AITE).navigation() as AiteActivity, SELECT_USER_CALLBACK)
                         var et = et.text.toString()
-                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_AITE).navigation(this@ReleaseDynamicsActivity, SELECT_USER_CALLBACK)
+//                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_AITE).navigation(this@ReleaseDynamicsActivity, SELECT_USER_CALLBACK)
                     }
 
                     override fun notifyTopic() {
@@ -167,44 +178,27 @@ class ReleaseDynamicsActivity : BaseActivity<ActivityReleasedynamicsBinding, Rel
                 .builder()
     }
 
-    var realPath: String? = null
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+
+    override fun onFragmentResult(requestCode: Int, resultCode: Int, data: Bundle?) {
+        super.onFragmentResult(requestCode, resultCode, data)
         when (requestCode) {
             SOCIAL_SELECT_PHOTOS -> {
                 if (data != null) {
-                    var array = data!!.getStringArrayListExtra("PhotoUrls")
+                    var array = data!!.getStringArrayList("PhotoUrls")
                     if (array.size == 9) {
-                        mViewModel?.items!!.clear()
+                        viewModel?.items!!.clear()
                     }
                     array.forEach {
-                        mViewModel?.items!!.add(0, it)
+                        viewModel?.items!!.add(0, it)
                     }
-                    if (mViewModel?.items!!.size > 9) {
-                        mViewModel?.items!!.remove("")
-                    }
-                }
-            }
-            CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    if (mViewModel?.realPath != null) {
-                        realPath = DialogUtils.startCrop(this, mViewModel?.realPath!!, ConvertUtils.dp2px(160F), ConvertUtils.dp2px(160F))
-                    }
-                }
-            }
-            REQUEST_CODE_CROP_IMAGE -> {
-                if (File(realPath).exists()) {
-                    if (mViewModel?.items!!.size == 9) {
-                        mViewModel?.items!!.removeAt(8)
-                        mViewModel?.items!!.add(realPath)
-                    } else {
-                        mViewModel?.items!!.add(0, realPath)
+                    if (viewModel?.items!!.size > 9) {
+                        viewModel?.items!!.remove("")
                     }
                 }
             }
             SELECT_USER_CALLBACK -> {
-                var list = Gson().fromJson<ArrayList<SocialUserModel>>(data?.getStringExtra("array"), object : TypeToken<ArrayList<SocialUserModel>>() {}.type)
-                var count = data?.getIntExtra("Count", 0)
+                var list = Gson().fromJson<ArrayList<SocialUserModel>>(data?.getString("array"), object : TypeToken<ArrayList<SocialUserModel>>() {}.type)
+                var count = data?.getInt("Count", 0)
                 if (list == null || count == null) {
                     return
                 }
@@ -232,6 +226,31 @@ class ReleaseDynamicsActivity : BaseActivity<ActivityReleasedynamicsBinding, Rel
                 }
                 Log.e("result", "当前Et的长度" + et.text.toString().length)
 //                et.resolveInsertText(context, "第三方的说法都是", nameListET, topicModels)
+            }
+        }
+    }
+
+    var realPath: String? = null
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+
+            CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (viewModel?.realPath != null) {
+                        realPath = DialogUtils.startCropFragment(this, viewModel?.realPath!!, ConvertUtils.dp2px(160F), ConvertUtils.dp2px(160F))
+                    }
+                }
+            }
+            REQUEST_CODE_CROP_IMAGE -> {
+                if (File(realPath).exists()) {
+                    if (viewModel?.items!!.size == 9) {
+                        viewModel?.items!!.removeAt(8)
+                        viewModel?.items!!.add(realPath)
+                    } else {
+                        viewModel?.items!!.add(0, realPath)
+                    }
+                }
             }
         }
     }

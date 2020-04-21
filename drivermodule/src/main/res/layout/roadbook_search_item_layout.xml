@@ -6,7 +6,7 @@
 
         <variable
             name="search_model"
-            type="com.example.drivermodule.ViewModel.RoadBook.RoadBookSearchViewModel"></variable>
+            type="com.example.drivermodule.ViewModel.RoadBookSearchViewModel"></variable>
 
         <variable
             name="roadbook_itemmodel"

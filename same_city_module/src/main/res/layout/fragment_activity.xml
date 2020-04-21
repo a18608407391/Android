@@ -16,6 +16,7 @@
         android:id="@+id/poketSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/d_55"
         android:background="@color/white">
 
         <android.support.design.widget.CoordinatorLayout
@@ -126,7 +127,7 @@
                                         android:clickable="true"
                                         android:gravity="center_vertical"
                                         android:singleLine="true"
-                                        android:text="搜索活动名称/活动类型"
+                                        android:text="搜索活动名称/活动标签"
                                         android:textColor="#A4A4A4"
                                         android:textSize="@dimen/s_15" />
                                 </LinearLayout>
@@ -153,12 +154,6 @@
                                 android:layout_marginLeft="@dimen/d_15"
                                 android:layout_marginTop="@dimen/d_15"
                                 android:orientation="horizontal">
-
-                                <com.elder.zcommonmodule.Widget.PileLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content">
-
-                                </com.elder.zcommonmodule.Widget.PileLayout>
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -216,7 +211,7 @@
                                 android:background="@color/trans"
                                 android:gravity="center_vertical"
                                 android:singleLine="true"
-                                android:text="搜索活动名称/活动类型"
+                                android:text="搜索活动名称/活动标签"
                                 android:textColor="#A4A4A4"
                                 android:textSize="@dimen/s_15" />
                         </LinearLayout>

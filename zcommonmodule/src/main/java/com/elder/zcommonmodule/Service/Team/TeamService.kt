@@ -10,6 +10,12 @@ import retrofit2.http.POST
 
 
 interface TeamService {
+
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiRiding/ridingManage/recordRidingData")
+    fun startDriver(@Header("appToken") header: String, @Body builder: RequestBody
+    ): Observable<BaseResponse>
+
     @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
     @POST("AmoskiRidingTeam/ridingTeam/createTeam")
     fun createTeam(@Header("appToken") header: String, @Body builder: RequestBody

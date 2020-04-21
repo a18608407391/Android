@@ -2,15 +2,12 @@ package com.cstec.administrator.chart_module.Adapter;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Handler;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,26 +17,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.alibaba.android.arouter.facade.Postcard;
-import com.alibaba.android.arouter.facade.callback.NavCallback;
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.cstec.administrator.chart_module.Activity.ChatRoomActivity;
 import com.cstec.administrator.chart_module.ChatItemController;
 import com.cstec.administrator.chart_module.R;
 import com.cstec.administrator.chart_module.Utils.CircleTransform;
 import com.cstec.administrator.chart_module.View.ChatUtils.DialogCreator;
 import com.cstec.administrator.chart_module.View.ChatUtils.HandleResponseCode;
-import com.elder.zcommonmodule.ConfigKt;
 import com.elder.zcommonmodule.LocalUtilsKt;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
-import com.zk.library.Base.AppManager;
-import com.zk.library.Utils.PreferenceUtils;
+import com.zk.library.Base.BaseFragment;
 import com.zk.library.Utils.RouterUtils;
 
 import org.cs.tec.library.Utils.ConvertUtils;
@@ -49,7 +37,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
 
 import cn.jpush.im.android.api.JMessageClient;
 import cn.jpush.im.android.api.callback.GetAvatarBitmapCallback;
@@ -99,7 +86,7 @@ public class ChattingListAdapter extends BaseAdapter {
 
     private Activity mActivity;
     private LayoutInflater mInflater;
-    private Context mContext;
+    private BaseFragment mContext;
     private int mWidth;
     private Conversation mConv;
     private List<Message> mMsgList = new ArrayList<Message>();//所有消息列表
@@ -114,18 +101,18 @@ public class ChattingListAdapter extends BaseAdapter {
     private boolean mHasLastPage = false;
     private boolean isChatRoom = false;
 
-    public ChattingListAdapter(Activity context, Conversation conv, ContentLongClickListener longClickListener) {
+    public ChattingListAdapter(BaseFragment context, Conversation conv, ContentLongClickListener longClickListener) {
         this.mContext = context;
-        mActivity = context;
+        mActivity = context.getActivity();
         DisplayMetrics dm = new DisplayMetrics();
         mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         mWidth = dm.widthPixels;
-        mInflater = LayoutInflater.from(mContext);
+        mInflater = LayoutInflater.from(mContext.getContext());
         this.mConv = conv;
         if (mConv != null && mConv.getMessagesFromNewest(0, mOffset) != null) {
             this.mMsgList = mConv.getMessagesFromNewest(0, mOffset);
         } else {
-            context.finish();
+            context.getActivity().finish();
         }
         reverse(mMsgList);
         mLongClickListener = longClickListener;
@@ -154,15 +141,15 @@ public class ChattingListAdapter extends BaseAdapter {
         checkSendingImgMsg();
     }
 
-    public ChattingListAdapter(Context context, Conversation conv, ContentLongClickListener longClickListener,
+    public ChattingListAdapter(BaseFragment context, Conversation conv, ContentLongClickListener longClickListener,
                                int msgId) {
         this.mContext = context;
-        mActivity = (Activity) context;
+        mActivity = (Activity) context.getActivity();
         DisplayMetrics dm = new DisplayMetrics();
         mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         mWidth = dm.widthPixels;
 
-        mInflater = LayoutInflater.from(mContext);
+        mInflater = LayoutInflater.from(mContext.getContext());
         this.mConv = conv;
         if (mConv.getUnReadMsgCnt() > PAGE_MESSAGE_COUNT) {
             this.mMsgList = mConv.getMessagesFromNewest(0, mConv.getUnReadMsgCnt());
@@ -323,7 +310,7 @@ public class ChattingListAdapter extends BaseAdapter {
                     incrementStartPosition();
                     notifyDataSetChanged();
                 } else {
-                    HandleResponseCode.onHandle(mContext, i, false);
+                    HandleResponseCode.onHandle(mContext.getContext(), i, false);
                     notifyDataSetChanged();
                 }
             }
@@ -543,14 +530,14 @@ public class ChattingListAdapter extends BaseAdapter {
         long nowDate = msg.getCreateTime();
         if (mOffset == 18) {
             if (position == 0 || position % 18 == 0) {
-                TimeFormat timeFormat = new TimeFormat(mContext, nowDate);
+                TimeFormat timeFormat = new TimeFormat(mContext.getContext(), nowDate);
                 holder.msgTime.setText(timeFormat.getDetailTime());
                 holder.msgTime.setVisibility(View.VISIBLE);
             } else {
                 long lastDate = mMsgList.get(position - 1).getCreateTime();
                 // 如果两条消息之间的间隔超过五分钟则显示时间
                 if (nowDate - lastDate > 300000) {
-                    TimeFormat timeFormat = new TimeFormat(mContext, nowDate);
+                    TimeFormat timeFormat = new TimeFormat(mContext.getContext(), nowDate);
                     holder.msgTime.setText(timeFormat.getDetailTime());
                     holder.msgTime.setVisibility(View.VISIBLE);
                 } else {
@@ -560,7 +547,7 @@ public class ChattingListAdapter extends BaseAdapter {
         } else {
             if (position == 0 || position == mOffset
                     || (position - mOffset) % 18 == 0) {
-                TimeFormat timeFormat = new TimeFormat(mContext, nowDate);
+                TimeFormat timeFormat = new TimeFormat(mContext.getContext(), nowDate);
 
                 holder.msgTime.setText(timeFormat.getDetailTime());
                 holder.msgTime.setVisibility(View.VISIBLE);
@@ -568,7 +555,7 @@ public class ChattingListAdapter extends BaseAdapter {
                 long lastDate = mMsgList.get(position - 1).getCreateTime();
                 // 如果两条消息之间的间隔超过五分钟则显示时间
                 if (nowDate - lastDate > 300000) {
-                    TimeFormat timeFormat = new TimeFormat(mContext, nowDate);
+                    TimeFormat timeFormat = new TimeFormat(mContext.getContext(), nowDate);
                     holder.msgTime.setText(timeFormat.getDetailTime());
                     holder.msgTime.setVisibility(View.VISIBLE);
                 } else {
@@ -585,7 +572,7 @@ public class ChattingListAdapter extends BaseAdapter {
 //                if (mUserInfo != null) {
 //                    if (mUserInfo!!.avatar != null) {
 
-                Picasso.with(mContext).load(LocalUtilsKt.getImageUrl(userInfo.getAvatar())).transform(new CircleTransform(mContext)).resize(ConvertUtils.Companion.dp2px(47.33F), ConvertUtils.Companion.dp2px(47.33F)).centerCrop().placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).into(holder.headIcon);
+                Picasso.with(mContext.getContext()).load(LocalUtilsKt.getImageUrl(userInfo.getAvatar())).transform(new CircleTransform(mContext.getContext())).resize(ConvertUtils.Companion.dp2px(47.33F), ConvertUtils.Companion.dp2px(47.33F)).centerCrop().placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).into(holder.headIcon);
 //                CircleCrop crop = new CircleCrop();
 //                RequestOptions options = new RequestOptions().transform(crop).placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true).override(ConvertUtils.Companion.dp2px(47.33F), ConvertUtils.Companion.dp2px(47.33F));
 
@@ -619,7 +606,6 @@ public class ChattingListAdapter extends BaseAdapter {
 //                            .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 4)
                     String ee = userInfo.getExtra("memberId");
                     int t = Float.valueOf(ee).intValue();
-                    Log.e("result", new Gson().toJson(userInfo) + "memberId" + ee);
 //                    Stack<Activity> activityStack = AppManager.Companion.getActivityStack();
 //                    for (int i1 = 0; i1 < activityStack.size(); i1++) {
 //                        if (activityStack.get(i1).getClass().getSimpleName().equalsIgnoreCase("DriverHomeActivity")) {
@@ -630,42 +616,56 @@ public class ChattingListAdapter extends BaseAdapter {
 //                    new Handler().postDelayed(new Runnable() {
 //                        @Override
 //                        public void run() {
-                    if (userInfo.getUserName() == PreferenceUtils.getString(mContext, ConfigKt.USER_PHONE)) {
-                        //代表点击的是自己的头像
-                        ChatRoomActivity activity = (ChatRoomActivity) mContext;
-                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t + "")
-                                .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, userInfo.getUserName())
-                                .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, userInfo.getNickname())
-                                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 10)
-                                .withFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT).navigation();
-                    } else {
-                        ChatRoomActivity activity = (ChatRoomActivity) mContext;
-                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
-                                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t + "")
-                                .withFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 10).navigation(activity, new NavCallback() {
-                            @Override
-                            public void onArrival(Postcard postcard) {
 
-                            }
+                    ChatRoomActivity activity = (ChatRoomActivity) mContext;
 
-                            @Override
-                            public void onFound(Postcard postcard) {
-                                super.onFound(postcard);
-                            }
+                    Bundle bundle = new Bundle();
+                    bundle.putString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t + "");
+                    bundle.putString(RouterUtils.Chat_Module.Chat_TARGET_ID, userInfo.getUserName());
+                    bundle.putString(RouterUtils.Chat_Module.Chat_CONV_TITLE, userInfo.getNickname());
+                    bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location);
+                    BaseFragment fr = (BaseFragment) ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation();
+                    fr.setArguments(bundle);
+                    activity.start(fr);
 
-                            @Override
-                            public void onLost(Postcard postcard) {
-                                super.onLost(postcard);
-                            }
-
-                            @Override
-                            public void onInterrupt(Postcard postcard) {
-                                super.onInterrupt(postcard);
-                            }
-                        });
-                    }
+//                    if (userInfo.getUserName() == PreferenceUtils.getString(mContext.getContext(), ConfigKt.USER_PHONE)) {
+//                        //代表点击的是自己的头像
+//
+//
+////                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+////                                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t + "")
+////                                .withString(RouterUtils.Chat_Module.Chat_TARGET_ID, userInfo.getUserName())
+////                                .withString(RouterUtils.Chat_Module.Chat_CONV_TITLE, userInfo.getNickname())
+////                                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 10)
+////                                .withFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT).navigation();
+//                    } else {
+//
+//                        ChatRoomActivity activity = (ChatRoomActivity) mContext;
+//                        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, activity.location)
+//                                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, t + "")
+//                                .withFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+//                                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 10).navigation(activity.getActivity(), new NavCallback() {
+//                            @Override
+//                            public void onArrival(Postcard postcard) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onFound(Postcard postcard) {
+//                                super.onFound(postcard);
+//                            }
+//
+//                            @Override
+//                            public void onLost(Postcard postcard) {
+//                                super.onLost(postcard);
+//                            }
+//
+//                            @Override
+//                            public void onInterrupt(Postcard postcard) {
+//                                super.onInterrupt(postcard);
+//                            }
+//                        });
+//                    }
 //                        }
 //                    }, 1500);
 
@@ -818,7 +818,7 @@ public class ChattingListAdapter extends BaseAdapter {
                 }
             }
         };
-        mDialog = DialogCreator.createResendDialog(mContext, listener);
+        mDialog = DialogCreator.createResendDialog(mContext.getContext(), listener);
         mDialog.getWindow().setLayout((int) (0.8 * mWidth), WindowManager.LayoutParams.WRAP_CONTENT);
         mDialog.show();
     }
@@ -835,7 +835,7 @@ public class ChattingListAdapter extends BaseAdapter {
                     holder.sendingIv.clearAnimation();
                     holder.sendingIv.setVisibility(View.GONE);
                     if (status != 0) {
-                        HandleResponseCode.onHandle(mContext, status, false);
+                        HandleResponseCode.onHandle(mContext.getContext(), status, false);
                         holder.resend.setVisibility(View.VISIBLE);
                     }
                 }
@@ -875,7 +875,7 @@ public class ChattingListAdapter extends BaseAdapter {
                         holder.progressTv.setVisibility(View.GONE);
                         holder.picture.setAlpha(1.0f);
                         if (status != 0) {
-                            HandleResponseCode.onHandle(mContext, status, false);
+                            HandleResponseCode.onHandle(mContext.getContext(), status, false);
                             holder.resend.setVisibility(View.VISIBLE);
                         }
                     }
@@ -913,9 +913,9 @@ public class ChattingListAdapter extends BaseAdapter {
                     public void gotResult(final int status, String desc) {
                         holder.progressTv.setVisibility(View.GONE);
                         //此方法是api21才添加的如果低版本会报错找不到此方法.升级api或者使用ContextCompat.getDrawable
-                        holder.contentLl.setBackground(mContext.getDrawable(R.drawable.jmui_msg_send_bg));
+                        holder.contentLl.setBackground(mContext.getActivity().getDrawable(R.drawable.jmui_msg_send_bg));
                         if (status != 0) {
-                            HandleResponseCode.onHandle(mContext, status, false);
+                            HandleResponseCode.onHandle(mContext.getContext(), status, false);
                             holder.resend.setVisibility(View.VISIBLE);
                         }
                     }

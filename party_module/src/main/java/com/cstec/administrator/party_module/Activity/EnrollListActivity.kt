@@ -14,17 +14,21 @@ import com.cstec.administrator.party_module.ViewModel.EnrollViewModel
 import com.cstec.administrator.party_module.databinding.ActivityEnrollBinding
 import com.elder.zcommonmodule.Entity.Location
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 
 
 @Route(path = RouterUtils.PartyConfig.ENROLL)
-class EnrollListActivity : BaseActivity<ActivityEnrollBinding, EnrollViewModel>() {
+class EnrollListActivity : BaseFragment<ActivityEnrollBinding, EnrollViewModel>() {
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_ID)
     @JvmField
-    var id: Int = 0
+    var ids: Int = 0
 
+    override fun initContentView(): Int {
+        return R.layout.activity_enroll
+    }
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)
     @JvmField
@@ -34,28 +38,30 @@ class EnrollListActivity : BaseActivity<ActivityEnrollBinding, EnrollViewModel>(
         return BR.enroll_model
     }
 
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
-        return R.layout.activity_enroll
-    }
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
+//        return R.layout.activity_enroll
+//    }
 
-    fun returnBack() {
-        finish()
-    }
+//    fun returnBack() {
+//        finish()
+//    }
 
-    override fun initViewModel(): EnrollViewModel? {
-        return ViewModelProviders.of(this)[EnrollViewModel::class.java]
-    }
+//    override fun initViewModel(): EnrollViewModel? {
+//        return ViewModelProviders.of(this)[EnrollViewModel::class.java]
+//    }
 
-    override fun doPressBack() {
-        super.doPressBack()
-        returnBack()
-    }
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        returnBack()
+//    }
 
     override fun initData() {
         super.initData()
-        mViewModel?.inject(this)
+        location = arguments!!.getSerializable(RouterUtils.PartyConfig.PARTY_LOCATION) as Location?
+        ids = arguments!!.getInt(RouterUtils.PartyConfig.PARTY_ID)
+        viewModel?.inject(this)
     }
 }

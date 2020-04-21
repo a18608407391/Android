@@ -9,7 +9,9 @@ import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.SearchPartyViewModel
 import com.cstec.administrator.party_module.databinding.ActivitySearchPartyBinding
 import com.elder.zcommonmodule.Entity.Location
+import com.elder.zcommonmodule.Utils.Utils
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_search_party.*
@@ -17,7 +19,10 @@ import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 
 @Route(path = RouterUtils.PartyConfig.SEARCH_PARTY)
-class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchPartyViewModel>() {
+class SearchPartyActivity : BaseFragment<ActivitySearchPartyBinding, SearchPartyViewModel>() {
+    override fun initContentView(): Int {
+        return R.layout.activity_search_party
+    }
 
 
     @Autowired(name = RouterUtils.PartyConfig.PARTY_LOCATION)
@@ -29,36 +34,38 @@ class SearchPartyActivity : BaseActivity<ActivitySearchPartyBinding, SearchParty
     var party_city: String? = null
 
 
-
     override fun initVariableId(): Int {
         return BR.search_party_model
     }
 
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
-        return R.layout.activity_search_party
-    }
-
-    override fun initViewModel(): SearchPartyViewModel? {
-        return ViewModelProviders.of(this)[SearchPartyViewModel::class.java]
-    }
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
+//        return R.layout.activity_search_party
+//    }
+//
+//    override fun initViewModel(): SearchPartyViewModel? {
+//        return ViewModelProviders.of(this)[SearchPartyViewModel::class.java]
+//    }
 
 
     override fun initData() {
         super.initData()
-        search_et.setOnEditorActionListener(mViewModel)
-        var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
-            if (it == "ActiveWebGotoApp") {
-                finish()
-            }
-        }
-        RxSubscriptions.add(s)
-        mViewModel?.inject(this)
+        Utils.setStatusTextColor(true, activity)
+        party_city = arguments!!.getString(RouterUtils.PartyConfig.PARTY_CITY)
+        location = arguments!!.getSerializable(RouterUtils.PartyConfig.PARTY_LOCATION) as Location?
+        search_et.setOnEditorActionListener(viewModel)
+        viewModel?.inject(this)
     }
-    override fun doPressBack() {
-        super.doPressBack()
-        finish()
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideSoftInput()
     }
+
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        finish()
+//    }
 }

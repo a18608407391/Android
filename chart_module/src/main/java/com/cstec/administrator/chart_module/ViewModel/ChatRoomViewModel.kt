@@ -59,16 +59,12 @@ import com.cstec.administrator.chart_module.View.*
 import com.cstec.administrator.chart_module.View.ChatUtils.FuncLayout
 import com.cstec.administrator.chart_module.View.Emoji.EmojiBean
 import com.google.gson.Gson
-import com.tencent.smtt.sdk.TbsLogReport
 import com.zk.library.Base.BaseApplication
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import org.cs.tec.library.Base.Utils.uiContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.json.JSONObject
 import java.io.File
 
 
@@ -85,6 +81,16 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         super.onPause()
         JMessageClient.exitConversation()
         ekBar.reset()
+    }
+
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.CHAT_ROOM_ACTIVITY_RETURN -> {
+                sendImageAfterSelfImagePicker(it.value as Intent)
+            }
+        }
     }
 
     override fun onResume() {
@@ -154,9 +160,9 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
-        this.mChatView = chatRoomActivity.findViewById(R.id.chat_view)
+        this.mChatView = chatRoomActivity.binding!!.root.findViewById(R.id.chat_view)
         var dm = DisplayMetrics()
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        activity.activity!!.getWindowManager().getDefaultDisplay().getMetrics(dm);
         mDensity = dm.density;
         mDensityDpi = dm.densityDpi;
         mWidth = dm.widthPixels;
@@ -165,11 +171,11 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         mAvatarSize = ((50 * mDensity).toInt())
         this.mChatView.initModule(mDensity, mDensityDpi)
         this.activity = chatRoomActivity
-        this.ekBar = chatRoomActivity.findViewById(R.id.ek_bar)
-        this.lvChat = chatRoomActivity.findViewById(R.id.lv_chat)
+        this.ekBar = chatRoomActivity.binding!!.root.findViewById(R.id.ek_bar)
+        this.lvChat = chatRoomActivity.binding!!.root.findViewById(R.id.lv_chat)
         this.mChatView.setListeners(chatRoomActivity)
-        this.mWindow = chatRoomActivity.window;
-        this.mImm = chatRoomActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        this.mWindow = chatRoomActivity.activity!!.window;
+        this.mImm = chatRoomActivity.activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         mUIHandler = UIHandler(chatRoomActivity)
         initView()
         initData()
@@ -193,7 +199,6 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                         }
                     }
                 })
-                Log.e("result", "会话信息" + Gson().toJson(mConv))
             }
             if (mConv == null) {
                 finish()
@@ -273,9 +278,9 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
     }
 
     private fun initEmoticonsKeyBoardBar() {
-        ekBar.setAdapter(SimpleCommonUtils.getCommonAdapter(activity, emoticonClickListener))
+        ekBar.setAdapter(SimpleCommonUtils.getCommonAdapter(activity.activity, emoticonClickListener))
         ekBar.addOnFuncKeyBoardListener(this)
-        var gridView = SimpleAppsGridView(activity)
+        var gridView = SimpleAppsGridView(activity.activity)
         ekBar.addFuncView(gridView)
         ekBar.etChat.setOnSizeChangedListener { w, h, oldw, oldh -> scrollToBottom() }
         ekBar.btnSend.setOnClickListener {
@@ -363,13 +368,15 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         if (isChatRoom) {
             ChatRoomManager.leaveChatRoom(activity.mTargetId?.toLong()!!, object : BasicCallback() {
                 override fun gotResult(p0: Int, p1: String?) {
-                    finish()
-                    onBackPressed()
+//                    finish()
+//                    onBackPressed()
+                    activity._mActivity?.onBackPressedSupport()
                 }
             });
         } else {
-            finish()
-            super.onBackPressed()
+            activity._mActivity?.onBackPressedSupport()
+//            finish()
+//            super.onBackPressed()
         }
     }
 
@@ -423,7 +430,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                     var msg = mConv?.createSendMessage(imageContent)
                     handleSendMsg(msg!!)
                 } else {
-                    ToastUtil.shortToast(activity, responseMessage)
+                    ToastUtil.shortToast(activity.activity, responseMessage)
                 }
             }
         });
@@ -528,7 +535,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
             mChatView.chatListView.isFocusable = true
             mChatView.chatListView.isFocusableInTouchMode = true
             mChatView.chatListView.requestFocus()
-            CommonUtils.hideKeyboard(activity)
+            CommonUtils.hideKeyboard(activity.activity)
             false
         }
     }
@@ -572,7 +579,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                     view?.getLocationOnScreen(location)
                     var OldListY = location[1]
                     var OldListX = location[0]
-                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                    TipView.Builder(activity.activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
                             .addItem(TipItem("复制"))
 //                            .addItem(TipItem("转发"))
                             .addItem(TipItem("删除"))
@@ -582,12 +589,12 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                                         if (msg.getContentType() == ContentType.text) {
                                             var content = (msg.getContent() as TextContent).text;
                                             if (Build.VERSION.SDK_INT > 11) {
-                                                var clipboard = activity
+                                                var clipboard = activity.activity!!
                                                         .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                                 var clip = ClipData.newPlainText("Simple text", content);
                                                 clipboard.primaryClip = clip;
                                             } else {
-                                                var clip = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                                var clip = activity.activity!!.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                                 if (clip.hasText()) {
                                                     clip.getText();
                                                 }
@@ -620,7 +627,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                     view?.getLocationOnScreen(location)
                     var OldListY = location.get(1)
                     var OldListX = location.get(0)
-                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                    TipView.Builder(activity.activity!!, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
                             .addItem(TipItem("复制"))
 //                            .addItem(TipItem("转发"))
                             .addItem(TipItem("撤回"))
@@ -631,20 +638,20 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                                         if (msg.getContentType() == ContentType.text) {
                                             var content = (msg.getContent() as TextContent).getText();
                                             if (Build.VERSION.SDK_INT > 11) {
-                                                var clipboard = activity
+                                                var clipboard = activity.activity!!
                                                         .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                                 var clip = ClipData.newPlainText("Simple text", content);
                                                 clipboard.setPrimaryClip(clip);
                                             } else {
-                                                var clip = activity
+                                                var clip = activity.activity!!
                                                         .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                                 if (clip.hasText()) {
                                                     clip.getText();
                                                 }
                                             }
-                                            Toast.makeText(activity, "已复制", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(activity.activity, "已复制", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            Toast.makeText(activity, "只支持复制文字", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(activity.activity, "只支持复制文字", Toast.LENGTH_SHORT).show();
                                         }
                                     } else if (position == 1) {
                                         //转发
@@ -655,14 +662,14 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
 //                                            JGApplication.forwardMsg.add(msg);
 //                                            startActivity(intent);
                                         } else {
-                                            Toast.makeText(activity, "只支持转发文本,图片,小视频", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(activity.activity, "只支持转发文本,图片,小视频", Toast.LENGTH_SHORT).show();
                                         }
                                     } else if (position == 1) {
                                         //撤回
                                         mConv?.retractMessage(msg, object : BasicCallback() {
                                             override fun gotResult(p0: Int, p1: String?) {
                                                 if (p0 == 855001) {
-                                                    Toast.makeText(activity, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(activity.activity, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
                                                 } else if (p0 == 0) {
                                                     mChatAdapter?.delMsgRetract(msg)
                                                 }
@@ -688,7 +695,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                     view?.getLocationOnScreen(location)
                     var OldListY = location[1]
                     var OldListX = location[0]
-                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                    TipView.Builder(activity.activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
 //                            .addItem(TipItem("转发"))
                             .addItem(TipItem("删除"))
                             .setOnItemClickListener(object : TipView.OnItemClickListener {
@@ -715,7 +722,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                     view?.getLocationOnScreen(location);
                     var OldListY = location[1];
                     var OldListX = location[0];
-                    TipView.Builder(activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
+                    TipView.Builder(activity.activity, mChatView, OldListX + view?.width!! / 2, OldListY + view?.height!!)
 //                            .addItem(TipItem("转发"))
                             .addItem(TipItem("撤回"))
                             .addItem(TipItem("删除"))
@@ -726,7 +733,7 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                                         mConv?.retractMessage(msg, object : BasicCallback() {
                                             override fun gotResult(i: Int, s: String?) {
                                                 if (i == 855001) {
-                                                    Toast.makeText(activity, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(activity.activity, "发送时间过长，不能撤回", Toast.LENGTH_SHORT).show();
                                                 } else if (i == 0) {
                                                     mChatAdapter?.delMsgRetract(msg)
                                                 }
@@ -814,28 +821,29 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
         var filename = StringUtil.get32UUID() + ".jpg"
         return StorageUtil.getWritePath(filename, StorageType.TYPE_TEMP)
     }
+//
+//    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        when (requestCode) {
+//            RequestCode.PICK_IMAGE -> {
+//                onPickImageActivityResult(requestCode, data);
+//            }
+//        }
+//    }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            RequestCode.PICK_IMAGE -> {
-                onPickImageActivityResult(requestCode, data);
-            }
-        }
-    }
-
-    private fun onPickImageActivityResult(requestCode: Int, data: Intent?) {
-        if (data == null) {
-            return;
-        }
-        var local = data.getBooleanExtra(Extras.EXTRA_FROM_LOCAL, false);
-        if (local) {
-            // 本地相册
-            sendImageAfterSelfImagePicker(data);
-        }
-    }
+//    private fun onPickImageActivityResult(requestCode: Int, data: Intent?) {
+//        if (data == null) {
+//            return;
+//        }
+//        var local = data.getBooleanExtra(Extras.EXTRA_FROM_LOCAL, false);
+//        if (local) {
+//            // 本地相册
+//            sendImageAfterSelfImagePicker(data);
+//        }
+//    }
 
     private fun sendImageAfterSelfImagePicker(data: Intent) {
-        SendImageHelper.sendImageAfterSelfImagePicker(activity, data, SendImageHelper.Callback { file, isOrig ->
+        Log.e("result", "sendImageAfterSelfImagePicker")
+        SendImageHelper.sendImageAfterSelfImagePicker(activity.activity, data, SendImageHelper.Callback { file, isOrig ->
             //所有图片都在这里拿到
             ImageContent.createImageContentAsync(file, object : ImageContent.CreateImageContentCallback() {
                 override fun gotResult(responseCode: Int, responseMessage: String, imageContent: ImageContent) {
@@ -856,15 +864,15 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
             BaseApplication.IMAGE_MESSAGE -> {
                 var from = PickImageActivity.FROM_LOCAL;
                 var requestCode = RequestCode.PICK_IMAGE;
-                PickImageActivity.start(activity, requestCode, from, tempFile()!!, true, 9,
+                PickImageActivity.start(activity.activity, requestCode, from, tempFile()!!, true, 9,
                         true, false, 0, 0);
             }
             BaseApplication.TAKE_PHOTO_MESSAGE -> {
-                if ((ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO)
+                if ((ContextCompat.checkSelfPermission(activity.activity!!, Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity.activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(activity.activity!!, Manifest.permission.RECORD_AUDIO)
                                 != PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(activity, "请在应用管理中打开“相机,读写存储,录音”访问权限！", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity.activity, "请在应用管理中打开“相机,读写存储,录音”访问权限！", Toast.LENGTH_LONG).show();
                 } else {
 //                    var intent = Intent(this, CameraActivity::class.java)
 //                            startActivityForResult (intent, RequestCode.TAKE_PHOTO);
@@ -884,10 +892,10 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
 //                }
             }
             BaseApplication.FILE_MESSAGE -> {
-                if (ContextCompat.checkSelfPermission(activity,
+                if (ContextCompat.checkSelfPermission(activity.activity!!,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(activity, "请在应用管理中打开“读写存储”访问权限！", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity.activity, "请在应用管理中打开“读写存储”访问权限！", Toast.LENGTH_LONG).show();
 
                 } else {
 //                    intent = new Intent (mContext, SendFileActivity.class);
@@ -930,49 +938,49 @@ class ChatRoomViewModel : BaseViewModel(), FuncLayout.OnFuncKeyBoardListener {
                 if (activity != null) {
                     when (msg?.what) {
                         REFRESH_LAST_PAGE -> {
-                            activity.mViewModel?.mChatAdapter?.dropDownToRefresh();
-                            activity.mViewModel?.mChatView!!.listView.onDropDownComplete();
-                            if (activity.mViewModel?.mChatAdapter?.isHasLastPage!!) {
+                            activity.viewModel?.mChatAdapter?.dropDownToRefresh();
+                            activity.viewModel?.mChatView!!.listView.onDropDownComplete();
+                            if (activity.viewModel?.mChatAdapter?.isHasLastPage!!) {
                                 if (Build.VERSION.SDK_INT >= 21) {
-                                    activity.mViewModel!!.mChatView.listView
-                                            .setSelectionFromTop(activity.mViewModel!!.mChatAdapter!!.offset,
-                                                    activity.mViewModel!!.mChatView.listView.headerHeight)
+                                    activity.viewModel!!.mChatView.listView
+                                            .setSelectionFromTop(activity.viewModel!!.mChatAdapter!!.offset,
+                                                    activity.viewModel!!.mChatView.listView.headerHeight)
                                 } else {
-                                    activity.mViewModel!!.mChatView.getListView().setSelection(activity.mViewModel!!.mChatAdapter
+                                    activity.viewModel!!.mChatView.getListView().setSelection(activity.viewModel!!.mChatAdapter
                                     !!.offset)
                                 }
-                                activity.mViewModel!!.mChatAdapter!!.refreshStartPosition();
+                                activity.viewModel!!.mChatAdapter!!.refreshStartPosition();
                             } else {
-                                activity.mViewModel!!.mChatView.listView.setSelection(0);
+                                activity.viewModel!!.mChatView.listView.setSelection(0);
                             }
                             //显示上一页的消息数18条
-                            activity.mViewModel!!.mChatView.getListView()
-                                    .setOffset(activity.mViewModel!!.mChatAdapter?.offset!!)
+                            activity.viewModel!!.mChatView.getListView()
+                                    .setOffset(activity.viewModel!!.mChatAdapter?.offset!!)
                         }
                         REFRESH_GROUP_NAME -> {
-                            if (activity.mViewModel?.mConv != null) {
+                            if (activity.viewModel?.mConv != null) {
                                 var num = msg.data.getInt(RouterUtils.Chat_Module.Chat_MEMBERS_COUNT)
                                 var groupName = msg.data.getString(RouterUtils.Chat_Module.Chat_GROUP_NAME)
-                                activity.mViewModel?.mChatView!!.setChatTitle(groupName, num)
+                                activity.viewModel?.mChatView!!.setChatTitle(groupName, num)
                             }
                         }
                         REFRESH_GROUP_NUM -> {
                             val num = msg.data.getInt(RouterUtils.Chat_Module.Chat_MEMBERS_COUNT)
-                            activity.mViewModel?.mChatView!!.setChatTitle(R.string.group, num)
+                            activity.viewModel?.mChatView!!.setChatTitle(R.string.group, num)
                         }
                         REFRESH_CHAT_TITLE -> {
-                            if (activity.mViewModel?.mGroupInfo != null) {
+                            if (activity.viewModel?.mGroupInfo != null) {
                                 //检查自己是否在群组中
-                                var info = activity.mViewModel?.mGroupInfo!!.getGroupMemberInfo(activity.mViewModel!!.mMyInfo?.userName,
-                                        activity.mViewModel?.mMyInfo?.appKey)
-                                if (!TextUtils.isEmpty(activity.mViewModel?.mGroupInfo!!.groupName)) {
+                                var info = activity.viewModel?.mGroupInfo!!.getGroupMemberInfo(activity.viewModel!!.mMyInfo?.userName,
+                                        activity.viewModel?.mMyInfo?.appKey)
+                                if (!TextUtils.isEmpty(activity.viewModel?.mGroupInfo!!.groupName)) {
                                     if (info != null) {
-                                        activity.mViewModel!!.mChatView.setChatTitle(activity.mTitle,
-                                                activity.mViewModel!!.mGroupInfo!!.groupMembers.size)
-                                        activity.mViewModel?.mChatView?.showRightBtn()
+                                        activity.viewModel!!.mChatView.setChatTitle(activity.mTitle,
+                                                activity.viewModel!!.mGroupInfo!!.groupMembers.size)
+                                        activity.viewModel?.mChatView?.showRightBtn()
                                     } else {
-                                        activity.mViewModel?.mChatView!!.setChatTitle(activity.mTitle)
-                                        activity.mViewModel?.mChatView!!.dismissRightBtn()
+                                        activity.viewModel?.mChatView!!.setChatTitle(activity.mTitle)
+                                        activity.viewModel?.mChatView!!.dismissRightBtn()
                                     }
                                 }
                             }

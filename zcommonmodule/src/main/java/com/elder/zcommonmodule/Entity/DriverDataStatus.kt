@@ -109,8 +109,15 @@ class DriverDataStatus() : Serializable {
         //DriverController参数
 
         startPoint = null
-        totalPoint = ArrayList<Location>()
-        locationLat = ObservableArrayList<Location>()
+        totalPoint = ArrayList()
+        locationLat = ObservableArrayList()
         onDestroyStatus = 0
+        //newData
     }
+
+
+    var UpValue = 0.0   //累计爬坡高度
+    var maxHeight = 0.0  //最高海拔
+    var maxSpeed: Float = 0F //最高速度
+    var UpCount = 0        //爬坡次数
 }

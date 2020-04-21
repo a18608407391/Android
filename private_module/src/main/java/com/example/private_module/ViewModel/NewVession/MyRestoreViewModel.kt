@@ -1,6 +1,8 @@
 package com.example.private_module.ViewModel.NewVession
 
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -9,10 +11,8 @@ import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Component.TitleComponent
-import com.elder.zcommonmodule.Entity.CollectionEntity
-import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity
-import com.elder.zcommonmodule.Entity.Location
-import com.elder.zcommonmodule.Entity.RestoreEntity
+import com.elder.zcommonmodule.DETAIL_RESULT
+import com.elder.zcommonmodule.Entity.*
 import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
@@ -20,6 +20,7 @@ import com.example.private_module.Activity.NewVession.MyRestoreActivity
 import com.example.private_module.BR
 import com.example.private_module.R
 import com.google.gson.Gson
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_my_restore.*
@@ -35,17 +36,49 @@ import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
 
-class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, TitleComponent.titleComponentCallBack, SwipeRefreshLayout.OnRefreshListener, SimpleClickListener {
+class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, TitleComponent.titleComponentCallBack, SwipeRefreshLayout.OnRefreshListener, SimpleClickListener, HttpInteface.SocialDynamicsList {
+    override fun ResultSDListSuccess(it: String) {
+        restoreActivity.dismissProgressDialog()
+        restoreActivity.swp!!.isRefreshing = false
+        var dyna = Gson().fromJson<DynamicsCategoryEntity>(it, DynamicsCategoryEntity::class.java)
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0])
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        restoreActivity.startForResult(model, DETAIL_RESULT)
+    }
+
+    override fun ResultSDListError(ex: Throwable) {
+
+    }
+
     override fun onSimpleClick(entity: Any) {
         var c = entity as CollectionEntity.Collection
-
-
         if (c.BIG_TYPE == null || c.BIG_TYPE == 0) {
-            if (c.releaseDynamicParent == null) {
-                Toast.makeText(restoreActivity, "该动态已被删除！", Toast.LENGTH_SHORT).show()
-            } else {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
-            }
+            restoreActivity.showProgressDialog("加载中......")
+            HttpRequest.instance.DynamicListResult = this
+            var map = HashMap<String, String>()
+            map["memberId"] = c.MEMBER_ID.toString()
+            map["id"] = c.DYNAMIC_ID.toString()
+            map["pageSize"] = "1"
+            map["length"] = "1"
+            map["type"] = "5"
+            map["yAxis"] = restoreActivity.location!!.longitude.toString()
+            map["xAxis"] = restoreActivity.location!!.latitude.toString()
+            HttpRequest.instance.getDynamicsList(map)
+//            if (c.releaseDynamicParent == null) {
+//                Log.e("result","动态"+Gson().toJson(c))
+//                Toast.makeText(restoreActivity.activity, "该动态已被删除！", Toast.LENGTH_SHORT).show()
+//            } else {
+//                var bundle = Bundle()
+//                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location)
+//                bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent)
+//                var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+//                model.arguments = bundle
+//                restoreActivity.startForResult(model, DETAIL_RESULT)
+////                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, restoreActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, c.releaseDynamicParent).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 8).navigation()
+//            }
         } else if (c.BIG_TYPE == 1) {
             ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, Integer.valueOf(entity.ID))
                     .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
@@ -67,16 +100,17 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
         initDatas()
         CoroutineScope(uiContext).launch {
             delay(10000)
-            restoreActivity.restore_swipe.isRefreshing = false
+            restoreActivity.swp!!.isRefreshing = false
         }
     }
 
     override fun onComponentClick(view: View) {
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(restoreActivity, object : NavCallback() {
-            override fun onArrival(postcard: Postcard?) {
-                finish()
-            }
-        })
+        restoreActivity._mActivity!!.onBackPressedSupport()
+//        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(restoreActivity, object : NavCallback() {
+//            override fun onArrival(postcard: Postcard?) {
+//                finish()
+//            }
+//        })
     }
 
     override fun onComponentFinish(view: View) {
@@ -137,7 +171,7 @@ class MyRestoreViewModel : BaseViewModel(), HttpInteface.PrivateRestoreList, Tit
             }
             items.add(item)
         }
-        restoreActivity.restore_swipe.isRefreshing = false
+        restoreActivity.swp!!.isRefreshing = false
     }
 
     override fun ResultPrivateDynamicError(ex: Throwable) {

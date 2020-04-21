@@ -20,15 +20,14 @@ import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.USERID
 
 //const val Base_URL = "http://ly532915135.vicp.cc/"
-//const val Base_URL = "http://yomoy.com.cn/"
-//https://wusiyao22.uicp.io/
+
 const val Base_URL = "http://yomoy.com.cn/"
 
 //const val Base_URL = "http://192.168.5.242/"
 //const val Base_URL = "http://192.168.5.253/"
 //const val Base_URL = "http://192.168.5.155/"
 //const val Base_URL = "http://192.168.5.178/"
-
+//
 const val USER_PHONE = "user_phone"
 const val USER_PASS = "user_pass"
 const val USER_TOKEN = "user_token"
@@ -48,10 +47,8 @@ const val REAL_CODE = "real_code"
 const val HISTORY_TABLE = "history_table"
 const val TEAM_CODE = "team_code"
 const val TEAM_ID = "team_id"
-
 const val UNIONID = "unionId"
 const val OPENID = "openId"
-
 const val MSG_RETURN_REQUEST = 125
 const val MSG_RETURN_REFRESH_REQUEST = 12
 var ROOT_PATH = Environment.getExternalStorageDirectory().absolutePath
@@ -60,7 +57,7 @@ const val REAL_PATH = "real_path"
 const val REQUEST_CODE_CAMERA = 101
 const val REQUEST_IMG_WARTER_MARK = 102
 const val PICK_IMAGE_ACTIVITY_REQUEST_CODE = 103
-
+const val REQUEST_DISCOVER_LOAD_ROADBOOK = 1221
 const val CHECK_PERMISSION = 104
 const val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 105
 const val GET_NICKNAME = 106
@@ -80,7 +77,7 @@ const val REQUEST_SHARE = 116
 const val START_DRIVER = 117
 const val TO_NAVIGATION = 118
 //普通状态
-
+const val ROAD_DETAIL_RETURN_VALUE = 119
 const val SOCIAL_DETAIL_RETURN = 130
 
 const val PRIVATE_DATA_RETURN = 131
@@ -93,14 +90,15 @@ const val REQUEST_CREATE_JOIN = 120
 
 const val REQUEST_LOAD_ROADBOOK = 121
 
-const val REQUEST_DISCOVER_LOAD_ROADBOOK = 1221
-
 const val REQUEST_MY_ROADBOOK = 123
 
 const val REQUEST_SEARCH_ROADBOOK = 122
 
 const val SOCIAL_SELECT_PHOTOS = 123
+const val REQUEST_WEB_GO_TO_APP = 125
 
+const val RELEASE_RESULT = 132
+const val DETAIL_RESULT = 133
 const val SELECT_USER_CALLBACK = 124
 const val DriverCancle = 2
 

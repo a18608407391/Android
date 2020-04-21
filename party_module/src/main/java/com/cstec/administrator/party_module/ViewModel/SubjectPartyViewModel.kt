@@ -2,6 +2,7 @@ package com.cstec.administrator.party_module.ViewModel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.util.Log
 import android.view.View
@@ -19,6 +20,7 @@ import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.DialogUtils
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_subject_party.*
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
@@ -80,7 +82,14 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
             }
         }
     }
-
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                subject._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
     var mTiltes = arrayOf("主题", "摩旅", "打卡")
 
     var pagerTitle = BindingViewPagerAdapter.PageTitles<BasePartyItemModel> { position, item ->
@@ -97,17 +106,28 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
     fun onClick(view: View) {
         when (view.id) {
             R.id.arrow -> {
-                subject.returnBack()
+                subject!!._mActivity!!.onBackPressedSupport()
+//                subject.returnBack()
             }
             R.id.title_ev -> {
-                DialogUtils.showProviceDialog(subject!!, province, "选择城市")
+                DialogUtils.showProviceDialog(subject!!.activity!!, province, "选择城市")
             }
             R.id.search_address -> {
-                ARouter.getInstance().build(RouterUtils.PartyConfig.SEARCH_PARTY).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-                        subject.location).withString(RouterUtils.PartyConfig.PARTY_CITY, city.get()).navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        subject.location)
+
+                bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
+                startFragment(subject, RouterUtils.PartyConfig.SEARCH_PARTY, bundle)
+
             }
             R.id.notify_icon -> {
-                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, subject.location).navigation()
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
+                        subject.location)
+                startFragment(subject, RouterUtils.Chat_Module.ActiveNotify_AC, bundle)
+//                ARouter.getInstance().build(RouterUtils.Chat_Module.ActiveNotify_AC).withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION, subject.location).navigation()
+
             }
         }
     }

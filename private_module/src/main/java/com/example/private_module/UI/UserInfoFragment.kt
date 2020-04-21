@@ -1,40 +1,27 @@
 package com.example.private_module.UI
 
 import android.app.ProgressDialog
-import android.graphics.Color
-import android.graphics.Paint
+import android.support.v4.widget.NestedScrollView
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.*
-import com.elder.zcommonmodule.DataBases.insertDriverInfo
 import com.elder.zcommonmodule.DataBases.insertUserInfo
-import com.elder.zcommonmodule.Entity.DriverInfo
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Entity.MsgCountData
 import com.elder.zcommonmodule.Http.BaseObserver
-import com.elder.zcommonmodule.Utils.DialogUtils
 import com.example.private_module.BR
 import com.elder.zcommonmodule.Entity.UserInfo
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
-import com.elder.zcommonmodule.Widget.CustomChart.AxisRenderer
-import com.elder.zcommonmodule.Widget.CustomChart.LineSet
 import com.example.private_module.Entitiy.PrivateEntity
 import com.example.private_module.R
 import com.example.private_module.ViewModel.UserInfoViewModel
 import com.example.private_module.databinding.FragmentUserBinding
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.listener.ChartTouchListener
-import com.github.mikephil.charting.listener.OnChartGestureListener
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.fragment_user.*
 import com.google.gson.Gson
 import com.zk.library.Bus.DataEven
 import com.zk.library.Bus.ServiceEven
@@ -46,8 +33,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.*
+import org.cs.tec.library.Base.Utils.ioContext
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
@@ -83,6 +72,13 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
         return BR.user_fr_viewModel
     }
 
+    override fun onUserInvisible() {
+        super.onUserInvisible()
+    }
+
+    override fun onUserVisible() {
+        super.onUserVisible()
+    }
     var lableList = ArrayList<String>()
     fun getUserInfo(flag: Boolean) {
         if (userInfo == null) {
@@ -114,26 +110,26 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
                         val cd = Calendar.getInstance()
                         if (cd.get(Calendar.MONTH) in 0..2) {
                             if (cd.get(Calendar.MONTH) == 0) {
-                                vertical_text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
-                                vertical_text3.text = (cd.get(Calendar.MONTH) + 1 - 1 + 12).toString() + "月"
-                                vertical_text2.text = (cd.get(Calendar.MONTH) + 1 - 2 + 12).toString() + "月"
-                                vertical_text1.text = (cd.get(Calendar.MONTH) + 1 - 3 + 12).toString() + "月"
+                                text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
+                                text3.text = (cd.get(Calendar.MONTH) + 1 - 1 + 12).toString() + "月"
+                                text2.text = (cd.get(Calendar.MONTH) + 1 - 2 + 12).toString() + "月"
+                                text1.text = (cd.get(Calendar.MONTH) + 1 - 3 + 12).toString() + "月"
                             } else if (cd.get(Calendar.MONTH) == 1) {
-                                vertical_text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
-                                vertical_text3.text = (cd.get(Calendar.MONTH) + 1 - 1).toString() + "月"
-                                vertical_text2.text = (cd.get(Calendar.MONTH) + 1 - 2 + 12).toString() + "月"
-                                vertical_text1.text = (cd.get(Calendar.MONTH) + 1 - 3 + 12).toString() + "月"
+                                text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
+                                text3.text = (cd.get(Calendar.MONTH) + 1 - 1).toString() + "月"
+                                text2.text = (cd.get(Calendar.MONTH) + 1 - 2 + 12).toString() + "月"
+                                text1.text = (cd.get(Calendar.MONTH) + 1 - 3 + 12).toString() + "月"
                             } else if (cd.get(Calendar.MONTH) == 2) {
-                                vertical_text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
-                                vertical_text3.text = (cd.get(Calendar.MONTH) + 1 - 1).toString() + "月"
-                                vertical_text2.text = (cd.get(Calendar.MONTH) + 1 - 2).toString() + "月"
-                                vertical_text1.text = (cd.get(Calendar.MONTH) + 1 - 3 + 12).toString() + "月"
+                                text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
+                                text3.text = (cd.get(Calendar.MONTH) + 1 - 1).toString() + "月"
+                                text2.text = (cd.get(Calendar.MONTH) + 1 - 2).toString() + "月"
+                                text1.text = (cd.get(Calendar.MONTH) + 1 - 3 + 12).toString() + "月"
                             }
                         } else {
-                            vertical_text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
-                            vertical_text3.text = (cd.get(Calendar.MONTH) + 1 - 1).toString() + "月"
-                            vertical_text2.text = (cd.get(Calendar.MONTH) + 1 - 2).toString() + "月"
-                            vertical_text1.text = (cd.get(Calendar.MONTH) + 1 - 3).toString() + "月"
+                            text4.text = (cd.get(Calendar.MONTH) + 1).toString() + "月"
+                            text3.text = (cd.get(Calendar.MONTH) + 1 - 1).toString() + "月"
+                            text2.text = (cd.get(Calendar.MONTH) + 1 - 2).toString() + "月"
+                            text1.text = (cd.get(Calendar.MONTH) + 1 - 3).toString() + "月"
                         }
                     } else {
                         code.queryUserDisCountRidingInfo!!.ridingData!!.forEachIndexed { index, progressData ->
@@ -141,17 +137,17 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
                                 viewModel?.allTotal?.set(DecimalFormat("0").format(progressData.allTotalDis!! / 1000))
                                 viewModel?.allTime?.set(ConvertUtils.formatTimeS(progressData.allTotalTime))
                             } else if (index == 1) {
-                                vertical_progressbar4.progress = (progressData.allTotalDis * 100 / max).toInt()
-                                vertical_text4.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
+                                progress4.progress = (progressData.allTotalDis * 100 / max).toInt()
+                                text4.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
                             } else if (index == 2) {
-                                vertical_progressbar3.progress = (progressData.allTotalDis * 100 / max).toInt()
-                                vertical_text3.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
+                                progress3.progress = (progressData.allTotalDis * 100 / max).toInt()
+                                text3.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
                             } else if (index == 3) {
-                                vertical_progressbar2.progress = (progressData.allTotalDis * 100 / max).toInt()
-                                vertical_text2.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
+                                progress2.progress = (progressData.allTotalDis * 100 / max).toInt()
+                                text2.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
                             } else if (index == 4) {
-                                vertical_progressbar1.progress = (progressData.allTotalDis * 100 / max).toInt()
-                                vertical_text1.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
+                                progress1.progress = (progressData.allTotalDis * 100 / max).toInt()
+                                text1.text = progressData.ridingMonth!!.split("-")[1].toInt().toString() + "月"
                             }
                         }
                     }
@@ -179,9 +175,28 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
         }
     }
 
+    lateinit var text1 :TextView
+    lateinit var text2 :TextView
+    lateinit var text3 :TextView
+    lateinit var text4 :TextView
+
+    lateinit var progress1: ProgressBar
+    lateinit var progress2: ProgressBar
+    lateinit var progress3: ProgressBar
+    lateinit var progress4: ProgressBar
+    lateinit var user_nest :NestedScrollView
     override fun initData() {
         super.initData()
         Log.e("user","initData")
+        text1 = binding!!.root.findViewById(R.id.vertical_text1)
+        text2 = binding!!.root.findViewById(R.id.vertical_text2)
+        text3 = binding!!.root.findViewById(R.id.vertical_text3)
+        text4 = binding!!.root.findViewById(R.id.vertical_text4)
+        progress1 = binding!!.root.findViewById(R.id.vertical_progressbar1)
+        progress2 = binding!!.root.findViewById(R.id.vertical_progressbar2)
+        progress3 = binding!!.root.findViewById(R.id.vertical_progressbar3)
+        progress4 = binding!!.root.findViewById(R.id.vertical_progressbar4)
+        user_nest =  binding!!.root.findViewById(R.id.user_nest)
         setchart()
         RxSubscriptions.add(RxBus.default?.toObservable(DataEven::class.java)!!.subscribe {
             var m = it.value + count
@@ -195,8 +210,11 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
 
 
     fun initNet() {
-        HttpRequest.instance.getMsgCount = this
-        HttpRequest.instance.getMsgNotifyCount(HashMap())
+        CoroutineScope(ioContext).launch {
+            delay(500)
+            HttpRequest.instance.getMsgCount = this@UserInfoFragment
+            HttpRequest.instance.getMsgNotifyCount(HashMap())
+        }
     }
 
     fun setchart() {
@@ -269,6 +287,16 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
 //        line_chart.addData(data)
 //        line_chart.show()
 //    }
-
+private var WAIT_TIME = 2000L
+    private var TOUCH_TIME: Long = 0
+    override fun onBackPressedSupport(): Boolean {
+        if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
+            _mActivity!!.finish()
+        } else {
+            TOUCH_TIME = System.currentTimeMillis()
+            Toast.makeText(_mActivity, "再次点击退出App", Toast.LENGTH_SHORT).show()
+        }
+        return true
+    }
 
 }

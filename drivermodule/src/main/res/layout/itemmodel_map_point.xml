@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="map_point_item"
+            type="com.example.drivermodule.Controller.MapPointItemModel"></variable>
+    </data>
+
+
+    <com.example.drivermodule.Sliding.SlidingUpPanelLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        app:initPanelMapPoint="@{map_point_item.panelState}"
+        app:initPanelMapListener="@{map_point_item}"
+        sothree:umanoDragView="@+id/map_point_slideView"
+        sothree:umanoFadeColor="#00FFFFFF"
+        sothree:umanoOverlay="true"
+        sothree:umanoPanelHeight="20dp"
+        sothree:umanoScrollableView="@+id/scroll_view"
+        sothree:umanoShadowHeight="0dp">
+
+        <RelativeLayout
+            android:id="@+id/top_main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/item_float_district_layout"
+                android:background="#00FFFFFF"
+                app:data="@{map_point_item}"></include>
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/slideView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/trans"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="bottom|center_horizontal"
+                android:orientation="vertical"
+                android:visibility="@{map_point_item.choiceVisible?View.VISIBLE:View.GONE}">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_20"
+                    android:src="@drawable/corner_line_circle" />
+
+
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/d_20"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/bottom_route_choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#FFFFFF"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        app:initMapPointLinear="@{map_point_item.items}"
+                        app:mapPointLinearCommand="@{map_point_item.bindingCommand}"></LinearLayout>
+                </HorizontalScrollView>
+
+
+                <android.support.v4.widget.NestedScrollView
+                    android:id="@+id/scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_405"
+                    android:visibility="@{map_point_item.listvisible?View.VISIBLE:View.GONE}">
+
+                    <!--<com.example.drivermodule.FoldLayout-->
+                    <!--android:id="@+id/fold"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent">-->
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:adapter="@{map_point_item.roadDetailAdapter}"
+                        app:itemBinding="@{map_point_item.roadDetailItemsBinding}"
+                        app:items="@{map_point_item.roadDetailItems}"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"></android.support.v7.widget.RecyclerView>
+
+                    <!--</com.example.drivermodule.FoldLayout>-->
+
+
+                </android.support.v4.widget.NestedScrollView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/d_55"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/detail_click"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/d_36"
+                        android:layout_weight="1"
+                        android:drawableLeft="@drawable/three_point_icon"
+                        android:gravity="left|center_vertical"
+                        android:text="路线详情"
+                        android:onClick="@{map_point_item::onClick}"
+                        android:textColor="@color/black_12"
+                        android:textSize="@dimen/s_15" />
+                    <TextView
+                        android:id="@+id/navi_btn"
+                        android:layout_width="@dimen/d_115"
+                        android:layout_height="@dimen/d_36"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginRight="@dimen/d_15"
+                        android:background="@drawable/login_btn_shape_nomal1"
+                        android:gravity="center"
+                        android:onClick="@{map_point_item::onClick}"
+                        android:text="开始导航"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/s_15" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.example.drivermodule.Sliding.SlidingUpPanelLayout>
+</layout>

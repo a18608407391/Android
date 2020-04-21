@@ -21,14 +21,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:fitsSystemWindows="true"
-                android:orientation="vertical"></LinearLayout>
-
             <include
                 layout="@layout/private_tab_layout"
                 app:data="@{my_fans_model.titleComponent}"></include>

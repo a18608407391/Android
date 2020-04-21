@@ -17,43 +17,48 @@ import com.elder.zcommonmodule.REQUEST_CODE_CROP_IMAGE
 import com.elder.zcommonmodule.SOCIAL_SELECT_PHOTOS
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import org.cs.tec.library.Utils.ConvertUtils
 
 
 @Route(path = RouterUtils.SocialConfig.SOCIAL_PHOTO)
-class DynamicsPhotoActivity : BaseActivity<ActivityDynamicsPhotoBinding, DynamicsPhotoViewModel>() {
+class DynamicsPhotoActivity : BaseFragment<ActivityDynamicsPhotoBinding, DynamicsPhotoViewModel>() {
+    override fun initContentView(): Int {
+        return R.layout.activity_dynamics_photo
+    }
+
     @Autowired(name = RouterUtils.SocialConfig.SOCIAL_MAX_COUNT)
     @JvmField
     var count: Int = 9
-
 
 
     override fun initVariableId(): Int {
         return BR.dynamics_photo
     }
 
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, false)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
-        return R.layout.activity_dynamics_photo
-    }
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, false)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x000000)
+//        return R.layout.activity_dynamics_photo
+//    }
+//
+//    override fun initViewModel(): DynamicsPhotoViewModel? {
+//        return ViewModelProviders.of(this)[DynamicsPhotoViewModel::class.java]
+//    }
 
-    override fun initViewModel(): DynamicsPhotoViewModel? {
-        return ViewModelProviders.of(this)[DynamicsPhotoViewModel::class.java]
-    }
-
-
-    override fun doPressBack() {
-        super.doPressBack()
-        finish()
-    }
+//
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        finish()
+//    }
 
     override fun initData() {
         super.initData()
-        mViewModel?.inject(this)
+        count = arguments!!.getInt(RouterUtils.SocialConfig.SOCIAL_MAX_COUNT)
+        viewModel?.inject(this)
     }
 
     var realPath: String? = null
@@ -62,8 +67,8 @@ class DynamicsPhotoActivity : BaseActivity<ActivityDynamicsPhotoBinding, Dynamic
         when (requestCode) {
             CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (mViewModel?.realPath != null) {
-                        realPath = DialogUtils.startCrop(this, mViewModel?.realPath!!, ConvertUtils.dp2px(160F), ConvertUtils.dp2px(160F))
+                    if (viewModel?.realPath != null) {
+                        realPath = DialogUtils.startCropFragment(this, viewModel?.realPath!!, ConvertUtils.dp2px(160F), ConvertUtils.dp2px(160F))
                     }
                 }
 //                if (data != null && data?.data != null) {
@@ -90,9 +95,13 @@ class DynamicsPhotoActivity : BaseActivity<ActivityDynamicsPhotoBinding, Dynamic
                 if (realPath != null) {
                     var list = ArrayList<String>()
                     list.add(realPath!!)
-                    intent.putStringArrayListExtra("PhotoUrls", list)
-                    setResult(SOCIAL_SELECT_PHOTOS, intent)
-                    finish()
+                    var bundler = Bundle()
+                    bundler.putStringArrayList("PhotoUrls", list)
+                    setFragmentResult(SOCIAL_SELECT_PHOTOS, bundler)
+                    _mActivity!!.onBackPressedSupport()
+//                    intent.putStringArrayListExtra("PhotoUrls", list)
+//                    setResult(SOCIAL_SELECT_PHOTOS, intent)
+//                    finish()
                 }
             }
         }

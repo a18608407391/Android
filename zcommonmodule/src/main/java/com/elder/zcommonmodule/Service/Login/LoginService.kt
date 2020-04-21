@@ -28,5 +28,10 @@ interface LoginService {
     ): Observable<BaseResponse>
 
 
+    @Headers("Content-type:application/json;charset=utf-8")//需要添加touch
+    @POST("AmoskiActivity/memberUser/quickLogin")
+    fun reLogin(@Body builder: RequestBody
+    ): Observable<BaseResponse>
+
 
 }

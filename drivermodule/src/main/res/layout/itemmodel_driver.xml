@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View"></import>
+
+        <variable
+            name="driver_item"
+            type="com.example.drivermodule.Controller.DriverItemModel"></variable>
+    </data>
+
+    <com.example.drivermodule.Sliding.SlidingUpPanelLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        app:initPanel="@{driver_item.panelState}"
+        sothree:umanoDragView="@+id/slideView"
+        sothree:umanoFadeColor="#00FFFFFF"
+        sothree:umanoPanelHeight="0dp"
+        sothree:umanoShadowHeight="0dp">
+
+        <RelativeLayout
+            android:id="@+id/main_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/top_main_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"></LinearLayout>
+
+            <include
+                android:id="@+id/item_bottom_layouts"
+                layout="@layout/driver_itembottom_layout"
+                android:visibility="@{driver_item.bottomLayoutVisible ? View.VISIBLE : View.GONE}"
+                app:data="@{driver_item}"></include>
+        </RelativeLayout>
+
+        <include
+            layout="@layout/driver_sliding_up"
+            app:data="@{driver_item}"></include>
+
+    </com.example.drivermodule.Sliding.SlidingUpPanelLayout>
+
+
+</layout>
+

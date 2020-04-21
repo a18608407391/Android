@@ -2,13 +2,11 @@ package com.example.drivermodule.Adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.amap.api.services.core.PoiItem
-import com.amap.api.services.help.Tip
-import com.example.drivermodule.Activity.SearchActivity
+import com.example.drivermodule.Fragment.SearchActivity
 import com.example.drivermodule.R
 import kotlinx.android.synthetic.main.history_item.view.*
 
@@ -21,7 +19,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
     constructor(activity: SearchActivity) {
         this.activity = activity
-        this.mInflate = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        this.mInflate = activity.activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): SearchViewHolder {

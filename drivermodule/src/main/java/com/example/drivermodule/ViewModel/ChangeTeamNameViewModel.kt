@@ -1,20 +1,17 @@
 package com.example.drivermodule.ViewModel
 
-import android.content.Intent
 import android.databinding.ObservableField
-import android.text.Editable
+import android.os.Bundle
 import android.text.TextUtils
-import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.elder.zcommonmodule.Component.TitleComponent
-import com.elder.zcommonmodule.GET_NICKNAME
 import com.elder.zcommonmodule.Utils.NameLengthFilter
-import com.example.drivermodule.Activity.Team.TeamChangeNameActivity
+import com.example.drivermodule.Fragment.Team.TeamChangeNameActivity
 import com.example.drivermodule.R
 import com.example.drivermodule.ViewModel.TeamSettingViewModel.Companion.REQUEST_TEAM_NAME
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import kotlinx.android.synthetic.main.activity_team_changename.*
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
@@ -22,7 +19,8 @@ import org.cs.tec.library.Base.Utils.getString
 
 class ChangeTeamNameViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        teamChangeNameActivity.finish()
+//        teamChangeNameActivity.finish()
+        teamChangeNameActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -35,10 +33,11 @@ class ChangeTeamNameViewModel : BaseViewModel(), TitleComponent.titleComponentCa
             Toast.makeText(context, getString(R.string.teamname_not_enough), Toast.LENGTH_SHORT).show()
             return
         }
-        var intent = Intent()
-        intent.putExtra("info", teamChangeNameActivity.nickname_et.text.toString())
-        teamChangeNameActivity.setResult(REQUEST_TEAM_NAME, intent)
-        finish()
+        var intent = Bundle()
+        intent.putString("info", teamChangeNameActivity.nickname_et.text.toString())
+        teamChangeNameActivity.setFragmentResult(REQUEST_TEAM_NAME, intent)
+        teamChangeNameActivity._mActivity!!.onBackPressedSupport()
+//        finish()
     }
 
     var NickName = ObservableField<String>()
@@ -54,6 +53,15 @@ class ChangeTeamNameViewModel : BaseViewModel(), TitleComponent.titleComponentCa
         teamChangeNameActivity.nickname_et.setSelection(0)
     }
 
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.Team_reject_even -> {
+//                finish()
+                teamChangeNameActivity!!._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
     fun String_length(value: String): Int {
         var valueLength = 0
         val chinese = "[\u4e00-\u9fa5]"

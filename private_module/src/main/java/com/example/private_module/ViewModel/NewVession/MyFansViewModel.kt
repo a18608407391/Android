@@ -2,6 +2,8 @@ package com.example.private_module.ViewModel.NewVession
 
 import android.content.Intent
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -24,6 +26,7 @@ import com.example.private_module.BR
 import com.example.private_module.R
 import com.google.gson.Gson
 import com.zk.library.Base.AppManager
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_myfans.*
@@ -49,7 +52,7 @@ class MyFansViewModel : BaseViewModel(), HttpInteface.PrivateFansList, TitleComp
             map["fansMemberId"] = entity.memberId.toString()
             HttpRequest.instance.getDynamicsFocus(map)
         } else {
-            var dialog = DialogUtils.createNomalDialog(myFansActivity, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
+            var dialog = DialogUtils.createNomalDialog(myFansActivity.activity!!, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
             dialog.setOnBtnClickL(OnBtnClickL {
                 dialog.dismiss()
             }, OnBtnClickL {
@@ -66,13 +69,20 @@ class MyFansViewModel : BaseViewModel(), HttpInteface.PrivateFansList, TitleComp
 
     override fun onImgClick(en: Any) {
         var entity = en as FansEntity.FansBean
-        ARouter.getInstance()
-                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(myFansActivity.location?.latitude!!, myFansActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, myFansActivity.location?.aoiName!!, myFansActivity.location!!.poiName))
-                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
-                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 5)
-                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                .navigation()
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, myFansActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID,  entity.memberId)
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        myFansActivity.start(model)
+//        var entity = en as FansEntity.FansBean
+//        ARouter.getInstance()
+//                .build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, Location(myFansActivity.location?.latitude!!, myFansActivity.location?.longitude!!, System.currentTimeMillis().toString(), 0F, 0.0, 0F, myFansActivity.location?.aoiName!!, myFansActivity.location!!.poiName))
+//                .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, entity.memberId)
+//                .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 5)
+//                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+//                .navigation()
     }
 
     override fun onRefresh() {
@@ -81,7 +91,7 @@ class MyFansViewModel : BaseViewModel(), HttpInteface.PrivateFansList, TitleComp
         initDatas()
         CoroutineScope(uiContext).launch {
             delay(10000)
-            myFansActivity.fans_swipe.isRefreshing = false
+            myFansActivity.swp!!.isRefreshing = false
         }
     }
 
@@ -111,7 +121,7 @@ class MyFansViewModel : BaseViewModel(), HttpInteface.PrivateFansList, TitleComp
             map["fansMemberId"] = entity.memberId.toString()
             HttpRequest.instance.getDynamicsFocus(map)
         } else {
-            var dialog = DialogUtils.createNomalDialog(myFansActivity, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
+            var dialog = DialogUtils.createNomalDialog(myFansActivity.activity!!, getString(R.string.cancle_focus_warm), getString(R.string.cancle), getString(R.string.confirm))
             dialog.setOnBtnClickL(OnBtnClickL {
                 dialog.dismiss()
             }, OnBtnClickL {
@@ -127,27 +137,28 @@ class MyFansViewModel : BaseViewModel(), HttpInteface.PrivateFansList, TitleComp
     }
 
     override fun onComponentClick(view: View) {
-        if (myFansActivity.type == 1) {
-            if (AppManager.activityStack!!.size == 1) {
-                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
-                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, myFansActivity.id)
-                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, myFansActivity.location)
-                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
-                        .navigation(myFansActivity, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                finish()
-                            }
-                        })
-            } else {
-                finish()
-            }
-        } else {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(myFansActivity, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    finish()
-                }
-            })
-        }
+        myFansActivity._mActivity!!.onBackPressedSupport()
+//        if (myFansActivity.type == 1) {
+//            if (AppManager.activityStack!!.size == 1) {
+//                ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_CAVALIER_HOME)
+//                        .withString(RouterUtils.SocialConfig.SOCIAL_MEMBER_ID, myFansActivity.id)
+//                        .withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, myFansActivity.location)
+//                        .withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 0)
+//                        .navigation(myFansActivity.activity, object : NavCallback() {
+//                            override fun onArrival(postcard: Postcard?) {
+//                                finish()
+//                            }
+//                        })
+//            } else {
+//                finish()
+//            }
+//        } else {
+//            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(myFansActivity.activity, object : NavCallback() {
+//                override fun onArrival(postcard: Postcard?) {
+//                    finish()
+//                }
+//            })
+//        }
     }
 
     override fun onComponentFinish(view: View) {
@@ -161,7 +172,7 @@ class MyFansViewModel : BaseViewModel(), HttpInteface.PrivateFansList, TitleComp
         fans.data!!.forEach {
             items.add(it)
         }
-        myFansActivity.fans_swipe.isRefreshing = false
+        myFansActivity.swp!!.isRefreshing = false
 
         Log.e("result", "粉丝数据" + it)
     }

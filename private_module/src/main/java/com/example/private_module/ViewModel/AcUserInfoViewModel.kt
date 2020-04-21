@@ -3,6 +3,7 @@ package com.example.private_module.ViewModel
 import android.content.Intent
 import android.databinding.ObservableField
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -49,8 +50,10 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
     }
 
     override fun onComponentClick(view: View) {
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-        finish()
+//        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+//        finish()
+
+        userInfoActivity._mActivity!!.onBackPressedSupport()
     }
 
 
@@ -194,12 +197,17 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         userInfoActivity.userInfo!!.data!!.synopsis = content.get()
         userInfoActivity.userInfo!!.data!!.sex = if (gender.get() == "男") "1" else "2"
         userInfoActivity.userInfo!!.data!!.address = adress.get()
-        var intent = Intent()
-        intent.putExtra("userInfo", userInfoActivity.userInfo)
-        userInfoActivity.setResult(GET_USERINFO, intent)
-        Toast.makeText(context, "个人信息修改成功！", Toast.LENGTH_SHORT).show()
+
+        var bundle = Bundle()
+        bundle.putSerializable("userInfo", userInfoActivity.userInfo)
+        userInfoActivity.setFragmentResult(GET_USERINFO, bundle)
+//        var intent = Intent()
+//        intent.putExtra("userInfo", userInfoActivity.userInfo)
+//        userInfoActivity.setResult(GET_USERINFO, intent)
+//        Toast.makeText(context, "个人信息修改成功！", Toast.LENGTH_SHORT).show()
         userInfoActivity.dismissProgressDialog()
-        finish()
+        userInfoActivity!!._mActivity!!.onBackPressedSupport()
+//        finish()
     }
 
     var component = TitleComponent()
@@ -256,24 +264,27 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         }
         when (view.id) {
             R.id.user_info_avater -> {
-                DialogUtils.showAnim(userInfoActivity, 0)
+                DialogUtils.showFragmentAnim(userInfoActivity, 0)
                 DialogUtils.lisentner = this@AcUserInfoViewModel
             }
             R.id.user_info_avater_arrow -> {
             }
             R.id.user_info_nickname -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.CHANGENICKNAME).withString(RouterUtils.PrivateModuleConfig.NICKNAME, nickname.get()).navigation(userInfoActivity, GET_NICKNAME)
+                var bundle = Bundle()
+                bundle.putString(RouterUtils.PrivateModuleConfig.NICKNAME, nickname.get())
+                startFragment(userInfoActivity,RouterUtils.PrivateModuleConfig.CHANGENICKNAME,bundle,GET_NICKNAME)
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.CHANGENICKNAME).withString(RouterUtils.PrivateModuleConfig.NICKNAME, nickname.get()).navigation(userInfoActivity.activity, GET_NICKNAME)
             }
             R.id.user_info_gender -> {
                 var list = ArrayList<String>()
                 list.add(getString(com.elder.zcommonmodule.R.string.male))
                 list.add(getString(com.elder.zcommonmodule.R.string.remale))
-                DialogUtils.showGenderDialog(userInfoActivity, genderCommand, list, getString(R.string.choice_gender))
+                DialogUtils.showGenderDialog(userInfoActivity.activity!!, genderCommand, list, getString(R.string.choice_gender))
             }
             R.id.user_info_gender_arrow -> {
             }
             R.id.user_info_birthday -> {
-                var year = DialogUtils.showBirthdayDialog(userInfoActivity, birthdayCommand)
+                var year = DialogUtils.showBirthdayDialog(userInfoActivity.activity!!, birthdayCommand)
                 var birthday = birthday.get()
                 if (birthday.isNullOrEmpty()) {
                     birthday = "1980-08-27"
@@ -292,7 +303,7 @@ class AcUserInfoViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
             R.id.user_info_birthday_arrow -> {
             }
             R.id.user_info_address -> {
-                DialogUtils.showCityDialog(userInfoActivity, cityCommand)
+                DialogUtils.showCityDialog(userInfoActivity.activity!!, cityCommand)
             }
 
             R.id.user_info_address_arrow -> {

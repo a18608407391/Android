@@ -11,7 +11,7 @@
 
         <variable
             name="road_model"
-            type="com.example.drivermodule.ViewModel.RoadBookViewModel"></variable>
+            type="com.example.drivermodule.Controller.RoadBookItemModel"></variable>
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

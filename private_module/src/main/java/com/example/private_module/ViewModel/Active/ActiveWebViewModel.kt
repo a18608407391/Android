@@ -20,6 +20,8 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject
 import com.tencent.mm.opensdk.modelpay.PayReq
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
+import com.zk.library.Bus.event.RxBusEven.Companion.ACTIVE_WEB_GO_TO_APP
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import io.reactivex.Observable
@@ -88,7 +90,8 @@ class ActiveWebViewModel : BaseViewModel() {
             } else if (t.contains("gotoTicketList")) {
                 ac.type = 1
                 webUrl.set(Base_URL + "/AmoskiWebActivity/personalcenter/roadbookActivitype/eticket/eticketList.html?appToken=" + PreferenceUtils.getString(context, USER_TOKEN) + "&type=app")
-                RxBus.default!!.post("ActiveWebGotoApp")
+                RxBus.default!!.post(RxBusEven.getInstance(ACTIVE_WEB_GO_TO_APP))
+
             } else if (t.startsWith("alipays://platformapi")) {
                 if (t.contains("end")) {
                     var m = t.split("end")

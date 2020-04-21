@@ -1,6 +1,7 @@
 package com.example.drivermodule.ViewModel
 
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -12,6 +13,7 @@ import com.elder.zcommonmodule.Entity.SoketBody.CreateTeamInfoDto
 import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonnelInfoDto
 import com.elder.zcommonmodule.Http.BaseObserver
 import com.elder.zcommonmodule.REQUEST_CREATE_JOIN
+import com.elder.zcommonmodule.REQUEST_LOAD_ROADBOOK
 import com.elder.zcommonmodule.Service.Error.ApiException
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
@@ -40,10 +42,17 @@ import java.util.concurrent.TimeUnit
 
 class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, HttpInteface.JoinTeamResult, TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        var intent = Intent()
-        intent.putExtra("type", "cancle")
-        createTeamActivity.setResult(REQUEST_CREATE_JOIN, intent)
-        finish()
+        var bundle = Bundle()
+        bundle.putString("type", "cancle")
+//        bundle.putSerializable("data", info)
+//        bundle.putString("teamCode", info.teamCode)
+        createTeamActivity.setFragmentResult(REQUEST_CREATE_JOIN, bundle)
+        createTeamActivity._mActivity!!.onBackPressedSupport()
+
+//        var intent = Intent()
+//        intent.putExtra("type", "cancle")
+//        createTeamActivity.setResult(REQUEST_CREATE_JOIN, intent)
+//        finish()
     }
 
     override fun onComponentFinish(view: View) {
@@ -57,15 +66,21 @@ class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, Http
         }
 
         if (!it?.startsWith("{")) {
-            Toast.makeText(createTeamActivity, it, Toast.LENGTH_SHORT).show()
+            Toast.makeText(createTeamActivity.activity, it, Toast.LENGTH_SHORT).show()
         } else {
             var info = Gson().fromJson<TeamPersonnelInfoDto>(it, TeamPersonnelInfoDto::class.java)
             info.teamCode = password
-            var intent = Intent()
-            intent.putExtra("type", "join")
-            intent.putExtra("data", info)
-            createTeamActivity.setResult(REQUEST_CREATE_JOIN, intent)
-            finish()
+
+            var bundle = Bundle()
+            bundle.putString("type", "join")
+            bundle.putSerializable("data", info)
+            createTeamActivity.setFragmentResult(REQUEST_CREATE_JOIN, bundle)
+            createTeamActivity._mActivity!!.onBackPressedSupport()
+//            var intent = Intent()
+//            intent.putExtra("type", "join")
+//            intent.putExtra("data", info)
+//            createTeamActivity.setResult(REQUEST_CREATE_JOIN, intent)
+//            finish()
         }
     }
 
@@ -80,15 +95,22 @@ class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, Http
             return
         }
         if (!it?.startsWith("{")) {
-            Toast.makeText(createTeamActivity, it, Toast.LENGTH_SHORT).show()
+            Toast.makeText(createTeamActivity.activity, it, Toast.LENGTH_SHORT).show()
         } else {
             var info = Gson().fromJson<CreateTeamInfoDto>(it, CreateTeamInfoDto::class.java)
-            var intent = Intent()
-            intent.putExtra("type", "create")
-            intent.putExtra("data", info)
-            intent.putExtra("teamCode", info.teamCode)
-            createTeamActivity.setResult(REQUEST_CREATE_JOIN, intent)
-            finish()
+
+            var bundle = Bundle()
+            bundle.putString("type", "create")
+            bundle.putSerializable("data", info)
+            bundle.putString("teamCode", info.teamCode)
+            createTeamActivity.setFragmentResult(REQUEST_CREATE_JOIN, bundle)
+            createTeamActivity._mActivity!!.onBackPressedSupport()
+//            var intent = Intent()
+//            intent.putExtra("type", "create")
+//            intent.putExtra("data", info)
+//            intent.putExtra("teamCode", info.teamCode)
+//            createTeamActivity.setResult(REQUEST_CREATE_JOIN, intent)
+//            finish()
         }
     }
 

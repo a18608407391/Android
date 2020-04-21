@@ -1,9 +1,9 @@
 package com.example.drivermodule.ViewModel
 
-import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.graphics.Color
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.elder.zcommonmodule.Component.TitleComponent
@@ -14,11 +14,12 @@ import com.elder.zcommonmodule.Entity.SoketBody.Soket
 import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonInfo
 import com.zk.library.Bus.ServiceEven
 import com.elder.zcommonmodule.getImageUrl
-import com.example.drivermodule.Activity.Team.TeamerPassActivity
+import com.example.drivermodule.Fragment.Team.TeamerPassActivity
 import com.example.drivermodule.BR
 import com.example.drivermodule.R
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +36,7 @@ import org.cs.tec.library.USERID
 class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
 
     override fun onComponentClick(view: View) {
-        finish()
+        teamerPassActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -49,7 +50,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 flag = false
             }
         }
-        if (datas == null) {
+        if (datas==null) {
             Toast.makeText(context, getString(R.string.select_null), Toast.LENGTH_SHORT).show()
             return
         } else {
@@ -68,17 +69,25 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 so.body?.userIds = datas?.memberId!!.get()
                 var pos = ServiceEven()
                 pos.type = "sendData"
-                pos.gson = Gson().toJson(so) + "\\r\\n"
+                pos.gson  = Gson().toJson(so) + "\\r\\n"
                 RxBus.default?.post(pos)
-                var intent = Intent()
+                var intent = Bundle()
                 teamerPassActivity.info?.redisData?.teamer = Integer.valueOf(datas!!.memberId.get()!!)
-                intent.putExtra("info", teamerPassActivity.info)
-                teamerPassActivity.setResult(TeamSettingViewModel.REQUEST_TEAM_PASS, intent)
-                finish()
+                intent.putSerializable("info", teamerPassActivity.info)
+                teamerPassActivity.setFragmentResult(TeamSettingViewModel.REQUEST_TEAM_PASS, intent)
+                teamerPassActivity._mActivity!!.onBackPressedSupport()
             }
         }
     }
 
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.Team_reject_even -> {
+                teamerPassActivity._mActivity!!.onBackPressedSupport()
+            }
+        }
+    }
     lateinit var teamerPassActivity: TeamerPassActivity
     var component = TitleComponent()
     var dispose: Disposable? = null
@@ -94,7 +103,6 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         }
         invalidate()
     }
-
     fun invalidate() {
         component.title.set(getString(R.string.pass_timer))
         component.rightText.set(getString(R.string.finish))
@@ -103,7 +111,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
         var id = PreferenceUtils.getString(context, USERID)
         if (teamerPassActivity.info != null) {
             items.clear()
-            teamerPassActivity.info?.redisData?.dtoList?.forEachIndexed { index, it ->
+            teamerPassActivity.info?.redisData?.dtoList?.forEach {
                 if (it.teamRoleColor == null || it.teamRoleColor.isEmpty()) {
                     it.teamRoleColor = "2D3138"
                 }
@@ -113,7 +121,7 @@ class TeamerPassViewModel : BaseViewModel(), TitleComponent.titleComponentCallBa
                 } else {
                     name = it.memberName
                 }
-                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)), index)
+                var da = PersonDatas(ObservableField(getImageUrl(it.memberHeaderUrl)), ObservableField(name), ObservableField(it.teamRoleName), ObservableField(it.memberId.toString()), ObservableField(false), ObservableField(Color.parseColor("#" + it.teamRoleColor)))
                 if (it.memberId.toString() != id) {
                     da.select.set(false)
                     da.isTeamer.set(false)

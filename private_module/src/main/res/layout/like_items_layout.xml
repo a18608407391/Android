@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
+        android:onClick="@{()->listener.onSimpleClick(like_item_entity)}"
         android:paddingTop="@dimen/d_15">
 
         <LinearLayout
@@ -41,7 +42,6 @@
                 android:layout_marginLeft="@dimen/d_15"
                 android:layout_marginRight="@dimen/d_15"
                 android:layout_weight="1"
-                android:onClick="@{()->listener.onSimpleClick(like_item_entity)}"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
