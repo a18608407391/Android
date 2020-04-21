@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.widget.LinearSnapHelper
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -14,6 +15,7 @@ import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.maps.AMap
 import com.amap.api.maps.LocationSource
+import com.amap.api.maps.TextureMapView
 import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.Marker
 import com.amap.api.maps.model.MyLocationStyle
@@ -28,7 +30,6 @@ import com.example.drivermodule.ViewModel.RoadBookFirstViewModel
 import com.example.drivermodule.databinding.ActivityRoadbookFirstBinding
 import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
-import kotlinx.android.synthetic.main.activity_roadbook_first.*
 import org.cs.tec.library.Utils.ConvertUtils
 
 
@@ -184,13 +185,21 @@ class RoadBookFirstActivity : BaseFragment<ActivityRoadbookFirstBinding, RoadBoo
 
 
     lateinit var mAmap: AMap
+    lateinit var first_map : TextureMapView
+    lateinit var first_roadbook_recycle :RecyclerView
+    lateinit var first_bottom_pager :RecyclerView
+    lateinit var behavior_by_rout :LinearLayout
     var behavior_by_routes: BottomSheetBehavior<LinearLayout>? = null
     override fun initData() {
         super.initData()
+        first_roadbook_recycle =   binding!!.root!!.findViewById(R.id.first_roadbook_recycle)
+        first_bottom_pager = binding!!.root!!.findViewById(R.id.first_bottom_pager)
+        behavior_by_rout = binding!!.root!!.findViewById(R.id.behavior_by_rout)
         var hot = arguments!!.getSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY) as HotData
         if (hot != null) {
             this.data = hot
         }
+        first_map =  binding!!.root!!.findViewById(R.id.first_map)
         mAmap = first_map.map
 //        mAmap.clear()
         mAmap.setInfoWindowAdapter(this)

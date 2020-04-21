@@ -23,7 +23,11 @@ import org.cs.tec.library.Base.Utils.uiContext
 
 class ChangeNickNameViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        changeNickNameActivity._mActivity!!.onBackPressedSupport()
+        changeNickNameActivity.hideSoftInput()
+        CoroutineScope(uiContext).launch {
+            delay(500)
+            changeNickNameActivity._mActivity!!.onBackPressedSupport()
+        }
     }
 
     override fun onComponentFinish(view: View) {
@@ -33,6 +37,7 @@ class ChangeNickNameViewModel : BaseViewModel(), TitleComponent.titleComponentCa
             return
         }
         changeNickNameActivity.hideSoftInput()
+
         CoroutineScope(uiContext).launch {
             delay(500)
             var intent = Bundle()

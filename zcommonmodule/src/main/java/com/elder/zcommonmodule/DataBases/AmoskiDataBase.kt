@@ -18,7 +18,7 @@ import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import java.nio.charset.Charset
 
 
-class AmoskiDataBase(mContext: Context = context) : ManagedSQLiteOpenHelper(mContext, DB_NAME, null, 3) {
+class AmoskiDataBase(mContext: Context = context) : ManagedSQLiteOpenHelper(mContext, DB_NAME, null, 4) {
     companion object {
         var mDb: AmoskiDataBase? = null
         fun getIncetance(): AmoskiDataBase? {
@@ -47,11 +47,25 @@ class AmoskiDataBase(mContext: Context = context) : ManagedSQLiteOpenHelper(mCon
         if (newVersion > oldVersion) {
             if (newVersion > 2) {
                 var result = checkColumnExist(db!!, DRIVER_STATUS_TABLE, DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_DISTANCE)
-                if (result) {
+                if (!result) {
                     var upgradeGoods = "alter table $DRIVER_STATUS_TABLE add column ${DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_DISTANCE} REAL"
                     var upgradeGoods1 = "alter table $DRIVER_STATUS_TABLE add column ${DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_TIME} INTEGER"
                     db?.execSQL(upgradeGoods)
                     db?.execSQL(upgradeGoods1)
+                }
+
+                if(newVersion==4){
+                    var result = checkColumnExist(db!!, DRIVER_STATUS_TABLE, DataBaseIndex.DriverContinue.MAX_SPEED)
+                    if(!result){
+                        var Goods = "alter table $DRIVER_STATUS_TABLE add column ${DataBaseIndex.DriverContinue.MAX_SPEED} REAL"
+                        var Goods1 = "alter table $DRIVER_STATUS_TABLE add column ${DataBaseIndex.DriverContinue.MAX_HEIGHT} REAL"
+                        var upgradeGoods2 = "alter table $DRIVER_STATUS_TABLE add column ${DataBaseIndex.DriverContinue.UP_COUNT} INTEGER"
+                        var upgradeGoods3 = "alter table $DRIVER_STATUS_TABLE add column ${DataBaseIndex.DriverContinue.UP_VALUE} REAL"
+                        db?.execSQL(Goods)
+                        db?.execSQL(Goods1)
+                        db?.execSQL(upgradeGoods2)
+                        db?.execSQL(upgradeGoods3)
+                    }
                 }
             }
         }
