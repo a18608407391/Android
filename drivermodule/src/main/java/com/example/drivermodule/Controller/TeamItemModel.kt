@@ -84,7 +84,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-class TeamItemModel : ItemViewModel<MapFrViewModel>(), Locationlistener {
+class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     //组队逻辑处理
     var markerList = HashMap<String, Marker>()
     var TeamInfo: TeamPersonInfo? = null
@@ -179,7 +179,6 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>(), Locationlistener {
     }
 
     override fun ItemViewModel(viewModel: MapFrViewModel): ItemViewModel<MapFrViewModel> {
-        viewModel?.listeners.add(this)
         mapFr = viewModel.mapActivity
         return super.ItemViewModel(viewModel)
     }
@@ -430,31 +429,33 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>(), Locationlistener {
 
     var notifyRouteChange: NormalDialog? = null
     private fun createDistrictDialog() {
-        if (notifyRouteChange == null) {
-            notifyRouteChange = DialogUtils.createNomalDialog(mapFr.activity!!, getString(R.string.route_change), getString(R.string.ignore), getString(R.string.change_route))
-            notifyRouteChange!!.setOnBtnClickL(OnBtnClickL {
-                notifyRouteChange?.dismiss()
-            }, OnBtnClickL {
-                notifyRouteChange?.dismiss()
-                backToDriver()
-                viewModel?.backStatus = true
-                if (viewModel?.status?.navigationType == 1) {
-                    var list = ArrayList<LatLng>()
-                    if (soketNavigation?.wayPoint != null && !soketNavigation?.wayPoint!!.isEmpty()) {
-                        soketNavigation?.wayPoint!!.forEach {
-                            list.add(AMapUtil.convertToLatLng(it))
+        if(mapFr.isVisible&&viewModel?.currentPosition==1){
+            if (notifyRouteChange == null) {
+                notifyRouteChange = DialogUtils.createNomalDialog(mapFr.activity!!, getString(R.string.route_change), getString(R.string.ignore), getString(R.string.change_route))
+                notifyRouteChange!!.setOnBtnClickL(OnBtnClickL {
+                    notifyRouteChange?.dismiss()
+                }, OnBtnClickL {
+                    notifyRouteChange?.dismiss()
+                    backToDriver()
+                    viewModel?.backStatus = true
+                    if (viewModel?.status?.navigationType == 1) {
+                        var list = ArrayList<LatLng>()
+                        if (soketNavigation?.wayPoint != null && !soketNavigation?.wayPoint!!.isEmpty()) {
+                            soketNavigation?.wayPoint!!.forEach {
+                                list.add(AMapUtil.convertToLatLng(it))
+                            }
                         }
-                    }
-                    viewModel?.status!!.navigationEndPoint = soketNavigation?.navigation_end
-                    viewModel?.startNavi(list, 2)
-                    RxBus.default?.post(RxBusEven.getInstance(RxBusEven.DriverNavigationRouteChange, soketNavigation!!))
+                        viewModel?.status!!.navigationEndPoint = soketNavigation?.navigation_end
+                        viewModel?.startNavi(list, 2)
+                        RxBus.default?.post(RxBusEven.getInstance(RxBusEven.DriverNavigationRouteChange, soketNavigation!!))
 
-                } else {
-                    toNavi(false)
-                }
-            })
+                    } else {
+                        toNavi(false)
+                    }
+                })
+            }
+            notifyRouteChange?.show()
         }
-        notifyRouteChange?.show()
     }
 
     private fun toNavi(b: Boolean) {
@@ -887,7 +888,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>(), Locationlistener {
         viewModel.changerFragment(2)
     }
 
-    override fun onLocation(location: AMapLocation) {
+     fun onLocation(location: AMapLocation) {
         if (BaseApplication.MinaConnected) {
             //发送定位
             this.location = location
@@ -931,9 +932,17 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>(), Locationlistener {
                 viewModel?.selectTab(0)
             }
             R.id.change_map_point -> {
-                viewModel.backStatus = true
-                backToDriver()
-                (viewModel?.items[0] as DriverItemModel).changeMap_Point_btn()
+                if(viewModel?.status.navigationType==0){
+                    viewModel.backStatus = true
+                    backToDriver()
+                    (viewModel?.items[0] as DriverItemModel).changeMap_Point_btn()
+                }else{
+                    var list = ArrayList<LatLng>()
+                    viewModel?.status.passPointDatas.forEach {
+                        list.add(LatLng(it.latitude, it.longitude))
+                    }
+                    viewModel?.startNavi(list, 2)
+                }
             }
             R.id.setting_btn -> {
                 if (viewModel?.curPosition != null) {

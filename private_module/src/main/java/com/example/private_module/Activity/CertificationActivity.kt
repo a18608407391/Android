@@ -9,12 +9,16 @@ import com.example.private_module.R
 import com.example.private_module.ViewModel.CertificationViewModel
 import com.example.private_module.databinding.ActivityCertficationBinding
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 
 
 @Route(path = RouterUtils.PrivateModuleConfig.CERTIFICATION)
-class CertificationActivity : BaseActivity<ActivityCertficationBinding, CertificationViewModel>() {
+class CertificationActivity : BaseFragment<ActivityCertficationBinding, CertificationViewModel>() {
+    override fun initContentView(): Int {
+        return R.layout.activity_certfication
+    }
 
     @Autowired(name = RouterUtils.PrivateModuleConfig.USER_AUTH)
     @JvmField
@@ -24,22 +28,22 @@ class CertificationActivity : BaseActivity<ActivityCertficationBinding, Certific
         return BR.certification_ViewModel
     }
 
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
-        return R.layout.activity_certfication
-    }
-
-    override fun initViewModel(): CertificationViewModel? {
-        return ViewModelProviders.of(this)[CertificationViewModel::class.java]
-    }
-    override fun doPressBack() {
-        super.doPressBack()
-        finish()
-    }
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
+//        return R.layout.activity_certfication
+//    }
+//
+//    override fun initViewModel(): CertificationViewModel? {
+//        return ViewModelProviders.of(this)[CertificationViewModel::class.java]
+//    }
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        finish()
+//    }
     override fun initData() {
         super.initData()
-        mViewModel?.inject(this)
+        viewModel?.inject(this)
     }
 }

@@ -19,7 +19,6 @@ import com.elder.amoski.R
 import com.elder.logrecodemodule.UI.ActivityFragment
 import com.elder.logrecodemodule.UI.LogRecodeFragment
 import com.elder.zcommonmodule.CALL_BACK_STATUS
-import com.elder.zcommonmodule.DataBases.deleteDriverStatus
 import com.elder.zcommonmodule.DriverCancle
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Even.ActivityResultEven
@@ -31,25 +30,21 @@ import com.example.drivermodule.Fragment.RoadHomeActivity
 import com.example.private_module.UI.UserInfoFragment
 import com.zk.library.Base.AppManager
 import com.zk.library.Base.BaseViewModel
-import com.zk.library.Base.Transaction.ISupportFragment
 import com.zk.library.Bus.ServiceEven
-import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
-import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
 import java.util.ArrayList
 
 
 class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener, MapFragment.MapLoadedCallBack {
     override fun LoadedSuccess() {
-        bottomVisible.set(false)
+//        bottomVisible.set(false)
     }
 
     var returnCheckId = 0
@@ -143,6 +138,20 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
                     returnPrivate = true
                 }
+                RxBusEven.NET_WORK_SUCCESS -> {
+                    if (mapFr != null && mapFr!!.viewModel?.status!!.startDriver.get() != DriverCancle) {
+                        var pos = ServiceEven()
+                        pos.type = "HomeDriver"
+                        RxBus.default?.post(pos)
+                    }
+                }
+                RxBusEven.NET_WORK_ERROR -> {
+                    if (mapFr != null && mapFr!!.viewModel?.status!!.startDriver.get() != DriverCancle) {
+                        var pos = ServiceEven()
+                        pos.type = "HomeStop"
+                        RxBus.default?.post(pos)
+                    }
+                }
             }
         })
     }
@@ -162,7 +171,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun changerFragment(position: Int) {
-        if(!homeActivity.isAdded){
+        if (!homeActivity.isAdded) {
             return
         }
         tans = homeActivity.childFragmentManager.beginTransaction()
@@ -179,6 +188,15 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                     Utils.setStatusTextColor(false, homeActivity.activity as HomeActivity)
                 } else {
                     Utils.setStatusTextColor(true, homeActivity.activity as HomeActivity)
+                }
+                var home = homeActivity.activity as HomeActivity
+                if (home.resume == "nomal" || home.resume.isNullOrEmpty()) {
+                    if (mapFr == null) {
+                        mapFr = ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_FR).navigation() as MapFragment?
+                        mFragments.add(mapFr!!)
+                        mapFr?.setDriverStatus(home.resume)
+                        tans!!.add(R.id.main_rootlayout, mapFr!!)
+                    }
                 }
             }
             bottomBg.set(context.getDrawable(R.drawable.home_bottom_bg))
@@ -211,9 +229,13 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 }
 //                mapFr!!.loadMultipleRootFragment(R.id.main_rootlayout,2,mapFr!!)
                 tans!!.add(R.id.main_rootlayout, mapFr!!)
-            } else {
-                bottomVisible.set(false)
             }
+
+            if(!mapFr!!.initStatus){
+                mapFr!!.initMap()
+            }
+
+            bottomVisible.set(false)
         } else if (position == 3) {
             if (messageFragment == null) {
                 var bundle = Bundle()

@@ -38,6 +38,7 @@ class LowLocationService : IntentService, AMapLocationListener {
     override fun onLocationChanged(amapLocation: AMapLocation?) {
         if (amapLocation != null && amapLocation.errorCode == 0) {
 //            if (amapLocation.locationType == 1) {
+
             RxBus.default?.post(amapLocation)
             builder?.setContentText("当前位置")
             if (amapLocation.accuracy < 30 && action == "driver") {
@@ -52,6 +53,8 @@ class LowLocationService : IntentService, AMapLocationListener {
                 var location = Location(amapLocation.latitude, amapLocation.longitude, System.currentTimeMillis().toString(), amapLocation.speed, amapLocation.altitude, amapLocation.bearing, aoi, poi)
                 insertLocation(location, userid!!)
             }
+        } else {
+            Log.e("result", "NetWorkError")
         }
     }
 
@@ -101,6 +104,8 @@ class LowLocationService : IntentService, AMapLocationListener {
         userid = PreferenceUtils.getString(context, USERID)
         when (intent?.action) {
             SERVICE_CREATE -> {
+
+
                 lastTime = System.currentTimeMillis()
 //                if (android.os.Build.VERSION.SDK_INT >= 26) {
 //                    context.startForegroundService(Intent(this@LowLocationService, RemoteService::class.java))
@@ -124,7 +129,9 @@ class LowLocationService : IntentService, AMapLocationListener {
                     }
                     play()
                 }
-                startLocation(true)
+                if (mLocationClient == null || !mLocationClient!!.isStarted) {
+                    startLocation(true)
+                }
             }
             SERVICE_START -> {
                 if (mLocationClient != null) {
@@ -171,7 +178,7 @@ class LowLocationService : IntentService, AMapLocationListener {
         // 设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
         mLocationOption.locationMode = AMapLocationClientOption.AMapLocationMode.Hight_Accuracy;
         if (flag) {
-            mLocationOption.interval = 30000
+            mLocationOption.interval = 10000
         } else {
             mLocationOption.interval = 2000
         }

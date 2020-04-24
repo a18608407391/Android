@@ -1,6 +1,8 @@
 package com.cstec.administrator.chart_module.ViewModel
 
 import android.databinding.ObservableArrayList
+import android.databinding.ViewDataBinding
+import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
@@ -11,6 +13,7 @@ import com.cstec.administrator.chart_module.BR
 import com.elder.zcommonmodule.Entity.SystemNotifyData
 import com.cstec.administrator.chart_module.R
 import com.elder.zcommonmodule.Component.TitleComponent
+import com.elder.zcommonmodule.DETAIL_RESULT
 import com.elder.zcommonmodule.Entity.DynamicsCategoryEntity
 import com.elder.zcommonmodule.Inteface.SimpleClickListener
 import com.elder.zcommonmodule.MSG_RETURN_REQUEST
@@ -20,6 +23,7 @@ import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_sys_notify.*
@@ -46,7 +50,14 @@ class SystemNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
     override fun ResultSDListSuccess(it: String) {
         systemNotifyListActivity.dismissProgressDialog()
         var dyna = Gson().fromJson<DynamicsCategoryEntity>(it, DynamicsCategoryEntity::class.java)
-        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, systemNotifyListActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 7).navigation()
+//        ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).withSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION, systemNotifyListActivity.location).withSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0]).withInt(RouterUtils.SocialConfig.SOCIAL_NAVITATION_ID, 7).navigation()
+
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION,systemNotifyListActivity.location)
+        bundle.putSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY, dyna.data!![0])
+        var model = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_DETAIL).navigation() as BaseFragment<ViewDataBinding, BaseViewModel>
+        model.arguments = bundle
+        systemNotifyListActivity.startForResult(model, DETAIL_RESULT)
     }
 
     override fun ResultSDListError(ex: Throwable) {
@@ -164,8 +175,9 @@ class SystemNotifyViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListe
 
     var scrollerBinding = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
-            Log.e("result", "加载更多" + t)
-            if (t > 1) {
+            if (t <lenth*pageSize) {
+                return
+            }else{
                 pageSize++
                 initDatas()
             }

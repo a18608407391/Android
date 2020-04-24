@@ -3,6 +3,7 @@ package com.example.drivermodule.ViewModel
 import android.content.Context
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -97,9 +98,12 @@ class RoadBookSearchViewModel : BaseViewModel(), TextView.OnEditorActionListener
         if (data == null) {
             return
         }
-//        ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data).navigation(roadBookSearchActivity.activity, REQUEST_LOAD_ROADBOOK)
-        roadBookSearchActivity!!.startForResult((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).navigation() as RoadBookFirstActivity).setHotData(data), REQUEST_LOAD_ROADBOOK)
 
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data)
+        startFragment(roadBookSearchActivity,RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY,bundle,REQUEST_LOAD_ROADBOOK)
+//        ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ENTITY, data).navigation(roadBookSearchActivity.activity, REQUEST_LOAD_ROADBOOK)
+//        roadBookSearchActivity!!.startForResult((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_FIRST_ACTIVITY).navigation() as RoadBookFirstActivity).setHotData(data), REQUEST_LOAD_ROADBOOK)
 //        var intent = Intent()
 //        intent.putExtra("hotdata", data)
 //        roadBookSearchActivity.setResult(REQUEST_LOAD_ROADBOOK,intent)

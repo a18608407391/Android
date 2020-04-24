@@ -32,6 +32,7 @@ import android.provider.Settings
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.FileProvider
+import android.util.Log
 import com.afollestad.materialdialogs.MaterialDialog
 import com.amap.api.location.AMapLocation
 import com.amap.api.maps.AMapUtils
@@ -48,9 +49,7 @@ import com.elder.zcommonmodule.Service.SERVICE_AUTO_BOOT_COMPLETED
 import com.liulishuo.filedownloader.BaseDownloadTask
 import com.liulishuo.filedownloader.FileDownloadSampleListener
 import com.liulishuo.filedownloader.FileDownloader
-import com.zk.library.Base.AppManager
 import com.zk.library.Bus.event.RxBusEven
-import com.zk.library.Bus.event.RxBusEven.Companion.BrowserSendTeamCode
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -69,6 +68,7 @@ import java.io.File
 class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
 
     var teamCode: String? = null
+    var isNetError = false
     override fun onDriveRouteSearched(p0: DriveRouteResult?, p1: Int) {
         var id = PreferenceUtils.getString(context, USERID)
         if (p1 == 1000) {
@@ -97,7 +97,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
     }
 
     var dispose: Disposable? = null
-
+    var onCreate = false
 
     @RequiresApi(android.os.Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,15 +111,32 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                 teamCode = uri.getQueryParameter("teamCode")
             }
         }
-
-
         if (!NetworkUtil.isNetworkAvailable(this)) {
+            isNetError = true
 //            ARouter.getInstance().build(RouterUtils.MapModuleConfig.SMOOTH_ACTIVITY).navigation()
             Toast.makeText(context, getString(R.string.network_notAvailable), Toast.LENGTH_SHORT).show()
             return
         }
+        doMain()
+    }
 
-        var list = queryAllUserInfo()
+
+    override fun onResume() {
+        super.onResume()
+        if (isNetError && onCreate) {
+            if (!NetworkUtil.isNetworkAvailable(this)) {
+                isNetError = true
+                Toast.makeText(context, getString(R.string.network_notAvailable), Toast.LENGTH_SHORT).show()
+                return
+            } else {
+                isNetError = false
+                doMain()
+            }
+            onCreate = true
+        }
+    }
+
+    fun doMain() {
         if (PreferenceUtils.getString(context, USERID) != null) {
             var location = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             if (!location.isProviderEnabled(LocationManager.GPS_PROVIDER) || !location.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
@@ -166,7 +183,6 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                 RxSubscriptions.remove(dispose)
             }
             RxSubscriptions.add(dispose)
-
         } else {
             if (BaseApplication.getInstance().curActivity == 0) {
                 goHome()
@@ -315,6 +331,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                         ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation()
                     }, OnBtnClickL {
                         dialog.dismiss()
+                        Log.e("result", "进入5")
                         ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
                             override fun onArrival(postcard: Postcard?) {
                                 this@SplashActivity.finish()
@@ -323,6 +340,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                     })
                     dialog.show()
                 } else {
+                    Log.e("result", "进入4")
                     ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
                         override fun onArrival(postcard: Postcard?) {
                             this@SplashActivity.finish()
@@ -330,6 +348,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                     })
                 }
             } else {
+                Log.e("result", "进入3")
                 ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
                     override fun onArrival(postcard: Postcard?) {
                         finish()
@@ -337,6 +356,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                 })
             }
         } else {
+            Log.e("result", "进入1")
             if (BaseApplication.getInstance().curActivity == 1) {
                 ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
                     override fun onArrival(postcard: Postcard?) {
@@ -347,6 +367,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
                     }
                 })
             } else if (BaseApplication.getInstance().curActivity == 3) {
+                Log.e("result", "进入2")
                 ARouter.getInstance().build(RouterUtils.MapModuleConfig.NAVIGATION).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
                     override fun onArrival(postcard: Postcard?) {
                         finish()

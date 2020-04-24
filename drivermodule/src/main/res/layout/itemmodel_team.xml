@@ -92,6 +92,7 @@
                         android:layout_marginLeft="@dimen/d_15"
                         android:gravity="center"
                         android:singleLine="true"
+                        android:maxLength="10"
                         android:text="@{team_item.districtTv}"
                         android:textColor="@color/nomalTextColor"
                         android:textSize="@dimen/s_15" />

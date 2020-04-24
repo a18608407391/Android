@@ -3,6 +3,7 @@ package com.cstec.administrator.social.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -65,15 +66,19 @@ class DynamicsDetailActivity : BaseFragment<ActivityDynamicsdetailBinding, Dynam
 //    }
 
 
-    var mCommentList : CommentExpandableListView ? = null
-    var mLinear :LinearLayout ? = null
+    var mCommentList: CommentExpandableListView? = null
+    var mLinear: LinearLayout? = null
     override fun initData() {
         super.initData()
         Utils.setStatusTextColor(true, this.activity)
-        mCommentList =  binding!!.root.findViewById(R.id.commonlist)
-        mLinear =  binding!!.root.findViewById(R.id.social_linear)
+        mCommentList = binding!!.root.findViewById(R.id.commonlist)
+        mLinear = binding!!.root.findViewById(R.id.social_linear)
         detail = arguments!!.getSerializable(RouterUtils.SocialConfig.SOCIAL_DETAIL_ENTITY) as DynamicsCategoryEntity.Dynamics?
         location = arguments!!.getSerializable(RouterUtils.SocialConfig.SOCIAL_LOCATION) as Location
+        if (detail!!.state == "3") {
+            Toast.makeText(activity, "该动态已被删除!", Toast.LENGTH_SHORT).show()
+            _mActivity!!.onBackPressedSupport()
+        }
         viewModel?.inject(this)
     }
 

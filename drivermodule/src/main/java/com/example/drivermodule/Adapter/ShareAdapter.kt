@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getColor
 import org.cs.tec.library.Utils.ConvertUtils
 import java.io.File
+import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -85,11 +87,14 @@ class ShareAdapter : RecyclerView.Adapter<ShareAdapter.AddCarViewHolder> {
         if (path == "default") {
             holder.share_item_img.setImageBitmap(BitmapFactory.decodeResource(context.resources, R.drawable.share_second_bg))
         } else {
+            Log.e("result", "加载的当前图片路径" + path)
             holder.share_item_img.setImageBitmap(BitmapFactory.decodeFile(path))
+//            var fis = FileInputStream(path)
+//            holder.share_item_img.setImageBitmap(BitmapFactory.decodeStream(fis))
+//            var optionsd = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.share_second_bg).skipMemoryCache(true).override(ConvertUtils.dp2px(225F), ConvertUtils.dp2px(402F))
+//            Glide.with(activity!!).asBitmap().load(path).apply(optionsd).into(holder.share_item_img)
         }
 
-//        var optionsd = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.share_second_bg).skipMemoryCache(true).override(ConvertUtils.dp2px(225F), ConvertUtils.dp2px(402F))
-//        Glide.with(activity!!).asBitmap().load(path).apply(optionsd).into(holder.share_item_img)
 
         val crop = CircleCrop()
         var options = RequestOptions().transform(crop).error(R.drawable.default_avatar).diskCacheStrategy(DiskCacheStrategy.ALL).skipMemoryCache(true)

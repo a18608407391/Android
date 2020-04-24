@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.REQUEST_CREATE_JOIN
 import com.example.drivermodule.BR
 import com.example.drivermodule.R
@@ -37,6 +38,7 @@ class CreateTeamActivity : BaseFragment<ActivityCreateTeamBinding, CreateTeamVie
 
     override fun initData() {
         super.initData()
+        viewModel?.location = arguments!!.getSerializable(RouterUtils.MapModuleConfig.START_LOCATION) as Location?
         viewModel?.inject(this)
     }
 

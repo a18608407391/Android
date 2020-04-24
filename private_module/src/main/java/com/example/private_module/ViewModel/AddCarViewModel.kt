@@ -1,10 +1,10 @@
 package com.example.private_module.ViewModel
 
 import android.databinding.ObservableField
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.afollestad.materialdialogs.util.DialogUtils
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.*
 import com.elder.zcommonmodule.Component.TitleComponent
@@ -14,7 +14,6 @@ import com.elder.zcommonmodule.Widget.CoverFlowLayoutManger
 import com.example.private_module.Activity.AddCarActivity
 import com.example.private_module.Adapter.AddCarAdapter
 import com.example.private_module.Bean.CarsEntity
-import com.example.private_module.Bean.HeadResultInfo
 import com.example.private_module.Bean.QueryAllcars
 import com.example.private_module.R
 import com.google.gson.Gson
@@ -26,18 +25,17 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_addcar.*
 import okhttp3.*
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
-import org.jetbrains.anko.collections.forEachByIndex
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 
 class AddCarViewModel : BaseViewModel(), AddCarAdapter.AddCarItemClickCallBack, CoverFlowLayoutManger.OnSelected, AddCarAdapter.editClickCallBack, TitleComponent.titleComponentCallBack {
     override fun onComponentClick(view: View) {
-        finish()
+//        finish()
+
+        addCarActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -46,7 +44,10 @@ class AddCarViewModel : BaseViewModel(), AddCarAdapter.AddCarItemClickCallBack, 
     }
 
     override fun editClick(view: View, position: Int) {
-        ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.BOND_CARS).withSerializable(RouterUtils.PrivateModuleConfig.Edit_CARS, cars[position]).navigation(addCarActivity, EDIT_CARS)
+        var bundle = Bundle()
+        bundle.putSerializable(RouterUtils.PrivateModuleConfig.Edit_CARS, cars[position])
+        startFragment(addCarActivity,RouterUtils.PrivateModuleConfig.BOND_CARS,bundle, EDIT_CARS)
+//        ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.BOND_CARS).withSerializable(RouterUtils.PrivateModuleConfig.Edit_CARS, cars[position]).navigation(addCarActivity, EDIT_CARS)
     }
 
     var bottomVisible = ObservableField<Boolean>(true)
@@ -62,7 +63,8 @@ class AddCarViewModel : BaseViewModel(), AddCarAdapter.AddCarItemClickCallBack, 
 
     override fun onItemClick(view: View, position: Int) {
         if (position == cars.size - 1) {
-            ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.BOND_CARS).navigation(addCarActivity, INSERT_CARS)
+            startFragment(addCarActivity,RouterUtils.PrivateModuleConfig.BOND_CARS, INSERT_CARS)
+//            ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.BOND_CARS).navigation(addCarActivity, INSERT_CARS)
         }
     }
 
@@ -177,7 +179,7 @@ class AddCarViewModel : BaseViewModel(), AddCarAdapter.AddCarItemClickCallBack, 
             }
             R.id.delete_cars -> {
                 if (cars.size == 2) {
-                    var dialog = com.elder.zcommonmodule.Utils.DialogUtils.createNomalDialog(addCarActivity, getString(R.string.only_one_car), getString(R.string.cancle), getString(R.string.confirm))
+                    var dialog = com.elder.zcommonmodule.Utils.DialogUtils.createNomalDialog(addCarActivity.activity!!, getString(R.string.only_one_car), getString(R.string.cancle), getString(R.string.confirm))
                     dialog.setOnBtnClickL(OnBtnClickL {
                         dialog.dismiss()
                     }, OnBtnClickL {

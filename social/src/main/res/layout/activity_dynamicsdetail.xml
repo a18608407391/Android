@@ -95,6 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/d_15"
+                    android:visibility="@{dynamics_detail_model.field.followed==2?View.GONE:View.VISIBLE}"
                     android:onClick="@{dynamics_detail_model::onClick}"
                     android:src="@drawable/share_icon" />
             </LinearLayout>

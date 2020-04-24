@@ -2,9 +2,8 @@ package com.elder.amoski.Activity
 
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -28,8 +27,6 @@ import com.elder.zcommonmodule.Entity.HotData
 import com.zk.library.Bus.ServiceEven
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
-import android.content.ClipData
-import android.util.Base64
 import cn.jpush.im.android.api.JMessageClient
 import cn.jpush.im.android.api.event.LoginStateChangeEvent
 import com.alibaba.android.arouter.facade.Postcard
@@ -40,20 +37,17 @@ import com.cstec.administrator.chart_module.Utils.Extras
 import com.cstec.administrator.chart_module.Utils.RequestCode
 import com.elder.amoski.Fragment.HomeFragment
 import com.elder.zcommonmodule.*
-import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Even.RequestErrorEven
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.Utils
 import com.example.private_module.UI.UserInfoFragment
-import com.google.gson.Gson
 import com.zk.library.Base.Transaction.anim.DefaultHorizontalAnimator
 import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Bus.event.RxBusEven.Companion.CHAT_ROOM_ACTIVITY_RETURN
-import kotlinx.android.synthetic.main.activity_home.*
 import org.cs.tec.library.Bus.RxSubscriptions
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
-import java.nio.charset.Charset
 
 
 @Route(path = RouterUtils.ActivityPath.HOME)
@@ -73,6 +67,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     @Autowired(name = RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY)
     @JvmField
     var resume: String? = null
+
+    @Autowired(name = RouterUtils.SocialConfig.SOCIAL_LOCATION)
+    @JvmField
+    var location: Location? = null
 
     override fun initContentView(savedInstanceState: Bundle?): Int {
         Utils.setStatusBar(this, false, false)
@@ -169,7 +167,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
             REQUEST_DISCOVER_LOAD_ROADBOOK -> {//路书页-》发现页路书
                 if (data != null) {
                     var data = data!!.getSerializableExtra("hotdata") as HotData
-                    Log.e("debug", "${this.localClassName};${data.title}")
                     var pos = ServiceEven()
                     pos.type = "HomeDriver"
                     RxBus.default?.post(pos)
@@ -265,8 +262,20 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
 
 
     override fun onBackPressedSupport() {
-        Log.e("result","onBackPressedSupport")
+        Log.e("result", "onBackPressedSupport")
         super.onBackPressedSupport()
+    }
+
+
+    class netWorkRecevicer : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent != null && intent.action == "android.net.conn.CONNECTIVITY_CHANGE") {
+                var manager = context!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                var activeInfo = manager.activeNetworkInfo
+
+
+            }
+        }
     }
 
 }

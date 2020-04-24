@@ -600,9 +600,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         hight = mScrollableView.getMeasuredHeight();
 
         recyclerView = mScrollableView.findViewById(R.id.recy);
-        ViewGroup.LayoutParams params =recyclerView.getLayoutParams();
-        params.height = ConvertUtils.Companion.px2dp(MaxHeight);
-        recyclerView.setLayoutParams(params);
+        if(recyclerView!=null){
+            ViewGroup.LayoutParams params =recyclerView.getLayoutParams();
+            params.height = ConvertUtils.Companion.px2dp(MaxHeight);
+            recyclerView.setLayoutParams(params);
+        }
 //        foldLayout = (FoldLayout) mScrollableView.getChildAt(0);
         //foldLayout.setAnchor(0);
     }
@@ -1280,9 +1282,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
         applyParallaxForCurrentSlideOffset();
         // Dispatch the slide event
         dispatchOnPanelSlide(mSlideableView);
-        ViewGroup.LayoutParams params =  recyclerView.getLayoutParams();
-        params.height = ConvertUtils.Companion.px2dp(MaxHeight * mSlideOffset);
-        recyclerView.setLayoutParams(params);
+        if(recyclerView!=null){
+            ViewGroup.LayoutParams params =  recyclerView.getLayoutParams();
+            params.height = ConvertUtils.Companion.px2dp(MaxHeight * mSlideOffset);
+            recyclerView.setLayoutParams(params);
+        }
+
 //        foldLayout.setFactor(mSlideOffset);
 
         // If the slide offset is negative, and overlay is not on, we need to increase the

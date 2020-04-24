@@ -132,16 +132,21 @@ public class ScreenRecordService extends Service implements Handler.Callback {
 
         setUpMediaRecorder();
         createVirtualDisplay();
-        mMediaRecorder.start();
 
-        ScreenUtil.startRecord();
-        //最多录制三分钟
-        mHandler.sendEmptyMessageDelayed(MSG_TYPE_COUNT_DOWN, 1000);
+        try {
+            mMediaRecorder.start();
+            ScreenUtil.startRecord();
+            //最多录制三分钟
+            mHandler.sendEmptyMessageDelayed(MSG_TYPE_COUNT_DOWN, 1000);
+            mIsRunning = true;
+            return true;
+        } catch (IllegalStateException ex) {
+            return false;
+        }
 
-        mIsRunning = true;
 
 //        Log.w("lala","startRecord ");
-        return true;
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -263,9 +268,8 @@ public class ScreenRecordService extends Service implements Handler.Callback {
     }
 
     public String getSaveDirectory() {
-
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            return Environment.getExternalStorageDirectory().getAbsolutePath();
+            return Environment.getExternalStorageDirectory().getPath();
         } else {
             return null;
         }

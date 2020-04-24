@@ -426,7 +426,7 @@ class DialogUtils() {
         }
 
 
-        fun showCarsDialog(activity: AppCompatActivity, cityCommand: BindingCommand<String>, datas: AllCarsEntity): OptionsPickerView<AllCarsEntity.AllCarsTypeBean>? {
+        fun showCarsDialog(activity: Activity, cityCommand: BindingCommand<String>, datas: AllCarsEntity): OptionsPickerView<AllCarsEntity.AllCarsTypeBean>? {
             var buidler = AlertDialog.Builder(activity, R.style.PopupAnimation)
             var alertDialog = buidler.create()
             alertDialog!!.setCanceledOnTouchOutside(true)

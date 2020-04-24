@@ -1,13 +1,12 @@
 package com.example.private_module.ViewModel
 
 import android.databinding.ObservableField
-import android.text.BoringLayout
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Component.TitleComponent
-import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.REQUEST_BOND_CAR
 import com.elder.zcommonmodule.USER_TOKEN
 import com.example.private_module.Activity.AuthActivity
@@ -34,9 +33,10 @@ class AuthViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     var isBinder = ObservableField<String>(getString(R.string.no_bond))
 
     override fun onComponentClick(view: View) {
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-        finish()
+//        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+//        finish()
 
+        authActivity!!._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -70,7 +70,7 @@ class AuthViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
         }).observeOn(AndroidSchedulers.mainThread()).subscribe {
             var result = Gson().fromJson<CertificationEntity>(it, CertificationEntity::class.java)
 
-            Log.e("result",it)
+            Log.e("result", it)
             if (result.code == 0) {
                 if (result.data?.bindVehicle == null) {
                     //未绑定
@@ -93,13 +93,18 @@ class AuthViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack {
     fun onClick(view: View) {
         when (view.id) {
             R.id.user_auth -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.CERTIFICATION).withBoolean(RouterUtils.PrivateModuleConfig.USER_AUTH, isAuth.get()!!).navigation(authActivity, REQUEST_BOND_CAR)
+                var bundle = Bundle()
+                bundle.putBoolean(RouterUtils.PrivateModuleConfig.USER_AUTH, isAuth.get()!!)
+                startFragment(authActivity, RouterUtils.PrivateModuleConfig.CERTIFICATION, bundle, REQUEST_BOND_CAR)
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.CERTIFICATION).withBoolean(RouterUtils.PrivateModuleConfig.USER_AUTH, isAuth.get()!!).navigation(authActivity, REQUEST_BOND_CAR)
             }
             R.id.car_binder -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.ADD_CARS).navigation(authActivity, REQUEST_BOND_CAR)
+                startFragment(authActivity, RouterUtils.PrivateModuleConfig.ADD_CARS, REQUEST_BOND_CAR)
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.ADD_CARS).navigation(authActivity, REQUEST_BOND_CAR)
             }
             R.id.add_car -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.BOND_CARS).navigation(authActivity, REQUEST_BOND_CAR)
+                startFragment(authActivity, RouterUtils.PrivateModuleConfig.BOND_CARS, REQUEST_BOND_CAR)
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.BOND_CARS).navigation(authActivity, REQUEST_BOND_CAR)
             }
         }
     }

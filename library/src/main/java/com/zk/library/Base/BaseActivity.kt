@@ -258,9 +258,9 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
         mViewModel!!.getUC().getFinishEven().observe(this, Observer { finish() })
         //关闭上一层
         mViewModel!!.getUC().getonBackPressEvent().observe(this, Observer { onBackPressed() })
-        mViewModel!!.getUC().showToastEven().observe(this, Observer {
-            Toast.makeText(this@BaseActivity, it, Toast.LENGTH_SHORT).show()
-        })
+//        mViewModel!!.getUC().showToastEven().observe(this, Observer {
+//            Toast.makeText(this@BaseActivity, it, Toast.LENGTH_SHORT).show()
+//        })
     }
 
     fun showDialog(title: String) {

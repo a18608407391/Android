@@ -40,11 +40,12 @@ class CertificationViewModel : BaseViewModel(), TitleComponent.titleComponentCal
 
 
     override fun onComponentClick(view: View) {
-        finish()
+//        finish()
+        certificationActivity!!._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     lateinit var certificationActivity: CertificationActivity
@@ -76,7 +77,6 @@ class CertificationViewModel : BaseViewModel(), TitleComponent.titleComponentCal
                     return
                 }
 
-
                 var token = PreferenceUtils.getString(context, USER_TOKEN)
                 certificationActivity.showProgressDialog(getString(R.string.certification_checking))
                 Observable.create(ObservableOnSubscribe<Response> {
@@ -94,7 +94,7 @@ class CertificationViewModel : BaseViewModel(), TitleComponent.titleComponentCal
                 }).observeOn(AndroidSchedulers.mainThread()).subscribe {
                     var request = Gson().fromJson<BaseResponse>(it, BaseResponse::class.java)
                     if (request.code == 0) {
-                        finish()
+                        certificationActivity!!._mActivity!!.onBackPressedSupport()
                     } else {
 
                     }

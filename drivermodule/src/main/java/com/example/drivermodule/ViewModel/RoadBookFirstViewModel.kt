@@ -447,6 +447,9 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
 
     var currentRoadList: ArrayList<RoadDetailEntity>? = null
     fun createMarker(data: ArrayList<RoadDetailEntity>) {
+        if (activity == null || activity.activity == null) {
+            return
+        }
         if (!makerList.isEmpty()) {
             makerList.forEach {
                 it.remove()
@@ -459,7 +462,6 @@ class RoadBookFirstViewModel : BaseViewModel(), HttpInteface.RoadBookDetail, Rou
                 lines = null
             }
         }
-
         this.currentRoadList = data
         lines = activity.mAmap.addPolyline(PolylineOptions()
                 .color(R.color.line_color)

@@ -9,6 +9,7 @@ import com.amap.api.location.AMapLocation
 import com.elder.zcommonmodule.Base_URL
 import com.elder.zcommonmodule.Component.TitleComponent
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Entity.SoketBody.CreateTeamInfoDto
 import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonnelInfoDto
 import com.elder.zcommonmodule.Http.BaseObserver
@@ -119,7 +120,7 @@ class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, Http
         Toast.makeText(context, getString(R.string.net_error), Toast.LENGTH_SHORT).show()
     }
 
-    var location: AMapLocation? = null
+    var location: Location? = null
     var password: String = ""
     lateinit var createTeamActivity: CreateTeamActivity
     fun inject(createTeamActivity: CreateTeamActivity) {
@@ -130,9 +131,6 @@ class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, Http
         component.setCallBack(this)
         HttpRequest.instance.setCreateTeamResult(this)
         HttpRequest.instance.setJoinTeamResult(this)
-        RxSubscriptions.add(RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
-            location = it
-        })
     }
 
     var component = TitleComponent()

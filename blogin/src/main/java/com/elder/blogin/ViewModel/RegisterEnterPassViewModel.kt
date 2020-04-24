@@ -297,7 +297,7 @@ class RegisterEnterPassViewModel : BaseViewModel() {
                                 PreferenceUtils.putString(context, USER_PHONE, registerEnterPasswordActivity.phone)
                                 PreferenceUtils.putString(context, USER_PASS, loginpass.get())
                                 PreferenceUtils.putString(context, USER_TOKEN, request.data as String)
-                                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(registerEnterPasswordActivity,object :NavCallback(){
+                                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").navigation(registerEnterPasswordActivity,object :NavCallback(){
                                     override fun onArrival(postcard: Postcard?) {
                                         deleteDriverStatus(request.msg!!)
                                         AppManager.get()?.finishActivity(RegisterActivity::class.java)
@@ -309,7 +309,7 @@ class RegisterEnterPassViewModel : BaseViewModel() {
 //                                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING).withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 0).navigation()
                             }, OnBtnClickL {
                                 dialog.dismiss()
-                                ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(registerEnterPasswordActivity, object : NavCallback() {
+                                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(registerEnterPasswordActivity, object : NavCallback() {
                                     override fun onArrival(postcard: Postcard?) {
                                         AppManager.get()?.finishActivity(RegisterActivity::class.java)
                                         AppManager.get()?.finishActivity(LoginActivity::class.java)
@@ -394,7 +394,7 @@ class RegisterEnterPassViewModel : BaseViewModel() {
                                     PreferenceUtils.putString(context, USER_PHONE, registerEnterPasswordActivity.phone)
                                     PreferenceUtils.putString(context, USER_PASS, loginpass.get())
                                     PreferenceUtils.putString(context, USER_TOKEN, request.data as String)
-                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(registerEnterPasswordActivity,object :NavCallback(){
+                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").navigation(registerEnterPasswordActivity,object :NavCallback(){
                                         override fun onArrival(postcard: Postcard?) {
                                             deleteDriverStatus(request.msg!!)
                                             AppManager.get()?.finishActivity(RegisterActivity::class.java)
@@ -406,7 +406,7 @@ class RegisterEnterPassViewModel : BaseViewModel() {
 //                                    ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.USER_SETTING).withInt(RouterUtils.PrivateModuleConfig.SETTING_CATEGORY, 0).navigation()
                                 }, OnBtnClickL {
                                     dialog.dismiss()
-                                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(registerEnterPasswordActivity, object : NavCallback() {
+                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(registerEnterPasswordActivity, object : NavCallback() {
                                         override fun onArrival(postcard: Postcard?) {
                                             AppManager.get()?.finishActivity(RegisterActivity::class.java)
                                             AppManager.get()?.finishActivity(LoginActivity::class.java)

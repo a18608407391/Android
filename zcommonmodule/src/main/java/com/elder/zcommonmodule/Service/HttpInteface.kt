@@ -28,6 +28,15 @@ class HttpInteface {
         fun AtmeListError(ex: Throwable)
     }
 
+    interface IUploadDriverFiles {
+        fun UploadDriverSuccess(response: String)
+        fun UploadDriverError(ex: Throwable)
+    }
+
+    interface IUploadDriverImages {
+        fun UploadDriverImagesSuccess(response: String)
+        fun UploadDriverImagesError(ex: Throwable)
+    }
 
     interface querySystemNotifyList {
         fun SystemNotifyListSuccess(response: String)
@@ -293,5 +302,10 @@ class HttpInteface {
     interface PartyUnReadNotify_inf {
         fun PartyUnReadNotifySucccess(it: String)
         fun PartyUnReadNotifyError(it: Throwable)
+    }
+
+    interface IRelogin {
+        fun IReloginSuccess()
+        fun IReloginError()
     }
 }

@@ -12,36 +12,51 @@ import com.example.private_module.R
 import com.example.private_module.ViewModel.AuthViewModel
 import com.example.private_module.databinding.ActivityAuthBinding
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Base.BaseFragment
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 
 
 @Route(path = RouterUtils.PrivateModuleConfig.MemberAuth)
-class AuthActivity : BaseActivity<ActivityAuthBinding, AuthViewModel>() {
+class AuthActivity : BaseFragment<ActivityAuthBinding, AuthViewModel>() {
+    override fun initContentView(): Int {
+        return R.layout.activity_auth
+    }
+
     override fun initVariableId(): Int {
         return BR.auth_ViewModel
     }
-    override fun initContentView(savedInstanceState: Bundle?): Int {
-        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
-        StatusbarUtils.setTranslucentStatus(this)
-        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
-        return R.layout.activity_auth
-    }
-    override fun initViewModel(): AuthViewModel? {
-        return ViewModelProviders.of(this)[AuthViewModel::class.java]
-    }
+
+//    override fun initContentView(savedInstanceState: Bundle?): Int {
+//        StatusbarUtils.setRootViewFitsSystemWindows(this, true)
+//        StatusbarUtils.setTranslucentStatus(this)
+//        StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
+//        return R.layout.activity_auth
+//    }
+
+//    override fun initViewModel(): AuthViewModel? {
+//        return ViewModelProviders.of(this)[AuthViewModel::class.java]
+//    }
+
     override fun initData() {
         super.initData()
-        mViewModel?.inject(this)
+        viewModel?.inject(this)
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.e("result","执行++++++")
-            mViewModel?.initDatas()
+        viewModel?.initDatas()
         super.onActivityResult(requestCode, resultCode, data)
     }
-    override fun doPressBack() {
-        super.doPressBack()
-        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
-        finish()
+
+
+    override fun onFragmentResult(requestCode: Int, resultCode: Int, data: Bundle?) {
+        super.onFragmentResult(requestCode, resultCode, data)
+        viewModel?.initDatas()
     }
+
+//    override fun doPressBack() {
+//        super.doPressBack()
+//        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
+//        finish()
+//    }
 }

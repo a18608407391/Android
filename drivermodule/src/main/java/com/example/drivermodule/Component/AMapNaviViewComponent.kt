@@ -10,6 +10,8 @@ import com.autonavi.tbt.TrafficFacilityInfo
 import com.elder.zcommonmodule.Entity.Location
 import com.example.drivermodule.Utils.NaviUtil
 import com.example.drivermodule.ViewModel.NavigationViewModel
+import com.zk.library.Bus.event.RxBusEven
+import com.zk.library.Bus.event.RxBusEven.Companion.NAVIGATION_DATA
 import kotlinx.android.synthetic.main.activity_navigation.*
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Utils.ConvertUtils
@@ -74,6 +76,7 @@ class AMapNaviViewComponent : AMapNaviViewListener, AMapNaviListener {
 
     override fun onLocationChange(amapLocation: AMapNaviLocation) {
         this.location = amapLocation
+        RxBus.default?.post(RxBusEven.getInstance(NAVIGATION_DATA,amapLocation))
 //        RxBus.default?.post(amapLocation)
     }
 

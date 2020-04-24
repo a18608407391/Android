@@ -3,10 +3,10 @@ package com.example.drivermodule.Utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Environment
+import android.util.Base64
 import android.util.Log
 import android.view.animation.LinearInterpolator
 import android.widget.Toast
-import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.maps.AMap
 import com.amap.api.maps.model.*
 import com.amap.api.maps.model.animation.AlphaAnimation
@@ -31,6 +31,8 @@ import com.elder.zcommonmodule.*
 import com.elder.zcommonmodule.DataBases.queryUserInfo
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Entity.Location
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Utils.Dialog.OnBtnClickL
 import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.Utils.FileUtils
@@ -41,11 +43,8 @@ import com.example.drivermodule.Entity.BitMapWithPath
 import com.example.drivermodule.R
 import com.example.drivermodule.Fragment.MapFragment
 import com.google.gson.Gson
-import com.tencent.mm.opensdk.modelmsg.SendAuth
-import com.zk.library.Base.BaseApplication
 import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
-import com.zk.library.Utils.RouterUtils
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -63,13 +62,47 @@ import org.cs.tec.library.Utils.ConvertUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.lang.Exception
+import java.nio.charset.Charset
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
-class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch.OnDistanceSearchListener, TraceListener, AMap.OnMapScreenShotListener, AMap.OnCameraChangeListener, CustomNaviCallback {
+class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch.OnDistanceSearchListener, TraceListener, AMap.OnMapScreenShotListener, AMap.OnCameraChangeListener, CustomNaviCallback, HttpInteface.IUploadDriverFiles, HttpInteface.IUploadDriverImages, HttpInteface.IRelogin {
+    override fun IReloginSuccess() {
+        showUpLoadDialog(parameter1!!, parameter2!!, parameter3!!, parameter4!!)
+    }
+
+    override fun IReloginError() {
+
+    }
+
+    override fun UploadDriverImagesSuccess(response: String) {
+        Log.e("result", "UploadDriverImagesSuccess" + response)
+    }
+
+    override fun UploadDriverImagesError(ex: Throwable) {
+        Log.e("result", "UploadDriverImagesError错误" + ex.message)
+    }
+
+    override fun UploadDriverSuccess(response: String) {
+        Log.e("result", "UploadDriverSuccess" + response)
+
+        var mult = MultipartBody.Builder().setType(MultipartBody.FORM)
+        mult.addFormDataPart("files", File(parameter1).name, RequestBody.create(MediaType.parse("image/jpg"), File(parameter1)))
+        mult.addFormDataPart("files", File(parameter2).name, RequestBody.create(MediaType.parse("image/jpg"), File(parameter2)))
+//        var body = RequestBody.create(MediaType.parse("text/plain"), file)
+//        var part = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("file", file.name, body).build()
+        HttpRequest.instance.uploadDriverImages = this
+        var t = MultipartBody.Part.createFormData("rid", fr.viewModel?.status?.driverNetRecord?.id.toString())
+        HttpRequest.instance.postDriverImage(mult.build(), t)
+    }
+
+    override fun UploadDriverError(ex: Throwable) {
+        Log.e("result", "UploadDriverError错误" + ex.message)
+    }
 
     var CurState = 0
 
@@ -131,10 +164,25 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
         }
     }
 
+
+    var parameter1: String? = null
+    var parameter2: String? = null
+    var parameter3: Bitmap? = null
+    var parameter4: File? = null
     fun Upload(p: String, path: String, newBitmap: Bitmap, file: File) {
+        this.parameter1 = p
+        this.parameter2 = path
+        this.parameter3 = newBitmap
+        this.parameter4 = file
+//        var body = RequestBody.create(MediaType.parse("text/plain"), file)
+//        var part = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("file", file.name, body).build()
+//       var t =  MultipartBody.Part.createFormData("rid", fr.viewModel?.status?.driverNetRecord?.id.toString())
+//        HttpRequest.instance.uploadDriverFiles = this
+//        HttpRequest.instance.postDriverFile(part,t)
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         var id = PreferenceUtils.getString(context, USERID)
         var user = queryUserInfo(id)[0]
+
         Observable.create(ObservableOnSubscribe<Response> {
             var client = OkHttpClient.Builder().readTimeout(60, TimeUnit.SECONDS).build()
             var body = RequestBody.create(MediaType.parse("text/plain"), file)
@@ -149,6 +197,7 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
             activity._mActivity?.dismissProgressDialog()
             showUpLoadDialog(p, path, newBitmap, file)
         }.observeOn(AndroidSchedulers.mainThread()).subscribe {
+            Log.e("result","当前啊啊啊请求" + it)
             var m = Gson().fromJson<BaseResponse>(it, BaseResponse::class.java)
             if (m.code == 0) {
                 Observable.create(ObservableOnSubscribe<Response> {
@@ -162,16 +211,15 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
                     it.onNext(response)
                 }).subscribeOn(Schedulers.io()).map(Function<Response, String> {
                     return@Function it.body()?.string()
-                }).doOnError {
-                    activity._mActivity?.dismissProgressDialog()
-                    showUpLoadDialog(p, path, newBitmap, file)
-                }.observeOn(AndroidSchedulers.mainThread()).subscribe {
+                }).observeOn(AndroidSchedulers.mainThread()).subscribe {
+                    Log.e("result","当前请求" + it)
                     var res = Gson().fromJson<BaseResponse>(it, BaseResponse::class.java)
                     activity._mActivity?.dismissProgressDialog()
+
                     if (res.code == 0) {
                         fr?.share.apply {
                             this?.userInfo?.set(user)
-                            this?.shareIcon = p
+                            this?.shareIcon = parameter1
                         }
                         fr?.driverAvatar?.set(getImageUrl(user.data?.headImgFile))
                         fr?.userName?.set(user.data?.name)
@@ -182,57 +230,36 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
                         fr?.deivceInfo?.distance?.set(DecimalFormat("0.0").format(fr.viewModel?.status?.distance!! / 1000))
                         fr?.deivceInfo?.time?.set(ConvertUtils.formatTimeS(fr.viewModel?.status?.second!!))
                         fr?.deivceInfo?.date?.set(simple.format(d))
-                        fr?.cancleDriver(true)
-                        File(p).delete()
-                        File(path).delete()
+//                        fr?.cancleDriver(true)
+//                        File(path).delete()
                     } else {
-                        Toast.makeText(context, res.msg, Toast.LENGTH_SHORT).show()
-//                        if (m.code == 10009) {
-//                            var pass = PreferenceUtils.getString(context, USER_PASS)
-//                            if (user?.data?.password == null) {
-//                                //微信登录的  进行微信授权
-//                                if (!BaseApplication.getInstance().mWxApi.isWXAppInstalled()) {
-//                                    Toast.makeText(context, "您手机尚未安装微信，请安装后再登录", Toast.LENGTH_SHORT).show()
-//                                } else {
-//                                    var req = SendAuth.Req()
-//                                    req.transaction = "inValidate"
-//                                    req.scope = "snsapi_userinfo"
-//                                    req.state = "wechat_sdk_xb_live_state"//官方说明：用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止csrf攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加session进行校验
-//                                    BaseApplication.getInstance().mWxApi.sendReq(req)
-//                                }
-//                            } else {
-//                                //账号密码登录的，直接登录账号密码
-//                                ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_PASSWORD).withInt(RouterUtils.LoginModuleKey.TYPE_CLASS, 1).navigation()
-//                            }
-//                        } else {
-//
-//                        }
-                        showUpLoadDialog(p, path, newBitmap, file)
+                        if (res.code == 10009) {
+                            var map = HashMap<String, String>()
+                            var str = PreferenceUtils.getString(context, USER_PHONE)
+//                          var str =   Base64.encodeToString(PreferenceUtils.getString(context,USER_PHONE), Base64.DEFAULT))
+                            map.put("phoneNumber", Base64.encodeToString(str.toByteArray(Charset.forName("UTF-8")), Base64.DEFAULT))
+                            HttpRequest.instance.ReLoginImpl = this
+                            HttpRequest.instance.relogin(map)
+                        } else {
+                            Toast.makeText(context, res.msg, Toast.LENGTH_SHORT).show()
+                            showUpLoadDialog(p, path, newBitmap, file)
+                        }
                     }
                 }
             } else {
-//                if (m.code == 10009) {
-//                    var pass = PreferenceUtils.getString(context, USER_PASS)
-//                    if (user?.data?.password == null) {
-//                        //微信登录的  进行微信授权
-//                        if (!BaseApplication.getInstance().mWxApi.isWXAppInstalled()) {
-//                            Toast.makeText(context, "您手机尚未安装微信，请安装后再登录", Toast.LENGTH_SHORT).show()
-//                        } else {
-//                            var req = SendAuth.Req()
-//                            req.transaction = "inValidate"
-//                            req.scope = "snsapi_userinfo"
-//                            req.state = "wechat_sdk_xb_live_state"//官方说明：用于保持请求和回调的状态，授权请求后原样带回给第三方。该参数可用于防止csrf攻击（跨站请求伪造攻击），建议第三方带上该参数，可设置为简单的随机数加session进行校验
-//                            BaseApplication.getInstance().mWxApi.sendReq(req)
-//                        }
-//                    } else {
-//                        //账号密码登录的，直接登录账号密码
-//                        ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_PASSWORD).withInt(RouterUtils.LoginModuleKey.TYPE_CLASS, 1).navigation()
-//                    }
-//                } else {
-//
-//                }
-                Toast.makeText(context, m.msg, Toast.LENGTH_SHORT).show()
-                showUpLoadDialog(p, path, newBitmap, file)
+                if (m.code == 10009) {
+                    var map = HashMap<String, String>()
+                    var str = PreferenceUtils.getString(context, USER_PHONE)
+//                          var str =   Base64.encodeToString(PreferenceUtils.getString(context,USER_PHONE), Base64.DEFAULT))
+                    map.put("phoneNumber", Base64.encodeToString(str.toByteArray(Charset.forName("UTF-8")), Base64.DEFAULT))
+                    HttpRequest.instance.ReLoginImpl = this
+                    HttpRequest.instance.relogin(map)
+                } else {
+                    Toast.makeText(context, m.msg, Toast.LENGTH_SHORT).show()
+                    showUpLoadDialog(p, path, newBitmap, file)
+                }
+//                Toast.makeText(context, m.msg, Toast.LENGTH_SHORT).show()
+//                showUpLoadDialog(p, path, newBitmap, file)
             }
         }
     }
@@ -312,23 +339,25 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
 
 
     var breatheMarker: Marker? = null
-//    var breatheMarker_center: Marker? = null
+    var breatheMarker_center: Marker? = null
 
     fun setLocation(location: Location) {
+        breatheMarker?.period = 1
+        breatheMarker_center?.period = 1
         breatheMarker?.position = LatLng(location.latitude, location.longitude)
-//        breatheMarker_center?.position = LatLng(location.latitude, location.longitude)
+        breatheMarker_center?.position = LatLng(location.latitude, location.longitude)
     }
 
     fun clearMarker() {
         if (breatheMarker != null) {
             breatheMarker?.remove()
-//            breatheMarker_center?.remove()
+            breatheMarker_center?.remove()
             breatheMarker = null
-//            breatheMarker_center = null
+            breatheMarker_center = null
         }
     }
 
-    fun createAnimationMarker(flag: Boolean, end: LatLonPoint){
+    fun createAnimationMarker(flag: Boolean, end: LatLonPoint): Marker? {
         if (!flag) {
 //            Log.e("result", "关闭定位")
             activity.mAmap.isMyLocationEnabled = false
@@ -338,8 +367,8 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
         breatheMarker = activity.mAmap.addMarker(MarkerOptions().position(LatLng(end.latitude, end.longitude)).zIndex(1f)
                 .anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory.fromResource(R.drawable.myself_inner)))
         // 中心的marker
-//        breatheMarker_center = activity.mAmap.addMarker(MarkerOptions().position(LatLng(end.latitude, end.longitude)).zIndex(2f)
-//                .anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory.fromResource(R.drawable.navi_map_gps_locked)))
+        breatheMarker_center = activity.mAmap.addMarker(MarkerOptions().position(LatLng(end.latitude, end.longitude)).zIndex(2f)
+                .anchor(0.5f, 0.5f).icon(BitmapDescriptorFactory.fromResource(R.drawable.navi_map_gps_locked)))
 
         // 动画执行完成后，默认会保持到最后一帧的状态
         var animationSet = AnimationSet(true)
@@ -356,7 +385,7 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
         animationSet.setInterpolator(LinearInterpolator())
         breatheMarker!!.setAnimation(animationSet)
         breatheMarker!!.startAnimation()
-//        return breatheMarker_center
+        return breatheMarker_center
     }
 
     fun createMaker(end: Location): Marker? {
@@ -399,11 +428,12 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
         }
         navi.calculateDriveRoute(sList, eList, wayPoint, strategy)
     }
+
     var caculateRouteListener: CalculateRouteListener? = null
 
     override fun onCalculateRouteSuccess(p0: AMapCalcRouteResult?) {
         super.onCalculateRouteSuccess(p0)
-        Log.e("result","算路成功！！！！！")
+        Log.e("result", "算路成功！！！！！")
         activity?._mActivity!!.dismissProgressDialog()
         if (caculateRouteListener != null) {
             caculateRouteListener?.CalculateCallBack(p0!!)

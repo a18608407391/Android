@@ -3,6 +3,7 @@ package com.example.private_module.ViewModel
 import android.content.Intent
 import android.databinding.ObservableField
 import android.net.Uri
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -25,13 +26,11 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_bondcars.*
 import okhttp3.*
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
-import org.json.JSONObject
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -42,7 +41,8 @@ class BondCarViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack,
     }
 
     override fun onComponentClick(view: View) {
-        finish()
+//        finish()
+        bondCarActivity._mActivity!!.onBackPressedSupport()
     }
 
     override fun onComponentFinish(view: View) {
@@ -81,7 +81,7 @@ class BondCarViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack,
 
         when (view.id) {
             R.id.bond_car_camera -> {
-                DialogUtils.showAnim(bondCarActivity,0)
+                DialogUtils.showFragmentAnim(bondCarActivity,0)
                 DialogUtils.lisentner = this@BondCarViewModel
             }
             R.id.cars_type_choice -> {
@@ -99,7 +99,7 @@ class BondCarViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack,
                     return@Function it.body()?.string()
                 }).observeOn(AndroidSchedulers.mainThread()).subscribe {
                     var entity = Gson().fromJson<AllCarsEntity>(it, AllCarsEntity::class.java)
-                    year = DialogUtils.showCarsDialog(bondCarActivity, carsCommand, entity)
+                    year = DialogUtils.showCarsDialog(bondCarActivity.activity!!, carsCommand, entity)
                 }
             }
             R.id.make_sure_add_car -> {
@@ -152,10 +152,12 @@ class BondCarViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack,
                             carEntitiy.brandName.set(brandName.get()!!)
                             carEntitiy.brandTypeName.set(brandTypeName.get())
                             carEntitiy.id.set(bondCarActivity.entity?.id!!.get())
-                            var intent = Intent()
-                            intent.putExtra("carsEntitiy", carEntitiy)
-                            bondCarActivity.setResult(EDIT_CARS, intent)
-                            finish()
+
+
+                            var intent = Bundle()
+                            intent.putSerializable("carsEntitiy", carEntitiy)
+                            bondCarActivity.setFragmentResult(EDIT_CARS, intent)
+                            bondCarActivity._mActivity!!.onBackPressedSupport()
                         }
                     }
                 } else {
@@ -200,10 +202,12 @@ class BondCarViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack,
                         carEntitiy.carBrandId.set(carBrandId!!)
                         carEntitiy.brandName.set(brandName.get()!!)
                         carEntitiy.brandTypeName.set(brandTypeName.get())
-                        var intent = Intent()
-                        intent.putExtra("carsEntitiy", carEntitiy)
-                        bondCarActivity.setResult(INSERT_CARS, intent)
-                        finish()
+
+
+                        var intent = Bundle()
+                        intent.putSerializable("carsEntitiy", carEntitiy)
+                        bondCarActivity.setFragmentResult(INSERT_CARS, intent)
+                        bondCarActivity!!._mActivity!!.onBackPressedSupport()
                     }
                 }
             }

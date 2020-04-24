@@ -111,7 +111,7 @@ class LoginPassViewModel : BaseViewModel(){
                             if (statusList.size != 0 && statusList[0].startDriver.get() != 2) {
                                 var dialog = DialogUtils.createNomalDialog(loginPassActivity!!, getString(R.string.checked_exception_out), getString(R.string.finish_driver), getString(R.string.continue_driving))
                                 dialog.setOnBtnClickL(OnBtnClickL {
-                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(loginPassActivity, object : NavCallback() {
+                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").navigation(loginPassActivity, object : NavCallback() {
                                         override fun onArrival(postcard: Postcard?) {
                                             deleteDriverStatus(it.msg!!)
                                             loginPassActivity.finish()
@@ -119,7 +119,7 @@ class LoginPassViewModel : BaseViewModel(){
                                     })
                                 }, OnBtnClickL {
                                     dialog.dismiss()
-                                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(loginPassActivity, object : NavCallback() {
+                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").navigation(loginPassActivity, object : NavCallback() {
                                         override fun onArrival(postcard: Postcard?) {
                                             loginPassActivity.finish()
                                         }

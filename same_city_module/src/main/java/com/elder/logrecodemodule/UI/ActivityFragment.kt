@@ -48,7 +48,7 @@ import java.util.HashMap
  * 活动页View
  * */
 @Route(path = RouterUtils.LogRecodeConfig.ACTIVITY_FRAGMENT)
-class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel>(), AppBarLayout.OnOffsetChangedListener, HttpInteface.HomeResult {
+class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel>(), AppBarLayout.OnOffsetChangedListener {
 
     override fun initContentView(): Int {
         return R.layout.fragment_activity
@@ -80,37 +80,38 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
         }
         RxSubscriptions.add(RxBus.default?.toObservable(DriverDataStatus::class.java)?.subscribe {
             Log.e("activity", "DriverDataStatus")
-            loadDatas(viewModel?.curLocation!!)
+//            loadDatas(viewModel?.curLocation!!)
         })
+
     }
 
-    fun loadDatas(location: AMapLocation) {
-        if (location == null) {
-            return
-        }
-        if (isAdded) {
-            if (!NetworkUtil.isNetworkAvailable(activity!!)) {
-                Toast.makeText(activity, getString(R.string.network_notAvailable), Toast.LENGTH_SHORT).show()
-                return
-            }
-        }
-        var token = PreferenceUtils.getString(context, USER_TOKEN)
-        if (token == null) {
-            ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(activity, object : NavCallback() {
-                override fun onArrival(postcard: Postcard?) {
-                    activity?.finish()
-                }
-            })
-            return
-        }
-        if (isAdded) {
-            HttpRequest.instance.homeResult = this
-            var map = HashMap<String, String>()
-            map["yAxis"] = location!!.longitude.toString()
-            map["xAxis"] = location!!.latitude.toString()
-            HttpRequest.instance.getHome(map)
-        }
-    }
+//    fun loadDatas(location: AMapLocation) {
+//        if (location == null) {
+//            return
+//        }
+//        if (isAdded) {
+//            if (!NetworkUtil.isNetworkAvailable(activity!!)) {
+//                Toast.makeText(activity, getString(R.string.network_notAvailable), Toast.LENGTH_SHORT).show()
+//                return
+//            }
+//        }
+//        var token = PreferenceUtils.getString(context, USER_TOKEN)
+//        if (token == null) {
+//            ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(activity, object : NavCallback() {
+//                override fun onArrival(postcard: Postcard?) {
+//                    activity?.finish()
+//                }
+//            })
+//            return
+//        }
+//        if (isAdded) {
+//            HttpRequest.instance.homeResult = this
+//            var map = HashMap<String, String>()
+//            map["yAxis"] = location!!.longitude.toString()
+//            map["xAxis"] = location!!.latitude.toString()
+//            HttpRequest.instance.getHome(map)
+//        }
+//    }
 
     private fun isTouchPointInView(view: View?, x: Int, y: Int): Boolean {
         if (view == null) {
@@ -153,55 +154,56 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
         }
     }
 
-
-    override fun ResultHomeSuccess(it: String) {
-        if (it.isNullOrEmpty() || it == "null") {
-            return
-        }
-        if (it.length < 10) {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            return
-        }
-        var home = Gson().fromJson<HomeEntitiy.HomeBean>(it, HomeEntitiy.HomeBean::class.java)
-        var base = BaseResponse()
-        base.code = 0
-        base.data = home.findMemberView
-        base.msg = "成功"
-        PreferenceUtils.putString(context, RouterUtils.PrivateModuleConfig.USER_INFO, Gson().toJson(base))
-        PreferenceUtils.putString(context, USER_PHONE, home.findMemberView?.tel)
-        PreferenceUtils.putString(context, REAL_NAME, home.findMemberView?.realName)
-        PreferenceUtils.putString(context, USERID, home.findMemberView?.id)
-        PreferenceUtils.putBoolean(context, RE_LOGIN, false)
-        PreferenceUtils.putString(context, REAL_CODE, home.findMemberView?.identityCard)
-        Log.e(this.javaClass.name, "${home.findMemberView}")
-        insertUserInfo(home.findMemberView!!)
-        viewModel?.Staggereditems!!.clear()
-        viewModel?.cityPartyitems!!.clear()
-        viewModel?.cityPartyitems!!.clear()
-        home?.queryGuideList?.forEach {
-            viewModel?.Staggereditems!!.add(it)
-        }
-        poketSwipeRefreshLayout?.isRefreshing = false
-        if (home.findMemberView?.tel.isNullOrEmpty()) {
-            var tele = TelephoneBinder.from(this)
-            var fr = tele.show()
-            fr.functionDismiss = viewModel
-        } else {
-            JMessageClient.login(home.findMemberView?.tel, "0123456789", object : BasicCallback() {
-                override fun gotResult(responseCode: Int, responseMessage: String?) {
-                    if (responseCode == 0) {
-                        var myInfo = JMessageClient.getMyInfo()
-                        Log.e("result", "IM 登录成功" + Gson().toJson(myInfo))
-                    } else {
-                        Log.e("result", "IM 登录失败" + responseMessage)
-                    }
-                }
-            })
-        }
-    }
-
-    override fun ResultHomeError(it: Throwable) {
-    }
+//
+//    override fun ResultHomeSuccess(it: String) {
+//        if (it.isNullOrEmpty() || it == "null") {
+//            return
+//        }
+//        if (it.length < 10) {
+//            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//        var home = Gson().fromJson<HomeEntitiy.HomeBean>(it, HomeEntitiy.HomeBean::class.java)
+//        var base = BaseResponse()
+//        base.code = 0
+//        base.data = home.findMemberView
+//        base.msg = "成功"
+//        PreferenceUtils.putString(context, RouterUtils.PrivateModuleConfig.USER_INFO, Gson().toJson(base))
+//        PreferenceUtils.putString(context, USER_PHONE, home.findMemberView?.tel)
+//        PreferenceUtils.putString(context, REAL_NAME, home.findMemberView?.realName)
+//        PreferenceUtils.putString(context, USERID, home.findMemberView?.id)
+//        PreferenceUtils.putBoolean(context, RE_LOGIN, false)
+//        PreferenceUtils.putString(context, REAL_CODE, home.findMemberView?.identityCard)
+//
+//        insertUserInfo(home.findMemberView!!)
+//        Log.e(this.javaClass.name, "${home.findMemberView}")
+//        viewModel?.Staggereditems!!.clear()
+//        viewModel?.cityPartyitems!!.clear()
+//        viewModel?.cityPartyitems!!.clear()
+//        home?.queryGuideList?.forEach {
+//            viewModel?.Staggereditems!!.add(it)
+//        }
+//        poketSwipeRefreshLayout?.isRefreshing = false
+//        if (home.findMemberView?.tel.isNullOrEmpty()) {
+//            var tele = TelephoneBinder.from(this)
+//            var fr = tele.show()
+//            fr.functionDismiss = viewModel
+//        } else {
+//            JMessageClient.login(home.findMemberView?.tel, "0123456789", object : BasicCallback() {
+//                override fun gotResult(responseCode: Int, responseMessage: String?) {
+//                    if (responseCode == 0) {
+//                        var myInfo = JMessageClient.getMyInfo()
+//                        Log.e("result", "IM 登录成功" + Gson().toJson(myInfo))
+//                    } else {
+//                        Log.e("result", "IM 登录失败" + responseMessage)
+//                    }
+//                }
+//            })
+//        }
+//    }
+//
+//    override fun ResultHomeError(it: Throwable) {
+//    }
 
     private var WAIT_TIME = 2000L
     private var TOUCH_TIME: Long = 0

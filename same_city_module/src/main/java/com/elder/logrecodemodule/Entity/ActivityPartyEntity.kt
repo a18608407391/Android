@@ -1,5 +1,6 @@
 package com.elder.logrecodemodule.Entity
 
+import com.elder.zcommonmodule.Entity.UserInfo
 import java.io.Serializable
 
 class ActivityPartyEntity : Serializable {
@@ -8,6 +9,7 @@ class ActivityPartyEntity : Serializable {
     var selectedActivityList: ArrayList<WonderfulActive>? = null
     var clockActivityList: ArrayList<ClockActive>? = null
     var topCityList: ArrayList<TopCity>? = null
+    var memberView: UserInfo.Result? = null
 
 
     class TopCity {

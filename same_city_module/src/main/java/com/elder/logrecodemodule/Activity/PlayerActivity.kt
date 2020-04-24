@@ -109,7 +109,9 @@ class PlayerActivity : BaseFragment<ActivityPlayerBinding, PlayerViewModel>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == viewModel?.REQUEST_SCREEN) {
+            Log.e("result","请求成功1")
             if (resultCode == Activity.RESULT_OK) {
+                Log.e("result","请求成功")
                 ScreenUtil.setUpData(resultCode, data)
                 viewModel?.start()
 

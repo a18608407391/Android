@@ -38,6 +38,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d_20"
                 app:adapter="@{system_notify_model.adapter}"
                 app:itemBinding="@{system_notify_model.itemBinding}"
                 app:items="@{system_notify_model.items}"

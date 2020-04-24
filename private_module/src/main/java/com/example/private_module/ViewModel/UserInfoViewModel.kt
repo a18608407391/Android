@@ -238,7 +238,8 @@ class UserInfoViewModel : BaseViewModel() {
                 ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_AC).withInt(RouterUtils.PrivateModuleConfig.MY_ACTIVE_WEB_TYPE, 1).navigation()
             }
             3 -> {
-                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MemberAuth).navigation()
+                startFragment(userInfoFragment.parentFragment!!,RouterUtils.PrivateModuleConfig.MemberAuth)
+//                ARouter.getInstance().build(RouterUtils.PrivateModuleConfig.MemberAuth).navigation()
             }
             4 -> {
                 var fr = userInfoFragment.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>

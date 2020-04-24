@@ -4,6 +4,7 @@ import android.content.Intent
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
 import android.databinding.ViewDataBinding
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -19,6 +20,7 @@ import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.CameraPosition
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.Marker
+import com.amap.api.maps.model.MyLocationStyle
 import com.example.drivermodule.R
 import com.zk.library.Base.BaseViewModel
 import com.elder.zcommonmodule.Component.DriverComponent
@@ -45,6 +47,7 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.example.drivermodule.Fragment.RoadHomeActivity
 import com.example.drivermodule.Fragment.MapFragment
+import com.example.drivermodule.Sliding.SlidingUpPanelLayout
 import com.zk.library.Base.BaseFragment
 import com.zk.library.Bus.ServiceEven
 import com.zk.library.Bus.event.RxBusEven
@@ -64,12 +67,15 @@ import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.http.NetworkUtil
+import java.sql.Driver
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 
-class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarkerDragListener, AMap.OnCameraChangeListener, TitleComponent.titleComponentCallBack, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, DriverComponent.onFiveClickListener, HttpInteface.startDriverResult {
+class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCameraChangeListener, TitleComponent.titleComponentCallBack, TabLayout.BaseOnTabSelectedListener<TabLayout.Tab>, DriverComponent.onFiveClickListener, HttpInteface.startDriverResult {
     var driverType = 0
+
+    var exTv = ObservableField<String>()
 
     override fun startDriverSuccess(it: String) {
         mapActivity.dismissProgressDialog()
@@ -87,7 +93,6 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
                 UpdateDriverStatus(status)
             }
         }
-        Log.e("result", "开始骑行后" + Gson().toJson(status))
         var wayPoint = ArrayList<LatLng>()
         if (!status?.passPointDatas.isNullOrEmpty()) {
             status?.passPointDatas.forEach {
@@ -109,14 +114,31 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
     }
 
     override fun FiveBtnClick(view: View) {
-        if (currentPosition == 0) {
-            (items[0] as DriverItemModel).onFiveBtnClick(view)
-        } else if (currentPosition == 2) {
+        if (view.id == R.id.setting_btn) {
+            if (curPosition != null) {
+                mapActivity.mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(curPosition!!.latitude, curPosition!!.longitude), 15F), 1000, object : AMap.CancelableCallback {
+                    override fun onFinish() {
+                    }
+
+                    override fun onCancel() {
+                    }
+                })
+            }
+        } else if (view.id == R.id.sos_btn) {
+            var intent = Intent(Intent.ACTION_CALL)
+            var data = Uri.parse("tel:120")
+            intent.data = data
+            mapActivity.startActivity(intent)
+        } else {
+            if (currentPosition == 0) {
+                (items[0] as DriverItemModel).onFiveBtnClick(view)
+            } else if (currentPosition == 2) {
 //            mapActivity.getMapPointFragment().viewModel?.FiveBtnClick(view)
-        } else if (currentPosition == 3) {
+            } else if (currentPosition == 3) {
 //            mapActivity.getRoadBookFragment().viewModel?.FiveBtnClick(view)
-        } else if (currentPosition == 1) {
-            (items[1] as TeamItemModel).onFiveBtnClick(view)
+            } else if (currentPosition == 1) {
+                (items[1] as TeamItemModel).onFiveBtnClick(view)
+            }
         }
     }
 
@@ -258,15 +280,6 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
     override fun onCameraChange(p0: CameraPosition?) {
     }
 
-    override fun onMarkerDragEnd(p0: Marker?) {
-    }
-
-    override fun onMarkerDragStart(p0: Marker?) {
-    }
-
-    override fun onMarkerDrag(p0: Marker?) {
-    }
-
     override fun onMarkerClick(p0: Marker?): Boolean {
         when (currentPosition) {
             2 -> {
@@ -286,7 +299,6 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
     var a: Disposable? = null
     fun inject(mapActivity: MapFragment) {
         this.mapActivity = mapActivity
-
         items.apply {
             this.add(DriverItemModel().ItemViewModel(this@MapFrViewModel))
             this.add(TeamItemModel().ItemViewModel(this@MapFrViewModel))
@@ -296,10 +308,12 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
         initTab()
         component.setHomeStyle()
         a = RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
-            if (listeners != null) {
-                listeners.forEachIndexed { index, locationlistener ->
-                    locationlistener?.onLocation(it)
-                }
+            if (it.errorCode != 0 || it.gpsAccuracyStatus == -1) {
+
+            }
+            if (items.size != 0) {
+                (items[0] as DriverItemModel).onLocation(it)
+                (items[1] as TeamItemModel).onLocation(it)
             }
         }
 
@@ -330,6 +344,16 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
     var currentPosition = 0
     fun changerFragment(position: Int) {
         currentPosition = position
+        if (position == 0) {
+            if (status.startDriver.get() == Drivering) {
+                mapActivity.myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE)
+            } else {
+                mapActivity.myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER)
+            }
+        } else {
+            mapActivity.myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER)
+        }
+        mapActivity.mAmap.myLocationStyle = mapActivity.myLocationStyle
         if (position == 2) {
             component.Drivering.set(false)
             component.rightIcon.set(context.getDrawable(R.drawable.three_point))
@@ -352,6 +376,7 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
             component.rightText.set("")
             component.type.set(1)
         }
+
         if (mapActivity.isAdded) {
             mapActivity.fr_main_rootlay.currentItem = currentPosition
         }
@@ -362,20 +387,35 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnMarke
         when (view.id) {
             R.id.fr_share_btn -> {
                 var fr = mapActivity.getDrverController()
-
-                showBottomSheet.set(false)
-//                RxBus.default?.postSticky(fr?.viewModel?.share!!)
-//                fr.behaviors.isHideable = true
-//                fr.behaviors.state = BottomSheetBehavior.STATE_EXPANDED
-                a?.dispose()
-                fr.cancleDriver(true)
-                startFragment(mapActivity.parentFragment!!, RouterUtils.MapModuleConfig.SHARE_ACTIVITY)
+                resetDriver(fr)
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.MapModuleConfig.SHARE_ENTITY, fr?.share!!)
+                startFragment(mapActivity.parentFragment!!, RouterUtils.MapModuleConfig.SHARE_ACTIVITY, bundle)
 //                ARouter.getInstance().build(RouterUtils.MapModuleConfig.SHARE_ACTIVITY).navigation(mapActivity.activity, object : NavCallback() {
 //                    override fun onArrival(postcard: Postcard?) {
 //                        finish()
 //                    }
 //                })
             }
+        }
+    }
+
+
+    fun resetDriver(fr: DriverItemModel) {
+        showBottomSheet.set(false)
+        fr.panelState.set(SlidingUpPanelLayout.PanelState.HIDDEN)
+        fr.bottomLayoutVisible.set(true)
+        status = DriverDataStatus()
+        component.Drivering.set(true)
+        fr.driverDistance.set("0M")
+        fr.driverTime.set("00:00")
+    }
+
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+
         }
     }
 

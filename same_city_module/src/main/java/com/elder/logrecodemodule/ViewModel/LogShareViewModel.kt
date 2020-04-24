@@ -166,7 +166,6 @@ class LogShareViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack
             }
             R.id.toRoadLook -> {
                 activity.start((ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation() as PlayerActivity).setValue(activity.imgs!!))
-
                 var even = NomalPostStickyEven(106, activity.imgs!!)
                 ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation()
                 RxBus.default?.postSticky(even)

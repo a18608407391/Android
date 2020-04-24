@@ -444,8 +444,8 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnIt
                 viewModel?.status!!.startDriver.set(DriverCancle)
             } else {
                 reset()
-                mapFr.mAmap.isMyLocationEnabled = true
-                mapFr.myLocationStyle.showMyLocation(true)
+                mapFr.mAmap.isMyLocationEnabled = false
+                mapFr.myLocationStyle.showMyLocation(false)
                 mapFr.myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE)
                 mapFr.mAmap.myLocationStyle = mapFr.myLocationStyle
                 mapFr.getDrverController()!!.driverController.continueDriver()
@@ -468,9 +468,13 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnIt
         t.address = ""
         SingleList[0] = t
         adapter.notifyDataSetChanged()
-
         if (viewModel?.backStatus!!) {
-            (viewModel.items[0] as DriverItemModel).GoTeam()
+            Log.e("Team","返回team")
+            if(viewModel?.tab.selectedTabPosition==1){
+                viewModel.changerFragment(1)
+            }else{
+                viewModel.selectTab(1)
+            }
             viewModel?.backStatus = false
         }
     }

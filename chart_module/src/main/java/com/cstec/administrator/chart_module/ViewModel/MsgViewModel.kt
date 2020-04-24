@@ -40,6 +40,7 @@ import com.elder.zcommonmodule.MSG_RETURN_REQUEST
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -362,31 +363,19 @@ class MsgViewModel : BaseViewModel(), View.OnClickListener, AdapterView.OnItemCl
         mListAdapter = ConversationListAdapter(activity, mDatas, activity)
         activity.setConvListAdapter(mListAdapter!!)
     }
-
-
-    var mReceiver: NetworkReceiver? = null
-    fun initReceiver() {
-        mReceiver = NetworkReceiver()
-        val filter = IntentFilter()
-        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-        activity.registerReceiver(mReceiver, filter)
-    }
-
-    //监听网络状态的广播
-    inner class NetworkReceiver : BroadcastReceiver() {
-
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent != null && intent.action == "android.net.conn.CONNECTIVITY_CHANGE") {
-                val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                val activeInfo = manager.activeNetworkInfo
-                if (null == activeInfo) {
-                    activity.showHeaderView()
-                } else {
-                    activity.dismissHeaderView()
-                }
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.NET_WORK_ERROR -> {
+                activity.showHeaderView()
+            }
+            RxBusEven.NET_WORK_SUCCESS -> {
+                activity.dismissHeaderView()
             }
         }
     }
+
+    //监听网络状态的广播
 
 
     fun refresh(conv: Conversation) {

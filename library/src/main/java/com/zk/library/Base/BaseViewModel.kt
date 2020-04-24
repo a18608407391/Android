@@ -139,23 +139,18 @@ open class BaseViewModel : ViewModel(), IBaseViewModel {
     open fun doRxEven(it: RxBusEven?) {
         when (it!!.type) {
             RxBusEven.RELOGIN -> {
-                uc!!.ToastEven!!.postValue("网络错误，请检查手机号是否已绑定")
+                uc!!.showToastEven()!!.postValue("网络错误，请检查手机号是否已绑定")
             }
             RxBusEven.RELOGIN_SUCCESS -> {
                 doRelogin()
-                uc!!.ToastEven!!.postValue("网络错误，请重新获取请求！")
+                uc!!.showToastEven()!!.postValue("网络错误，请重新获取请求！")
             }
         }
     }
-
     override fun removeRxBus() {
         RxSubscriptions.remove(disposable)
         RxSubscriptions.remove(destroyEven)
     }
-
-
-
-
     class UIChangeLiveData : SingleLiveEvent<Any>() {
         var showDialogEvent: SingleLiveEvent<String>? = null
         var dismissDialogEvent: SingleLiveEvent<Void>? = null

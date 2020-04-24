@@ -193,11 +193,11 @@ public class ViewAdapter {
         if (status == null) {
             return;
         }
-        ArrayList height = new ArrayList<Double>();
+        ArrayList<Double> height = new ArrayList<Double>();
         long time = status.getSecond();
         ObservableArrayList<Location> locations = status.getLocationLat();
         for (int i = 0; i < locations.size(); i++) {
-            height.add(locations.get(i));
+            height.add(locations.get(i).getHeight());
         }
         if (height.isEmpty() || height.size() < 6) {
             return;
@@ -215,15 +215,16 @@ public class ViewAdapter {
         int count = 0;
         List<Unit> lines = new ArrayList<>();
         for (int i = 0; i < size - 1; i++) {
+            Double d = height.get(i);
             if (i % n == 0) {
                 count++;
-                Unit t = new Unit((float) (height.get(i)) + 1, (new DecimalFormat("0.0").format(baseTime * count) + "s"));
+                Unit t = new Unit(Float.valueOf(d.toString()) + 1, (new DecimalFormat("0.0").format(baseTime * count) + "s"));
                 lines.add(t);
             } else if (i == size - 1) {
-                Unit t = new Unit((float) (height.get(i)) + 1, "");
+                Unit t = new Unit(Float.valueOf(d.toString()) + 1, "");
                 lines.add(t);
             } else {
-                lines.add(new Unit((float) (height.get(i)) + 1));
+                lines.add(new Unit(Float.valueOf(d.toString()) + 1));
             }
         }
         chart.feed(lines);

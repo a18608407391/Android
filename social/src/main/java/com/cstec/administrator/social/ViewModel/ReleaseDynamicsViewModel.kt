@@ -203,9 +203,9 @@ class ReleaseDynamicsViewModel : BaseViewModel(), DialogUtils.Companion.IconUriC
                         mult.addFormDataPart("files", File(it).name, RequestBody.create(MediaType.parse("image/jpg"), File(it)))
                     }
                 }
-
-//                Log.e("result", "发布图片")
                 HttpRequest.instance.postMuiltyPhoto(mult.build())
+
+
             } else {
                 sendNoPhoto(ArrayList())
             }

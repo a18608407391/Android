@@ -146,8 +146,16 @@ abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel> : RxFragmen
         //关闭上一层
         viewModel!!.getUC().getonBackPressEvent().observe(this, Observer { activity!!.onBackPressed() })
         viewModel!!.getUC().showToastEven().observe(this, Observer {
-            Toast.makeText(this.activity, it, Toast.LENGTH_SHORT).show()
+            if (this.childFragmentManager.fragments.isEmpty()) {
+                if (this.isVisible) {
+                    doRelogin()
+                }
+            }
         })
+    }
+
+    fun doRelogin() {
+//         showProgressDialog("")
     }
 
     abstract fun initContentView(): Int
@@ -469,7 +477,7 @@ abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel> : RxFragmen
     }
 
     override fun onBackPressedSupport(): Boolean {
-        Log.e("result","onBackPressedSupport" + this::class.java.canonicalName)
+        Log.e("result", "onBackPressedSupport" + this::class.java.canonicalName)
         return mDelegate.onBackPressedSupport()
     }
 

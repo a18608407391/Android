@@ -2,6 +2,7 @@ package com.example.drivermodule.Fragment
 
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.elder.zcommonmodule.Utils.Utils
 import com.example.drivermodule.BR
 import com.example.drivermodule.R
 import com.example.drivermodule.ViewModel.SearchViewModel
@@ -47,5 +48,10 @@ class SearchActivity : BaseFragment<ActivitySearchLocationBinding, SearchViewMod
     override fun initData() {
         super.initData()
         viewModel?.inject(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Utils.setStatusTextColor(true,activity)
     }
 }

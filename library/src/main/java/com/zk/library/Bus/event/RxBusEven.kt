@@ -30,6 +30,9 @@ class RxBusEven {
         var ACTIVE_WEB_GO_TO_APP = 0x6003
         val RELOGIN = 0x6004
         val RELOGIN_SUCCESS = 0x6005
+        var NAVIGATION_DATA = 0x6006
+        var NET_WORK_ERROR = 0x6007
+        var NET_WORK_SUCCESS = 0x6008
 
         fun getInstance(type: Int): RxBusEven {
             var even = RxBusEven()

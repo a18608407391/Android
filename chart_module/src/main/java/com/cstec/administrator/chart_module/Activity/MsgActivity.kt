@@ -89,19 +89,9 @@ class MsgActivity : ChartBaseActivity<ActivityMsgBinding, MsgViewModel>() {
                 })
     }
 
-    override fun onResume() {
-        super.onResume()
-        mViewModel?.initReceiver()
-    }
-
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
         super.onDestroy()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        unregisterReceiver(mViewModel?.mReceiver)
     }
 
     private fun initView() {

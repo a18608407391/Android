@@ -211,7 +211,9 @@ class HttpRequest {
         })
     }
 
-    fun relogin(phone: HashMap<String,String>) {
+
+    var ReLoginImpl: HttpInteface.IRelogin? = null
+    fun relogin(phone: HashMap<String, String>) {
 //        val aesPhone = String(StringBuilder(Base64.encodeToString(phone.tob(Charset.forName("UTF-8")), Base64.DEFAULT)))
 //        var map = HashMap<String, String>()
 //        map.put("phoneNumber", aesPhone)
@@ -225,6 +227,10 @@ class HttpRequest {
             override fun onNext(t: String) {
                 RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.RELOGIN))
                 PreferenceUtils.putString(context, USER_TOKEN, t)
+                if(ReLoginImpl!=null){
+                    ReLoginImpl!!.IReloginSuccess()
+                }
+
             }
 
             //            override fun onSubscribe(d: Disposable) {
@@ -238,6 +244,10 @@ class HttpRequest {
 //
             override fun onError(e: Throwable) {
                 RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.RELOGIN))
+                if (ReLoginImpl != null) {
+                    ReLoginImpl!!.IReloginError()
+                }
+
             }
 //
 //            override fun onComplete() {
@@ -425,10 +435,7 @@ class HttpRequest {
 
     var postPhotoResult: HttpInteface.SocialUploadPhoto? = null
     var DynamicListResult: HttpInteface.SocialDynamicsList? = null
-
-
     var DynamicLikeResult: HttpInteface.SocialDynamicsLike? = null
-
     var CommentLikeResult: HttpInteface.SocialCommentLike? = null
     var DynamicCommentResult: HttpInteface.SocialDynamicsComment? = null
     var DynamicCommentListResult: HttpInteface.SocialDynamicsCommentList? = null
@@ -436,6 +443,51 @@ class HttpRequest {
     var DynamicCollectionResult: HttpInteface.SocialDynamicsCollection? = null
     var DynamicLikerListResult: HttpInteface.SocialDynamicsLikerList? = null
     var DynamicFocusListResult: HttpInteface.SocialDynamicsFocuserList? = null
+
+
+    var uploadDriverFiles: HttpInteface.IUploadDriverFiles? = null
+    var uploadDriverImages: HttpInteface.IUploadDriverImages? = null
+    fun postDriverFile(part: MultipartBody, part1: MultipartBody.Part) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(TeamService::class.java)?.uploadDriverFiles(token, part.parts(), part1)?.map(ServerResponseError())?.doOnError {
+            uploadDriverFiles?.UploadDriverError(it)
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                uploadDriverFiles?.UploadDriverSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                uploadDriverFiles?.UploadDriverError(e)
+            }
+        })
+    }
+
+    fun postDriverImage(part: MultipartBody, part1: MultipartBody.Part) {
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(TeamService::class.java)?.uploadDriverImages(token, part.parts(), part1)?.map(ServerResponseError())?.doOnError {
+            uploadDriverImages?.UploadDriverImagesError(it)
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe(object : Observer<String> {
+            override fun onComplete() {
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onNext(t: String) {
+                uploadDriverImages?.UploadDriverImagesSuccess(t)
+            }
+
+            override fun onError(e: Throwable) {
+                uploadDriverImages?.UploadDriverImagesError(e)
+            }
+        })
+    }
 
 
     fun postMuiltyPhoto(part: MultipartBody) {
@@ -459,7 +511,6 @@ class HttpRequest {
 
         })
     }
-
 
     var resultReleaseDynamics: HttpInteface.SocialReleaseDynamics? = null
 

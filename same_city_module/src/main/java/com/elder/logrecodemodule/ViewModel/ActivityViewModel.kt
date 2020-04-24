@@ -8,6 +8,8 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import cn.jpush.im.android.api.JMessageClient
+import cn.jpush.im.api.BasicCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.location.AMapLocation
 import com.amap.api.services.district.DistrictResult
@@ -27,11 +29,10 @@ import com.elder.logrecodemodule.Entity.ActivityPartyEntity
 import com.elder.logrecodemodule.R
 import com.elder.logrecodemodule.UI.ActivityFragment
 import com.elder.logrecodemodule.adapter.ActivityPartyAdapter
-import com.elder.zcommonmodule.CURRENT_WEATHER
-import com.elder.zcommonmodule.Entity.CountryMemberEntity
-import com.elder.zcommonmodule.Entity.HotData
-import com.elder.zcommonmodule.Entity.Location
-import com.elder.zcommonmodule.Entity.WeatherAndLocation
+import com.elder.zcommonmodule.*
+import com.elder.zcommonmodule.DataBases.insertUserInfo
+import com.elder.zcommonmodule.Entity.*
+import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Inteface.ClockActiveClickListener
 import com.elder.zcommonmodule.Inteface.MBCommandClickListener
 import com.elder.zcommonmodule.Inteface.TitleClickListener
@@ -43,18 +44,21 @@ import com.elder.zcommonmodule.Widget.CityPicker.CityPicker
 import com.elder.zcommonmodule.Widget.CityPicker.adapter.OnPickListener
 import com.elder.zcommonmodule.Widget.CityPicker.model.City
 import com.elder.zcommonmodule.Widget.CityPicker.model.LocatedCity
+import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinder
 import com.elder.zcommonmodule.Widget.TelePhoneBinder.TelephoneBinderDialogFragment
 import com.google.gson.Gson
 import com.zk.library.Base.BaseFragment
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
+import kotlinx.android.synthetic.main.fragment_activity.*
 import me.tatarka.bindingcollectionadapter2.collections.MergeObservableList
 import me.tatarka.bindingcollectionadapter2.itembindings.OnItemBindClass
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
+import org.cs.tec.library.USERID
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 import java.util.*
@@ -140,7 +144,6 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
                 mweathersearch = WeatherSearch(context)
                 mweathersearch!!.setOnWeatherSearchListener(this)
                 requestWeatherDataForCity("湖南省")
-                activityFragment.loadDatas(curLocation!!)
             }
         })
     }
@@ -150,7 +153,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
      * @param cityName 城市名
      * * */
     fun requestWeatherDataForCity(cityName: String?) {
-        var mquery =  WeatherSearchQuery(cityName, WeatherSearchQuery.WEATHER_TYPE_LIVE)
+        var mquery = WeatherSearchQuery(cityName, WeatherSearchQuery.WEATHER_TYPE_LIVE)
 //        if (cityName!!.endsWith("省")) {//省
 //            Log.e("activity", "省${cityName}")
 //
@@ -258,8 +261,27 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
             return
         }
 
+
+
         activityPartyItems.removeAll()
         var activityPartyEntity = Gson().fromJson<ActivityPartyEntity>(it, ActivityPartyEntity::class.java)
+
+        var base = BaseResponse()
+        base.code = 0
+        base.data = activityPartyEntity.memberView
+        base.msg = "成功"
+        PreferenceUtils.putString(context, RouterUtils.PrivateModuleConfig.USER_INFO, Gson().toJson(base))
+        PreferenceUtils.putString(context, USER_PHONE, activityPartyEntity.memberView?.tel)
+        PreferenceUtils.putString(context, REAL_NAME, activityPartyEntity.memberView?.realName)
+        PreferenceUtils.putString(context, USERID, activityPartyEntity.memberView?.id)
+        PreferenceUtils.putBoolean(context, RE_LOGIN, false)
+        PreferenceUtils.putString(context, REAL_CODE, activityPartyEntity.memberView?.identityCard)
+
+        insertUserInfo(activityPartyEntity.memberView!!)
+
+        Log.e("result", Gson().toJson(activityPartyEntity.memberView))
+
+
         var activityPartyRecommand = ActivityPartyRecommand()
         activityPartyEntity.topActivityList!!.forEach {
             var item = it
@@ -368,6 +390,23 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
             }
             Log.e("activity", "=================================")
         }
+        activityFragment.poketSwipeRefreshLayout?.isRefreshing = false
+        if (activityPartyEntity.memberView?.tel.isNullOrEmpty()) {
+            var tele = TelephoneBinder.from(activityFragment)
+            var fr = tele.show()
+            fr.functionDismiss = this
+        } else {
+            JMessageClient.login(activityPartyEntity.memberView?.tel, "0123456789", object : BasicCallback() {
+                override fun gotResult(responseCode: Int, responseMessage: String?) {
+                    if (responseCode == 0) {
+                        var myInfo = JMessageClient.getMyInfo()
+                        Log.e("result", "IM 登录成功" + Gson().toJson(myInfo))
+                    } else {
+                        Log.e("result", "IM 登录失败" + responseMessage)
+                    }
+                }
+            })
+        }
     }
 
     override fun getPartyHomeError(it: Throwable) {
@@ -390,7 +429,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
                 Location(curLocation!!.latitude, curLocation!!.longitude))
         bundle.putInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
         bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
-        startFragment(activityFragment.parentFragment!!,RouterUtils.PartyConfig.SUBJECT_PARTY,bundle)
+        startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.SUBJECT_PARTY, bundle)
 //        ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY)
 //                .withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
 //                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
@@ -434,7 +473,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
         bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
         bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
         bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE)
-        startFragment(activityFragment.parentFragment!! , RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
+        startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
 //        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL)
 //                .withInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
 //                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
@@ -459,7 +498,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
         bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
         bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
         bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE)
-        startFragment(activityFragment.parentFragment!! , RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
+        startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL, bundle)
     }
 
     override fun onClockActiveClick(entity: Any) {
@@ -479,7 +518,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
 
     override fun onDismiss() {
         //弹出窗消失了
-        activityFragment.loadDatas(curLocation!!)
+        requestWeatherDataForCity(tvCity.get())
     }
 
     override fun onBack() {

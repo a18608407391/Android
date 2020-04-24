@@ -1,6 +1,10 @@
 package com.elder.amoski
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.util.Log
 import com.alibaba.android.arouter.launcher.ARouter
 import com.elder.amoski.Service.LocationService.Companion.ServiceLocation
@@ -20,9 +24,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import cn.jpush.im.android.api.JMessageClient
 import com.cstec.administrator.chart_module.Receiver.NotificationClickEventReceiver
 import com.cstec.administrator.chart_module.Utils.StorageUtil
+import com.elder.zcommonmodule.Service.SERVICE_CREATE
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection
 import com.liulishuo.filedownloader.FileDownloader
 import com.zk.library.Bus.DataEven
+import com.zk.library.Bus.event.RxBusEven
 
 
 class AppInstance : BaseApplication() {
@@ -70,9 +76,9 @@ class AppInstance : BaseApplication() {
                 "splashCreate" -> {
                     Log.e("result", "splashCreate")
                     if (android.os.Build.VERSION.SDK_INT >= 26) {
-                        context.startForegroundService(Intent(context, LowLocationService::class.java).setAction("Create"))
+                        context.startForegroundService(Intent(context, LowLocationService::class.java).setAction(SERVICE_CREATE))
                     } else {
-                        context.startService(Intent(context, LowLocationService::class.java).setAction("Create"))
+                        context.startService(Intent(context, LowLocationService::class.java).setAction(SERVICE_CREATE))
                     }
                 }
                 "splashContinue" -> {
@@ -95,7 +101,7 @@ class AppInstance : BaseApplication() {
                     context.startService(Intent(context, LowLocationService::class.java).setAction("driver"))
                 }
                 "sendData" -> {
-                    Log.e("result","发送指令"+  it.gson)
+                    Log.e("result", "发送指令" + it.gson)
                     var session = SessionManager.getInstance().writeToServer(it.gson)
                 }
                 "HomeStop" -> {
@@ -117,6 +123,38 @@ class AppInstance : BaseApplication() {
         JMessageClient.setNotificationFlag(JMessageClient.FLAG_NOTIFY_WITH_SOUND or JMessageClient.FLAG_NOTIFY_WITH_LED or JMessageClient.FLAG_NOTIFY_WITH_VIBRATE)
         //注册Notification点击的接收器
         NotificationClickEventReceiver(applicationContext)
+        initReceiver()
+    }
+
+    var mReceiver: NetworkReceiver? = null
+    fun initReceiver() {
+        mReceiver = NetworkReceiver()
+        val filter = IntentFilter()
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        registerReceiver(mReceiver, filter)
+    }
+
+    inner class NetworkReceiver : BroadcastReceiver() {
+
+
+        var TimeOut = 0L
+        override fun onReceive(context: Context, intent: Intent?) {
+            if (System.currentTimeMillis() - TimeOut < 1000) {
+                return
+            } else {
+                TimeOut = System.currentTimeMillis()
+            }
+            Log.e("result","网络状态监听")
+            if (intent != null && intent.action == "android.net.conn.CONNECTIVITY_CHANGE") {
+                val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val activeInfo = manager.activeNetworkInfo
+                if (null == activeInfo) {
+                    RxBus.default?.post(RxBusEven.getInstance(RxBusEven.NET_WORK_ERROR))
+                } else {
+                    RxBus.default?.post(RxBusEven.getInstance(RxBusEven.NET_WORK_SUCCESS))
+                }
+            }
+        }
     }
 
 

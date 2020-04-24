@@ -26,7 +26,7 @@ class AddCarAdapter : RecyclerView.Adapter<AddCarAdapter.AddCarViewHolder> {
     var mListDatas: ArrayList<CarsEntity>? = null
 
     constructor(activity: AddCarActivity) {
-        this.mLayoutInflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        this.mLayoutInflater = activity.activity!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     }
 
 
