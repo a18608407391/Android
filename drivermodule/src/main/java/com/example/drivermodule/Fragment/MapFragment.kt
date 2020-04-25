@@ -36,7 +36,6 @@ import com.example.drivermodule.Controller.MapPointItemModel
 import com.example.drivermodule.Controller.RoadBookItemModel
 import com.example.drivermodule.Controller.TeamItemModel
 import com.example.drivermodule.R
-import com.example.drivermodule.Sliding.SlidingUpPanelLayout
 import com.example.drivermodule.Utils.MapControllerUtils
 import com.example.drivermodule.ViewModel.MapFrViewModel
 import com.example.drivermodule.databinding.FragmentMapBinding
@@ -278,22 +277,36 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
         super.initMap(savedInstanceState)
         fr_map_view.onCreate(savedInstanceState)
         Utils.setStatusTextColor(true, activity!!)
+        mAmap = fr_map_view.map
+        if (resume == "nomal" || resume.isNullOrEmpty()) {
 
+        } else {
+            initMap()
+        }
     }
 
     var initStatus = false
     fun initMap() {
+        Log.e("result", "initMap")
         initStatus = true
         var pos = ServiceEven()
         pos.type = "HomeDriver"
         RxBus.default?.post(pos)
         initStatus()
-        mAmap = fr_map_view.map
         viewModel?.inject(this)
         setUpMap()
         mAmap.moveCamera(CameraUpdateFactory.zoomTo(15F))
         initListener()
     }
+
+    override fun onUserVisible() {
+        super.onUserVisible()
+        Log.e("result", "onUserVisible")
+        if (!initStatus) {
+            initMap()
+        }
+    }
+
 
     var sensorManager: SensorManager? = null
     private fun initListener() {

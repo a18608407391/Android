@@ -32,6 +32,7 @@
             android:checkedButton="@id/same_city"
             android:elevation="@dimen/d_5"
             android:gravity="center"
+
             android:orientation="horizontal"
             android:visibility="@{main_fr_viewmodel.bottomVisible?View.VISIBLE:View.GONE}">
 
@@ -41,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:button="@null"
+
                 android:drawableTop="@drawable/active_select"
                 android:gravity="center"
                 android:text="@string/active"

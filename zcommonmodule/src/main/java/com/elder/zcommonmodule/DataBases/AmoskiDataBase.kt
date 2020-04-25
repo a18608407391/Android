@@ -53,7 +53,6 @@ class AmoskiDataBase(mContext: Context = context) : ManagedSQLiteOpenHelper(mCon
                     db?.execSQL(upgradeGoods)
                     db?.execSQL(upgradeGoods1)
                 }
-
                 if(newVersion==4){
                     var result = checkColumnExist(db!!, DRIVER_STATUS_TABLE, DataBaseIndex.DriverContinue.MAX_SPEED)
                     if(!result){
@@ -222,6 +221,10 @@ class AmoskiDataBase(mContext: Context = context) : ManagedSQLiteOpenHelper(mCon
             DataBaseIndex.DriverContinue.DISTANCE + " REAL," +             //是否是新设备
             DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_TIME + " INTEGER," +             //是否是新设备
             DataBaseIndex.DriverContinue.NAVIGATION_TOTAL_DISTANCE + " REAL," +             //是否是新设备
+            DataBaseIndex.DriverContinue.UP_COUNT + " INTEGER," +             //是否是新设备
+            DataBaseIndex.DriverContinue.UP_VALUE + " REAL," +             //是否是新设备
+            DataBaseIndex.DriverContinue.MAX_HEIGHT + " REAL," +             //是否是新设备
+            DataBaseIndex.DriverContinue.MAX_SPEED + " REAL," +             //是否是新设备
             DataBaseIndex.DriverContinue.START_POINT + " BLOB," +             //是否是新设备
 
 

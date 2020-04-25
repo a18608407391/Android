@@ -14,6 +14,7 @@ import com.amap.api.maps.model.animation.Animation
 import com.amap.api.maps.model.animation.AnimationSet
 import com.amap.api.maps.model.animation.ScaleAnimation
 import com.amap.api.navi.AMapNavi
+import com.amap.api.navi.enums.NaviType
 import com.amap.api.navi.model.AMapCalcRouteResult
 import com.amap.api.navi.model.NaviLatLng
 import com.amap.api.services.core.LatLonPoint
@@ -230,8 +231,8 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
                         fr?.deivceInfo?.distance?.set(DecimalFormat("0.0").format(fr.viewModel?.status?.distance!! / 1000))
                         fr?.deivceInfo?.time?.set(ConvertUtils.formatTimeS(fr.viewModel?.status?.second!!))
                         fr?.deivceInfo?.date?.set(simple.format(d))
-//                        fr?.cancleDriver(true)
-//                        File(path).delete()
+                        fr?.cancleDriver(true)
+                        File(path).delete()
                     } else {
                         if (res.code == 10009) {
                             var map = HashMap<String, String>()
@@ -437,7 +438,7 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
         activity?._mActivity!!.dismissProgressDialog()
         if (caculateRouteListener != null) {
             caculateRouteListener?.CalculateCallBack(p0!!)
-            navi.releaseLocManager()
+            navi.startNavi(NaviType.GPS)
         }
     }
 

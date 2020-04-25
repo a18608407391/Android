@@ -33,6 +33,7 @@ import com.zk.library.Base.BaseViewModel
 import com.zk.library.Bus.ServiceEven
 import com.zk.library.Utils.RouterUtils
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.uiContext
@@ -227,12 +228,10 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 if (home.resume == "road") {
                     mapFr!!.hotData = homeActivity.hot
                 }
-//                mapFr!!.loadMultipleRootFragment(R.id.main_rootlayout,2,mapFr!!)
                 tans!!.add(R.id.main_rootlayout, mapFr!!)
             }
-
-            if(!mapFr!!.initStatus){
-                mapFr!!.initMap()
+            if (!mapFr!!.initStatus) {
+                  mapFr!!.initMap()
             }
 
             bottomVisible.set(false)

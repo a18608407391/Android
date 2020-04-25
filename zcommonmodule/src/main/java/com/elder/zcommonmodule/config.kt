@@ -22,7 +22,7 @@ import org.cs.tec.library.USERID
 //const val Base_URL = "http://ly532915135.vicp.cc/"
 
 const val Base_URL = "http://yomoy.com.cn/"
-//const val Base_URL = "https://wusiyao22.uicp.io/"
+//const val Base_URL = "http://wusiyao22.uicp.io/"
 //const val Base_URL = "http://192.168.5.242/"
 //const val Base_URL = "http://192.168.5.253/"
 //const val Base_URL = "http://192.168.5.155/"
