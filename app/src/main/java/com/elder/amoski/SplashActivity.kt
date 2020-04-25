@@ -41,11 +41,15 @@ import com.amap.api.services.core.LatLonPoint
 import com.amap.api.services.route.*
 import com.elder.zcommonmodule.*
 import com.elder.zcommonmodule.DataBases.*
+import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Entity.Location
 import com.zk.library.Bus.ServiceEven
 import com.elder.zcommonmodule.Http.NetWorkManager
+import com.elder.zcommonmodule.Service.HttpInteface
+import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Service.Login.LoginService
 import com.elder.zcommonmodule.Service.SERVICE_AUTO_BOOT_COMPLETED
+import com.elder.zcommonmodule.Utils.FileSystem
 import com.liulishuo.filedownloader.BaseDownloadTask
 import com.liulishuo.filedownloader.FileDownloadSampleListener
 import com.liulishuo.filedownloader.FileDownloader
@@ -65,7 +69,20 @@ import org.cs.tec.library.USERID
 import java.io.File
 
 
-class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
+class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpInteface.IRelogin {
+    override fun IReloginSuccess(t: String) {
+
+        Log.e("result","重新获取Token成功")
+        var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
+        PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
+        PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
+        BaseApplication.getInstance().lastTokenTime = System.currentTimeMillis()
+        doMain()
+    }
+
+    override fun IReloginError() {
+        Log.e("result","重新获取Token失败")
+    }
 
     var teamCode: String? = null
     var isNetError = false
@@ -104,6 +121,9 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 //        OSUtil.jumpStartInterface(context)
+        var phones = PreferenceUtils.getString(context, USER_PHONE)
+        Log.e("phone",phones)
+        Log.e("phone",FileSystem.getPhoneBase64(phones!!))
 
         if (intent != null) {
             if (!intent.scheme.isNullOrEmpty()) {
@@ -117,7 +137,25 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener {
             Toast.makeText(context, getString(R.string.network_notAvailable), Toast.LENGTH_SHORT).show()
             return
         }
-        doMain()
+
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        var limit = PreferenceUtils.getLong(context, TOKEN_LIMIT)
+        var phone = PreferenceUtils.getString(context, USER_PHONE)
+        if (token.isNullOrEmpty() || limit.toInt() == -1 || phone.isNullOrEmpty()) {
+            doMain()
+        } else {
+            if (System.currentTimeMillis() - limit > BaseApplication.getInstance().TokenTimeOutLimit) {
+                //说明token失效了
+                Log.e("result", "token失效")
+                var map = HashMap<String, String>()
+                map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
+                map["type"] = "app"
+                HttpRequest.instance.ReLoginImpl = this
+                HttpRequest.instance.relogin(map)
+            } else {
+                doMain()
+            }
+        }
     }
 
 

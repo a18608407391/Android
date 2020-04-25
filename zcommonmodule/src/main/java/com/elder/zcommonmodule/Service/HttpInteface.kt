@@ -1,9 +1,6 @@
 package com.elder.zcommonmodule.Service
 
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
-import com.elder.zcommonmodule.Entity.SoketBody.CreateTeamInfoDto
-import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonnelInfoDto
-import com.elder.zcommonmodule.Service.Error.ApiException
 
 
 class HttpInteface {
@@ -305,7 +302,7 @@ class HttpInteface {
     }
 
     interface IRelogin {
-        fun IReloginSuccess()
+        fun IReloginSuccess(t: String)
         fun IReloginError()
     }
 }

@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.util.Log
+import android.view.MotionEvent
 import android.widget.Toast
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.elder.amoski.BR
@@ -37,21 +38,55 @@ import com.cstec.administrator.chart_module.Utils.Extras
 import com.cstec.administrator.chart_module.Utils.RequestCode
 import com.elder.amoski.Fragment.HomeFragment
 import com.elder.zcommonmodule.*
+import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Even.RequestErrorEven
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
+import com.elder.zcommonmodule.Utils.FileSystem
 import com.elder.zcommonmodule.Utils.Utils
 import com.example.private_module.UI.UserInfoFragment
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.zk.library.Base.Transaction.anim.DefaultHorizontalAnimator
 import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Bus.event.RxBusEven.Companion.CHAT_ROOM_ACTIVITY_RETURN
 import org.cs.tec.library.Bus.RxSubscriptions
+import org.json.JSONObject
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 
 @Route(path = RouterUtils.ActivityPath.HOME)
-class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInteface.ExitLogin {
+class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInteface.ExitLogin, HttpInteface.IRelogin {
+    override fun IReloginSuccess(t: String) {
+        var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
+        PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
+        PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
+        BaseApplication.getInstance().lastTokenTime = System.currentTimeMillis()
+        BaseApplication.getInstance().TokenTimeOutCheck = false
+    }
+
+    override fun doTouchEven(ev: MotionEvent?): Boolean {
+        super.doTouchEven(ev)
+        if (!BaseApplication.getInstance().TokenTimeOutCheck) {
+            if (System.currentTimeMillis() - BaseApplication.getInstance().lastTokenTime >= BaseApplication.getInstance().TokenTimeOutLimit) {
+                Log.e("result", "登录过期")
+                BaseApplication.getInstance().TokenTimeOutCheck = true
+                var phone = PreferenceUtils.getString(context, USER_PHONE)
+                var map = HashMap<String, String>()
+                map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
+                map["type"] = "app"
+                HttpRequest.instance.ReLoginImpl = this
+                HttpRequest.instance.relogin(map)
+                return false
+            }
+        }
+        return true
+    }
+
+    override fun IReloginError() {
+    }
+
     override fun ExitLoginSuccess(it: String) {
         exitForce()
     }
@@ -80,7 +115,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     override fun initViewModel(): HomeViewModel? {
         return ViewModelProviders.of(this).get(HomeViewModel::class.java)
     }
-
 
     override fun onResume() {
         super.onResume()

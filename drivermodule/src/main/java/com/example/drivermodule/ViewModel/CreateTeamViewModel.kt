@@ -174,6 +174,7 @@ class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, Http
                 var map = HashMap<String, String>()
                 map["joinAddr"] = location?.latitude.toString() + "," + location?.longitude.toString()
                 HttpRequest.instance.createTeam(map)
+
             }
             R.id.join_btn -> {
                 if (location == null) {

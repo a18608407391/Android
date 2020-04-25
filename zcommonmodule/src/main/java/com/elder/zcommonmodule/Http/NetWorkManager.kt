@@ -3,6 +3,7 @@ package com.elder.zcommonmodule.Http
 import android.util.Log
 import com.elder.zcommonmodule.Base_URL
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -36,7 +37,8 @@ class NetWorkManager {
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build()
     }
-    fun getOkHttpClientWithToken(token:String): OkHttpClient? {
+
+    fun getOkHttpClientWithToken(token: String): OkHttpClient? {
         val loggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message ->
             //打印retrofit日志
             Log.i("BaseClient", "retrofitBack = $message")
@@ -49,6 +51,7 @@ class NetWorkManager {
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build()
     }
+
     fun getOkHttpsClient(): OkHttpClient? {
         val loggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger { message ->
             //打印retrofit日志
@@ -82,13 +85,13 @@ class NetWorkManager {
                     }
                 })
                 .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build()
     }
 
     fun getOkHttpRetrofit(): Retrofit? {
-        Log.e("enroll",Base_URL)
+        Log.e("enroll", Base_URL)
         return Retrofit.Builder().client(getOkHttpClient()).baseUrl(Base_URL).addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build()
     }
 
@@ -97,9 +100,13 @@ class NetWorkManager {
     }
 
     fun getBaseRequestBody(map: HashMap<String, String>): RequestBody? {
-        return RequestBody.create(MediaType.parse("application/json;charset=utf-8"), Gson().toJson(map))
+        var json = GsonBuilder().disableHtmlEscaping().create()
+        return RequestBody.create(MediaType.parse("application/json;charset=utf-8"), json.toJson(map))
     }
-
+    fun getBaseReplaceRequestBody(map: HashMap<String, String>): RequestBody? {
+        var json = GsonBuilder().disableHtmlEscaping().create()
+        return RequestBody.create(MediaType.parse("application/json;charset=utf-8"), json.toJson(map).replace("\\n",""))
+    }
     fun getBaseRequestBodyAny(map: HashMap<String, Any>): RequestBody? {
         return RequestBody.create(MediaType.parse("application/json;charset=utf-8"), Gson().toJson(map))
     }

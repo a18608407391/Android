@@ -164,6 +164,7 @@ class RouterUtils() {
             const val LogListActivity = "/log/loglist"
             const val SHARE = "/log/share"
             const val PLAYER = "/log/player"
+            const val PLAYER_ENTITY = "/log/player_entity"
             const val SHARE_ENTITY = "/activity/share"
             const val LOG_LIST_ENTITY = "/activity/entity"
             const val SAME_CITY_LOCATION_AC = "/activity/citylocation"

@@ -278,6 +278,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
         fr_map_view.onCreate(savedInstanceState)
         Utils.setStatusTextColor(true, activity!!)
         mAmap = fr_map_view.map
+        Log.e("result",resume)
         if (resume == "nomal" || resume.isNullOrEmpty()) {
 
         } else {

@@ -165,10 +165,16 @@ class LogShareViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack
                 bottomVisible.set(true)
             }
             R.id.toRoadLook -> {
-                activity.start((ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation() as PlayerActivity).setValue(activity.imgs!!))
-                var even = NomalPostStickyEven(106, activity.imgs!!)
-                ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation()
-                RxBus.default?.postSticky(even)
+                var bundle = Bundle()
+
+                bundle.putSerializable(RouterUtils.LogRecodeConfig.PLAYER_ENTITY,activity.imgs)
+
+                startFragment(activity,RouterUtils.LogRecodeConfig.PLAYER,bundle)
+
+//                activity.start((ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation() as PlayerActivity).setValue(activity.imgs!!))
+//                var even = NomalPostStickyEven(106, activity.imgs!!)
+//                ARouter.getInstance().build(RouterUtils.LogRecodeConfig.PLAYER).navigation()
+//                RxBus.default?.postSticky(even)
             }
             R.id.share_btn -> {
                 var share = ShareEntity()

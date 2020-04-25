@@ -49,6 +49,7 @@ class PlayerActivity : BaseFragment<ActivityPlayerBinding, PlayerViewModel>() {
 
     override fun initData() {
         super.initData()
+        imgs = arguments!!.getSerializable(RouterUtils.LogRecodeConfig.PLAYER_ENTITY) as UIdeviceInfo?
         viewModel?.inject(this)
     }
 
@@ -89,7 +90,7 @@ class PlayerActivity : BaseFragment<ActivityPlayerBinding, PlayerViewModel>() {
         if (viewModel?.connect != null) {
             this.activity!!.unbindService(viewModel?.connect)
         }
-        if(player_mapview!=null){
+        if (player_mapview != null) {
             player_mapview.onDestroy()
         }
         if (viewModel?.d != null) {
@@ -109,9 +110,9 @@ class PlayerActivity : BaseFragment<ActivityPlayerBinding, PlayerViewModel>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == viewModel?.REQUEST_SCREEN) {
-            Log.e("result","请求成功1")
+            Log.e("result", "请求成功1")
             if (resultCode == Activity.RESULT_OK) {
-                Log.e("result","请求成功")
+                Log.e("result", "请求成功")
                 ScreenUtil.setUpData(resultCode, data)
                 viewModel?.start()
 

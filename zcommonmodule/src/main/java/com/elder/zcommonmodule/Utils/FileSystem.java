@@ -4,28 +4,27 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 
 
+import com.elder.zcommonmodule.ConfigKt;
+import com.zk.library.Utils.PreferenceUtils;
+
 import org.cs.tec.library.Base.Utils.UtilsKt;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
+import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import static com.elder.zcommonmodule.ConfigKt.Point_Save_Path;
@@ -70,6 +69,11 @@ public abstract class FileSystem {
             }
         }
         return false;
+    }
+
+
+    public static String getPhoneBase64(String phone) {
+        return new String(Base64.encodeToString(phone.getBytes(Charset.forName("UTF-8")), Base64.DEFAULT));
     }
 
     public static void unzipFile(String zipFileString, String outPathString) throws IOException {

@@ -54,6 +54,8 @@ import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -168,7 +170,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
 //            }
 
 //            Log.e("result", "获取到当前定位点" + amapLocation.locationType + "GPS信号" + amapLocation?.gpsAccuracyStatus)
-            if(!viewModel?.status.locationLat.isNullOrEmpty()){
+            if (!viewModel?.status.locationLat.isNullOrEmpty()) {
                 viewModel?.exTv.set("当前骑行GPS信号" + amapLocation.gpsAccuracyStatus + "数据点类型" + amapLocation.locationType + "数据点" + viewModel?.status.locationLat.size)
             }
 
@@ -415,12 +417,23 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                 driverStatus.set(Drivering)
                 viewModel.status.startDriver.set(Drivering)
             }
-            R.id.route_click->{
-
+            R.id.route_click -> {
+                var bundle = Bundle()
+                bundle.putSerializable(RouterUtils.LogRecodeConfig.PLAYER_ENTITY, deivceInfo)
+                viewModel?.startFragment(mapFr, RouterUtils.LogRecodeConfig.PLAYER, bundle)
             }
         }
     }
 
+    fun converToUiDriver(info: DriverInfo): UIdeviceInfo {
+        var simple = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        var d = Date(info.createTime)
+        var u = ""
+        if (info.ridingEndBackgroudImg != null) {
+            u = info.ridingEndBackgroudImg!!
+        }
+        return UIdeviceInfo(ObservableField(simple.format(d)), ObservableField(getDriverImageUrl(info.trackImgUrl, info.baseUrl)), ObservableField(DecimalFormat("0.0").format(info?.totalDistance?.toDouble()!! / 1000)), ObservableField(ConvertUtils.formatTimeS(info?.totalTime!!)), ObservableField(DecimalFormat("0.0").format((info?.totalDistance!! * 3.6 / info!!.totalTime!!))), ObservableField(info.ridingFileUrl!!), ObservableField(u), ObservableField(info.id.toString()), ObservableField(info.baseUrl!!))
+    }
 
     fun dontHaveOneMetre(cotent: String, leftBtnTv: String, rightBtnTv: String, type: Int) {
         var dia = DialogUtils.createNomalDialog(mapFr.activity!!, cotent, leftBtnTv, rightBtnTv)

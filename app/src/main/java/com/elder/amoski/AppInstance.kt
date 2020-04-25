@@ -35,6 +35,10 @@ class AppInstance : BaseApplication() {
     var width = 0
     var hight = 0
 
+
+
+
+
     companion object {
         private lateinit var instan: AppInstance
         fun getInstance(): AppInstance {
@@ -144,7 +148,7 @@ class AppInstance : BaseApplication() {
             } else {
                 TimeOut = System.currentTimeMillis()
             }
-            Log.e("result","网络状态监听")
+            Log.e("result", "网络状态监听")
             if (intent != null && intent.action == "android.net.conn.CONNECTIVITY_CHANGE") {
                 val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 val activeInfo = manager.activeNetworkInfo

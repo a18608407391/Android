@@ -49,6 +49,7 @@ const val TEAM_CODE = "team_code"
 const val TEAM_ID = "team_id"
 const val UNIONID = "unionId"
 const val OPENID = "openId"
+const val TOKEN_LIMIT = "token_limit"
 const val MSG_RETURN_REQUEST = 125
 const val MSG_RETURN_REFRESH_REQUEST = 12
 var ROOT_PATH = Environment.getExternalStorageDirectory().absolutePath

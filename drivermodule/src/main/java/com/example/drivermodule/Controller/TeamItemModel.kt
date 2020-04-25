@@ -359,7 +359,6 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                     }
                     SocketDealType.UPDATETEAMINFO.code -> {
                         //队内信息更新
-
                         var m = Soket()
                         m.type = 1006
                         m.teamCode = teamCode.get()
@@ -556,8 +555,9 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                 addChildView(TeamInfo?.redisData!!.dtoList)
                 viewModel?.component.isTeam.set(true)
             }
+            Log.e("result","initInfo处理1")
         } else {
-
+              Log.e("result","initInfo处理")
         }
         mapFr.dismissProgressDialog()
     }
@@ -706,7 +706,6 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                 } else {
                     if (it.memberId.toString() != mapFr.user.data?.id) {
                         createImageMarker(it)
-
                     }
                 }
                 personDatas.add(it)
@@ -868,6 +867,9 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
         viewModel?.component.isTeam.set(false)
         viewModel.changerFragment(0)
     }
+
+
+
 
     fun backToRoad() {
         if (BaseApplication.isClose) {

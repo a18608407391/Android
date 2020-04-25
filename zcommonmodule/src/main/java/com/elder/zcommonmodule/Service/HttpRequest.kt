@@ -1,14 +1,9 @@
 package com.elder.zcommonmodule.Service
 
-import android.util.Base64
 import android.util.Log
 import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
-import com.elder.zcommonmodule.Entity.SoketBody.CreateTeamInfoDto
-import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonnelInfoDto
-import com.elder.zcommonmodule.Http.BaseObserver
 import com.elder.zcommonmodule.Http.NetWorkManager
 import com.elder.zcommonmodule.Service.Error.ExceptionEngine
-import com.elder.zcommonmodule.Service.Error.HttpServerResponseError
 import com.elder.zcommonmodule.Service.Error.ServerResponseError
 import com.elder.zcommonmodule.Service.Login.LoginService
 import com.elder.zcommonmodule.Service.Login.PrivateService
@@ -23,15 +18,10 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Bus.RxBus
-import java.io.UnsupportedEncodingException
-import java.lang.StringBuilder
-import java.nio.charset.Charset
 
 
 class HttpRequest {
@@ -42,7 +32,6 @@ class HttpRequest {
     }
 
     var startDriver: HttpInteface.startDriverResult? = null
-
     fun startDriver(map: HashMap<String, String>) {
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         NetWorkManager.instance.getOkHttpRetrofit()?.create(TeamService::class.java)?.startDriver(token, NetWorkManager.instance.getBaseRequestBody(map)!!)?.map(ServerResponseError())?.doOnError {
@@ -61,7 +50,6 @@ class HttpRequest {
             override fun onError(e: Throwable) {
                 startDriver?.startDriverError(e)
             }
-
         })
     }
 
@@ -217,7 +205,7 @@ class HttpRequest {
 //        val aesPhone = String(StringBuilder(Base64.encodeToString(phone.tob(Charset.forName("UTF-8")), Base64.DEFAULT)))
 //        var map = HashMap<String, String>()
 //        map.put("phoneNumber", aesPhone)
-        NetWorkManager.instance.getOkHttpRetrofit()!!.create(LoginService::class.java).reLogin(NetWorkManager.instance.getBaseRequestBody(phone)!!).map { baseResponse -> baseResponse.data.toString() }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : Observer<String> {
+        NetWorkManager.instance.getOkHttpRetrofit()!!.create(LoginService::class.java).reLogin(NetWorkManager.instance.getBaseReplaceRequestBody(phone)!!).map { baseResponse -> baseResponse.data.toString() }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : Observer<String> {
             override fun onComplete() {
             }
 
@@ -227,10 +215,9 @@ class HttpRequest {
             override fun onNext(t: String) {
                 RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.RELOGIN))
                 PreferenceUtils.putString(context, USER_TOKEN, t)
-                if(ReLoginImpl!=null){
-                    ReLoginImpl!!.IReloginSuccess()
+                if (ReLoginImpl != null) {
+                    ReLoginImpl!!.IReloginSuccess(t)
                 }
-
             }
 
             //            override fun onSubscribe(d: Disposable) {

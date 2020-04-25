@@ -49,7 +49,6 @@ public class ServerResponseError implements Function<BaseResponse, String> {
         if (reponse.getCode() != 0) {
             Log.e(this.getClass().getName(), getIntGson().toJson(reponse).replace("\\", ""));
             //如果服务器端有错误信息返回，那么抛出异常，让下面的方法去捕获异常做统一处理
-
             if (reponse.getCode() == 10009) {
                 HashMap<String, String> map = new HashMap();
                 map.put("phoneNumber", new String(Base64.encodeToString(PreferenceUtils.getString(UtilsKt.getContext(), ConfigKt.USER_PHONE).getBytes(Charset.forName("UTF-8")), Base64.DEFAULT)));
@@ -57,7 +56,6 @@ public class ServerResponseError implements Function<BaseResponse, String> {
             } else {
                 RxBus.Companion.getDefault().post(new RequestErrorEven(reponse.getCode()));
             }
-
             return "";
         } else {
             //服务器请求数据成功，返回里面的数据实体
@@ -86,6 +84,4 @@ public class ServerResponseError implements Function<BaseResponse, String> {
                 }).create();
         return gson;
     }
-
-
 }

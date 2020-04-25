@@ -104,7 +104,17 @@ abstract class BaseActivity<V : ViewDataBinding, VM : BaseViewModel> : RxAppComp
                 return false
             }
         }
-        return mDelegate.dispatchTouchEvent(ev) || super.dispatchTouchEvent(ev);
+        if (doTouchEven(ev)) {
+            return mDelegate.dispatchTouchEvent(ev) || super.dispatchTouchEvent(ev);
+        } else {
+            return false
+        }
+    }
+
+
+    open fun doTouchEven(ev: MotionEvent?): Boolean {
+
+        return true
     }
 
 

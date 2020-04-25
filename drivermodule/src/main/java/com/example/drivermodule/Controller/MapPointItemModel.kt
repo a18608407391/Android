@@ -469,10 +469,12 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnIt
         SingleList[0] = t
         adapter.notifyDataSetChanged()
         if (viewModel?.backStatus!!) {
-            Log.e("Team","返回team")
-            if(viewModel?.tab.selectedTabPosition==1){
+            Log.e("Team", "返回team")
+            if (viewModel?.tab.selectedTabPosition == 1) {
                 viewModel.changerFragment(1)
-            }else{
+                var model = viewModel?.items[0] as DriverItemModel
+                model.GoTeam()
+            } else {
                 viewModel.selectTab(1)
             }
             viewModel?.backStatus = false

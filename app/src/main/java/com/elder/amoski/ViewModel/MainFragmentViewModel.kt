@@ -230,7 +230,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 }
                 tans!!.add(R.id.main_rootlayout, mapFr!!)
             }
-            if (!mapFr!!.initStatus) {
+            if (mapFr!!.isAdded&&!mapFr!!.initStatus) {
                   mapFr!!.initMap()
             }
 

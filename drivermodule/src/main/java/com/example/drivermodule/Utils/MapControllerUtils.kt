@@ -72,7 +72,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch.OnDistanceSearchListener, TraceListener, AMap.OnMapScreenShotListener, AMap.OnCameraChangeListener, CustomNaviCallback, HttpInteface.IUploadDriverFiles, HttpInteface.IUploadDriverImages, HttpInteface.IRelogin {
-    override fun IReloginSuccess() {
+    override fun IReloginSuccess(t: String) {
         showUpLoadDialog(parameter1!!, parameter2!!, parameter3!!, parameter4!!)
     }
 

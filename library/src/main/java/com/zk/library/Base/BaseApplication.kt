@@ -35,9 +35,10 @@ open class BaseApplication : Application() {
     var getWidthPixels = 0
     var getHightPixels = 0
     var curActivity = 0
-
     var curFragment = 0
-
+    var TokenTimeOutCheck = false
+    var TokenTimeOutLimit: Long = 45 * 360 * 1000
+    var lastTokenTime = 0L
 
     companion object {
         private lateinit var instanc: BaseApplication
