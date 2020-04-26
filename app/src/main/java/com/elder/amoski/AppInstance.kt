@@ -11,8 +11,6 @@ import com.elder.amoski.Service.LocationService.Companion.ServiceLocation
 import com.elder.amoski.Service.LowLocationService
 import com.elder.amoski.Service.Mina.SessionManager
 import com.zk.library.Bus.ServiceEven
-import com.elder.zcommonmodule.Service.SERVICE_CANCLE_MINA
-import com.elder.zcommonmodule.Service.SERVICE_CREATE_MINA
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.organ.Service.InitService
@@ -24,7 +22,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import cn.jpush.im.android.api.JMessageClient
 import com.cstec.administrator.chart_module.Receiver.NotificationClickEventReceiver
 import com.cstec.administrator.chart_module.Utils.StorageUtil
-import com.elder.zcommonmodule.Service.SERVICE_CREATE
+import com.elder.zcommonmodule.Service.*
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection
 import com.liulishuo.filedownloader.FileDownloader
 import com.zk.library.Bus.DataEven
@@ -77,7 +75,7 @@ class AppInstance : BaseApplication() {
         ARouter.init(this)
         postEven = RxBus.default?.toObservable(ServiceEven::class.java)!!.subscribe {
             when (it.type) {
-                "splashCreate" -> {
+                SERVICE_CREATE -> {
                     Log.e("result", "splashCreate")
                     if (android.os.Build.VERSION.SDK_INT >= 26) {
                         context.startForegroundService(Intent(context, LowLocationService::class.java).setAction(SERVICE_CREATE))
@@ -96,11 +94,11 @@ class AppInstance : BaseApplication() {
                     isClose = true
                     context?.startService(Intent(context, LowLocationService::class.java).setAction(SERVICE_CANCLE_MINA))
                 }
-                "HomeStart" -> {
+                SERVICE_START -> {
                     Log.e("result", "HomeStart")
-                    context.startService(Intent(context, LowLocationService::class.java).setAction("start"))
+                    context.startService(Intent(context, LowLocationService::class.java).setAction(SERVICE_START))
                 }
-                "HomeDriver" -> {
+              SERVICE_DRIVER-> {
                     Log.e("result", "HomeDriver")
                     context.startService(Intent(context, LowLocationService::class.java).setAction("driver"))
                 }
@@ -108,9 +106,9 @@ class AppInstance : BaseApplication() {
                     Log.e("result", "发送指令" + it.gson)
                     var session = SessionManager.getInstance().writeToServer(it.gson)
                 }
-                "HomeStop" -> {
+              SERVICE_STOP -> {
                     Log.e("result", "HomeStop")
-                    context.startService(Intent(context, LowLocationService::class.java).setAction("stop"))
+                    context.startService(Intent(context, LowLocationService::class.java).setAction(SERVICE_STOP))
                 }
                 "MsgCount" -> {
                     var count = JMessageClient.getAllUnReadMsgCount()

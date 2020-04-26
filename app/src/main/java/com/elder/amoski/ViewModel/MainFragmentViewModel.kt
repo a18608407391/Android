@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RadioGroup
 import com.alibaba.android.arouter.launcher.ARouter
+import com.amap.api.location.AMapLocation
 import com.cstec.administrator.chart_module.Fragment.MessageFragment
 import com.cstec.administrator.social.Fragment.SocialFragment
 import com.elder.amoski.Activity.HomeActivity
@@ -18,19 +19,24 @@ import com.elder.amoski.Fragment.HomeFragment
 import com.elder.amoski.R
 import com.elder.logrecodemodule.UI.ActivityFragment
 import com.elder.logrecodemodule.UI.LogRecodeFragment
-import com.elder.zcommonmodule.CALL_BACK_STATUS
-import com.elder.zcommonmodule.DriverCancle
+import com.elder.zcommonmodule.*
+import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Even.ActivityResultEven
+import com.elder.zcommonmodule.Service.*
+import com.elder.zcommonmodule.Utils.FileSystem
 import com.zk.library.Bus.event.RxBusEven
 import com.elder.zcommonmodule.Utils.Utils
 import com.example.drivermodule.Fragment.MapFragment
 import com.example.drivermodule.Fragment.RoadBookSearchActivity
 import com.example.drivermodule.Fragment.RoadHomeActivity
 import com.example.private_module.UI.UserInfoFragment
+import com.google.gson.Gson
 import com.zk.library.Base.AppManager
+import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Bus.ServiceEven
+import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -43,10 +49,23 @@ import org.cs.tec.library.Utils.ConvertUtils
 import java.util.ArrayList
 
 
-class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener, MapFragment.MapLoadedCallBack {
+class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener, MapFragment.MapLoadedCallBack, HttpInteface.IRelogin {
+    override fun IReloginSuccess(t: String) {
+        var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
+        PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
+        PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
+        BaseApplication.getInstance().lastTokenTime = System.currentTimeMillis()
+        BaseApplication.getInstance().TokenTimeOutCheck = false
+    }
+
+    override fun IReloginError() {
+
+    }
+
     override fun LoadedSuccess() {
 //        bottomVisible.set(false)
     }
+
 
     var returnCheckId = 0
     var checkModel = 0
@@ -105,6 +124,89 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
     }
 
 
+    fun checkRelogin() {
+        if (!BaseApplication.getInstance().TokenTimeOutCheck) {
+            if (System.currentTimeMillis() - BaseApplication.getInstance().lastTokenTime >= BaseApplication.getInstance().TokenTimeOutLimit) {
+                Log.e("result", "登录过期")
+                BaseApplication.getInstance().TokenTimeOutCheck = true
+                var phone = PreferenceUtils.getString(context, USER_PHONE)
+                var map = HashMap<String, String>()
+                map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
+                map["type"] = "app"
+                HttpRequest.instance.ReLoginImpl = this
+                HttpRequest.instance.relogin(map)
+            }
+        }
+    }
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.RxLocation -> {
+                checkRelogin()
+                var location = it.value as AMapLocation
+                if (activityFragment != null && activityFragment!!.isAdded) {
+                    activityFragment!!.viewModel?.receiveLocation(location)
+                }
+                if (mapFr != null && mapFr!!.isAdded) {
+                    mapFr?.viewModel?.receiveLocation(location)
+//                    if (curPosition != 2) {
+//                        if (mapFr!!.viewModel?.status!!.startDriver.get() == DriverCancle) {
+//                            var pos = ServiceEven()
+//                            pos.type = SERVICE_START
+//                            RxBus.default?.post(pos)
+//                        }
+//                    }
+                }
+                if (myself != null && myself!!.isAdded) {
+                    myself!!.viewModel?.receiveLocation(location)
+                }
+
+
+            }
+            RxBusEven.DriverReturnRequest -> {
+                CoroutineScope(uiContext).launch {
+                    mRadioGroup!!.check(lastCheckediD)
+                    bottomVisible.set(true)
+                }
+            }
+            RxBusEven.PartyWebViewReturn -> {
+                bottomVisible.set(it.value as Boolean)
+                if (it.secondValue as Int == 1) {
+                    mRadioGroup!!.check(lastCheckediD)
+                }
+            }
+            RxBusEven.ENTER_TO_SEARCH -> {
+//                    homeActivity.start(SearchCategoryFragment())
+                homeActivity.start((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_SEARCH_ACTIVITY).navigation() as RoadBookSearchActivity))
+            }
+            RxBusEven.ENTER_TO_ROAD_HOME -> {
+                var loc = it.value as Location
+                var type = it.value2 as Int
+                homeActivity.start((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_ACTIVITY).navigation() as RoadHomeActivity).setLocation(loc).setType(type))
+            }
+            RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                returnPrivate = true
+            }
+            RxBusEven.NET_WORK_SUCCESS -> {
+                if (mapFr != null && mapFr!!.viewModel?.status!!.startDriver.get() != DriverCancle) {
+                    var pos = ServiceEven()
+                    pos.type = SERVICE_DRIVER
+                    RxBus.default?.post(pos)
+                }else{
+                    var pos = ServiceEven()
+                    pos.type = SERVICE_START
+                    RxBus.default?.post(pos)
+                }
+            }
+            RxBusEven.NET_WORK_ERROR -> {
+                var pos = ServiceEven()
+                pos.type = SERVICE_STOP
+                RxBus.default?.post(pos)
+            }
+        }
+    }
+
     var mRadioGroup: RadioGroup? = null
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -113,52 +215,9 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         mRadioGroup = homeActivity.binding!!.root.findViewById(R.id.main_bottom_bg)
         returnCheckId = R.id.same_city
         initStatus()
-        RxSubscriptions.add(RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
-            when (it.type) {
-                RxBusEven.DriverReturnRequest -> {
-                    CoroutineScope(uiContext).launch {
-                        mRadioGroup!!.check(lastCheckediD)
-                        bottomVisible.set(true)
-                    }
-                }
-                RxBusEven.PartyWebViewReturn -> {
-                    bottomVisible.set(it.value as Boolean)
-                    if (it.secondValue as Int == 1) {
-                        mRadioGroup!!.check(lastCheckediD)
-                    }
-                }
-                RxBusEven.ENTER_TO_SEARCH -> {
-//                    homeActivity.start(SearchCategoryFragment())
-                    homeActivity.start((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_SEARCH_ACTIVITY).navigation() as RoadBookSearchActivity))
-                }
-                RxBusEven.ENTER_TO_ROAD_HOME -> {
-                    var loc = it.value as Location
-                    var type = it.value2 as Int
-                    homeActivity.start((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_ACTIVITY).navigation() as RoadHomeActivity).setLocation(loc).setType(type))
-                }
-                RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
-                    returnPrivate = true
-                }
-                RxBusEven.NET_WORK_SUCCESS -> {
-                    if (mapFr != null && mapFr!!.viewModel?.status!!.startDriver.get() != DriverCancle) {
-                        var pos = ServiceEven()
-                        pos.type = "HomeDriver"
-                        RxBus.default?.post(pos)
-                    }
-                }
-                RxBusEven.NET_WORK_ERROR -> {
-                    if (mapFr != null && mapFr!!.viewModel?.status!!.startDriver.get() != DriverCancle) {
-                        var pos = ServiceEven()
-                        pos.type = "HomeStop"
-                        RxBus.default?.post(pos)
-                    }
-                }
-            }
-        })
     }
 
     var returnPrivate = false
-
 
     private fun initStatus() {
         var home = homeActivity.activity as HomeActivity
@@ -179,7 +238,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         if (position == 0) {
             if (activityFragment == null) {
                 var pos = ServiceEven()
-                pos.type = "HomeStart"
+                pos.type = SERVICE_START
                 RxBus.default?.post(pos)
                 activityFragment = ARouter.getInstance().build(RouterUtils.LogRecodeConfig.ACTIVITY_FRAGMENT).navigation() as ActivityFragment
                 mFragments.add(activityFragment!!)
@@ -230,8 +289,8 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 }
                 tans!!.add(R.id.main_rootlayout, mapFr!!)
             }
-            if (mapFr!!.isAdded&&!mapFr!!.initStatus) {
-                  mapFr!!.initMap()
+            if (mapFr!!.isAdded && !mapFr!!.initStatus) {
+                mapFr!!.initMap()
             }
 
             bottomVisible.set(false)
@@ -247,7 +306,10 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             }
         } else if (position == 4) {
             if (myself == null) {
+                var bundle = Bundle()
+                bundle.putParcelable("location", activityFragment!!.viewModel?.curLocation!!)
                 myself = ARouter.getInstance().build(RouterUtils.FragmentPath.MYSELFPAGE).navigation() as UserInfoFragment
+                myself!!.arguments = bundle
                 mFragments.add(myself!!)
                 tans?.add(R.id.main_rootlayout, myself!!)
 //                homeActivity!!.loadMultipleRootFragment(R.id.main_rootlayout,4,myself!!)

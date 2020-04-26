@@ -58,10 +58,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.tatarka.bindingcollectionadapter2.BindingViewPagerAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
+import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.USERID
@@ -223,13 +227,19 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
     var curPosition: Location? = null
 
     override fun onComponentClick(view: View) {
-
         if (currentPosition == 3) {
             (items[3] as MapPointItemModel).onComponentClick()
         } else {
-            var even = RxBusEven()
-            even.type = RxBusEven.DriverReturnRequest
-            RxBus.default?.post(even)
+            if (showBottomSheet!!.get()!!) {
+                var model = items!![0] as DriverItemModel
+                resetDriver(model)
+            }
+            CoroutineScope(uiContext).launch {
+                delay(200)
+                var even = RxBusEven()
+                even.type = RxBusEven.DriverReturnRequest
+                RxBus.default?.post(even)
+            }
         }
         return
     }
@@ -296,7 +306,6 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
     var showBottomSheet = ObservableField<Boolean>(false)
     var mFragments = ArrayList<Fragment>()
     lateinit var mapActivity: MapFragment
-    var a: Disposable? = null
     fun inject(mapActivity: MapFragment) {
         this.mapActivity = mapActivity
         items.apply {
@@ -307,23 +316,22 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
         }
         initTab()
         component.setHomeStyle()
-        a = RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
-            if (it.errorCode != 0 || it.gpsAccuracyStatus == -1) {
-
-            }
-            if (items.size != 0) {
-                (items[0] as DriverItemModel).onLocation(it)
-                (items[1] as TeamItemModel).onLocation(it)
-            }
-        }
-
-        RxSubscriptions.add(a)
         component.setCallBack(this)
         component.setOnFiveClickListener(this)
 
 //        changerFragment(0)
     }
 
+
+    fun receiveLocation(it: AMapLocation) {
+        if (it.errorCode != 0 || it.gpsAccuracyStatus == -1) {
+
+        }
+        if (items.size != 0) {
+            (items[0] as DriverItemModel).onLocation(it)
+            (items[1] as TeamItemModel).onLocation(it)
+        }
+    }
 
     var listeners: ArrayList<Locationlistener> = ArrayList()
 

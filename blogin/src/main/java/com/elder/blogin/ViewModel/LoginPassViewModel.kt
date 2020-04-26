@@ -102,6 +102,7 @@ class LoginPassViewModel : BaseViewModel(){
                         PreferenceUtils.putString(context, USER_PHONE, loginname.get()!!)
                         PreferenceUtils.putString(context, USER_PASS, loginpass.get())
                         PreferenceUtils.putString(context, USER_TOKEN, it.data as String)
+                        PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
                         Log.e("result", "当前的TokenByLogin" + it.data as String)
 //                        getUserInfo(it.data.toString())
                         PreferenceUtils.putBoolean(context, RE_LOGIN, false)

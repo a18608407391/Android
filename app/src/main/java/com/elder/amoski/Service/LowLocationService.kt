@@ -22,6 +22,8 @@ import com.elder.zcommonmodule.R
 import com.elder.zcommonmodule.Service.*
 import com.elder.amoski.Service.Mina.MinaService
 import com.iflytek.speech.UtilityConfig
+import com.zk.library.Bus.event.RxBusEven
+import com.zk.library.Bus.event.RxBusEven.Companion.RxLocation
 import com.zk.library.Utils.PreferenceUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -38,8 +40,9 @@ class LowLocationService : IntentService, AMapLocationListener {
     override fun onLocationChanged(amapLocation: AMapLocation?) {
         if (amapLocation != null && amapLocation.errorCode == 0) {
 //            if (amapLocation.locationType == 1) {
-
-            RxBus.default?.post(amapLocation)
+            Log.e("result",amapLocation.toStr())
+            var rx = RxBusEven.getInstance(RxLocation,amapLocation)
+            RxBus.default?.post(rx)
             builder?.setContentText("当前位置")
             if (amapLocation.accuracy < 30 && action == "driver") {
                 var aoi = ""

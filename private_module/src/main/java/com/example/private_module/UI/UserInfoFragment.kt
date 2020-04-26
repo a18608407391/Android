@@ -79,6 +79,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
     override fun onUserVisible() {
         super.onUserVisible()
     }
+
     var lableList = ArrayList<String>()
     fun getUserInfo(flag: Boolean) {
         if (userInfo == null) {
@@ -175,19 +176,19 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
         }
     }
 
-    lateinit var text1 :TextView
-    lateinit var text2 :TextView
-    lateinit var text3 :TextView
-    lateinit var text4 :TextView
+    lateinit var text1: TextView
+    lateinit var text2: TextView
+    lateinit var text3: TextView
+    lateinit var text4: TextView
 
     lateinit var progress1: ProgressBar
     lateinit var progress2: ProgressBar
     lateinit var progress3: ProgressBar
     lateinit var progress4: ProgressBar
-    lateinit var user_nest :NestedScrollView
+    lateinit var user_nest: NestedScrollView
     override fun initData() {
         super.initData()
-        Log.e("user","initData")
+        viewModel?.receiveLocation(arguments!!.getParcelable("location"))
         text1 = binding!!.root.findViewById(R.id.vertical_text1)
         text2 = binding!!.root.findViewById(R.id.vertical_text2)
         text3 = binding!!.root.findViewById(R.id.vertical_text3)
@@ -196,7 +197,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
         progress2 = binding!!.root.findViewById(R.id.vertical_progressbar2)
         progress3 = binding!!.root.findViewById(R.id.vertical_progressbar3)
         progress4 = binding!!.root.findViewById(R.id.vertical_progressbar4)
-        user_nest =  binding!!.root.findViewById(R.id.user_nest)
+        user_nest = binding!!.root.findViewById(R.id.user_nest)
         setchart()
         RxSubscriptions.add(RxBus.default?.toObservable(DataEven::class.java)!!.subscribe {
             var m = it.value + count
@@ -232,7 +233,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
 
 
     fun callback(info: UserInfo) {
-        Log.e("user","${Gson().toJson(userInfo)}")
+        Log.e("user", "${Gson().toJson(userInfo)}")
         userInfo = info
         insertUserInfo(userInfo?.data!!)
         PreferenceUtils.putString(context, USER_INFO, Gson().toJson(userInfo))
@@ -243,7 +244,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
     }
 
 
-//    private var mValues = floatArrayOf(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.2f)
+    //    private var mValues = floatArrayOf(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.2f)
 //    fun initChart(i: Int, lable: Array<String>?, half: Boolean) {
 //        if (line_chart == null || lable == null) {
 //            return
@@ -287,7 +288,7 @@ class UserInfoFragment : BaseFragment<FragmentUserBinding, UserInfoViewModel>(),
 //        line_chart.addData(data)
 //        line_chart.show()
 //    }
-private var WAIT_TIME = 2000L
+    private var WAIT_TIME = 2000L
     private var TOUCH_TIME: Long = 0
     override fun onBackPressedSupport(): Boolean {
         if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {

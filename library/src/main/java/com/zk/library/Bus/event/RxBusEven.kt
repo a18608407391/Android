@@ -33,6 +33,7 @@ class RxBusEven {
         var NAVIGATION_DATA = 0x6006
         var NET_WORK_ERROR = 0x6007
         var NET_WORK_SUCCESS = 0x6008
+        var RxLocation = 0x6009
 
         fun getInstance(type: Int): RxBusEven {
             var even = RxBusEven()

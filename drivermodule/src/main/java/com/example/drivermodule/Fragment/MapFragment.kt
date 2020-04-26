@@ -28,6 +28,7 @@ import com.elder.zcommonmodule.DataBases.queryUserInfo
 import com.elder.zcommonmodule.Entity.DriverDataStatus
 import com.elder.zcommonmodule.Entity.HotData
 import com.elder.zcommonmodule.Entity.UserInfo
+import com.elder.zcommonmodule.Service.SERVICE_DRIVER
 import com.elder.zcommonmodule.Utils.Utils
 import com.example.drivermodule.BR
 import com.example.drivermodule.CalculateRouteListener
@@ -46,6 +47,10 @@ import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.USERID
 
@@ -266,7 +271,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
             viewModel?.status?.uid = user.data?.id!!
         } else {
             var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))[0]
-            Log.e("result", "骑行数据" + Gson().toJson(status))
+            Log.e("result", "骑行数据"+status.locationLat.size)
             viewModel?.status = status
         }
     }
@@ -278,7 +283,6 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
         fr_map_view.onCreate(savedInstanceState)
         Utils.setStatusTextColor(true, activity!!)
         mAmap = fr_map_view.map
-        Log.e("result",resume)
         if (resume == "nomal" || resume.isNullOrEmpty()) {
 
         } else {
@@ -288,10 +292,9 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
 
     var initStatus = false
     fun initMap() {
-        Log.e("result", "initMap")
         initStatus = true
         var pos = ServiceEven()
-        pos.type = "HomeDriver"
+        pos.type = SERVICE_DRIVER
         RxBus.default?.post(pos)
         initStatus()
         viewModel?.inject(this)
@@ -438,13 +441,18 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
         if (viewModel?.currentPosition == 3) {
             (viewModel?.items!![3] as MapPointItemModel).onComponentClick()
         } else {
-            var model = viewModel?.items!![0] as DriverItemModel
-            if (viewModel?.showBottomSheet!!.get() == true) {
+
+            if (viewModel?.showBottomSheet!!.get()!!) {
+                var model = viewModel?.items!![0] as DriverItemModel
                 viewModel?.resetDriver(model)
             }
-            var even = RxBusEven()
-            even.type = RxBusEven.DriverReturnRequest
-            RxBus.default?.post(even)
+            CoroutineScope(uiContext).launch {
+                delay(200)
+                var even = RxBusEven()
+                even.type = RxBusEven.DriverReturnRequest
+                RxBus.default?.post(even)
+            }
+
         }
         return true
     }

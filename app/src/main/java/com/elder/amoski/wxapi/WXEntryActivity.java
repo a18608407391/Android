@@ -76,6 +76,7 @@ import okhttp3.Response;
 
 import static com.elder.zcommonmodule.ConfigKt.Base_URL;
 import static com.elder.zcommonmodule.ConfigKt.OPENID;
+import static com.elder.zcommonmodule.ConfigKt.TOKEN_LIMIT;
 import static com.elder.zcommonmodule.ConfigKt.UNIONID;
 import static com.elder.zcommonmodule.ConfigKt.USER_TOKEN;
 import static com.elder.zcommonmodule.ConfigKt.checkDriverStatus;
@@ -190,6 +191,7 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                                 PreferenceUtils.putString(WXEntryActivity.this, USER_TOKEN, wxLoginBean.getData().getAppToken());
                                 PreferenceUtils.putString(WXEntryActivity.this, UNIONID, wxLoginBean.getData().getUnionId());
                                 PreferenceUtils.putString(WXEntryActivity.this, OPENID, wxLoginBean.getData().getOpenId());
+                                PreferenceUtils.putLong(WXEntryActivity.this, TOKEN_LIMIT, System.currentTimeMillis());
                                 dialog.dismiss();
                                 if (type == 0) {
                                     go2Home();

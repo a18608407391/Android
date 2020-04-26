@@ -138,16 +138,15 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
 
     fun inject(activityFragment: ActivityFragment) {
         this.activityFragment = activityFragment
-        RxSubscriptions.add(RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
-            if (curLocation == null) {
-                curLocation = it
-                mweathersearch = WeatherSearch(context)
-                mweathersearch!!.setOnWeatherSearchListener(this)
-                requestWeatherDataForCity("湖南省")
-            }
-        })
     }
-
+    fun receiveLocation(it: AMapLocation) {
+        if (curLocation == null) {
+            curLocation = it
+            mweathersearch = WeatherSearch(context)
+            mweathersearch!!.setOnWeatherSearchListener(this)
+            requestWeatherDataForCity("湖南省")
+        }
+    }
     /**
      * 请求选择城市天气数据
      * @param cityName 城市名

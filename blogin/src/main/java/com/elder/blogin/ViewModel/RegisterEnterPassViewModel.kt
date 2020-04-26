@@ -289,6 +289,7 @@ class RegisterEnterPassViewModel : BaseViewModel() {
                     PreferenceUtils.putString(context, USER_PASS, loginpass.get())
                     PreferenceUtils.putString(context, USER_TOKEN, request.data as String)
                     PreferenceUtils.putString(context, USERID, request.msg)
+                    PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
                     if (checkDriverStatus()) {
                         var statusList = queryDriverStatus(request.msg!!)
                         if (statusList.size != 0 && statusList[0].startDriver.get() != 2) {
@@ -394,6 +395,7 @@ class RegisterEnterPassViewModel : BaseViewModel() {
                                     PreferenceUtils.putString(context, USER_PHONE, registerEnterPasswordActivity.phone)
                                     PreferenceUtils.putString(context, USER_PASS, loginpass.get())
                                     PreferenceUtils.putString(context, USER_TOKEN, request.data as String)
+                                    PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
                                     ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").navigation(registerEnterPasswordActivity,object :NavCallback(){
                                         override fun onArrival(postcard: Postcard?) {
                                             deleteDriverStatus(request.msg!!)

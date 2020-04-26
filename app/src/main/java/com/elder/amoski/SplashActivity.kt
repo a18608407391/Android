@@ -49,6 +49,7 @@ import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.Service.Login.LoginService
 import com.elder.zcommonmodule.Service.SERVICE_AUTO_BOOT_COMPLETED
+import com.elder.zcommonmodule.Service.SERVICE_CREATE
 import com.elder.zcommonmodule.Utils.FileSystem
 import com.liulishuo.filedownloader.BaseDownloadTask
 import com.liulishuo.filedownloader.FileDownloadSampleListener
@@ -72,7 +73,7 @@ import java.io.File
 class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpInteface.IRelogin {
     override fun IReloginSuccess(t: String) {
 
-        Log.e("result","重新获取Token成功")
+        Log.e("result", "重新获取Token成功")
         var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
         PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
         PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
@@ -81,7 +82,8 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
     }
 
     override fun IReloginError() {
-        Log.e("result","重新获取Token失败")
+
+        doMain()
     }
 
     var teamCode: String? = null
@@ -122,8 +124,8 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         setContentView(R.layout.activity_splash)
 //        OSUtil.jumpStartInterface(context)
         var phones = PreferenceUtils.getString(context, USER_PHONE)
-        Log.e("phone",phones)
-        Log.e("phone",FileSystem.getPhoneBase64(phones!!))
+        Log.e("phone", phones)
+        Log.e("phone", FileSystem.getPhoneBase64(phones!!))
 
         if (intent != null) {
             if (!intent.scheme.isNullOrEmpty()) {
@@ -142,6 +144,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         var limit = PreferenceUtils.getLong(context, TOKEN_LIMIT)
         var phone = PreferenceUtils.getString(context, USER_PHONE)
         if (token.isNullOrEmpty() || limit.toInt() == -1 || phone.isNullOrEmpty()) {
+            Log.e("result", "token失效1")
             doMain()
         } else {
             if (System.currentTimeMillis() - limit > BaseApplication.getInstance().TokenTimeOutLimit) {
@@ -153,6 +156,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
                 HttpRequest.instance.ReLoginImpl = this
                 HttpRequest.instance.relogin(map)
             } else {
+                Log.e("result", "token失效2")
                 doMain()
             }
         }
@@ -190,38 +194,48 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             } else {
             }
         }
+
         var flag = checkDriverStatus()
         if (flag) {
+            Log.e("result", "token失效3")
             var pos = ServiceEven()
-            pos.type = "splashCreate"
+            pos.type = SERVICE_CREATE
             RxBus.default?.post(pos)
-            dispose = RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
-                var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
-                if (status[0].locationLat.size != 0) {
-                    var driver = status[0].locationLat
-                    var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(it.latitude, it.longitude))
-                    if (dis < 1000) {
-                        if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
-                            status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
+            dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
+                when(it.type){
+                    RxBusEven.RxLocation->{
+                        Log.e("result", "token失效4")
+                        var loction = it.value as AMapLocation
+                        var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
+                        if (status[0].locationLat.size != 0) {
+                            var driver = status[0].locationLat
+                            var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(loction.latitude, loction.longitude))
+                            if (dis < 1000) {
+                                if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
+                                    status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
+                                }
+                                UpdateDriverStatus(status[0])
+                                doStatus(status)
+                            } else {
+                                var mRoutePath = RouteSearch(this)
+                                mRoutePath.setRouteSearchListener(this)
+                                var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(loction.latitude, loction.longitude))
+                                var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
+                                        null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
+                                mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
+                            }
+                        } else {
+                            doStatus(status)
                         }
-                        UpdateDriverStatus(status[0])
-                        doStatus(status)
-                    } else {
-                        var mRoutePath = RouteSearch(this)
-                        mRoutePath.setRouteSearchListener(this)
-                        var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(it.latitude, it.longitude))
-                        var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
-                                null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
-                        mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
+                        dispose?.dispose()
+                        RxSubscriptions.remove(dispose)
                     }
-                } else {
-                    doStatus(status)
                 }
-                dispose?.dispose()
-                RxSubscriptions.remove(dispose)
+
             }
             RxSubscriptions.add(dispose)
         } else {
+            Log.e("result", "token失效3")
             if (BaseApplication.getInstance().curActivity == 0) {
                 goHome()
             } else {
@@ -354,6 +368,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
 
 
     fun doStatus(status: ArrayList<DriverDataStatus>) {
+        Log.e("result", "token失效5")
         if (BaseApplication.getInstance().curActivity == 0) {
             var time = "0"
             if (status[0].locationLat.size != 0) {

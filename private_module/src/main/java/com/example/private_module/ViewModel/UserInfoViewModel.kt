@@ -202,14 +202,11 @@ class UserInfoViewModel : BaseViewModel() {
 
     var location: AMapLocation? = null
     var loc: Location? = null
-    override fun registerRxBus() {
-        super.registerRxBus()
-        RxSubscriptions.add(RxBus.default?.toObservable(AMapLocation::class.java)?.subscribe {
-            this.location = it
-            loc = Location(location!!.latitude, location!!.longitude, System.currentTimeMillis().toString(), location!!.speed, location!!.altitude, location!!.bearing, location!!.city, location!!.aoiName)
-        })
-    }
 
+    fun receiveLocation(it:AMapLocation){
+        this.location = it
+        loc = Location(location!!.latitude, location!!.longitude, System.currentTimeMillis().toString(), location!!.speed, location!!.altitude, location!!.bearing, location!!.city, location!!.aoiName)
+    }
 
     var iconArray = arrayOf(R.drawable.my_roadbook_icon, R.drawable.user_active_icon, R.drawable.ele_ticket, R.drawable.cert_icon, R.drawable.restore_icon)
 
