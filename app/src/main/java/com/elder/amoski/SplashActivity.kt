@@ -78,12 +78,11 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
         PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
         BaseApplication.getInstance().lastTokenTime = System.currentTimeMillis()
-        doMain()
+        mainDoing()
     }
 
     override fun IReloginError() {
-
-        doMain()
+        mainDoing()
     }
 
     var teamCode: String? = null
@@ -99,7 +98,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             var status = queryDriverStatus(id)
             status[0].second = (System.currentTimeMillis() - status[0].StartTime) / 1000
             UpdateDriverStatus(status[0])
-            doStatus(queryDriverStatus(id))
+            doStatusLocation(queryDriverStatus(id), loc!!)
         }
     }
 
@@ -122,17 +121,13 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-//        OSUtil.jumpStartInterface(context)
-        var phones = PreferenceUtils.getString(context, USER_PHONE)
-        Log.e("phone", phones)
-        Log.e("phone", FileSystem.getPhoneBase64(phones!!))
-
         if (intent != null) {
             if (!intent.scheme.isNullOrEmpty()) {
                 var uri = intent.data
                 teamCode = uri.getQueryParameter("teamCode")
             }
         }
+        Log.e("result","当前Code" + teamCode)
         if (!NetworkUtil.isNetworkAvailable(this)) {
             isNetError = true
 //            ARouter.getInstance().build(RouterUtils.MapModuleConfig.SMOOTH_ACTIVITY).navigation()
@@ -140,24 +135,33 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             return
         }
 
-        var token = PreferenceUtils.getString(context, USER_TOKEN)
-        var limit = PreferenceUtils.getLong(context, TOKEN_LIMIT)
-        var phone = PreferenceUtils.getString(context, USER_PHONE)
-        if (token.isNullOrEmpty() || limit.toInt() == -1 || phone.isNullOrEmpty()) {
-            Log.e("result", "token失效1")
-            doMain()
+        if (BaseApplication.getInstance().curActivity != 0) {
+            ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    if (teamCode != null) {
+                        RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
+                    }
+                    finish()
+                }
+            })
+            return
         } else {
-            if (System.currentTimeMillis() - limit > BaseApplication.getInstance().TokenTimeOutLimit) {
-                //说明token失效了
-                Log.e("result", "token失效")
-                var map = HashMap<String, String>()
-                map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
-                map["type"] = "app"
-                HttpRequest.instance.ReLoginImpl = this
-                HttpRequest.instance.relogin(map)
+            var token = PreferenceUtils.getString(context, USER_TOKEN)
+            var limit = PreferenceUtils.getLong(context, TOKEN_LIMIT)
+            var phone = PreferenceUtils.getString(context, USER_PHONE)
+            if (token.isNullOrEmpty() || limit.toInt() == -1 || phone.isNullOrEmpty()) {
+                mainDoing()
             } else {
-                Log.e("result", "token失效2")
-                doMain()
+                if (System.currentTimeMillis() - limit > BaseApplication.getInstance().TokenTimeOutLimit) {
+                    //说明token失效了
+                    var map = HashMap<String, String>()
+                    map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
+                    map["type"] = "app"
+                    HttpRequest.instance.ReLoginImpl = this
+                    HttpRequest.instance.relogin(map)
+                } else {
+                    mainDoing()
+                }
             }
         }
     }
@@ -172,13 +176,19 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
                 return
             } else {
                 isNetError = false
-                doMain()
+                mainDoing()
             }
             onCreate = true
         }
     }
 
+
+    var loc: AMapLocation? = null
     fun doMain() {
+        //必要事情，请求权限
+//          goHome()
+
+
         if (PreferenceUtils.getString(context, USERID) != null) {
             var location = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             if (!location.isProviderEnabled(LocationManager.GPS_PROVIDER) || !location.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
@@ -195,6 +205,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             }
         }
 
+
         var flag = checkDriverStatus()
         if (flag) {
             Log.e("result", "token失效3")
@@ -202,8 +213,8 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             pos.type = SERVICE_CREATE
             RxBus.default?.post(pos)
             dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
-                when(it.type){
-                    RxBusEven.RxLocation->{
+                when (it.type) {
+                    RxBusEven.RxLocation -> {
                         Log.e("result", "token失效4")
                         var loction = it.value as AMapLocation
                         var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
@@ -250,6 +261,8 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
 
 
     fun Nomal() {
+
+
         var info = context.packageManager.getPackageInfo(context.packageName, 0)
         var map = HashMap<String, String>()
         map.put("version", info.versionCode.toString())
@@ -512,5 +525,234 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
 //        }
 //        startActivity(intent);
 //    }
+
+
+    fun mainDoing() {
+        //检查权限
+        var wm1 = this.windowManager
+        BaseApplication.getInstance().getWidthPixels = wm1.defaultDisplay.width
+        BaseApplication.getInstance().getHightPixels = wm1.defaultDisplay.height
+        RxPermissions(this).request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE, Manifest.permission.RECORD_AUDIO, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE).subscribe {
+            if (it) {
+                if (BaseApplication.getInstance().curActivity == 0) {
+                    //检查更新
+                    if (PreferenceUtils.getString(context, USERID) != null) {
+                        var location = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                        if (!location.isProviderEnabled(LocationManager.GPS_PROVIDER) || !location.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                            Toast.makeText(context, getString(R.string.get_point_time_out), Toast.LENGTH_SHORT).show()
+                            var intent = Intent()
+                            intent.setAction(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                            startActivity(intent)
+                            finish()
+                        } else if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(context, getString(R.string.permisstion_error), Toast.LENGTH_SHORT).show()
+                            var intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            intent.data = Uri.parse("package:$packageName")
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+                    checkVession()
+                } else {
+
+                }
+            } else {
+                Toast.makeText(context, getString(R.string.permisstion_error), Toast.LENGTH_SHORT).show()
+                var intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                intent.data = Uri.parse("package:$packageName")
+                startActivity(intent)
+                finish()
+            }
+        }
+    }
+
+    fun checkVession() {
+        var info = context.packageManager.getPackageInfo(context.packageName, 0)
+        var map = HashMap<String, String>()
+        map.put("version", info.versionCode.toString())
+        NetWorkManager.instance.getOkHttpRetrofit()?.create(LoginService::class.java)?.getVession(NetWorkManager.instance.getBaseRequestBody(map)!!)?.map {
+            return@map it
+        }?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.doOnError {
+            Toast.makeText(context, org.cs.tec.library.Base.Utils.getString(com.elder.blogin.R.string.network_error) + it.message, Toast.LENGTH_SHORT).show()
+        }?.onErrorResumeNext(Observable.empty())?.subscribe {
+            if (it.code == 0) {
+                var entity = Gson().fromJson<Entity>(Gson().toJson(it.data), Entity::class.java)
+                if (entity.version) {
+                    if (entity.force) {
+                        var dialog = DialogUtils.createNomalStyleOneDialog(this, entity.versionDesc!!, getString(R.string.go_update))
+                        dialog.title(getString(R.string.update_notice))
+                        dialog.setCanceledOnTouchOutside(false)
+                        dialog.setCancelable(false)
+                        dialog.show()
+                        dialog.setOnBtnClickL(OnBtnClickL {
+                            dialog.dismiss()
+                            CoroutineScope(uiContext).launch {
+                                delay(500)
+                                goUpdate(entity)
+                            }
+                        })
+                    } else {
+                        var s = entity.versionDesc!!.replace("\\n", "\n")
+                        var dialog = DialogUtils.createNomalDialog(this, s, getString(R.string.ingnore), getString(R.string.go_update))
+                        dialog.title(getString(R.string.update_notice))
+                        dialog.setCanceledOnTouchOutside(false)
+                        dialog.setCancelable(false)
+                        dialog.show()
+                        dialog.setOnBtnClickL(OnBtnClickL {
+                            dialog.dismiss()
+//                            goHome()
+                            checkDriver()
+                        }, OnBtnClickL {
+                            dialog.dismiss()
+                            CoroutineScope(uiContext).launch {
+                                delay(500)
+                                goUpdate(entity)
+                            }
+//                            finish()
+                        })
+                    }
+                } else {
+                    checkDriver()
+
+                    //无需更新  检查骑行状态
+//                    thread {
+//                        Thread.sleep(3000)
+//                        var flag = PreferenceUtils.getBoolean(context, APP_CREATE, false)
+//                        if (flag) {
+//                            ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
+//                                override fun onArrival(postcard: Postcard?) {
+//                                    finish()
+//                                }
+//                            })
+//                        } else {
+//                            PreferenceUtils.putBoolean(context, APP_CREATE, true)
+//                            ARouter.getInstance().build(RouterUtils.ActivityPath.GUIDE).navigation(this, object : NavCallback() {
+//                                override fun onArrival(postcard: Postcard?) {
+//                                    finish()
+//                                }
+//                            })
+//                        }
+//                    }
+                }
+            } else {
+                Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    fun checkDriver() {
+        var pos = ServiceEven()
+        pos.type = SERVICE_CREATE
+        RxBus.default?.post(pos)
+        dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
+            when (it.type) {
+                RxBusEven.RxLocation -> {
+                    var loction = it.value as AMapLocation
+                    this.loc = loction
+                    var flag = checkDriverStatus()
+                    if (flag) {
+                        var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
+                        if (status[0].locationLat.size != 0) {
+                            var driver = status[0].locationLat
+                            var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(loction.latitude, loction.longitude))
+                            if (dis < 1000) {
+                                if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
+                                    status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
+                                }
+                                UpdateDriverStatus(status[0])
+                                doStatusLocation(status, loction)
+                            } else {
+                                var mRoutePath = RouteSearch(this)
+                                mRoutePath.setRouteSearchListener(this)
+                                var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(loction.latitude, loction.longitude))
+                                var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
+                                        null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
+                                mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
+                            }
+                        } else {
+                            doStatusLocation(status, loction)
+                        }
+                    } else {
+                        var flag = PreferenceUtils.getBoolean(context, APP_CREATE, false)
+                        if (flag) {
+                            var token = PreferenceUtils.getString(context, USER_TOKEN)
+                            if (token == null) {
+                                ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
+                                    override fun onArrival(postcard: Postcard?) {
+                                        finish()
+                                    }
+                                })
+                            } else {
+                                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withParcelable(RouterUtils.ActivityPath.AMAP_LOCATION, loction).navigation(this, object : NavCallback() {
+                                    override fun onArrival(postcard: Postcard?) {
+                                        finish()
+                                    }
+                                })
+                            }
+                        } else {
+                            PreferenceUtils.putBoolean(context, APP_CREATE, true)
+                            ARouter.getInstance().build(RouterUtils.ActivityPath.GUIDE).navigation(this, object : NavCallback() {
+                                override fun onArrival(postcard: Postcard?) {
+                                    finish()
+                                }
+                            })
+                        }
+                    }
+                    dispose?.dispose()
+                    RxSubscriptions.remove(dispose)
+                }
+            }
+        }
+        RxSubscriptions.add(dispose)
+    }
+
+    private fun doStatusLocation(status: ArrayList<DriverDataStatus>, loction: AMapLocation) {
+        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withParcelable(RouterUtils.ActivityPath.AMAP_LOCATION, loction).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
+            override fun onArrival(postcard: Postcard?) {
+                this@SplashActivity.finish()
+            }
+        })
+
+
+//                    })
+//                    dialog.show()
+//                } else {
+//                    Log.e("result", "进入4")
+//                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
+//                        override fun onArrival(postcard: Postcard?) {
+//                            this@SplashActivity.finish()
+//                        }
+//                    })
+//                }
+//            } else {
+//                Log.e("result", "进入3")
+//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            }
+//        } else {
+//            Log.e("result", "进入1")
+//            if (BaseApplication.getInstance().curActivity == 1) {
+//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        if (teamCode != null) {
+//                            RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
+//                        }
+//                        finish()
+//                    }
+//                })
+//            } else if (BaseApplication.getInstance().curActivity == 3) {
+//                Log.e("result", "进入2")
+//                ARouter.getInstance().build(RouterUtils.MapModuleConfig.NAVIGATION).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            }
+//        }
+    }
 
 }

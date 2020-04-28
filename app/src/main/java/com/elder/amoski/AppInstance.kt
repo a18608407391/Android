@@ -59,13 +59,6 @@ class AppInstance : BaseApplication() {
                 .build()
         )
         PreferenceUtils.putBoolean(context, ServiceLocation, false)
-//        KeepLiveHelper.getDefault().init(this, "", "")
-////        NotificationUtils().setNotification("测试变化标题", "测试变化内容", R.mipmap.ic_launcher)
-//        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            KeepLiveHelper.getDefault().bindService(LocationService::class.java)
-//        } else {
-//            KeepLiveHelper.getDefault().bindService(LocationLowService::class.java)
-//        }
         FileDownloader.setupOnApplicationOnCreate(this)
                 .connectionCreator(FileDownloadUrlConnection.Creator(FileDownloadUrlConnection.Configuration()
                         .connectTimeout(15000) // set connection timeout.
@@ -73,6 +66,7 @@ class AppInstance : BaseApplication() {
                 ))
                 .commit()
         ARouter.init(this)
+
         postEven = RxBus.default?.toObservable(ServiceEven::class.java)!!.subscribe {
             when (it.type) {
                 SERVICE_CREATE -> {

@@ -139,17 +139,14 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         }
     }
 
-    override fun doRxEven(it: RxBusEven?) {
-        super.doRxEven(it)
-        when (it?.type) {
-            RxBusEven.RxLocation -> {
-                checkRelogin()
-                var location = it.value as AMapLocation
-                if (activityFragment != null && activityFragment!!.isAdded) {
-                    activityFragment!!.viewModel?.receiveLocation(location)
-                }
-                if (mapFr != null && mapFr!!.isAdded) {
-                    mapFr?.viewModel?.receiveLocation(location)
+
+    fun setLocation(it: AMapLocation) {
+        var location = it
+        if (activityFragment != null && activityFragment!!.isAdded) {
+            activityFragment!!.viewModel?.receiveLocation(location)
+        }
+        if (mapFr != null && mapFr!!.isAdded) {
+            mapFr?.viewModel?.receiveLocation(location)
 //                    if (curPosition != 2) {
 //                        if (mapFr!!.viewModel?.status!!.startDriver.get() == DriverCancle) {
 //                            var pos = ServiceEven()
@@ -157,12 +154,18 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
 //                            RxBus.default?.post(pos)
 //                        }
 //                    }
-                }
-                if (myself != null && myself!!.isAdded) {
-                    myself!!.viewModel?.receiveLocation(location)
-                }
+        }
+        if (myself != null && myself!!.isAdded) {
+            myself!!.viewModel?.receiveLocation(location)
+        }
+    }
 
-
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it?.type) {
+            RxBusEven.RxLocation -> {
+                checkRelogin()
+                setLocation(it.value as AMapLocation)
             }
             RxBusEven.DriverReturnRequest -> {
                 CoroutineScope(uiContext).launch {
@@ -193,7 +196,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                     var pos = ServiceEven()
                     pos.type = SERVICE_DRIVER
                     RxBus.default?.post(pos)
-                }else{
+                } else {
                     var pos = ServiceEven()
                     pos.type = SERVICE_START
                     RxBus.default?.post(pos)
@@ -203,6 +206,9 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 var pos = ServiceEven()
                 pos.type = SERVICE_STOP
                 RxBus.default?.post(pos)
+            }
+            RxBusEven.BrowserSendTeamCode -> {
+                mRadioGroup!!.check(R.id.driver_middle)
             }
         }
     }
@@ -237,9 +243,14 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         tans = homeActivity.childFragmentManager.beginTransaction()
         if (position == 0) {
             if (activityFragment == null) {
-                var pos = ServiceEven()
-                pos.type = SERVICE_START
-                RxBus.default?.post(pos)
+                var home = homeActivity.activity as HomeActivity
+                if (home.location != null) {
+                    setLocation(home.location!!)
+                } else {
+                    var pos = ServiceEven()
+                    pos.type = SERVICE_START
+                    RxBus.default?.post(pos)
+                }
                 activityFragment = ARouter.getInstance().build(RouterUtils.LogRecodeConfig.ACTIVITY_FRAGMENT).navigation() as ActivityFragment
                 mFragments.add(activityFragment!!)
                 tans?.add(R.id.main_rootlayout, activityFragment!!)
@@ -249,7 +260,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 } else {
                     Utils.setStatusTextColor(true, homeActivity.activity as HomeActivity)
                 }
-                var home = homeActivity.activity as HomeActivity
+
                 if (home.resume == "nomal" || home.resume.isNullOrEmpty()) {
                     if (mapFr == null) {
                         mapFr = ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_FR).navigation() as MapFragment?

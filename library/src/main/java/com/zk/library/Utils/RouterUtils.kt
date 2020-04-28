@@ -10,6 +10,7 @@ class RouterUtils() {
             const val LOGIN_PASSWORD = "/login/loginpassword"
             const val REGISTER = "/login/register"
             const val REGISTER_SETTINGPASS = "/login/registerSetting"
+            const val AMAP_LOCATION = "/app/location"
         }
     }
 

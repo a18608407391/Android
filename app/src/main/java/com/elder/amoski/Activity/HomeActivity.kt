@@ -33,6 +33,7 @@ import cn.jpush.im.android.api.event.LoginStateChangeEvent
 import com.alibaba.android.arouter.facade.Postcard
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.callback.NavCallback
+import com.amap.api.location.AMapLocation
 import com.cstec.administrator.chart_module.Fragment.MessageFragment
 import com.cstec.administrator.chart_module.Utils.Extras
 import com.cstec.administrator.chart_module.Utils.RequestCode
@@ -103,9 +104,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     @JvmField
     var resume: String? = null
 
-    @Autowired(name = RouterUtils.SocialConfig.SOCIAL_LOCATION)
+    @Autowired(name = RouterUtils.ActivityPath.AMAP_LOCATION)
     @JvmField
-    var location: Location? = null
+    var location: AMapLocation? = null
+
+
+    @Autowired(name =RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE)
+    @JvmField
+    var code: String? = null
 
     override fun initContentView(savedInstanceState: Bundle?): Int {
         Utils.setStatusBar(this, false, false)

@@ -51,7 +51,14 @@ import org.cs.tec.library.binding.command.BindingConsumer
 import java.text.DecimalFormat
 
 
-class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnItemClickListener, SlidingUpPanelLayout.PanelSlideListener {
+class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.PanelSlideListener, BaseQuickAdapter.OnItemChildClickListener {
+    override fun onItemChildClick(p0: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        pointList.removeAt(position)
+        adapter?.setNewData(pointList)
+        viewModel?.status!!.passPointDatas.removeAt(position)
+        mapFr.mapUtils?.setDriverRoute(converLatPoint(startMaker?.position!!), LatLonPoint(viewModel.status.navigationEndPoint!!.latitude, viewModel.status.navigationEndPoint!!.longitude), viewModel!!.status!!.passPointDatas)
+    }
+
     override fun onPanelSlide(panel: View?, slideOffset: Float) {
 
     }
@@ -68,9 +75,6 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnIt
         }
     }
 
-    override fun onItemClick(adapter: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
-
-    }
 
     //地图选点逻辑处理
     var listvisible = ObservableField<Boolean>(false)
@@ -187,7 +191,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnIt
     override fun ItemViewModel(viewModel: MapFrViewModel): ItemViewModel<MapFrViewModel> {
         mapFr = viewModel?.mapActivity
         adapter = AddPointItemAdapter(R.layout.district_item, SingleList)
-        adapter.onItemClickListener = this
+        adapter.onItemChildClickListener = this
         adapter.setModel(this)
         return super.ItemViewModel(viewModel)
     }
@@ -287,6 +291,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnIt
             viewModel?.startNavi(list, 2)
         }
         returnDriverFr()
+        mapFr!!.mapUtils!!.navi.destroy()
     }
 
     fun addPoint(it: Marker) {
@@ -534,6 +539,9 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), BaseQuickAdapter.OnIt
                 }
                 var index = list.indexOf(t)
                 t.select.set(true)
+
+                mapFr.mapUtils!!.navi!!.selectRouteId(t!!.id.get()!!)
+                mapFr.mapUtils!!.navi!!.selectMainPathID(mapFr?.mapUtils!!.navi.naviPaths[Integer.valueOf(t!!.id.get()!!)]!!.pathid)
                 list.set(index, t)
                 mapFr.mAmap.clear()
                 items.clear()

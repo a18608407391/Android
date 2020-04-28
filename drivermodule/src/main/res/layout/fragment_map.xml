@@ -58,12 +58,6 @@
                 app:adapter="@{map_fr_Model.adapter}"
                 app:itemBinding="@{map_fr_Model.itemBinding}"
                 app:items="@{map_fr_Model.items}"></com.zk.library.Weidge.NoScrollViewPager>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/s_15"
-                android:textColor="@color/black"
-                android:text="@{map_fr_Model.exTv}"/>
             <include
                 layout="@layout/right_five_btn_layout"
                 android:visibility="@{map_fr_Model.component.type == 1 ? View.VISIBLE : View.GONE}"

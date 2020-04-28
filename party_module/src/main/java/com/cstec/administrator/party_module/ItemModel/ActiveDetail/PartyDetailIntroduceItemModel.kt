@@ -150,7 +150,6 @@ class PartyDetailIntroduceItemModel : BasePartyItemModel() {
                     model.party.nest_clock.setNeedScroll(true)
                 }
             }
-            Log.e("result", "到底底部或者顶部" + t)
         }
     })
 

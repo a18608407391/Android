@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.navi.AMapNavi
 import com.amap.api.navi.AMapNaviView
+import com.amap.api.navi.enums.NaviType
 import com.amap.api.navi.model.NaviLatLng
 import com.zk.library.Base.BaseViewModel
 import org.cs.tec.library.Base.Utils.context
@@ -48,14 +49,12 @@ class NavigationViewModel : BaseViewModel() {
     var totalTime = ObservableField<String>("00:00")
     var totalDistance = ObservableField<String>("0M")
     var nextAddress = ObservableField<String>("")
-
     var sList: MutableList<NaviLatLng> = ArrayList()
     var eList: MutableList<NaviLatLng> = ArrayList()
     var mWayPointList: MutableList<NaviLatLng> = ArrayList()
     var component = AMapNaviViewComponent(this)
     lateinit var navigationActivity: NavigationActivity
     lateinit var mAMapNavi: AMapNavi
-
     var navigation: SoketNavigation? = null
     fun inject(navigationActivity: NavigationActivity) {
         this.navigationActivity = navigationActivity
@@ -88,7 +87,7 @@ class NavigationViewModel : BaseViewModel() {
         mAMapNavi = AMapNavi.getInstance(context)
         mAMapNavi.addAMapNaviListener(component)
         mAMapNavi.setUseInnerVoice(true)
-
+        mAMapNavi.setMultipleRouteNaviMode(true)
         mStartLatlng = NaviLatLng(navigationActivity.start!!.latitude, navigationActivity.start!!.longitude)
         mEndLatlng = NaviLatLng(navigationActivity.end!!.latitude, navigationActivity.end!!.longitude)
         navigationActivity.list?.forEach {
@@ -139,6 +138,7 @@ class NavigationViewModel : BaseViewModel() {
         eList.clear()
         sList.add(mStartLatlng!!)
         eList.add(mEndLatlng!!)
+
         var strategy = RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION
         try {
             strategy = mAMapNavi.strategyConvert(true, false, false, false, false)
@@ -169,6 +169,9 @@ class NavigationViewModel : BaseViewModel() {
                     display.set(false)
                     mAMapNaviView?.displayOverview()
                 }
+            }
+            R.id.enter -> {
+                mAMapNavi.selectRouteId(13)
             }
         }
     }

@@ -420,7 +420,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
             R.id.route_click -> {
                 var bundle = Bundle()
                 bundle.putSerializable(RouterUtils.LogRecodeConfig.PLAYER_ENTITY, deivceInfo)
-                viewModel?.startFragment(mapFr, RouterUtils.LogRecodeConfig.PLAYER, bundle)
+                viewModel?.startFragment(mapFr.parentFragment!!, RouterUtils.LogRecodeConfig.PLAYER, bundle)
             }
         }
     }

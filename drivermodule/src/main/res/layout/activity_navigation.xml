@@ -106,9 +106,11 @@
                         android:textSize="@dimen/s_24" />
 
                     <TextView
+                        android:id="@+id/enter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/d_05"
+                        android:onClick="@{navigation_model::onClick}"
                         android:text="进入"
                         android:textColor="#60FFFFFF"
                         android:textSize="@dimen/s_24" />

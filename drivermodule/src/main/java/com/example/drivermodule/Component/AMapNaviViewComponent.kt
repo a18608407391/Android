@@ -13,6 +13,10 @@ import com.example.drivermodule.ViewModel.NavigationViewModel
 import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Bus.event.RxBusEven.Companion.NAVIGATION_DATA
 import kotlinx.android.synthetic.main.activity_navigation.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Utils.ConvertUtils
 
@@ -76,7 +80,7 @@ class AMapNaviViewComponent : AMapNaviViewListener, AMapNaviListener {
 
     override fun onLocationChange(amapLocation: AMapNaviLocation) {
         this.location = amapLocation
-        RxBus.default?.post(RxBusEven.getInstance(NAVIGATION_DATA,amapLocation))
+        RxBus.default?.post(RxBusEven.getInstance(NAVIGATION_DATA, amapLocation))
 //        RxBus.default?.post(amapLocation)
     }
 
@@ -110,6 +114,7 @@ class AMapNaviViewComponent : AMapNaviViewListener, AMapNaviListener {
 //        Toast.makeText(this, "errorInfo：" + errorInfo + ",Message：" + ErrorInfo.getError(errorInfo), Toast.LENGTH_LONG).show()
         Log.e("result", "onCalculateRouteFailure")
     }
+
 
     override fun onReCalculateRouteForYaw() {
         //偏航后重新计算路线回调
@@ -342,15 +347,33 @@ class AMapNaviViewComponent : AMapNaviViewListener, AMapNaviListener {
     }
 
     override fun onCalculateRouteSuccess(aMapCalcRouteResult: AMapCalcRouteResult) {
-        if (map.navigationActivity?.type > 1) {
-            Log.e("result","导航路径选择编号" + map.navigationActivity.type)
-            map.mAMapNavi.selectRouteId(map.navigationActivity.type)
+
+
+        if(map.navigationActivity.type>1){
+           var flag =  map.mAMapNavi.selectRouteId(map.navigationActivity.type)
+            if(flag){
+                Log.e("result","选择路径成功，当前路径id" +map.navigationActivity.type )
+                map.mAMapNavi.startNavi(NaviType.GPS)
+            }
+        }else{
+            map.mAMapNavi.startNavi(NaviType.GPS)
         }
-        map.mAMapNavi.startNavi(NaviType.GPS)
+//        var path = map.mAMapNavi?.naviPaths[map.navigationActivity.type]
+
+//        if (map.navigationActivity?.type > 1) {
+//            Log.e("result", "导航路径选择编号" + map.navigationActivity.type)
+//            aMapCalcRouteResult.routeid.forEach {
+//                Log.e("result", "路线列表ID" + it)
+//            }
+//            CoroutineScope(uiContext).launch {
+//                delay(1000)
+//                map.mAMapNavi.selectRouteId(aMapCalcRouteResult.routeid[2])
+//            }
+//        }
     }
 
     override fun onCalculateRouteFailure(aMapCalcRouteResult: AMapCalcRouteResult) {
-        Log.e("result","onCalculateRouteFailure" + aMapCalcRouteResult.errorDetail)
+        Log.e("result", "onCalculateRouteFailure" + aMapCalcRouteResult.errorDetail)
     }
 
     override fun onNaviRouteNotify(aMapNaviRouteNotifyData: AMapNaviRouteNotifyData) {

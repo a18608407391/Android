@@ -408,8 +408,9 @@ class MapControllerUtils : GeocodeSearch.OnGeocodeSearchListener, DistanceSearch
         CoroutineScope(uiContext).launch {
             activity._mActivity?.showProgressDialog("正在规划路径中......")
         }
-        navi = AMapNavi.getInstance(this.activity.activity)
+        navi = AMapNavi.getInstance(context)
         navi.addAMapNaviListener(this)
+
         caculateRouteListener = activity
         var sList: MutableList<NaviLatLng> = ArrayList()
         var eList: MutableList<NaviLatLng> = ArrayList()

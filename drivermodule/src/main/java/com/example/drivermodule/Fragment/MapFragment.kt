@@ -420,6 +420,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
                         (viewModel?.items!![2] as RoadBookItemModel).doLoadDatas(its!!)
                     } else {
                         if (viewModel?.currentPosition != 2) {
+
                             viewModel?.selectTab(viewModel?.currentPosition!!)
                         }
                     }
