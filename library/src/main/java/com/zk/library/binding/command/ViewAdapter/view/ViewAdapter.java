@@ -2,8 +2,11 @@ package com.zk.library.binding.command.ViewAdapter.view;
 
 import android.databinding.BindingAdapter;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.jakewharton.rxbinding2.view.RxView;
+import com.zk.library.R;
 
 import org.cs.tec.library.binding.command.BindingCommand;
 
@@ -108,7 +111,7 @@ public class ViewAdapter {
         });
     }
 
-//    @BindingAdapter({"onTouchCommand"})
+    //    @BindingAdapter({"onTouchCommand"})
 //    public static void onTouchCommand(View view, final ResponseCommand<MotionEvent, Boolean> onTouchCommand) {
 //        view.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
@@ -120,4 +123,12 @@ public class ViewAdapter {
 //            }
 //        });
 //    }
+    @BindingAdapter("setLinearLayoutHeight")
+    public static void setLinearLayoutHeight(TextView layout, int height) {
+//        layout.setHeight(0);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) layout.getLayoutParams();
+        params.height = height;
+        layout.setLayoutParams(params);
+        layout.requestLayout();
+    }
 }

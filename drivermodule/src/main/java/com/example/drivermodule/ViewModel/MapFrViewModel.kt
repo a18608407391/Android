@@ -11,8 +11,6 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.alibaba.android.arouter.facade.Postcard
-import com.alibaba.android.arouter.facade.callback.NavCallback
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.location.AMapLocation
 import com.amap.api.maps.AMap
@@ -45,19 +43,17 @@ import com.elder.zcommonmodule.Entity.SoketBody.SoketTeamStatus
 import com.elder.zcommonmodule.Entity.StartRidingRequest
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
-import com.example.drivermodule.Fragment.RoadHomeActivity
 import com.example.drivermodule.Fragment.MapFragment
 import com.example.drivermodule.Sliding.SlidingUpPanelLayout
+import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseFragment
-import com.zk.library.Bus.ServiceEven
 import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
+import com.zk.library.Weidge.NoScrollViewPager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -67,11 +63,9 @@ import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getString
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
-import org.cs.tec.library.Bus.RxSubscriptions
 import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
 import org.cs.tec.library.http.NetworkUtil
-import java.sql.Driver
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
@@ -153,10 +147,12 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
     }
 
     override fun onTabSelected(p0: TabLayout.Tab?) {
+        Log.e("result", "onTabSelected" + currentPosition)
         if (p0!!.position == currentPosition) {
             return
         }
         if (p0!!.position == 2 && currentPosition == 3) {
+            Log.e("result", "解散队伍" + currentPosition)
             return
         }
         when (p0?.position) {
@@ -190,7 +186,6 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
                         if (date == null && mapActivity.hotData == null) {
                             if (curPosition != null) {
                                 var fr = mapActivity.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
-
                                 var bundle = Bundle()
                                 bundle.putSerializable(RouterUtils.MapModuleConfig.ROAD_CURRENT_POINT, curPosition)
                                 bundle.putInt(RouterUtils.MapModuleConfig.ROAD_CURRENT_TYPE, 1)
@@ -210,18 +205,17 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
                         changerFragment(2)
                         if (mapActivity.getRoadBookController().selecPosition != 0) {
                             mapActivity.getRoadBookController()!!.select_position.set(0)
-                        } else {
-                            mapActivity.getRoadBookController()?.recycleComponent?.initDatas(mapActivity.getRoadBookController()?.netWorkData!!, mapActivity.getRoadBookController()?.data, 0)
                         }
+                        mapActivity.getRoadBookController()?.recycleComponent?.initDatas(mapActivity.getRoadBookController()?.netWorkData!!, mapActivity.getRoadBookController()?.data, 0)
                     }
                 }
             }
         }
     }
 
-    lateinit var status: DriverDataStatus
-    var TeamStatus: SoketTeamStatus? = null
-    var backStatus: Boolean = false
+    lateinit var status: DriverDataStatus        //本地骑行状态类
+    var TeamStatus: SoketTeamStatus? = null      //本地组队状态类，目前作用不大
+    var backStatus: Boolean = false              //返回骑行界面/组队界面状态 前往地图选点判断参数
     //    var driverController = DriverController(this)
     var cur = 0L
     var curPosition: Location? = null
@@ -257,11 +251,8 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
         }
     }
 
-
     var adapter = BindingViewPagerAdapter<ItemViewModel<MapFrViewModel>>()
-
     var items = ObservableArrayList<ItemViewModel<MapFrViewModel>>()
-
 
     var itemBinding = ItemBinding.of<ItemViewModel<MapFrViewModel>> { itemBinding, position, item ->
         when (position) {
@@ -336,8 +327,10 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
     var listeners: ArrayList<Locationlistener> = ArrayList()
 
     lateinit var tab: TabLayout
+    lateinit var fr_main_rootlay: NoScrollViewPager
     private fun initTab() {
         tab = mapActivity.binding?.root!!.findViewById(R.id.topTab)
+        fr_main_rootlay = mapActivity.binding?.root!!.findViewById(R.id.fr_main_rootlay)
         tab.addTab(tab.newTab().setText(getString(R.string.driver)))
         tab.addTab(tab.newTab().setText(getString(R.string.team)))
         tab.addTab(tab.newTab().setText(getString(R.string.road_book_nomal_title)))
@@ -384,9 +377,8 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
             component.rightText.set("")
             component.type.set(1)
         }
-
         if (mapActivity.isAdded) {
-            mapActivity.fr_main_rootlay.currentItem = currentPosition
+            fr_main_rootlay.currentItem = currentPosition
         }
     }
 
@@ -443,8 +435,6 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
     fun startNavi(wayPoint: ArrayList<LatLng>, b: Int) {
         if (status.navigationEndPoint != null && status.navigationStartPoint != null) {
             var list = ArrayList<LatLng>()
-
-
             if (wayPoint != null && wayPoint.size != 0) {
                 wayPoint.forEach {
                     list.add(it)
@@ -458,9 +448,13 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
             } else if (b == 3) {
                 status.navigationType = 1
                 //组队页面点击开始导航
-
             } else if (b == 4) {
                 status.navigationType = 1
+            }
+            if (BaseApplication.MinaConnected) {
+                if (mapActivity.getTeamController().teamer.toString() == mapActivity.user.data!!.id) {
+                    mapActivity.getTeamController().sendNavigationNotify()
+                }
             }
             mapActivity?.mAmap?.moveCamera(CameraUpdateFactory.changeLatLng(LatLng(status.navigationStartPoint!!.latitude, status.navigationStartPoint!!.longitude)))
             if (status.navigationStartPoint != null && status.navigationEndPoint != null) {

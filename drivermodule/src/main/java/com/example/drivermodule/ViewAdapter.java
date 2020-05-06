@@ -103,16 +103,6 @@ public class ViewAdapter {
                 if (command != null) {
                     command.execute(event);
                 }
-//                int action = event.getAction();
-//                float x = event.getX();
-//                switch (action) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        break;
-//                }
                 return true;
             }
         });

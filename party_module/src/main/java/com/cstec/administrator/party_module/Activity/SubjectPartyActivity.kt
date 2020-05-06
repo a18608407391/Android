@@ -17,12 +17,14 @@ import com.cstec.administrator.party_module.databinding.ActivitySubjectPartyBind
 import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Utils.Utils
 import com.zk.library.Base.BaseFragment
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import com.zk.library.Utils.StatusbarUtils
 import kotlinx.android.synthetic.main.activity_subject_party.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.cs.tec.library.Base.Utils.getStatusBarHeight
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
@@ -64,6 +66,7 @@ class SubjectPartyActivity : BaseFragment<ActivitySubjectPartyBinding, SubjectPa
 
     override fun initData() {
         super.initData()
+        RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.StatusBar, getStatusBarHeight()))
         Utils.setStatusTextColor(true, activity)
         location = arguments!!.getSerializable(RouterUtils.PartyConfig.PARTY_LOCATION) as Location?
         city = arguments!!.getString(RouterUtils.PartyConfig.PARTY_CITY)
@@ -76,6 +79,11 @@ class SubjectPartyActivity : BaseFragment<ActivitySubjectPartyBinding, SubjectPa
             subject_TabLayout.getTabAt(type)!!.select()
         }
         viewModel?.inject(this)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.StatusBar, 0))
     }
 
 //    fun returnBack() {

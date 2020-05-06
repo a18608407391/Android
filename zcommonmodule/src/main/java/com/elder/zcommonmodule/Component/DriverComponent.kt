@@ -34,10 +34,10 @@ class DriverComponent : TitleComponent(), Serializable {
 
 
 
-    var isTeam  = ObservableField<Boolean>(false)
+    var isTeam  = ObservableField<Boolean>(false)            //以前用于判断组队是否开启，现在作用不大
 
 
-    var Drivering = ObservableField<Boolean>(true)
+    var Drivering = ObservableField<Boolean>(true)       //用于判断界面右边5个按钮内显示方式
 
     var fiveListener: onFiveClickListener? = null
 

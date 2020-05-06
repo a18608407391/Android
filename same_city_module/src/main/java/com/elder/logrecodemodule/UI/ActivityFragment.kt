@@ -61,6 +61,10 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
     var CurrentClickTime = 0L
     override fun initData() {
         super.initData()
+        if (arguments!!.get("location") != null) {
+            viewModel?.receiveLocation(arguments!!.getParcelable<AMapLocation>("location"))
+        }
+
         viewModel?.inject(this)
         if (this.isAdded) {
             poketSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE)

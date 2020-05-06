@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.activity_search_party.*
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
 import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Bus.RxBus
 import java.io.Serializable
 
 
@@ -75,6 +76,7 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
     var items = ObservableArrayList<PartySearchEntity>()
 
     fun itemClick(entity: PartySearchEntity) {
+        RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.StatusBar,0))
         when (entity.BIG_TYPE) {
             1 -> {
 //                ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
@@ -94,7 +96,6 @@ class SearchPartyViewModel : BaseViewModel(), HttpInteface.PartySearch, TextView
                 startFragment(activity, RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL, bundle)
             }
             2 -> {
-
                 var bundle = Bundle()
                 bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                         Location(activity.location!!.latitude, activity.location!!.longitude))

@@ -211,14 +211,16 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                                                 @Override
                                                 public void onBtnClick() {
                                                     dialog.dismiss();
-                                                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_ACTIVITY)
+                                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME)
                                                             .withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue")
                                                             .navigation(WXEntryActivity.this, new NavCallback() {
                                                                 @Override
                                                                 public void onArrival(Postcard postcard) {
-                                                                    Stack<Activity> activities = AppManager.Companion.getActivityStack();
-                                                                    activities.get(0).finish();
-                                                                    activities.get(1).finish();
+                                                                    AppManager.Companion.get().finishOtherActivity(HomeActivity.class);
+//                                                                    Stack<Activity> activities = AppManager.Companion.getActivityStack();
+//
+//                                                                    activities.get(0).finish();
+//                                                                    activities.get(1).finish();
                                                                 }
                                                             });
                                                 }
@@ -273,9 +275,10 @@ public class WXEntryActivity extends AppCompatActivity implements IWXAPIEventHan
                 .navigation(WXEntryActivity.this, new NavCallback() {
                     @Override
                     public void onArrival(Postcard postcard) {
-                        Stack<Activity> activities = AppManager.Companion.getActivityStack();
-                        activities.get(0).finish();
-                        activities.get(1).finish();
+                        AppManager.Companion.get().finishOtherActivity(HomeActivity.class);
+//                        Stack<Activity> activities = AppManager.Companion.getActivityStack();
+//                        activities.get(0).finish();
+//                        activities.get(1).finish();
                     }
                 });
     }

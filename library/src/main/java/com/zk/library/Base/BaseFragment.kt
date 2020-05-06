@@ -312,7 +312,6 @@ abstract class BaseFragment<V : ViewDataBinding, VM : BaseViewModel> : RxFragmen
             } else {
                 onUserInvisible()
             }
-
         }
     }
 

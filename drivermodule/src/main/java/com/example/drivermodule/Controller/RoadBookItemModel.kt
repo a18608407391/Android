@@ -89,7 +89,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     var lastMarker: Marker? = null
 
     var pagerAdapter = BindingRecyclerViewAdapter<BottomHoriDatas>()
-    var itemBinding = ItemBinding.of<BottomHoriDatas>(BR.horiDatas, R.layout.roadbook_bottom_hori_item_layout)
+    var itemBinding = ItemBinding.of<BottomHoriDatas>(BR.horiDatas, R.layout.roadbook_bottom_hori_item_layout).bindExtra(BR.road_model,this@RoadBookItemModel)
     var items = ObservableArrayList<BottomHoriDatas>()
 
     var recycleComponent = SimpleItemRecycleComponent(this)
@@ -115,24 +115,23 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
 
     fun toNavi(data: BottomHoriDatas) {
         if (viewModel?.status.navigationType == 0) {
-            viewModel?.status!!.navigationEndPoint = Location(data.lat, data.lon, System.currentTimeMillis().toString(), 0F, 0.0, 0F)
+            viewModel?.status!!.navigationEndPoint = Location(data.lat, data.lon, System.currentTimeMillis().toString(), 0F, 0.0, 0F, data.describe.get()!!)
             if (viewModel?.status.startDriver.get() == DriverCancle) {
                 viewModel?.startDriver(4)
             } else {
-
+                viewModel?.startNavi(ArrayList(), 4)
             }
         } else {
             if (viewModel?.status.navigationEndPoint?.latitude != data.lat || viewModel?.status.navigationEndPoint!!.longitude != data.lon) {
                 var socket = SoketNavigation()
-                socket.navigation_end = Location(data.lat, data.lon, System.currentTimeMillis().toString(), 0F, 0.0, 0F)
+                socket.navigation_end = Location(data.lat, data.lon, System.currentTimeMillis().toString(), 0F, 0.0, 0F, data.describe.get()!!)
                 socket.wayPoint = ArrayList()
                 socket.type = "road"
                 RxBus.default?.post(socket)
             }
             var list = ArrayList<LatLng>()
-            viewModel?.status!!.navigationEndPoint = Location(data.lat, data.lon, System.currentTimeMillis().toString(), 0F, 0.0, 0F)
-
-//            viewModel?.startNavi(driverViewModel?.status!!.navigationStartPoint!!, driverViewModel?.status!!.navigationEndPoint!!, list, false)
+            viewModel?.status!!.navigationEndPoint = Location(data.lat, data.lon, System.currentTimeMillis().toString(), 0F, 0.0, 0F, data.describe.get()!!)
+            viewModel?.startNavi(list, 4)
 //        driverViewModel?.startNavi(driverViewModel?.status!!.navigationStartPoint!!, driverViewModel?.status!!.navigationEndPoint!!, list, false)
         }
 

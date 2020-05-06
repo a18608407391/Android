@@ -8,6 +8,7 @@ import android.databinding.ViewDataBinding
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -106,6 +107,10 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     var type: String? = null   //队伍创建加入界面返回的参数
     var soketNavigation: SoketNavigation? = null
     fun restAllData() {
+        markerListNumber.forEach {
+            markerList[it]?.remove()
+        }
+        markerListNumber.clear()
         markerList.clear()
         TeamInfo = null
         teamer = 0
@@ -160,53 +165,79 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                         startTime = viewModel.TeamStatus?.teamCreate?.createTime!!
                     }
                 }
+
                 titleName.set("")
                 so.userId = mapFr.user.data!!.id
                 teamId = so.teamId
                 teamCode.set(so.teamCode)
+
                 sendOrder(so, false)
                 viewModel.TeamStatus?.teamStatus = TeamStarting
                 viewModel?.TeamStatus?.save()
+
             }
             TeamSocketDisConnect -> {
                 //组队Socket已断开
             }
             MinaDataReceive -> {
+
                 //组队数据接收
+
                 doSocket((it.value) as BasePacketReceive)
+
             }
         }
     }
 
     override fun ItemViewModel(viewModel: MapFrViewModel): ItemViewModel<MapFrViewModel> {
+
         mapFr = viewModel.mapActivity
+
         return super.ItemViewModel(viewModel)
+
     }
 
-
     fun sendOrder(n: Soket, flag: Boolean) {
+
         if (mapFr.onStart && flag) {
+
             CoroutineScope(uiContext).launch {
+
                 mapFr.showProgressDialog(getString(R.string.get_message))
+
             }
+
         }
 
         var pos = ServiceEven()
+
         pos.type = "sendData"
+
         pos.gson = Gson().toJson(n) + "\\r\\n"
+
         RxBus.default?.post(pos)
+
     }
 
 
     var HeartTimeLimit = 0L
 
     private fun doSocket(it: BasePacketReceive) {
+
+        Log.e("result", "doSocket" + Gson().toJson(it))
+
         if (mapFr.isAdded) {
+
             if (BaseApplication.isClose) {
+
                 return
+
             }
+
             if (it.code == 0) {
+
                 when (it.type) {
+
                     SocketDealType.HEART_BEAT.code -> {
                         //发送心跳
                         if (System.currentTimeMillis() - HeartTimeLimit < 10000) {
@@ -370,8 +401,6 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                     }
                     SocketDealType.DISMISSTEAM.code -> {
                         //解散队伍
-
-
                         CoroutineScope(uiContext).launch {
                             Toast.makeText(context, "您的队伍已被解散！", Toast.LENGTH_SHORT).show()
                         }
@@ -428,7 +457,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
 
     var notifyRouteChange: NormalDialog? = null
     private fun createDistrictDialog() {
-        if(mapFr.isVisible&&viewModel?.currentPosition==1){
+        if (mapFr.isVisible && viewModel?.currentPosition == 1) {
             if (notifyRouteChange == null) {
                 notifyRouteChange = DialogUtils.createNomalDialog(mapFr.activity!!, getString(R.string.route_change), getString(R.string.ignore), getString(R.string.change_route))
                 notifyRouteChange!!.setOnBtnClickL(OnBtnClickL {
@@ -471,10 +500,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
             } else {
                 viewModel?.startNavi(list, 3)
             }
-            sendNavigationNotify()
-
 //            viewModel?.startNavi(viewModel?.status!!.navigationStartPoint!!, viewModel?.status!!.navigationEndPoint!!, list, flag)
-
         } else {
             if (soketNavigation != null) {
                 viewModel?.status.navigationEndPoint = soketNavigation?.navigation_end
@@ -498,7 +524,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
         }
     }
 
-    private fun sendNavigationNotify() {
+     fun sendNavigationNotify() {
         var so = Soket()
         so.type = SocketDealType.NAVIGATION_START.code
         so.teamCode = teamCode.get()
@@ -543,6 +569,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     }
 
     fun initInfo() {
+        Log.e("result", "initInfo处理")
         if (TeamInfo != null && TeamInfo?.redisData != null && TeamInfo?.redisData?.createTime != null) {
             if (TeamInfo?.redisData?.teamName != null) {
                 titleName.set(TeamInfo?.redisData?.teamName + "(" + TeamInfo?.redisData?.dtoList?.size + ")")
@@ -555,9 +582,9 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                 addChildView(TeamInfo?.redisData!!.dtoList)
                 viewModel?.component.isTeam.set(true)
             }
-            Log.e("result","initInfo处理1")
+            Log.e("result", "initInfo处理1")
         } else {
-              Log.e("result","initInfo处理")
+            Log.e("result", "initInfo处理")
         }
         mapFr.dismissProgressDialog()
     }
@@ -768,7 +795,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
         }
     }
 
-    var xF  =0F
+    var xF = 0F
     var scrollerCallBack = BindingCommand(object : BindingConsumer<MotionEvent> {
         override fun call(event: MotionEvent) {
             var action = event.action
@@ -828,31 +855,36 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
 
     fun endTeam(b: Boolean) {
         Log.e("result", "解散队伍endTeam")
-        var so = Soket()
-        so.teamCode = teamCode.get()
-        so.teamId = teamId
-        so.userId = mapFr.user.data?.id
-        if (b) {
-            if (mapFr.user.data?.id == teamer.toString()) {
-                so.type = SocketDealType.DISMISSTEAM.code
-            } else {
-                so.type = SocketDealType.LEAVETEAM.code
-            }
-        }
-        sendOrder(so, false)
-        closeMina()
-        viewModel.TeamStatus!!.resetTeam()
-        viewModel.TeamStatus = null
         CoroutineScope(uiContext).launch {
-            delay(200)
-            viewModel?.selectTab(0)
+            var so = Soket()
+            so.teamCode = teamCode.get()
+            so.teamId = teamId
+            so.userId = mapFr.user.data?.id
+            if (b) {
+                if (mapFr.user.data?.id == teamer.toString()) {
+                    so.type = SocketDealType.DISMISSTEAM.code
+                } else {
+                    so.type = SocketDealType.LEAVETEAM.code
+                }
+            }
+            mapFr.teamCode = null
+            sendOrder(so, false)
+            closeMina()
+            if(viewModel.TeamStatus!=null){
+                Log.e("result","TeamStatus不为空")
+                viewModel.TeamStatus!!.resetTeam()
+            }
+            viewModel.TeamStatus = null
+            mapFr.viewModel?.selectTab(0)
         }
     }
 
     fun backToDriver() {
+        Log.e("result", "backToDriver")
         if (BaseApplication.isClose) {
             //不发送消息 清空所有数据
             restAllData()
+            Log.e("result", "isClose")
         } else {
             markerListNumber.forEach {
                 markerList[it]?.remove()
@@ -860,15 +892,15 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
             markerListNumber.clear()
             markerList.clear()
             //发送消息
+            Log.e("result", "isOpen")
         }
         if (viewModel?.status.startDriver.get() == TeamModel) {
             viewModel?.status.startDriver.set(DriverCancle)
         }
+        Log.e("result", "backToDriver`1")
         viewModel?.component.isTeam.set(false)
         viewModel.changerFragment(0)
     }
-
-
 
 
     fun backToRoad() {
@@ -890,7 +922,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
         viewModel.changerFragment(2)
     }
 
-     fun onLocation(location: AMapLocation) {
+    fun onLocation(location: AMapLocation) {
         if (BaseApplication.MinaConnected) {
             //发送定位
             this.location = location
@@ -934,11 +966,11 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                 viewModel?.selectTab(0)
             }
             R.id.change_map_point -> {
-                if(viewModel?.status.navigationType==0){
+                if (viewModel?.status.navigationType == 0) {
                     viewModel.backStatus = true
                     backToDriver()
                     (viewModel?.items[0] as DriverItemModel).changeMap_Point_btn()
-                }else{
+                } else {
                     var list = ArrayList<LatLng>()
                     viewModel?.status.passPointDatas.forEach {
                         list.add(LatLng(it.latitude, it.longitude))

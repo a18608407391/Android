@@ -37,11 +37,11 @@ import org.cs.tec.library.USERID
 class LowLocationService : IntentService, AMapLocationListener {
     private var mediaPlayer: MediaPlayer? = null
     var lastTime: Long = 0
+    var sid = android.os.Process.myPid();
     override fun onLocationChanged(amapLocation: AMapLocation?) {
         if (amapLocation != null && amapLocation.errorCode == 0) {
 //            if (amapLocation.locationType == 1) {
-            Log.e("result",amapLocation.toStr())
-            var rx = RxBusEven.getInstance(RxLocation,amapLocation)
+            var rx = RxBusEven.getInstance(RxLocation, amapLocation)
             RxBus.default?.post(rx)
             builder?.setContentText("当前位置")
             if (amapLocation.accuracy < 30 && action == "driver") {
@@ -63,13 +63,28 @@ class LowLocationService : IntentService, AMapLocationListener {
 
 
     var minaService: MinaService? = null
+    var notiyConnect: NotifyConnection? = null
+    class NotifyConnection : ServiceConnection {
+        var serivce: LowLocationService
+        constructor(serivce: LowLocationService) {
+            this.serivce = serivce
+        }
+        override fun onServiceDisconnected(name: ComponentName?) {
+        }
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            if (android.os.Build.VERSION.SDK_INT >= 26) {
+                serivce.createNotifyCation()
+                serivce.stopForeground(true)
+                serivce.unbindService(serivce.notiyConnect)
+                serivce.notiyConnect = null
+            }
+        }
+    }
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            Log.e("result", "MINA启动")
             var binder = service as MinaService.LocalBinder
             minaService = binder.service
             minaService!!.start()
-
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -78,6 +93,20 @@ class LowLocationService : IntentService, AMapLocationListener {
 //            bindService(Intent(this@LowLocationService, RemoteService::class.java), this, Context.BIND_IMPORTANT)
         }
     }
+
+
+//    var remoteervice: RemoteService? = null
+//    var notifyConnection = object : ServiceConnection {
+//        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+//
+//        }
+//
+//        override fun onServiceDisconnected(name: ComponentName) {
+////            PreferenceUtils.putString(context, "FinishTimeRemote", System.currentTimeMillis().toString())
+////            startService(Intent(this@LowLocationService, RemoteService::class.java))
+////            bindService(Intent(this@LowLocationService, RemoteService::class.java), this, Context.BIND_IMPORTANT)
+//        }
+//    }
 
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
@@ -107,19 +136,13 @@ class LowLocationService : IntentService, AMapLocationListener {
         userid = PreferenceUtils.getString(context, USERID)
         when (intent?.action) {
             SERVICE_CREATE -> {
-
-
                 lastTime = System.currentTimeMillis()
-//                if (android.os.Build.VERSION.SDK_INT >= 26) {
-//                    context.startForegroundService(Intent(this@LowLocationService, RemoteService::class.java))
-//                } else {
-//                    startService(Intent(this@LowLocationService, RemoteService::class.java))
-//                }
-
                 if (mediaPlayer == null) {
                     if (android.os.Build.VERSION.SDK_INT >= 26) {
                         createNotifyCation()
                     }
+                    notiyConnect = NotifyConnection(this)
+                    bindService(Intent(this, RemoteService::class.java), notiyConnect, Context.BIND_AUTO_CREATE)
                     mediaPlayer = MediaPlayer.create(this, R.raw.silents)
                     mediaPlayer?.setVolume(0f, 0f)
                     mediaPlayer?.setOnCompletionListener {
@@ -132,6 +155,7 @@ class LowLocationService : IntentService, AMapLocationListener {
                     }
                     play()
                 }
+
                 if (mLocationClient == null || !mLocationClient!!.isStarted) {
                     startLocation(true)
                 }
@@ -208,13 +232,13 @@ class LowLocationService : IntentService, AMapLocationListener {
         notification = Notification.Builder(this)
                 .setChannelId(UtilityConfig.CHANNEL_ID)
                 .setContentTitle(getString(R.string.app_name))//标题
-                .setContentText("运行中...")//内容
+                .setContentText("正在获取定位信息中.....")//内容
 //                .setContentIntent(pending)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)//小图标一定需要设置,否则会报错(如果不设置它启动服务前台化不会报错,但是你会发现这个通知不会启动),如果是普通通知,不设置必然报错
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
                 .build();
-        startForeground(1, notification);//服务前台化只能使用startForeground()方法,不能使用
+        startForeground(sid, notification);//服务前台化只能使用startForeground()方法,不能使用
     }
 
     var builder: Notification.Builder? = null
@@ -238,7 +262,7 @@ class LowLocationService : IntentService, AMapLocationListener {
                 isCreateChannel = true
             }
             builder = Notification.Builder(applicationContext, channelId)
-            startForeground(10, builder?.build())
+            startForeground(sid, builder?.build())
         } else {
             builder = Notification.Builder(applicationContext)
         }

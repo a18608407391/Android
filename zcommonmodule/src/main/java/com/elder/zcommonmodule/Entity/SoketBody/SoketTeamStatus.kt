@@ -14,7 +14,7 @@ import java.io.Serializable
 class SoketTeamStatus : Serializable {
 
     //组队相关
-    var uid  =0
+    var uid = 0
     var startTeam: Boolean = false   //是否组队
     var teamCreate: CreateTeamInfoDto? = null
     var teamJoin: TeamPersonnelInfoDto? = null
@@ -24,9 +24,9 @@ class SoketTeamStatus : Serializable {
         teamCreate = null
         teamJoin = null
         teamStatus = 0
-     var flag =    File(Environment.getExternalStorageDirectory().getPath() + "/Amoski" + Team_Status_Save_PATH).delete()
-        if(flag){
-            Log.e("result","删除成功")
+        var flag = File(Environment.getExternalStorageDirectory().getPath() + "/Amoski" + Team_Status_Save_PATH).delete()
+        if (flag) {
+            Log.e("result", "删除成功")
         }
     }
 

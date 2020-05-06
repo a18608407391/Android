@@ -30,6 +30,7 @@ import com.example.private_module.UI.UserInfoFragment
 import com.zk.library.Base.AppManager
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import kotlinx.android.synthetic.main.activity_home.*
@@ -43,8 +44,22 @@ import org.cs.tec.library.http.NetworkUtil
 import java.util.*
 
 
-class HomeViewModel : BaseViewModel(){
-//
+class HomeViewModel : BaseViewModel() {
+
+
+    var statusHeight = ObservableField(0)
+
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.StatusBar -> {
+                statusHeight.set(it.value as Int)
+            }
+        }
+    }
+
+    //
 //
 //    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
 //        when (checkedId) {

@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
 import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.maps.AMap
@@ -27,8 +28,10 @@ import com.elder.zcommonmodule.DataBases.queryDriverStatus
 import com.elder.zcommonmodule.DataBases.queryUserInfo
 import com.elder.zcommonmodule.Entity.DriverDataStatus
 import com.elder.zcommonmodule.Entity.HotData
+import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Entity.UserInfo
 import com.elder.zcommonmodule.Service.SERVICE_DRIVER
+import com.elder.zcommonmodule.Utils.DialogUtils
 import com.elder.zcommonmodule.Utils.Utils
 import com.example.drivermodule.BR
 import com.example.drivermodule.CalculateRouteListener
@@ -259,6 +262,12 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
 
     override fun initData() {
         super.initData()
+        if (arguments!!.get("location") != null) {
+            var location = arguments!!.getParcelable<AMapLocation>("location")
+            if (location != null) {
+                viewModel?.curPosition = Location(location.latitude, location.longitude, System.currentTimeMillis().toString())
+            }
+        }
 
     }
 
@@ -271,7 +280,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
             viewModel?.status?.uid = user.data?.id!!
         } else {
             var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))[0]
-            Log.e("result", "骑行数据"+status.locationLat.size)
+            Log.e("result", "骑行数据" + status.locationLat.size)
             viewModel?.status = status
         }
     }
@@ -292,6 +301,7 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
 
     var initStatus = false
     fun initMap() {
+        Log.e("result", "initMap")
         initStatus = true
         var pos = ServiceEven()
         pos.type = SERVICE_DRIVER
@@ -456,5 +466,11 @@ class MapFragment : BaseFragment<FragmentMapBinding, MapFrViewModel>(), Location
 
         }
         return true
+    }
+
+    var teamCode: String? = null
+    fun setCode(code: String?) {
+        teamCode = code
+
     }
 }

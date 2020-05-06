@@ -61,7 +61,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
                 ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation()
                 finish()
             } else {
-                Log.e("result", "执行了finishOtherActivity")
 //                context.startService(Intent(context, LowLocationService::class.java).setAction(SERVICE_CANCLE_MINA))
                 var pos = ServiceEven()
                 pos.type = "MinaServiceCancle"

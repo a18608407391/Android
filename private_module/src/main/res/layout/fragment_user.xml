@@ -19,15 +19,14 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/d_55"
         android:orientation="vertical">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/d_50"
             android:background="@color/trans"></RelativeLayout>
-
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/user_nest"
             android:layout_width="match_parent"
+
             android:layout_height="match_parent">
 
             <LinearLayout

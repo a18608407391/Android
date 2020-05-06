@@ -55,6 +55,7 @@ import com.liulishuo.filedownloader.BaseDownloadTask
 import com.liulishuo.filedownloader.FileDownloadSampleListener
 import com.liulishuo.filedownloader.FileDownloader
 import com.zk.library.Bus.event.RxBusEven
+import com.zk.library.Utils.StatusbarUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -72,7 +73,6 @@ import java.io.File
 
 class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpInteface.IRelogin {
     override fun IReloginSuccess(t: String) {
-
         Log.e("result", "重新获取Token成功")
         var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
         PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
@@ -86,6 +86,8 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
     }
 
     var teamCode: String? = null
+
+
     var isNetError = false
     override fun onDriveRouteSearched(p0: DriveRouteResult?, p1: Int) {
         var id = PreferenceUtils.getString(context, USERID)
@@ -121,13 +123,14 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        StatusbarUtils.fullScreen(this)
         if (intent != null) {
             if (!intent.scheme.isNullOrEmpty()) {
                 var uri = intent.data
                 teamCode = uri.getQueryParameter("teamCode")
             }
         }
-        Log.e("result","当前Code" + teamCode)
+        Log.e("result", "当前Code" + teamCode)
         if (!NetworkUtil.isNetworkAvailable(this)) {
             isNetError = true
 //            ARouter.getInstance().build(RouterUtils.MapModuleConfig.SMOOTH_ACTIVITY).navigation()
@@ -139,9 +142,17 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
                 override fun onArrival(postcard: Postcard?) {
                     if (teamCode != null) {
-                        RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
+                        if (PreferenceUtils.getString(context, USER_TOKEN) != null) {
+                            RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
+                            finish()
+                        } else {
+                            ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this@SplashActivity, object : NavCallback() {
+                                override fun onArrival(p0: Postcard?) {
+                                    finish()
+                                }
+                            })
+                        }
                     }
-                    finish()
                 }
             })
             return
@@ -184,85 +195,79 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
 
 
     var loc: AMapLocation? = null
-    fun doMain() {
-        //必要事情，请求权限
-//          goHome()
-
-
-        if (PreferenceUtils.getString(context, USERID) != null) {
-            var location = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if (!location.isProviderEnabled(LocationManager.GPS_PROVIDER) || !location.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                Toast.makeText(context, getString(R.string.get_point_time_out), Toast.LENGTH_SHORT).show()
-                var intent = Intent()
-                intent.setAction(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivity(intent)
-            } else if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, getString(R.string.permisstion_error), Toast.LENGTH_SHORT).show()
-                var intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.data = Uri.parse("package:$packageName")
-                startActivity(intent)
-            } else {
-            }
-        }
-
-
-        var flag = checkDriverStatus()
-        if (flag) {
-            Log.e("result", "token失效3")
-            var pos = ServiceEven()
-            pos.type = SERVICE_CREATE
-            RxBus.default?.post(pos)
-            dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
-                when (it.type) {
-                    RxBusEven.RxLocation -> {
-                        Log.e("result", "token失效4")
-                        var loction = it.value as AMapLocation
-                        var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
-                        if (status[0].locationLat.size != 0) {
-                            var driver = status[0].locationLat
-                            var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(loction.latitude, loction.longitude))
-                            if (dis < 1000) {
-                                if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
-                                    status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
-                                }
-                                UpdateDriverStatus(status[0])
-                                doStatus(status)
-                            } else {
-                                var mRoutePath = RouteSearch(this)
-                                mRoutePath.setRouteSearchListener(this)
-                                var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(loction.latitude, loction.longitude))
-                                var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
-                                        null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
-                                mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
-                            }
-                        } else {
-                            doStatus(status)
-                        }
-                        dispose?.dispose()
-                        RxSubscriptions.remove(dispose)
-                    }
-                }
-
-            }
-            RxSubscriptions.add(dispose)
-        } else {
-            Log.e("result", "token失效3")
-            if (BaseApplication.getInstance().curActivity == 0) {
-                goHome()
-            } else {
-                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation()
-                if (teamCode != null) {
-                    RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
-                }
-                finish()
-            }
-        }
-    }
+//    fun doMain() {
+//        //必要事情，请求权限
+////          goHome()
+//
+//        if (PreferenceUtils.getString(context, USERID) != null) {
+//            var location = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//            if (!location.isProviderEnabled(LocationManager.GPS_PROVIDER) || !location.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+//                Toast.makeText(context, getString(R.string.get_point_time_out), Toast.LENGTH_SHORT).show()
+//                var intent = Intent()
+//                intent.setAction(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+//                startActivity(intent)
+//            } else if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                Toast.makeText(context, getString(R.string.permisstion_error), Toast.LENGTH_SHORT).show()
+//                var intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//                intent.data = Uri.parse("package:$packageName")
+//                startActivity(intent)
+//            } else {
+//            }
+//        }
+//        var flag = checkDriverStatus()
+//        if (flag) {
+//            Log.e("result", "token失效3")
+//            var pos = ServiceEven()
+//            pos.type = SERVICE_CREATE
+//            RxBus.default?.post(pos)
+//            dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
+//                when (it.type) {
+//                    RxBusEven.RxLocation -> {
+//                        Log.e("result", "token失效4")
+//                        var loction = it.value as AMapLocation
+//                        var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
+//                        if (status[0].locationLat.size != 0) {
+//                            var driver = status[0].locationLat
+//                            var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(loction.latitude, loction.longitude))
+//                            if (dis < 1000) {
+//                                if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
+//                                    status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
+//                                }
+//                                UpdateDriverStatus(status[0])
+//                                doStatus(status)
+//                            } else {
+//                                var mRoutePath = RouteSearch(this)
+//                                mRoutePath.setRouteSearchListener(this)
+//                                var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(loction.latitude, loction.longitude))
+//                                var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
+//                                        null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
+//                                mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
+//                            }
+//                        } else {
+//                            doStatus(status)
+//                        }
+//                        dispose?.dispose()
+//                        RxSubscriptions.remove(dispose)
+//                    }
+//                }
+//            }
+//            RxSubscriptions.add(dispose)
+//        } else {
+////            Log.e("result", "token失效3")
+////            if (BaseApplication.getInstance().curActivity == 0) {
+////                goHome()
+////            } else {
+////                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation()
+////                if (teamCode != null) {
+////                    RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
+////                }
+////                finish()
+////            }
+//        }
+//    }
 
 
     fun Nomal() {
-
-
         var info = context.packageManager.getPackageInfo(context.packageName, 0)
         var map = HashMap<String, String>()
         map.put("version", info.versionCode.toString())
@@ -380,68 +385,68 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
     }
 
 
-    fun doStatus(status: ArrayList<DriverDataStatus>) {
-        Log.e("result", "token失效5")
-        if (BaseApplication.getInstance().curActivity == 0) {
-            var time = "0"
-            if (status[0].locationLat.size != 0) {
-                var location = status[0].locationLat[status[0].locationLat.size - 1]
-                time = location.time
-            }
-            if (System.currentTimeMillis() - time.toLong() > 60000) {
-                var flag = PreferenceUtils.getBoolean(context, SERVICE_AUTO_BOOT_COMPLETED)
-                if (!flag || !OSUtil.checkIgnoreBattery(this)) {
-                    var dialog = DialogUtils.createNomalDialog(this, getString(R.string.checked_exception_out), getString(R.string.finish_driver), getString(R.string.continue_driving))
-                    dialog.setOnBtnClickL(OnBtnClickL {
-                        dialog.dismiss()
-                        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation()
-                    }, OnBtnClickL {
-                        dialog.dismiss()
-                        Log.e("result", "进入5")
-                        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-                            override fun onArrival(postcard: Postcard?) {
-                                this@SplashActivity.finish()
-                            }
-                        })
-                    })
-                    dialog.show()
-                } else {
-                    Log.e("result", "进入4")
-                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-                        override fun onArrival(postcard: Postcard?) {
-                            this@SplashActivity.finish()
-                        }
-                    })
-                }
-            } else {
-                Log.e("result", "进入3")
-                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            }
-        } else {
-            Log.e("result", "进入1")
-            if (BaseApplication.getInstance().curActivity == 1) {
-                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        if (teamCode != null) {
-                            RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
-                        }
-                        finish()
-                    }
-                })
-            } else if (BaseApplication.getInstance().curActivity == 3) {
-                Log.e("result", "进入2")
-                ARouter.getInstance().build(RouterUtils.MapModuleConfig.NAVIGATION).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
-                    override fun onArrival(postcard: Postcard?) {
-                        finish()
-                    }
-                })
-            }
-        }
-    }
+//    fun doStatus(status: ArrayList<DriverDataStatus>) {
+//        Log.e("result", "token失效5")
+//        if (BaseApplication.getInstance().curActivity == 0) {
+//            var time = "0"
+//            if (status[0].locationLat.size != 0) {
+//                var location = status[0].locationLat[status[0].locationLat.size - 1]
+//                time = location.time
+//            }
+//            if (System.currentTimeMillis() - time.toLong() > 60000) {
+//                var flag = PreferenceUtils.getBoolean(context, SERVICE_AUTO_BOOT_COMPLETED)
+//                if (!flag || !OSUtil.checkIgnoreBattery(this)) {
+//                    var dialog = DialogUtils.createNomalDialog(this, getString(R.string.checked_exception_out), getString(R.string.finish_driver), getString(R.string.continue_driving))
+//                    dialog.setOnBtnClickL(OnBtnClickL {
+//                        dialog.dismiss()
+//                        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation()
+//                    }, OnBtnClickL {
+//                        dialog.dismiss()
+//                        Log.e("result", "进入5")
+//                        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
+//                            override fun onArrival(postcard: Postcard?) {
+//                                this@SplashActivity.finish()
+//                            }
+//                        })
+//                    })
+//                    dialog.show()
+//                } else {
+//                    Log.e("result", "进入4")
+//                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
+//                        override fun onArrival(postcard: Postcard?) {
+//                            this@SplashActivity.finish()
+//                        }
+//                    })
+//                }
+//            } else {
+//                Log.e("result", "进入3")
+//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            }
+//        } else {
+//            Log.e("result", "进入1")
+//            if (BaseApplication.getInstance().curActivity == 1) {
+//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        if (teamCode != null) {
+//                            RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
+//                        }
+//                        finish()
+//                    }
+//                })
+//            } else if (BaseApplication.getInstance().curActivity == 3) {
+//                Log.e("result", "进入2")
+//                ARouter.getInstance().build(RouterUtils.MapModuleConfig.NAVIGATION).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
+//                    override fun onArrival(postcard: Postcard?) {
+//                        finish()
+//                    }
+//                })
+//            }
+//        }
+//    }
 
 
     override fun onDestroy() {
@@ -640,68 +645,76 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         }
     }
 
-
     fun checkDriver() {
-        var pos = ServiceEven()
-        pos.type = SERVICE_CREATE
-        RxBus.default?.post(pos)
-        dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
-            when (it.type) {
-                RxBusEven.RxLocation -> {
-                    var loction = it.value as AMapLocation
-                    this.loc = loction
-                    var flag = checkDriverStatus()
-                    if (flag) {
-                        var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
-                        if (status[0].locationLat.size != 0) {
-                            var driver = status[0].locationLat
-                            var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(loction.latitude, loction.longitude))
-                            if (dis < 1000) {
-                                if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
-                                    status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
-                                }
-                                UpdateDriverStatus(status[0])
-                                doStatusLocation(status, loction)
-                            } else {
-                                var mRoutePath = RouteSearch(this)
-                                mRoutePath.setRouteSearchListener(this)
-                                var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(loction.latitude, loction.longitude))
-                                var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
-                                        null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
-                                mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
-                            }
-                        } else {
-                            doStatusLocation(status, loction)
-                        }
-                    } else {
-                        var flag = PreferenceUtils.getBoolean(context, APP_CREATE, false)
-                        if (flag) {
-                            var token = PreferenceUtils.getString(context, USER_TOKEN)
-                            if (token == null) {
-                                ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
-                                    override fun onArrival(postcard: Postcard?) {
-                                        finish()
+        var token = PreferenceUtils.getString(context, USER_TOKEN)
+        var flag = PreferenceUtils.getBoolean(context, APP_CREATE, false)
+        if (!flag) {
+            PreferenceUtils.putBoolean(context, APP_CREATE, true)
+            ARouter.getInstance().build(RouterUtils.ActivityPath.GUIDE).navigation(this, object : NavCallback() {
+                override fun onArrival(postcard: Postcard?) {
+                    finish()
+                }
+            })
+        } else {
+            if (token == null) {
+                ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
+                    override fun onArrival(postcard: Postcard?) {
+                        finish()
+                    }
+                })
+            } else {
+                var pos = ServiceEven()
+                pos.type = SERVICE_CREATE
+                RxBus.default?.post(pos)
+                dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
+                    when (it.type) {
+                        RxBusEven.RxLocation -> {
+                            var loction = it.value as AMapLocation
+                            this.loc = loction
+                            var flag = checkDriverStatus()
+                            if (flag) {
+                                var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
+                                if (status[0].locationLat.size != 0) {
+                                    var driver = status[0].locationLat
+                                    var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(loction.latitude, loction.longitude))
+                                    if (dis < 1000) {
+                                        if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
+                                            status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
+                                        }
+                                        UpdateDriverStatus(status[0])
+                                        doStatusLocation(status, loction)
+                                    } else {
+                                        var mRoutePath = RouteSearch(this)
+                                        mRoutePath.setRouteSearchListener(this)
+                                        var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(loction.latitude, loction.longitude))
+                                        var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
+                                                null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
+                                        mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
                                     }
-                                })
-                            } else {
-                                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withParcelable(RouterUtils.ActivityPath.AMAP_LOCATION, loction).navigation(this, object : NavCallback() {
-                                    override fun onArrival(postcard: Postcard?) {
-                                        finish()
-                                    }
-                                })
-                            }
-                        } else {
-                            PreferenceUtils.putBoolean(context, APP_CREATE, true)
-                            ARouter.getInstance().build(RouterUtils.ActivityPath.GUIDE).navigation(this, object : NavCallback() {
-                                override fun onArrival(postcard: Postcard?) {
-                                    finish()
+                                } else {
+                                    doStatusLocation(status, loction)
                                 }
-                            })
+                            } else {
+                                if (teamCode != null) {
+                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withParcelable(RouterUtils.ActivityPath.AMAP_LOCATION, loction).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
+                                        override fun onArrival(postcard: Postcard?) {
+                                            finish()
+                                        }
+                                    })
+                                } else {
+                                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withParcelable(RouterUtils.ActivityPath.AMAP_LOCATION, loction).navigation(this, object : NavCallback() {
+                                        override fun onArrival(postcard: Postcard?) {
+                                            finish()
+                                        }
+                                    })
+                                }
+                            }
+                            dispose?.dispose()
+                            RxSubscriptions.remove(dispose)
                         }
                     }
-                    dispose?.dispose()
-                    RxSubscriptions.remove(dispose)
                 }
+                RxSubscriptions.add(dispose)
             }
         }
         RxSubscriptions.add(dispose)

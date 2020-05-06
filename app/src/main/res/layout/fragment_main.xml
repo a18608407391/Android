@@ -32,7 +32,6 @@
             android:checkedButton="@id/same_city"
             android:elevation="@dimen/d_5"
             android:gravity="center"
-
             android:orientation="horizontal"
             android:visibility="@{main_fr_viewmodel.bottomVisible?View.VISIBLE:View.GONE}">
 

@@ -25,8 +25,10 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import com.zk.library.Base.BaseApplication
 import com.zk.library.Base.BaseFragment
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import org.cs.tec.library.Base.Utils.getScreenHeightPx
+import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Utils.ConvertUtils
 /**
  * 打开活动详情
@@ -136,7 +138,6 @@ class PartyClockDetailActivity : BaseFragment<ActivityPartyClockDetailBinding, P
     var downy = 0F
     var onScroll = false
 
-
     var mScrollY = 0;
     var lastScrollY = 0;
     var toolBarPositionY = 0;
@@ -162,7 +163,6 @@ class PartyClockDetailActivity : BaseFragment<ActivityPartyClockDetailBinding, P
         city = arguments!!.getString(RouterUtils.PartyConfig.PARTY_CITY)
         code = arguments!!.getInt(RouterUtils.PartyConfig.PARTY_CODE)
         party_id = arguments!!.getInt(RouterUtils.PartyConfig.PARTY_ID)
-
         mPartyDetailClockViewPager = binding!!.root!!.findViewById(R.id.mPartyDetailClockViewPager)
         mPartyDetailClockTabLayout = binding!!.root!!.findViewById(R.id.mPartyDetailClockTabLayout)
         mPartyDetailSubjectMagicTabLayout = binding!!.root!!.findViewById(R.id.mPartyDetailSubjectMagicTabLayout)

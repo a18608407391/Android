@@ -116,10 +116,8 @@ class SubjectPartyViewModel : BaseViewModel(), TabLayout.BaseOnTabSelectedListen
                 var bundle = Bundle()
                 bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                         subject.location)
-
                 bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, city.get())
                 startFragment(subject, RouterUtils.PartyConfig.SEARCH_PARTY, bundle)
-
             }
             R.id.notify_icon -> {
                 var bundle = Bundle()

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.alibaba.android.arouter.launcher.ARouter
 import com.amap.api.location.AMapLocation
 import com.amap.api.maps.AMapUtils
@@ -35,6 +36,7 @@ import com.google.gson.Gson
 import com.zk.library.Base.BaseApplication
 import com.elder.zcommonmodule.Component.ItemViewModel
 import com.elder.zcommonmodule.DataBases.*
+import com.elder.zcommonmodule.Entity.SoketBody.TeamPersonnelInfoDto
 import com.example.drivermodule.Fragment.SearchActivity
 import com.example.drivermodule.Utils.AMapUtil
 import com.zk.library.Base.BaseFragment
@@ -53,14 +55,33 @@ import org.cs.tec.library.Base.Utils.*
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.USERID
 import org.cs.tec.library.Utils.ConvertUtils
+import org.cs.tec.library.Utils.ToastUtils
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamStatus {
+class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamStatus, HttpInteface.JoinTeamResult {
+    override fun JoinTeamSuccess(it: String) {
+        if (it.isNullOrEmpty()) {
+            Toast.makeText(mapFr.activity, "队伍解散或已失效", Toast.LENGTH_SHORT).show()
+            viewModel.selectTab(0)
+            return
+        }
+        var info = Gson().fromJson<TeamPersonnelInfoDto>(it, TeamPersonnelInfoDto::class.java)
+        info.teamCode = mapFr?.teamCode
+        mapFr?.getTeamController().join = info
+//        viewModel?.selectTab(1)
+        if (viewModel?.currentPosition == 0) {
+            viewModel?.changerFragment(1)
+        }
+        mapFr?.getTeamController().startMinaService()
+    }
 
+    override fun JoinTeamError(ex: Throwable) {
+
+    }
 
     override fun onDismiss(fr: BaseDialogFragment, value: Any) {
         if (fr is LoginDialogFragment) {
@@ -73,24 +94,37 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
         super.onDismiss(fr, value)
     }
 
+    //                HttpRequest.instance.JoinResult = this
+//                var map = HashMap<String, String>()
+//                map["teamCode"] = mapFr!!.teamCode!!
+//                map["joinAddr"] = viewModel?.curPosition?.latitude.toString() + "," + viewModel?.curPosition?.longitude.toString()
+//                HttpRequest.instance.JoinTeam(map)
     override fun CheckTeamStatusSucccess(it: BaseResponse) {
         var info = Gson().fromJson<CreateTeamInfoDto>(Gson().toJson(it.data), CreateTeamInfoDto::class.java)
         if (it.code == 0) {
             viewModel.TeamStatus = SoketTeamStatus()
             mapFr.getTeamController().create = info
-            Log.e("result", "组队数据" + Gson().toJson(info))
             viewModel?.changerFragment(1)
             startMinaService()
+            if (mapFr.teamCode != null && info.teamCode != mapFr.teamCode) {
+                Toast.makeText(mapFr.activity!!, "已有队伍，请退出队伍后，手动加入！", Toast.LENGTH_SHORT).show()
+            }
         } else {
             if (it.code == 20001) {
                 //队伍不存在
+                Log.e("result", "TeamColde" + mapFr.teamCode)
                 viewModel.TeamStatus = SoketTeamStatus()
-//                var fr = mapFr.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
-//                fr!!.startForResult((ARouter.getInstance().build(RouterUtils.TeamModule.TEAM_CREATE).navigation() as CreateTeamActivity), REQUEST_CREATE_JOIN)
-                var bundle = Bundle()
-                bundle.putSerializable(RouterUtils.MapModuleConfig.START_LOCATION, viewModel?.curPosition)
-                viewModel?.startFragment(mapFr.parentFragment!!, RouterUtils.TeamModule.TEAM_CREATE, bundle, REQUEST_CREATE_JOIN)
-//                ARouter.getInstance().build(RouterUtils.TeamModule.TEAM_CREATE).navigation(mapFr.activity, REQUEST_CREATE_JOIN)
+                if (mapFr.teamCode == null) {
+                    var bundle = Bundle()
+                    bundle.putSerializable(RouterUtils.MapModuleConfig.START_LOCATION, viewModel?.curPosition)
+                    viewModel?.startFragment(mapFr.parentFragment!!, RouterUtils.TeamModule.TEAM_CREATE, bundle, REQUEST_CREATE_JOIN)
+                } else {
+                    HttpRequest.instance.JoinResult = this
+                    var map = HashMap<String, String>()
+                    map["teamCode"] = mapFr!!.teamCode!!
+                    map["joinAddr"] = viewModel?.curPosition?.latitude.toString() + "," + viewModel?.curPosition?.longitude.toString()
+                    HttpRequest.instance.JoinTeam(map)
+                }
             } else if (it.code == 10009) {
 //                showLoginDialogFragment(mapFr)
             }
@@ -151,7 +185,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
         return super.ItemViewModel(viewModel)
     }
 
-    lateinit var curAmapLocation: AMapLocation
+    var curAmapLocation: AMapLocation? = null
 
     var isUp = false
     var curHeight = 0.0
@@ -161,21 +195,8 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
         //处理定位信息
 
         if (amapLocation != null && amapLocation.errorCode == 0) {
-//            if (amapLocation?.gpsAccuracyStatus == AMapLocation.GPS_ACCURACY_BAD) {
-//                if (viewModel?.mapActivity?.onStart!!) {
-//                    CoroutineScope(uiContext).launch {
-//                        Toast.makeText(mapFr.activity, getString(R.string.gsp_bad), Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
-
-//            Log.e("result", "获取到当前定位点" + amapLocation.locationType + "GPS信号" + amapLocation?.gpsAccuracyStatus)
-            if (!viewModel?.status.locationLat.isNullOrEmpty()) {
-                viewModel?.exTv.set("当前骑行GPS信号" + amapLocation.gpsAccuracyStatus + "数据点类型" + amapLocation.locationType + "数据点" + viewModel?.status.locationLat.size)
-            }
-
             mapFr.mListener?.onLocationChanged(amapLocation)// 显示系统小蓝点
-            if (viewModel?.curPosition == null) {
+            if (this.curAmapLocation == null) {
                 mapFr.mAmap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(amapLocation.latitude, amapLocation.longitude)))
                 viewModel?.mapActivity.dismissProgressDialog()
             }
@@ -264,7 +285,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
         } else {
             viewModel?.status?.startAoiName = amapLocation?.poiName
         }
-        viewModel?.status?.driverStartPoint = Location(amapLocation.latitude, amapLocation.longitude, amapLocation.time.toString(), amapLocation.speed, amapLocation.height, amapLocation.bearing)
+        viewModel?.status?.driverStartPoint = amapLocation
         UpdateDriverStatus(viewModel?.status!!)
     }
 
@@ -320,6 +341,14 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                 } else {
                     deleteDriverStatus(PreferenceUtils.getString(org.cs.tec.library.Base.Utils.context, USERID))
                     cancleDriver(true)
+                }
+            }
+        }
+        if (mapFr!!.teamCode != null) {
+            if (viewModel?.curPosition != null) {
+                CoroutineScope(uiContext).launch {
+                    delay(500)
+                    viewModel?.selectTab(1)
                 }
             }
         }
@@ -507,8 +536,6 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
             var fr = viewModel?.mapActivity.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
             fr.startForResult((ARouter.getInstance().build(RouterUtils.MapModuleConfig.SEARCH_ACTIVITY).navigation() as SearchActivity).setModel(0), RESULT_POINT)
         }
-
-//        ARouter.getInstance().build(RouterUtils.MapModuleConfig.SEARCH_ACTIVITY).withInt(RouterUtils.MapModuleConfig.SEARCH_MODEL, 0).navigation(mapFr.activity, RESULT_POINT)
     }
 
     fun onInfoWindowClick(it: Marker?) {
@@ -566,7 +593,6 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                     var bundle = Bundle()
                     bundle.putSerializable(RouterUtils.MapModuleConfig.ROAD_CURRENT_POINT, viewModel?.curPosition)
                     viewModel?.startFragment(viewModel?.mapActivity.parentFragment!!, RouterUtils.MapModuleConfig.ROAD_BOOK_ACTIVITY, bundle, REQUEST_LOAD_ROADBOOK)
-//                    ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_ACTIVITY).withSerializable(RouterUtils.MapModuleConfig.ROAD_CURRENT_POINT, viewModel?.curPosition).navigation(mapFr.activity, REQUEST_LOAD_ROADBOOK)
                 }
             }
         }
@@ -580,7 +606,6 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                 list.add(LatLng(it.latitude, it.longitude))
             }
             viewModel?.startNavi(list, 2)
-//            ARouter.getInstance().build(RouterUtils.MapModuleConfig.NAVIGATION).navigation()
         } else {
             if (driverStatus.get() == Drivering && viewModel?.status.locationLat.size == 0) {
                 return
@@ -590,7 +615,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
         }
     }
 
-    fun GoTeam() {
+    open fun GoTeam() {
         //检查当前组队信息
         //检查当前进入方式
         if (BaseApplication.MinaConnected) {
@@ -607,6 +632,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
             HttpRequest.instance.setCheckStatusResult(this)
             var map = HashMap<String, String>()
             HttpRequest.instance.checkTeamStatus(map)
+
         }
     }
 
@@ -622,27 +648,6 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                 viewModel?.mapActivity.NavigationStart = false
                 viewModel?.status.navigationType = 0
                 viewModel?.status.passPointDatas.clear()
-            }
-            RxBusEven.NAVIGATION_DATA -> {
-//                var location = it.value as AMapNaviLocation
-//                if (last == null) {
-//                    last = viewModel?.status.locationLat.last()
-//                }
-//                viewModel?.status.distance += AMapUtils.calculateLineDistance(LatLng(last?.latitude!!, last?.longitude!!), LatLng(location.coord?.latitude!!, location.coord?.longitude!!))
-//                last = Location(location.coord.latitude, location.coord.latitude)
-//
-//                viewModel?.mapActivity.mapUtils!!.setLocation(Location(mapFr.mAmap.myLocation.latitude, mapFr.mAmap.myLocation.longitude))
-//                var distanceTv = ""
-//                if (viewModel?.status!!.distance > 1000) {
-//                    distanceTv = DecimalFormat("0.0").format(viewModel?.status!!.distance / 1000) + "KM"
-//                } else {
-//                    distanceTv = DecimalFormat("0.0").format(viewModel?.status!!.distance) + "M"
-//                }
-//                driverDistance.set(distanceTv)
-//
-//                viewModel?.status.locationLat.add(Location(location.coord.latitude, location.coord.latitude))
-//                driverController?.setLineDatas(viewModel?.status?.locationLat, getColor(R.color.line_color))
-//                driverController.setLineDatas()
             }
         }
     }

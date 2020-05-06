@@ -12,10 +12,13 @@ import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Base.Utils.getStatusBarHeight
 import org.cs.tec.library.Base.Utils.getString
+import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 import java.util.*
@@ -39,6 +42,7 @@ class SubjectItemModel : BasePartyItemModel(), HttpInteface.PartySuject_inf, Sub
 //        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, entity.ID)
 //                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
 //                        Location(model.subject.location!!.latitude, model.subject.location!!.longitude)).withInt(RouterUtils.PartyConfig.NavigationType, 1).withInt(RouterUtils.PartyConfig.PARTY_CODE, entity.CODE).withString(RouterUtils.PartyConfig.PARTY_CITY, model.subject.city).navigation()
+        RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.StatusBar,0))
         var model = viewModel as SubjectPartyViewModel
         var bundle = Bundle()
         bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,

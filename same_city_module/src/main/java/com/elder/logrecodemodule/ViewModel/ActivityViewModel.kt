@@ -139,14 +139,17 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
     fun inject(activityFragment: ActivityFragment) {
         this.activityFragment = activityFragment
     }
+
     fun receiveLocation(it: AMapLocation) {
         if (curLocation == null) {
+            Log.e("result", "执行receiveLocation")
             curLocation = it
             mweathersearch = WeatherSearch(context)
             mweathersearch!!.setOnWeatherSearchListener(this)
             requestWeatherDataForCity("湖南省")
         }
     }
+
     /**
      * 请求选择城市天气数据
      * @param cityName 城市名
@@ -168,13 +171,12 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
     /**
      * 请求城市活动数据
      * */
-    private fun requestActivityDataForCity(location: AMapLocation?) {
+    fun requestActivityDataForCity(location: AMapLocation?) {
         HttpRequest.instance.partyHome = this
         var map = HashMap<String, String>()
         map["city"] = tvCity.get()!!
         map["x"] = location!!.longitude.toString()
         map["y"] = location!!.latitude.toString()
-        Log.e("activity", "${map["city"]},${map["x"]},${map["y"]}")
         HttpRequest.instance.getPartyHome(map)
     }
 
@@ -200,6 +202,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     fun startSearchPartyActivity() {
+
 
         var bundle = Bundle()
         bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,

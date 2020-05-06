@@ -204,6 +204,7 @@ class SimpleItemRecycleComponent {
     var allData: ArrayList<RoadDetailEntity>? = null
 
     fun initDatas(linear: ArrayList<RoadDetailEntity>, data: HotData?, dex: Int) {
+        Log.e("result","initData")
         this.allData = linear
         horiDatas.clear()
         childItems.removeAll()

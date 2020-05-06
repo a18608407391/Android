@@ -14,9 +14,11 @@ import com.elder.zcommonmodule.Entity.Location
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.google.gson.Gson
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
 import me.tatarka.bindingcollectionadapter2.BindingRecyclerViewAdapter
 import me.tatarka.bindingcollectionadapter2.ItemBinding
+import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.binding.command.BindingCommand
 import org.cs.tec.library.binding.command.BindingConsumer
 
@@ -31,6 +33,7 @@ class ClockItemModel : BasePartyItemModel(), HttpInteface.PartyClock_inf, Subjec
     }
 
     override fun onSubjectItemClick(entity: SubjectEntity) {
+        RxBus.default!!.post(RxBusEven.getInstance(RxBusEven.StatusBar,0))
         var model = viewModel as SubjectPartyViewModel
         var bundle = Bundle()
         bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,

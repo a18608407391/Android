@@ -42,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.context
+import org.cs.tec.library.Base.Utils.getStatusBarHeight
 import org.cs.tec.library.Base.Utils.uiContext
 import org.cs.tec.library.Bus.RxBus
 import org.cs.tec.library.Bus.RxSubscriptions
@@ -68,7 +69,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
 
 
     var returnCheckId = 0
-    var checkModel = 0
     var bottomVisible = ObservableField<Boolean>(true)
     lateinit var homeActivity: HomeFragment
     var mFragments = ArrayList<Fragment>()
@@ -89,36 +89,38 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
         when (checkedId) {
             R.id.same_city -> {
+                home.mViewModel?.statusHeight!!.set(0)
                 changerFragment(0)
                 lastCheckediD = returnCheckId
                 returnCheckId = R.id.same_city
             }
             R.id.main_left -> {
+                home.mViewModel?.statusHeight!!.set(getStatusBarHeight())
                 Utils.setStatusTextColor(true, homeActivity.activity)
                 changerFragment(1)
                 lastCheckediD = returnCheckId
                 returnCheckId = R.id.main_left
             }
             R.id.driver_middle -> {
+                home.mViewModel?.statusHeight!!.set(getStatusBarHeight())
                 Utils.setStatusTextColor(true, homeActivity.activity)
                 changerFragment(2)
                 lastCheckediD = returnCheckId
                 returnCheckId = R.id.driver_middle
-                checkModel = 1
             }
             R.id.dynamics -> {
+                home.mViewModel?.statusHeight!!.set(getStatusBarHeight())
                 Utils.setStatusTextColor(true, homeActivity.activity)
                 changerFragment(3)
                 lastCheckediD = returnCheckId
                 returnCheckId = R.id.dynamics
             }
             R.id.main_right -> {
+                home.mViewModel?.statusHeight!!.set(getStatusBarHeight())
                 Utils.setStatusTextColor(true, homeActivity.activity)
                 changerFragment(4)
-                Log.e("lastCheckediD", "returnCheckId" + returnCheckId)
                 lastCheckediD = returnCheckId
                 returnCheckId = R.id.main_right
-                checkModel = 0
             }
         }
     }
@@ -130,6 +132,9 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 Log.e("result", "登录过期")
                 BaseApplication.getInstance().TokenTimeOutCheck = true
                 var phone = PreferenceUtils.getString(context, USER_PHONE)
+                if (phone == null) {
+                    return
+                }
                 var map = HashMap<String, String>()
                 map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
                 map["type"] = "app"
@@ -139,24 +144,17 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         }
     }
 
-
+    var amapLocation: AMapLocation? = null
     fun setLocation(it: AMapLocation) {
-        var location = it
-        if (activityFragment != null && activityFragment!!.isAdded) {
-            activityFragment!!.viewModel?.receiveLocation(location)
+        amapLocation = it
+        if (activityFragment != null) {
+            activityFragment!!.viewModel?.receiveLocation(amapLocation!!)
         }
         if (mapFr != null && mapFr!!.isAdded) {
-            mapFr?.viewModel?.receiveLocation(location)
-//                    if (curPosition != 2) {
-//                        if (mapFr!!.viewModel?.status!!.startDriver.get() == DriverCancle) {
-//                            var pos = ServiceEven()
-//                            pos.type = SERVICE_START
-//                            RxBus.default?.post(pos)
-//                        }
-//                    }
+            mapFr?.viewModel?.receiveLocation(amapLocation!!)
         }
         if (myself != null && myself!!.isAdded) {
-            myself!!.viewModel?.receiveLocation(location)
+            myself!!.viewModel?.receiveLocation(amapLocation!!)
         }
     }
 
@@ -169,7 +167,14 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             }
             RxBusEven.DriverReturnRequest -> {
                 CoroutineScope(uiContext).launch {
-                    mRadioGroup!!.check(lastCheckediD)
+                    //                    Log.e("result", "lastCheckediD" + lastCheckediD.toString())
+//                    Log.e("result", "returnCheckId" + returnCheckId.toString())
+//                    Log.e("result", R.id.driver_middle.toString())
+                    if (lastCheckediD == returnCheckId) {
+                        mRadioGroup!!.check(R.id.same_city)
+                    } else {
+                        mRadioGroup!!.check(lastCheckediD)
+                    }
                     bottomVisible.set(true)
                 }
             }
@@ -208,16 +213,24 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 RxBus.default?.post(pos)
             }
             RxBusEven.BrowserSendTeamCode -> {
+                //组队Code 问题  非重启app，进入此处
                 mRadioGroup!!.check(R.id.driver_middle)
+                if (!BaseApplication.MinaConnected) {
+                    home.code = it.value as String
+                    mapFr!!.teamCode = it.value as String
+                    mapFr!!.viewModel?.selectTab(1)
+                }
             }
         }
     }
 
-    var mRadioGroup: RadioGroup? = null
 
+    var mRadioGroup: RadioGroup? = null
+    lateinit var home: HomeActivity
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun inject(homeActivity: HomeFragment) {
         this.homeActivity = homeActivity
+        this.home = homeActivity.activity as HomeActivity
         mRadioGroup = homeActivity.binding!!.root.findViewById(R.id.main_bottom_bg)
         returnCheckId = R.id.same_city
         initStatus()
@@ -226,7 +239,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
     var returnPrivate = false
 
     private fun initStatus() {
-        var home = homeActivity.activity as HomeActivity
         if (home.resume == "nomal" || home.resume.isNullOrEmpty()) {
             changerFragment(0)
         } else {
@@ -243,24 +255,24 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         tans = homeActivity.childFragmentManager.beginTransaction()
         if (position == 0) {
             if (activityFragment == null) {
-                var home = homeActivity.activity as HomeActivity
+                var bundle = Bundle()
+                activityFragment = ARouter.getInstance().build(RouterUtils.LogRecodeConfig.ACTIVITY_FRAGMENT).navigation() as ActivityFragment
+                mFragments.add(activityFragment!!)
+                tans?.add(R.id.main_rootlayout, activityFragment!!)
                 if (home.location != null) {
                     setLocation(home.location!!)
+                    bundle.putParcelable("location", home.location)
+                    activityFragment!!.arguments = bundle
                 } else {
                     var pos = ServiceEven()
                     pos.type = SERVICE_START
                     RxBus.default?.post(pos)
                 }
-                activityFragment = ARouter.getInstance().build(RouterUtils.LogRecodeConfig.ACTIVITY_FRAGMENT).navigation() as ActivityFragment
-                mFragments.add(activityFragment!!)
-                tans?.add(R.id.main_rootlayout, activityFragment!!)
-//                mapFr!!.loadMultipleRootFragment(R.id.rootLayout,0,activityFragment!!)
                 if (activityFragment!!.curOffset > -ConvertUtils.dp2px(122F)) {
                     Utils.setStatusTextColor(false, homeActivity.activity as HomeActivity)
                 } else {
                     Utils.setStatusTextColor(true, homeActivity.activity as HomeActivity)
                 }
-
                 if (home.resume == "nomal" || home.resume.isNullOrEmpty()) {
                     if (mapFr == null) {
                         mapFr = ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_FR).navigation() as MapFragment?
@@ -268,6 +280,10 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                         mapFr?.setDriverStatus(home.resume)
                         tans!!.add(R.id.main_rootlayout, mapFr!!)
                     }
+                }
+            } else {
+                if (activityFragment!!.viewModel?.activityPartyItems.isNullOrEmpty()) {
+                    activityFragment!!.viewModel?.requestActivityDataForCity(amapLocation)
                 }
             }
             bottomBg.set(context.getDrawable(R.drawable.home_bottom_bg))
@@ -290,10 +306,12 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             }
         } else if (position == 2) {
             if (mapFr == null) {
+                var bundle = Bundle()
+                bundle.putParcelable("location", home.location)
                 mapFr = ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_FR).navigation() as MapFragment?
+                mapFr!!.arguments = bundle
                 mFragments.add(mapFr!!)
                 mapFr!!.loaded = this
-                var home = homeActivity.activity as HomeActivity
                 mapFr?.setDriverStatus(home.resume)
                 if (home.resume == "road") {
                     mapFr!!.hotData = homeActivity.hot
@@ -303,8 +321,10 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             if (mapFr!!.isAdded && !mapFr!!.initStatus) {
                 mapFr!!.initMap()
             }
-
+            mapFr!!.setCode(home.code)
             bottomVisible.set(false)
+
+
         } else if (position == 3) {
             if (messageFragment == null) {
                 var bundle = Bundle()
@@ -397,7 +417,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 driverSelected.set(context.getDrawable(R.drawable.black_driver_icon))
                 AppManager.get()?.finishOtherActivity(homeActivity.javaClass)
             } else if (it == "ToUser") {
-                (homeActivity.activity as HomeActivity).runOnUiThread {
+              home.runOnUiThread {
                     mRadioGroup!!.check(R.id.main_right)
                 }
             }

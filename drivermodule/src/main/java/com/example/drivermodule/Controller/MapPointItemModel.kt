@@ -77,18 +77,18 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
 
 
     //地图选点逻辑处理
-    var listvisible = ObservableField<Boolean>(false)
-    var startMaker: Marker? = null
-    var screenMaker: Marker? = null
-    var dataEmpty = ObservableField<Boolean>(false)
-    var finalyText = ObservableField<String>(getString(R.string.location_select))
-    var choiceVisible = ObservableField<Boolean>(true)
-    var pointList = ArrayList<PointEntity>()
-    var finallyMarker: Marker? = null
-    var panelState = ObservableField<SlidingUpPanelLayout.PanelState>(SlidingUpPanelLayout.PanelState.HIDDEN)
-    lateinit var adapter: AddPointItemAdapter
+    var listvisible = ObservableField<Boolean>(false)   //顶部recycleView是否显示
+    var startMaker: Marker? = null                                  //开始位置
+    var screenMaker: Marker? = null                               //可移动maker
+    var dataEmpty = ObservableField<Boolean>(false)         //
+    var finalyText = ObservableField<String>(getString(R.string.location_select))           //重点位置文案
+    var choiceVisible = ObservableField<Boolean>(true)      //显示状态切换
+    var pointList = ArrayList<PointEntity>()                         //显示模式1 显示途经点列表展开
+    var finallyMarker: Marker? = null                              //重点的marker
+    var panelState = ObservableField<SlidingUpPanelLayout.PanelState>(SlidingUpPanelLayout.PanelState.HIDDEN) //底部滑动栏显示控制
+    lateinit var adapter: AddPointItemAdapter              //顶部列表适配器
     var CurState = 0  //列表状态，收缩状态为0  展示状态为1
-    var SingleList = ArrayList<PointEntity>().apply {
+    var SingleList = ArrayList<PointEntity>().apply {   // 显示模式2 ，途经点列表收起，显示当前有多少个途经点
         this.add(PointEntity("", LatLonPoint(0.0, 0.0)))
     }
 
@@ -352,9 +352,9 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
         }
     }
 
-    var routeDistance = 0
-    var routeTime = 0
-    var curRouteEntity: RouteEntity? = null
+    var routeDistance = 0       //规划路径长度
+    var routeTime = 0            //规划路径时间
+    var curRouteEntity: RouteEntity? = null        //规划路径的实体类
     private fun drawRouteLine(routeEntity: RouteEntity?) {
         curRouteEntity = routeEntity
         var path = mapFr.mapUtils?.navi?.naviPaths!![routeEntity!!.id.get()]

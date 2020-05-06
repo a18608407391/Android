@@ -18,10 +18,12 @@ import com.elder.zcommonmodule.RE_LOGIN
 import com.elder.zcommonmodule.Service.HttpInteface
 import com.elder.zcommonmodule.Service.HttpRequest
 import com.elder.zcommonmodule.USER_PHONE
+import com.elder.zcommonmodule.USER_TOKEN
 import com.elder.zcommonmodule.Utils.SettingUtils
 import com.example.private_module.Activity.SettingActivity
 import com.example.private_module.R
 import com.google.gson.Gson
+import com.zk.library.Base.AppManager
 import com.zk.library.Base.BaseViewModel
 import com.zk.library.Utils.OSUtil
 import com.zk.library.Utils.PreferenceUtils
@@ -36,6 +38,7 @@ class SettingViewModel : BaseViewModel(), TitleComponent.titleComponentCallBack,
         setting.dismissProgressDialog()
         RxBus.default?.post("ExiLogin")
         PreferenceUtils.putBoolean(context, RE_LOGIN, true)
+        PreferenceUtils.putString(context, USER_TOKEN, null)
 //                context.startService(Intent(context, LowLocationService::class.java).setAction("stop"))
         var pos = ServiceEven()
         pos.type = "HomeStop"

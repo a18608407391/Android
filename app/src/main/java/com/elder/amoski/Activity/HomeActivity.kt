@@ -10,6 +10,7 @@ import android.support.annotation.RequiresApi
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
+import androidx.work.WorkManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.elder.amoski.BR
 import com.elder.amoski.R
@@ -52,6 +53,7 @@ import com.google.gson.GsonBuilder
 import com.zk.library.Base.Transaction.anim.DefaultHorizontalAnimator
 import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Bus.event.RxBusEven.Companion.CHAT_ROOM_ACTIVITY_RETURN
+import com.zk.library.Worker.WorkRequest
 import org.cs.tec.library.Bus.RxSubscriptions
 import org.json.JSONObject
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
@@ -109,7 +111,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     var location: AMapLocation? = null
 
 
-    @Autowired(name =RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE)
+    @Autowired(name = RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE)
     @JvmField
     var code: String? = null
 
@@ -163,7 +165,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
         StatusbarUtils.setTranslucentStatus(this)
         StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
         mViewModel?.inject(this)
-//        main_bottom_bg.setOnCheckedChangeListener(mViewModel)
         RxSubscriptions.add(RxBus.default?.toObservable(RequestErrorEven::class.java)?.subscribe {
             Log.e(this.javaClass.name, "${it.errorCode}")
             if (it.errorCode == 10009) {
@@ -186,11 +187,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
             }
             999 -> {
                 if (resultCode == 0) {
-                    Toast.makeText(context, "后台活动开启未启动", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "后台數據權限开启未启动", Toast.LENGTH_SHORT).show()
                 } else if (resultCode == Activity.RESULT_OK) {
                     PreferenceUtils.putBoolean(context, "OPEN_GOD_MODEL", true)
                 }
             }
+
             REQUEST_LOAD_ROADBOOK -> {
                 if (data != null) {
                     var date = data.getSerializableExtra("hotdata") as HotData
@@ -286,6 +288,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
         RxBus.default?.post(pos)
         ARouter.getInstance().build(RouterUtils.ActivityPath.LOGIN_CODE).navigation(this, object : NavCallback() {
             override fun onArrival(postcard: Postcard?) {
+                PreferenceUtils.putBoolean(context, RE_LOGIN, true)
+                PreferenceUtils.putString(context, USER_TOKEN, null)
                 finish()
             }
         })
@@ -300,22 +304,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
         }
     }
 
-
     override fun onBackPressedSupport() {
         Log.e("result", "onBackPressedSupport")
         super.onBackPressedSupport()
     }
-
-
-    class netWorkRecevicer : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent != null && intent.action == "android.net.conn.CONNECTIVITY_CHANGE") {
-                var manager = context!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                var activeInfo = manager.activeNetworkInfo
-
-
-            }
-        }
-    }
-
 }

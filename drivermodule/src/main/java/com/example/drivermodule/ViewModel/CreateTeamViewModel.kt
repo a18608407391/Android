@@ -24,6 +24,7 @@ import com.example.drivermodule.Activity.Team.CreateTeamActivity
 import com.example.drivermodule.R
 import com.google.gson.Gson
 import com.zk.library.Base.BaseViewModel
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.PreferenceUtils
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -82,6 +83,16 @@ class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, Http
 //            intent.putExtra("data", info)
 //            createTeamActivity.setResult(REQUEST_CREATE_JOIN, intent)
 //            finish()
+        }
+    }
+
+
+    override fun doRxEven(it: RxBusEven?) {
+        super.doRxEven(it)
+        when (it!!.type) {
+            RxBusEven.BrowserSendTeamCode -> {
+                createTeamActivity._mActivity!!.onBackPressedSupport()
+            }
         }
     }
 
@@ -174,8 +185,8 @@ class CreateTeamViewModel : BaseViewModel(), HttpInteface.CreateTeamResult, Http
                 var map = HashMap<String, String>()
                 map["joinAddr"] = location?.latitude.toString() + "," + location?.longitude.toString()
                 HttpRequest.instance.createTeam(map)
-
             }
+
             R.id.join_btn -> {
                 if (location == null) {
                     return

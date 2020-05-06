@@ -8,7 +8,9 @@ import com.cstec.administrator.party_module.R
 import com.cstec.administrator.party_module.ViewModel.PartyCheckTicketViewModel
 import com.cstec.administrator.party_module.databinding.ActivityPartyCheckTicketBinding
 import com.zk.library.Base.BaseActivity
+import com.zk.library.Bus.event.RxBusEven
 import com.zk.library.Utils.RouterUtils
+import org.cs.tec.library.Bus.RxBus
 
 
 class PartyCheckTicketActivity : BaseActivity<ActivityPartyCheckTicketBinding, PartyCheckTicketViewModel>() {
@@ -35,6 +37,7 @@ class PartyCheckTicketActivity : BaseActivity<ActivityPartyCheckTicketBinding, P
     }
     override fun initData() {
         super.initData()
+
         mViewModel?.inejct(this)
     }
 }
