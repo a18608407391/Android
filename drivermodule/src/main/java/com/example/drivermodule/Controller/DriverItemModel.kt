@@ -62,6 +62,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
+
+//骑行控制器
+
 class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamStatus, HttpInteface.JoinTeamResult {
     override fun JoinTeamSuccess(it: String) {
         if (it.isNullOrEmpty()) {

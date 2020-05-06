@@ -60,6 +60,9 @@ import org.cs.tec.library.binding.command.BindingConsumer
 import java.text.DecimalFormat
 
 
+
+//路书控制器控制器
+
 class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBookDetail, ChoiceBagPopupWindow.PopWindowClick {
     override fun onPopWindowItemClick(view: View) {
         var fr = viewModel?.mapActivity.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>

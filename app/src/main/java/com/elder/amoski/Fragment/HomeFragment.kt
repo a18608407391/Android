@@ -93,6 +93,7 @@ class HomeFragment : BaseFragment<FragmentMainBinding, MainFragmentViewModel>() 
     }
 
     fun loadRoadBook(data: Bundle) {
+        //social模块点击跳转路书
         hot = data!!.getSerializable("hotdata") as HotData
         var home = activity as HomeActivity
         home.resume = "road"

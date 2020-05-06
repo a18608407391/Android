@@ -60,35 +60,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 
 @Route(path = RouterUtils.ActivityPath.HOME)
-class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInteface.ExitLogin, HttpInteface.IRelogin {
-    override fun IReloginSuccess(t: String) {
-        var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
-        PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
-        PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
-        BaseApplication.getInstance().lastTokenTime = System.currentTimeMillis()
-        BaseApplication.getInstance().TokenTimeOutCheck = false
-    }
-
-    override fun doTouchEven(ev: MotionEvent?): Boolean {
-        super.doTouchEven(ev)
-        if (!BaseApplication.getInstance().TokenTimeOutCheck) {
-            if (System.currentTimeMillis() - BaseApplication.getInstance().lastTokenTime >= BaseApplication.getInstance().TokenTimeOutLimit) {
-                Log.e("result", "登录过期")
-                BaseApplication.getInstance().TokenTimeOutCheck = true
-                var phone = PreferenceUtils.getString(context, USER_PHONE)
-                var map = HashMap<String, String>()
-                map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
-                map["type"] = "app"
-                HttpRequest.instance.ReLoginImpl = this
-                HttpRequest.instance.relogin(map)
-                return false
-            }
-        }
-        return true
-    }
-
-    override fun IReloginError() {
-    }
+class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInteface.ExitLogin{
 
     override fun ExitLoginSuccess(it: String) {
         exitForce()
@@ -159,35 +131,28 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
         super.initData()
         //这里处理所有Fragment跳转动画
         fragmentAnimator = DefaultHorizontalAnimator()
+        //注册激光IM消息接收器
         JMessageClient.registerEventReceiver(this)
+        //初始化主Fragment
         homeFr = HomeFragment.newInstance()
         loadRootFragment(R.id.home_main_layout, homeFr!!)
         StatusbarUtils.setTranslucentStatus(this)
         StatusbarUtils.setStatusBarMode(this, true, 0x00000000)
         mViewModel?.inject(this)
-        RxSubscriptions.add(RxBus.default?.toObservable(RequestErrorEven::class.java)?.subscribe {
-            Log.e(this.javaClass.name, "${it.errorCode}")
-            if (it.errorCode == 10009) {
-//                exitForce()
-            }
-        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.e("result", requestCode.toString() + "requestCode" + resultCode)
         when (requestCode) {
             GET_USERINFO -> {
                 if (data != null) {
+                    //用户信息修改返回
                     var info = data?.extras!!["userInfo"] as UserInfo
                     var fr = homeFr!!.viewModel?.myself as UserInfoFragment
                     fr.callback(info)
-//                    var even = ActivityResultEven(requestCode, )
-//                    RxBus.default?.post(even)
                 }
             }
             999 -> {
                 if (resultCode == 0) {
-//                    Toast.makeText(context, "后台數據權限开启未启动", Toast.LENGTH_SHORT).show()
                 } else if (resultCode == Activity.RESULT_OK) {
                     PreferenceUtils.putBoolean(context, "OPEN_GOD_MODEL", true)
                 }
@@ -231,12 +196,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
                 fr.getUserInfo(false)
             }
             MSG_RETURN_REQUEST -> {//从消息界面返回
-//                if (resultCode == MSG_RETURN_REQUEST) {
-//                    main_bottom_bg.check(R.id.main_left)
-//                } else {
-//                    var fr = mViewModel?.myself as UserInfoFragment
-//                    fr.getUserInfo(false)
-//                }
 
             }
             MSG_RETURN_REFRESH_REQUEST -> {//@我的界面返回
@@ -305,7 +264,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(), HttpInt
     }
 
     override fun onBackPressedSupport() {
-        Log.e("result", "onBackPressedSupport")
         super.onBackPressedSupport()
     }
 }

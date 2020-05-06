@@ -1,5 +1,4 @@
 package com.elder.amoski.ViewModel
-
 import android.databinding.ObservableField
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -39,7 +38,6 @@ import com.zk.library.Bus.ServiceEven
 import com.zk.library.Utils.PreferenceUtils
 import com.zk.library.Utils.RouterUtils
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Base.Utils.getStatusBarHeight
@@ -131,10 +129,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             if (System.currentTimeMillis() - BaseApplication.getInstance().lastTokenTime >= BaseApplication.getInstance().TokenTimeOutLimit) {
                 Log.e("result", "登录过期")
                 BaseApplication.getInstance().TokenTimeOutCheck = true
-                var phone = PreferenceUtils.getString(context, USER_PHONE)
-                if (phone == null) {
-                    return
-                }
+                var phone: String? = PreferenceUtils.getString(context, USER_PHONE) ?: return
                 var map = HashMap<String, String>()
                 map["phoneNumber"] = FileSystem.getPhoneBase64(phone!!)
                 map["type"] = "app"
@@ -167,9 +162,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             }
             RxBusEven.DriverReturnRequest -> {
                 CoroutineScope(uiContext).launch {
-                    //                    Log.e("result", "lastCheckediD" + lastCheckediD.toString())
-//                    Log.e("result", "returnCheckId" + returnCheckId.toString())
-//                    Log.e("result", R.id.driver_middle.toString())
                     if (lastCheckediD == returnCheckId) {
                         mRadioGroup!!.check(R.id.same_city)
                     } else {
@@ -236,9 +228,12 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         initStatus()
     }
 
+
+    //h5返回，HomeActivity Resume 检查，判断是否切换到用户模块
     var returnPrivate = false
 
     private fun initStatus() {
+        //处理登录状态，默认状态或者骑行
         if (home.resume == "nomal" || home.resume.isNullOrEmpty()) {
             changerFragment(0)
         } else {
@@ -275,6 +270,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 }
                 if (home.resume == "nomal" || home.resume.isNullOrEmpty()) {
                     if (mapFr == null) {
+                        //普通进入方式，地图懒加载
                         mapFr = ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_FR).navigation() as MapFragment?
                         mFragments.add(mapFr!!)
                         mapFr?.setDriverStatus(home.resume)
@@ -301,7 +297,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 social = ARouter.getInstance().build(RouterUtils.SocialConfig.SOCIAL_MAIN).navigation() as SocialFragment
                 social!!.arguments = bundle
                 mFragments.add(social!!)
-//                mapFr!!.loadMultipleRootFragment(R.id.main_rootlayout,1,social!!)
                 tans!!.add(R.id.main_rootlayout, social!!)
             }
         } else if (position == 2) {
@@ -323,8 +318,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             }
             mapFr!!.setCode(home.code)
             bottomVisible.set(false)
-
-
         } else if (position == 3) {
             if (messageFragment == null) {
                 var bundle = Bundle()
@@ -333,7 +326,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 messageFragment!!.arguments = bundle
                 mFragments.add(messageFragment!!)
                 tans?.add(R.id.main_rootlayout, messageFragment!!)
-//                mapFr!!.loadMultipleRootFragment(R.id.main_rootlayout,3,messageFragment!!)
             }
         } else if (position == 4) {
             if (myself == null) {
@@ -343,7 +335,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 myself!!.arguments = bundle
                 mFragments.add(myself!!)
                 tans?.add(R.id.main_rootlayout, myself!!)
-//                homeActivity!!.loadMultipleRootFragment(R.id.main_rootlayout,4,myself!!)
             }
             bottomBg.set(context.getDrawable(R.drawable.home_bottom_bg))
             if (type == 2) {
@@ -356,10 +347,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
             logSelected.set(false)
             privateSelected.set(true)
         }
-
-//        mapFr!!.showHideFragment(mFragments[curPosition],mFragments[position])
         curPosition = position
-
         mFragments!!.forEach {
             tans!!.hide(it)
         }

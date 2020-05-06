@@ -28,6 +28,9 @@ import org.cs.tec.library.Base.Utils.context
 import org.cs.tec.library.Utils.ConvertUtils
 
 
+//用户第一次进入App展示界面  APP_CREATE 标记
+
+
 @Route(path = RouterUtils.ActivityPath.GUIDE)
 class GuideActivity : BaseActivity<ActivityGuideBinding, GuideViewModel>() {
     override fun initVariableId(): Int {

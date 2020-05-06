@@ -124,13 +124,14 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         StatusbarUtils.fullScreen(this)
+        //App起始界面 判断隐式意图是否由外部跳转进来的组队邀请
         if (intent != null) {
             if (!intent.scheme.isNullOrEmpty()) {
                 var uri = intent.data
                 teamCode = uri.getQueryParameter("teamCode")
             }
         }
-        Log.e("result", "当前Code" + teamCode)
+        //网络是否异常
         if (!NetworkUtil.isNetworkAvailable(this)) {
             isNetError = true
 //            ARouter.getInstance().build(RouterUtils.MapModuleConfig.SMOOTH_ACTIVITY).navigation()
@@ -138,6 +139,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             return
         }
 
+        //使用instance启动模式 判断当前界面所在地
         if (BaseApplication.getInstance().curActivity != 0) {
             ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).navigation(this, object : NavCallback() {
                 override fun onArrival(postcard: Postcard?) {
@@ -157,6 +159,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
             })
             return
         } else {
+            //app退出或者销毁以后进入
             var token = PreferenceUtils.getString(context, USER_TOKEN)
             var limit = PreferenceUtils.getLong(context, TOKEN_LIMIT)
             var phone = PreferenceUtils.getString(context, USER_PHONE)
@@ -384,71 +387,6 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         super.onStart()
     }
 
-
-//    fun doStatus(status: ArrayList<DriverDataStatus>) {
-//        Log.e("result", "token失效5")
-//        if (BaseApplication.getInstance().curActivity == 0) {
-//            var time = "0"
-//            if (status[0].locationLat.size != 0) {
-//                var location = status[0].locationLat[status[0].locationLat.size - 1]
-//                time = location.time
-//            }
-//            if (System.currentTimeMillis() - time.toLong() > 60000) {
-//                var flag = PreferenceUtils.getBoolean(context, SERVICE_AUTO_BOOT_COMPLETED)
-//                if (!flag || !OSUtil.checkIgnoreBattery(this)) {
-//                    var dialog = DialogUtils.createNomalDialog(this, getString(R.string.checked_exception_out), getString(R.string.finish_driver), getString(R.string.continue_driving))
-//                    dialog.setOnBtnClickL(OnBtnClickL {
-//                        dialog.dismiss()
-//                        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "cancle").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation()
-//                    }, OnBtnClickL {
-//                        dialog.dismiss()
-//                        Log.e("result", "进入5")
-//                        ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-//                            override fun onArrival(postcard: Postcard?) {
-//                                this@SplashActivity.finish()
-//                            }
-//                        })
-//                    })
-//                    dialog.show()
-//                } else {
-//                    Log.e("result", "进入4")
-//                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-//                        override fun onArrival(postcard: Postcard?) {
-//                            this@SplashActivity.finish()
-//                        }
-//                    })
-//                }
-//            } else {
-//                Log.e("result", "进入3")
-//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-//                    override fun onArrival(postcard: Postcard?) {
-//                        finish()
-//                    }
-//                })
-//            }
-//        } else {
-//            Log.e("result", "进入1")
-//            if (BaseApplication.getInstance().curActivity == 1) {
-//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
-//                    override fun onArrival(postcard: Postcard?) {
-//                        if (teamCode != null) {
-//                            RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
-//                        }
-//                        finish()
-//                    }
-//                })
-//            } else if (BaseApplication.getInstance().curActivity == 3) {
-//                Log.e("result", "进入2")
-//                ARouter.getInstance().build(RouterUtils.MapModuleConfig.NAVIGATION).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
-//                    override fun onArrival(postcard: Postcard?) {
-//                        finish()
-//                    }
-//                })
-//            }
-//        }
-//    }
-
-
     override fun onDestroy() {
         super.onDestroy()
         if (dispose != null) {
@@ -572,6 +510,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
     }
 
     fun checkVession() {
+        //版本检测
         var info = context.packageManager.getPackageInfo(context.packageName, 0)
         var map = HashMap<String, String>()
         map.put("version", info.versionCode.toString())
@@ -593,6 +532,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
                             dialog.dismiss()
                             CoroutineScope(uiContext).launch {
                                 delay(500)
+                                //版本更新
                                 goUpdate(entity)
                             }
                         })
@@ -605,7 +545,6 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
                         dialog.show()
                         dialog.setOnBtnClickL(OnBtnClickL {
                             dialog.dismiss()
-//                            goHome()
                             checkDriver()
                         }, OnBtnClickL {
                             dialog.dismiss()
@@ -646,6 +585,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
     }
 
     fun checkDriver() {
+        //检查骑行状态 距离补偿
         var token = PreferenceUtils.getString(context, USER_TOKEN)
         var flag = PreferenceUtils.getBoolean(context, APP_CREATE, false)
         if (!flag) {
@@ -726,46 +666,6 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
                 this@SplashActivity.finish()
             }
         })
-
-
-//                    })
-//                    dialog.show()
-//                } else {
-//                    Log.e("result", "进入4")
-//                    ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-//                        override fun onArrival(postcard: Postcard?) {
-//                            this@SplashActivity.finish()
-//                        }
-//                    })
-//                }
-//            } else {
-//                Log.e("result", "进入3")
-//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "resume").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {
-//                    override fun onArrival(postcard: Postcard?) {
-//                        finish()
-//                    }
-//                })
-//            }
-//        } else {
-//            Log.e("result", "进入1")
-//            if (BaseApplication.getInstance().curActivity == 1) {
-//                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
-//                    override fun onArrival(postcard: Postcard?) {
-//                        if (teamCode != null) {
-//                            RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
-//                        }
-//                        finish()
-//                    }
-//                })
-//            } else if (BaseApplication.getInstance().curActivity == 3) {
-//                Log.e("result", "进入2")
-//                ARouter.getInstance().build(RouterUtils.MapModuleConfig.NAVIGATION).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation(this, object : NavCallback() {
-//                    override fun onArrival(postcard: Postcard?) {
-//                        finish()
-//                    }
-//                })
-//            }
-//        }
     }
 
 }

@@ -51,6 +51,9 @@ import org.cs.tec.library.binding.command.BindingConsumer
 import java.text.DecimalFormat
 
 
+
+//地图选点控制器
+
 class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.PanelSlideListener, BaseQuickAdapter.OnItemChildClickListener {
     override fun onItemChildClick(p0: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
         pointList.removeAt(position)
