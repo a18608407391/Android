@@ -5,6 +5,9 @@ import com.elder.zcommonmodule.Entity.HttpResponseEntitiy.BaseResponse
 
 class HttpInteface {
 
+    //网络请求接口类
+
+
     interface startDriverResult {
         fun startDriverSuccess(it: String)
         fun startDriverError(error: Throwable)

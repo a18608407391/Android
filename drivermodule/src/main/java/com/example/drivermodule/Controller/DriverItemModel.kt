@@ -67,6 +67,7 @@ import java.util.concurrent.TimeUnit
 
 class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamStatus, HttpInteface.JoinTeamResult {
     override fun JoinTeamSuccess(it: String) {
+        //加入队伍成功回调
         if (it.isNullOrEmpty()) {
             Toast.makeText(mapFr.activity, "队伍解散或已失效", Toast.LENGTH_SHORT).show()
             viewModel.selectTab(0)
@@ -96,13 +97,8 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
         }
         super.onDismiss(fr, value)
     }
-
-    //                HttpRequest.instance.JoinResult = this
-//                var map = HashMap<String, String>()
-//                map["teamCode"] = mapFr!!.teamCode!!
-//                map["joinAddr"] = viewModel?.curPosition?.latitude.toString() + "," + viewModel?.curPosition?.longitude.toString()
-//                HttpRequest.instance.JoinTeam(map)
     override fun CheckTeamStatusSucccess(it: BaseResponse) {
+        //队伍检查成功回调
         var info = Gson().fromJson<CreateTeamInfoDto>(Gson().toJson(it.data), CreateTeamInfoDto::class.java)
         if (it.code == 0) {
             viewModel.TeamStatus = SoketTeamStatus()
@@ -115,7 +111,6 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
         } else {
             if (it.code == 20001) {
                 //队伍不存在
-                Log.e("result", "TeamColde" + mapFr.teamCode)
                 viewModel.TeamStatus = SoketTeamStatus()
                 if (mapFr.teamCode == null) {
                     var bundle = Bundle()
@@ -196,7 +191,6 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
 
     private fun location(amapLocation: AMapLocation?) {
         //处理定位信息
-
         if (amapLocation != null && amapLocation.errorCode == 0) {
             mapFr.mListener?.onLocationChanged(amapLocation)// 显示系统小蓝点
             if (this.curAmapLocation == null) {
@@ -274,14 +268,14 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
 
     var isPauseDriver = false   //骑行暂停后
     var PauseMath = 0        //骑行暂停
-    var NeedPauseMath = false
+    var NeedPauseMath = false    //是否开启骑行暂停距离另算功能 该功能，暂时未确定使用
     private fun addStartPoint(amapLocation: Location) {
+        //骑行添加初始点
         mapFr.dismissProgressDialog()
         mapFr.setDriverStyle()
         mapFr.mAmap.clear()
         viewModel?.status?.locationLat?.add(amapLocation)
         mapFr?.mapUtils?.createAnimationMarker(true, LatLonPoint(amapLocation.latitude, amapLocation.longitude))
-//        mapActivity.getMapPointFragment().viewModel?.mapPointController?.startMaker = mapFr?.mapUtils!!.createMaker(amapLocation)
         driverController?.startMarker = mapFr?.mapUtils!!.createMaker(amapLocation)
         if (amapLocation?.aoiName != null && !amapLocation?.aoiName.isEmpty()) {
             viewModel?.status?.startAoiName = amapLocation?.aoiName
@@ -293,7 +287,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
     }
 
     private fun initView(model: MapFrViewModel) {
-        //进入方式判断
+        //进入方式判断，骑行数据初始化加载
         if (viewModel.status?.driverStartPoint != null) {
             if (viewModel?.status?.locationLat.isNullOrEmpty()) {
                 viewModel?.status?.locationLat.add(viewModel?.status?.driverStartPoint)
@@ -332,11 +326,13 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
             }
         }
         if (viewModel?.mapActivity.resume == "road") {
+            //查看路书跳转到路书处理
             CoroutineScope(uiContext).launch {
                 delay(200)
                 viewModel?.selectTab(2)
             }
         } else if (viewModel?.mapActivity.resume == "cancle") {
+            //取消骑行
             CoroutineScope(uiContext).launch {
                 delay(500)
                 if (viewModel?.status!!.distance > 1000) {
@@ -348,6 +344,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
             }
         }
         if (mapFr!!.teamCode != null) {
+            //初始化后，处理外部链接分享的组队邀请
             if (viewModel?.curPosition != null) {
                 CoroutineScope(uiContext).launch {
                     delay(500)
@@ -355,12 +352,12 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                 }
             }
         }
-//        mapFr.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE)
     }
 
     fun onClick(view: View) {
         when (view.id) {
             R.id.item_start_navagation -> {
+                //开始骑行
                 if (driverStatus.get() == Drivering) {
                     driverStatus.set(DriverPause)
                     viewModel.status.startDriver.set(DriverPause)
@@ -450,6 +447,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                 viewModel.status.startDriver.set(Drivering)
             }
             R.id.route_click -> {
+                //轨迹回放
                 var bundle = Bundle()
                 bundle.putSerializable(RouterUtils.LogRecodeConfig.PLAYER_ENTITY, deivceInfo)
                 viewModel?.startFragment(mapFr.parentFragment!!, RouterUtils.LogRecodeConfig.PLAYER, bundle)
@@ -468,6 +466,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
     }
 
     fun dontHaveOneMetre(cotent: String, leftBtnTv: String, rightBtnTv: String, type: Int) {
+        //取消骑行弹出窗
         var dia = DialogUtils.createNomalDialog(mapFr.activity!!, cotent, leftBtnTv, rightBtnTv)
         dia.setOnBtnClickL(OnBtnClickL {
             dia.dismiss()
@@ -504,7 +503,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
     var isResultPoint = false
 
     fun setResult(requestCode: Int, resultCode: Int, data: Bundle?) {
-        Log.e("result", "onFragmentResult" + requestCode)
+        //搜索点返回到骑行界面，展示maker
         when (requestCode) {
             RESULT_POINT -> {
                 if (data != null) {
@@ -542,7 +541,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
     }
 
     fun onInfoWindowClick(it: Marker?) {
-        //开始导航了
+        //点击maker窗口开始导航了
         it!!.remove()
         viewModel?.status.navigationStartPoint = viewModel?.status.startPoint
         var location = Location(it!!.position.latitude, it!!.position.longitude, System.currentTimeMillis().toString(), 0F, 0.0, 0F, it.title, "")
@@ -556,8 +555,10 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
     }
 
     fun cancleDriver(b: Boolean) {
+        //取消骑行
         driverStatus.set(DriverCancle)
         if (b) {
+            //是否清除地图标记
             mapFr.mAmap.clear()
         }
         driverController.cancleDriver()
@@ -578,6 +579,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
 
 
     fun onFiveBtnClick(view: View) {
+        //右边5个按钮点击事件
         when (view.id) {
             R.id.sos_btn -> {
                 var intent = Intent(Intent.ACTION_CALL)
@@ -602,6 +604,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
     }
 
     fun changeMap_Point_btn() {
+
         if (viewModel?.status.navigationType != 0) {
             //跳到导航
             var list = ArrayList<LatLng>()
@@ -610,6 +613,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
             }
             viewModel?.startNavi(list, 2)
         } else {
+            //转换到地图选点界面
             if (driverStatus.get() == Drivering && viewModel?.status.locationLat.size == 0) {
                 return
             }
@@ -635,7 +639,6 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
             HttpRequest.instance.setCheckStatusResult(this)
             var map = HashMap<String, String>()
             HttpRequest.instance.checkTeamStatus(map)
-
         }
     }
 
@@ -648,6 +651,7 @@ class DriverItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.CheckTeamS
                 }
             }
             RxBusEven.NAVIGATION_FINISH -> {
+                //导航结束通知
                 viewModel?.mapActivity.NavigationStart = false
                 viewModel?.status.navigationType = 0
                 viewModel?.status.passPointDatas.clear()

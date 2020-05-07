@@ -72,7 +72,7 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
     var tvDegree = ObservableField<String>()//度数
     var tvWeek = ObservableField<String>()//星期
     var tvCity = ObservableField<String>("湖南省")//省市
-    var vIsField = ObservableField<Boolean>(false)
+    var vIsField = ObservableField<Boolean>(false)      //搜索隐藏
     lateinit var activityFragment: ActivityFragment
     var curLocation: AMapLocation? = null
     var mweathersearch: WeatherSearch? = null
@@ -156,14 +156,6 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
      * * */
     fun requestWeatherDataForCity(cityName: String?) {
         var mquery = WeatherSearchQuery(cityName, WeatherSearchQuery.WEATHER_TYPE_LIVE)
-//        if (cityName!!.endsWith("省")) {//省
-//            Log.e("activity", "省${cityName}")
-//
-//        } else {//市
-//
-//            Log.e("activity", "市${cityName.substring(0, cityName.indexOf("市"))}")
-//            WeatherSearchQuery(cityName.substring(0, cityName.indexOf("市") - 1), WeatherSearchQuery.WEATHER_TYPE_LIVE)
-//        }
         mweathersearch!!.setQuery(mquery);
         mweathersearch!!.searchWeatherAsyn(); //异步搜索
     }
@@ -262,8 +254,6 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
         if (it.isNullOrEmpty() || it == "系统繁忙") {
             return
         }
-
-
 
         activityPartyItems.removeAll()
         var activityPartyEntity = Gson().fromJson<ActivityPartyEntity>(it, ActivityPartyEntity::class.java)
@@ -385,12 +375,6 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
 
             activityPartyItems.insertItem(ObservableField("精彩活动").get())
             activityPartyItems.insertList(select)
-
-            Log.e("activity", "================================")
-            activityPartyItems.forEach {
-                Log.e("activity", "$it")
-            }
-            Log.e("activity", "=================================")
         }
         activityFragment.poketSwipeRefreshLayout?.isRefreshing = false
         if (activityPartyEntity.memberView?.tel.isNullOrEmpty()) {
@@ -432,13 +416,6 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
         bundle.putInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
         bundle.putString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
         startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.SUBJECT_PARTY, bundle)
-//        ARouter.getInstance().build(RouterUtils.PartyConfig.SUBJECT_PARTY)
-//                .withInt(RouterUtils.PartyConfig.Party_SELECT_TYPE, type)
-//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-//                        Location(curLocation!!.latitude, curLocation!!.longitude))
-//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
-//                .navigation()
-
     }
 
     var activityPartyHotRecommendCommand = BindingCommand(object : BindingConsumer<ActivityPartyEntity.HotRecommend> {
@@ -448,14 +425,6 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
             if (t.ID == 0) {
                 return
             }
-//            ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
-//                    .withInt(RouterUtils.PartyConfig.PARTY_ID, t.ID)
-//                    .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-//                            Location(curLocation!!.latitude, curLocation!!.longitude))
-//                    .withInt(RouterUtils.PartyConfig.PARTY_CODE, t.CODE)
-//                    .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
-//                    .navigation()
-
             var bundle = Bundle()
             bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                     Location(curLocation!!.latitude, curLocation!!.longitude))
@@ -476,24 +445,10 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
         bundle.putInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
         bundle.putInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE)
         startFragment(activityFragment.parentFragment!!, RouterUtils.PartyConfig.PARTY_DETAIL, bundle)
-//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_DETAIL)
-//                .withInt(RouterUtils.PartyConfig.PARTY_ID, en.ID)
-//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-//                        Location(curLocation!!.latitude, curLocation!!.longitude))
-//                .withInt(RouterUtils.PartyConfig.PARTY_CODE, en.CODE)
-//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
     }
 
     override fun onWonderfulClick(entity: Any) {//精彩活动点击
         var ac = entity as ActivityPartyEntity.WonderfulActive
-//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_SUBJECT_DETAIL)
-//                .withInt(RouterUtils.PartyConfig.PARTY_ID, ac.ID)
-//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-//                        Location(curLocation!!.latitude, curLocation!!.longitude))
-//                .withInt(RouterUtils.PartyConfig.PARTY_CODE, ac.CODE)
-//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get())
-//                .navigation()
-
         var bundle = Bundle()
         bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                 Location(curLocation!!.latitude, curLocation!!.longitude))
@@ -505,10 +460,6 @@ class ActivityViewModel : BaseViewModel(), SwipeRefreshLayout.OnRefreshListener,
 
     override fun onClockActiveClick(entity: Any) {
         var clock = entity as ActivityPartyEntity.ClockActive
-//        ARouter.getInstance().build(RouterUtils.PartyConfig.PARTY_CLOCK_DETAIL).withInt(RouterUtils.PartyConfig.PARTY_ID, clock.ID)
-//                .withSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
-//                        Location(curLocation!!.latitude, curLocation!!.longitude)).withInt(RouterUtils.PartyConfig.PARTY_CODE, clock.CODE)
-//                .withString(RouterUtils.PartyConfig.PARTY_CITY, tvCity.get()).navigation()
         var bundle = Bundle()
         bundle.putSerializable(RouterUtils.PartyConfig.PARTY_LOCATION,
                 Location(curLocation!!.latitude, curLocation!!.longitude))

@@ -70,38 +70,37 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     }
 
     //路书逻辑处理
-    var netWorkData: ArrayList<RoadDetailEntity>? = null
-    var data: HotData? = null
-    var bottomVisible = ObservableField<Boolean>(false)
-    var FrondVisible = ObservableField<Boolean>(false)
-    var pathList = HashMap<String, AMapNaviPath>()
-    var dayCount = ObservableField<Int>()
-    var title = ObservableField<String>()
-    var distance_andtime = ObservableField<String>()
-    var pointAddress = ObservableField<String>()
-    var discribe = ObservableField<String>()
+    var netWorkData: ArrayList<RoadDetailEntity>? = null       //网络请求路书数据集合
+    var data: HotData? = null                                  //路书数据
+    var bottomVisible = ObservableField<Boolean>(false)    //底部详情布局隐藏控制
+    var FrondVisible = ObservableField<Boolean>(false)     //前方路况布局隐藏控制
+    var pathList = HashMap<String, AMapNaviPath>()                 //路线集合，用于免加载处理
+    var dayCount = ObservableField<Int>()                          //天数
+    var title = ObservableField<String>()                          //标题
+    var distance_andtime = ObservableField<String>()                 //时间距离
+    var pointAddress = ObservableField<String>()                    //点的位置
+    var discribe = ObservableField<String>()                        //描述
     var id = ObservableField<String>()
     var time = 0L
-    var indexPath = 0
+    var indexPath = 0                                                   //当前线路索引
     var makerList = ArrayList<Marker>()
-    var lines: Polyline? = null
+    var lines: Polyline? = null                                            //当前路线实体类
     var currentRoad: RoadDetailEntity? = null
     var currentRoadList: ArrayList<RoadDetailEntity>? = null
-    var scrollPosition = ObservableField(-1)
-    //recyclerView滑动到指定位置
-    var lastMarker: Marker? = null
+    var scrollPosition = ObservableField(-1)           //recyclerView滑动到指定位置
+
+    var lastMarker: Marker? = null                           //上一个点击的marker点
 
     var pagerAdapter = BindingRecyclerViewAdapter<BottomHoriDatas>()
     var itemBinding = ItemBinding.of<BottomHoriDatas>(BR.horiDatas, R.layout.roadbook_bottom_hori_item_layout).bindExtra(BR.road_model,this@RoadBookItemModel)
     var items = ObservableArrayList<BottomHoriDatas>()
 
-    var recycleComponent = SimpleItemRecycleComponent(this)
+    var recycleComponent = SimpleItemRecycleComponent(this)          //底部滑动窗公共处理类
     var times = 0L
 
 
     override fun getRoadBookDetailSuccess(it: String) {
-
-        Log.e("result", "getRoadBookDetailSuccess" + it)
+        //路书详情获取成功回调
         viewModel?.mapActivity.dismissProgressDialog()
         CoroutineScope(ioContext).async {
             netWorkData = Gson().fromJson<ArrayList<RoadDetailEntity>>(it, object : TypeToken<ArrayList<RoadDetailEntity>>() {}.type)
@@ -117,6 +116,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     }
 
     fun toNavi(data: BottomHoriDatas) {
+        //点击maker显示布局后，点击导航回调
         if (viewModel?.status.navigationType == 0) {
             viewModel?.status!!.navigationEndPoint = Location(data.lat, data.lon, System.currentTimeMillis().toString(), 0F, 0.0, 0F, data.describe.get()!!)
             if (viewModel?.status.startDriver.get() == DriverCancle) {
@@ -143,11 +143,12 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     var behavior_by_routes = ObservableField<Int>(BottomSheetBehavior.STATE_HIDDEN)
 
     override fun getRoadBookDetailError(ex: Throwable) {
+        //获取路线错误
         viewModel?.mapActivity.dismissProgressDialog()
-        Log.e("result", "getRoadBookDetailError" + ex.message)
     }
 
     fun MiddleRoadClick(data: BottomHoriDatas) {
+        //查看路书点详情
         ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_WEB_ACTIVITY).withInt(RouterUtils.MapModuleConfig.ROAD_WEB_TYPE, 0).withString(RouterUtils.MapModuleConfig.ROAD_WEB_ID, data.roadid).navigation()
     }
 
@@ -156,6 +157,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
             if (lastMarker == null) {
                 return
             }
+            //滑动recycleView，改变maker选择状态
             markerChange(makerList[t])
         }
     })
@@ -165,6 +167,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     //TabLayout 标签选择
 
     fun markerChange(p0: Marker) {
+        //设置当前maker点为选中状态
         if (System.currentTimeMillis() - times < 200) {
             times = System.currentTimeMillis()
             return
@@ -178,12 +181,6 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
         if (selecPosition == 0) {
             //HOME
             select_position.set(Integer.valueOf(p0?.snippet) + 1)
-//            selectTab()
-//            initTabSelect()
-//
-//            var date = driverViewModel?.recycleComponent.horiDatas[index + 1]
-//
-//            driverViewModel?.recycleComponent.click(date)
         } else {
             if (lastMarker != null) {
                 var inflater = viewModel.mapActivity.activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -259,18 +256,19 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     var selecPosition = 0
     var tabSelect = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
+            //底部滑动栏，tabLayout选择回调
             selecPosition = t
             initTabSelect(t, true)
         }
     })
 
     fun initTabSelect(position: Int, type: Boolean) {
+        //初始化路书界面
         if (recycleComponent!!.allData != null) {
             if (position == 0) {
                 items!!.clear()
                 recycleComponent.initDatas(netWorkData!!, data, 0)
                 createMarker(recycleComponent!!.allData!!)
-//                bottomVisible!!.set(false)
                 behavior_by_routes!!.set(BottomSheetBehavior.STATE_COLLAPSED)
             } else {
                 items!!.clear()
@@ -296,8 +294,6 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
                     ro.visible.set(true)
                     list.add(ro)
                     var recy = RoadBookRecycleEntity()
-//                driverViewModel?.recycleComponent.megerList.insertItem(m)
-//                driverViewModel?.recycleComponent.megerList.insertList(list)
                     recycleComponent.megerList.insertItem(recy)
                     recycleComponent.changeIndex(position - 1, recycleComponent!!.allData!![position - 1], true)
                     behavior_by_routes!!.set(BottomSheetBehavior.STATE_COLLAPSED)
@@ -309,6 +305,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     fun onClick(view: View) {
         when (view.id) {
             R.id.item_road_line_detail -> {
+                //查看线路详情
                 ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_WEB_ACTIVITY).withInt(RouterUtils.MapModuleConfig.ROAD_WEB_TYPE, 1).withString(RouterUtils.MapModuleConfig.ROAD_WEB_ID, id.get()).navigation()
             }
         }
@@ -330,6 +327,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     }
 
     fun customView(maker: Marker, view: View?) {
+        //自定义maker窗口显示
         var list = maker.snippet.split(";")
         var img = view!!.findViewById<ImageView>(R.id.left_img)
         var top = view!!.findViewById<TextView>(R.id.top_tv)
@@ -371,6 +369,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     }
 
     fun backToDriver() {
+        //返回到骑行
         if (lines != null) {
             lines?.remove()
             lines = null
@@ -395,13 +394,14 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     }
 
     fun NextRoadClick(view: View) {
+        //下一个点信息详情
         var index = makerList.indexOf(lastMarker)
         var ms = items[index + 1]
         ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_WEB_ACTIVITY).withInt(RouterUtils.MapModuleConfig.ROAD_WEB_TYPE, 3).withString(RouterUtils.MapModuleConfig.ROAD_WEB_ID, items[index].roadid + "," + ms.roadid).navigation()
     }
 
     fun createMarker(data: ArrayList<RoadDetailEntity>) {
-        Log.e("result", "data" + data.size)
+        //创建途径maker点
         if (!makerList.isEmpty()) {
             makerList.forEach {
                 it.remove()
@@ -467,15 +467,13 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
         if (pathList.isEmpty()) {
             viewModel.mapActivity.showProgressDialog(getString(R.string.loading_route))
             viewModel?.mapActivity.mapUtils?.setDriverRoute(fromAndTo.from, fromAndTo.to, pass)
-//            var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
-//                    pass, null, "")
-//            mRoutePath?.calculateDriveRouteAsyn(query)
         } else {
             drawPath(pathList["0"])
         }
     }
 
     fun drawPath(p0: AMapNaviPath?) {
+        //绘制线路
         if (!pathList.containsKey(indexPath.toString())) {
             pathList.put(indexPath.toString(), p0!!)
         }
@@ -491,6 +489,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     }
 
     fun createMarker(data: RoadDetailEntity) {
+        //根据路书数据创建marker点
         if (!makerList.isEmpty()) {
             makerList.forEach {
                 it.remove()
@@ -545,6 +544,7 @@ class RoadBookItemModel : ItemViewModel<MapFrViewModel>(), HttpInteface.RoadBook
     }
 
     fun CalculateCallBack(result: AMapCalcRouteResult) {
+        //路线规划回调
         if (result.errorCode == 0) {
             var path = viewModel?.mapActivity.mapUtils?.navi?.naviPaths!![result.routeid[0]]
             drawPath(path)

@@ -88,25 +88,26 @@ import kotlin.collections.HashMap
 class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     //组队逻辑处理
     var markerList = HashMap<String, Marker>()
-    var TeamInfo: TeamPersonInfo? = null
-    var teamer: Int = 0
-    var teamCode = ObservableField<String>()
-    var teamId: String? = null
-    var teamName: String? = null
-    var markerListNumber = ArrayList<String>()
-    var titleName = ObservableField<String>()
-    var date = ObservableField<String>()
-    var districtTv = ObservableField<String>()
-    var visibleScroller = ObservableField<Boolean>(true)
-    var teamNavigation = ObservableField<Boolean>(false)
-    var create: CreateTeamInfoDto? = null
-    var join: TeamPersonnelInfoDto? = null
-    var isLoginTimeOut = false
-    var startTime: Long = 0
-    var location: AMapLocation? = null
-    var type: String? = null   //队伍创建加入界面返回的参数
-    var soketNavigation: SoketNavigation? = null
+    var TeamInfo: TeamPersonInfo? = null            //本地组队信息，目前用处不大
+    var teamer: Int = 0                      //队长id
+    var teamCode = ObservableField<String>()           //队伍编号
+    var teamId: String? = null                //队伍ID
+    var teamName: String? = null               //队伍名字
+    var markerListNumber = ArrayList<String>()           //界面maker点编号集合
+    var titleName = ObservableField<String>()            //标题名
+    var date = ObservableField<String>()           //日期
+    var districtTv = ObservableField<String>()          //描述文本
+    var visibleScroller = ObservableField<Boolean>(true)       //
+    var teamNavigation = ObservableField<Boolean>(false)       //是否有组队导航
+    var create: CreateTeamInfoDto? = null                 //创建队伍基本信息
+    var join: TeamPersonnelInfoDto? = null                //加入队伍基本信息
+    var isLoginTimeOut = false              //是否登录超时
+    var startTime: Long = 0              //开始时间
+    var location: AMapLocation? = null            //当前定位点
+    var type: String? = null   //队伍创建加入界面返回的参数       //
+    var soketNavigation: SoketNavigation? = null         //组队导航信息
     fun restAllData() {
+        //状态清空 队伍解散或者退出队伍
         markerListNumber.forEach {
             markerList[it]?.remove()
         }
@@ -177,12 +178,10 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
 
             }
             TeamSocketDisConnect -> {
-                //组队Socket已断开
+                //组队Socket已断开  已在BaseApplication中处理
             }
             MinaDataReceive -> {
-
                 //组队数据接收
-
                 doSocket((it.value) as BasePacketReceive)
 
             }
@@ -198,7 +197,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     }
 
     fun sendOrder(n: Soket, flag: Boolean) {
-
+            //发送指令
         if (mapFr.onStart && flag) {
 
             CoroutineScope(uiContext).launch {
@@ -223,9 +222,6 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     var HeartTimeLimit = 0L
 
     private fun doSocket(it: BasePacketReceive) {
-
-        Log.e("result", "doSocket" + Gson().toJson(it))
-
         if (mapFr.isAdded) {
 
             if (BaseApplication.isClose) {
@@ -407,7 +403,6 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                         var even = RxBusEven()
                         even.type = RxBusEven.Team_reject_even
                         RxBus.default!!.post(even)
-                        Log.e("result", "解散队伍")
                         endTeam(false)
                     }
                     SocketDealType.UPDATE_MANAGER.code -> {
@@ -457,6 +452,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
 
     var notifyRouteChange: NormalDialog? = null
     private fun createDistrictDialog() {
+        //队伍导航目的地更改提醒
         if (mapFr.isVisible && viewModel?.currentPosition == 1) {
             if (notifyRouteChange == null) {
                 notifyRouteChange = DialogUtils.createNomalDialog(mapFr.activity!!, getString(R.string.route_change), getString(R.string.ignore), getString(R.string.change_route))
@@ -487,6 +483,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     }
 
     private fun toNavi(b: Boolean) {
+        //组队导航跳转
         if (teamer.toString() == mapFr.user.data?.id) {
             var list = ArrayList<LatLng>()
             if (!viewModel?.status.passPointDatas.isEmpty()) {
@@ -525,6 +522,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     }
 
      fun sendNavigationNotify() {
+         //发送组队导航通知
         var so = Soket()
         so.type = SocketDealType.NAVIGATION_START.code
         so.teamCode = teamCode.get()
@@ -548,6 +546,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
 
     fun doCreate(data: Bundle?) {
         if (data != null) {
+            //创建队伍返回回调处理
             type = data.getString("type")
             when (type) {
                 "create" -> {
@@ -563,13 +562,12 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                 }
             }
         } else {
-            Log.e("result", "data==null")
             viewModel.selectTab(0)
         }
     }
 
     fun initInfo() {
-        Log.e("result", "initInfo处理")
+        //队伍信息初始化
         if (TeamInfo != null && TeamInfo?.redisData != null && TeamInfo?.redisData?.createTime != null) {
             if (TeamInfo?.redisData?.teamName != null) {
                 titleName.set(TeamInfo?.redisData?.teamName + "(" + TeamInfo?.redisData?.dtoList?.size + ")")
@@ -582,21 +580,22 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
                 addChildView(TeamInfo?.redisData!!.dtoList)
                 viewModel?.component.isTeam.set(true)
             }
-            Log.e("result", "initInfo处理1")
         } else {
-            Log.e("result", "initInfo处理")
         }
         mapFr.dismissProgressDialog()
     }
 
+    //底部头像列表数据
     var personDatas = ObservableArrayList<TeamPersonnelInfoDto>().apply {
         this.add(TeamPersonnelInfoDto())
     }
 
+    //分享弹出窗
     var shareDialog: AlertDialog? = null
 
     var BottomChildClick = BindingCommand(object : BindingConsumer<Int> {
         override fun call(t: Int) {
+            //底部头像点击事件回调
             var entity = personDatas[t]
             if (t == 0) {
                 if (TeamInfo?.redisData?.dtoList?.size == TeamInfo?.redisData?.teamMaxCount) {
@@ -655,6 +654,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     })
 
     fun shareWx(type: Int) {
+        //微信分享
         if (TeamInfo == null && mapFr.activity!!.isFinishing) {
             return
         }
@@ -686,6 +686,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     }
 
     fun addChildView(dtoList: MutableList<TeamPersonnelInfoDto>) {
+        //添加队员界面实现
         if (dtoList != null && dtoList.size != 0) {
             personDatas.clear()
             personDatas.add(TeamPersonnelInfoDto())
@@ -741,6 +742,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     }
 
     private fun createImageMarker(it: TeamPersonnelInfoDto) {
+        //创建队员marker点
         var m = it.joinAddr.split(",")
         var position = LatLng(m[0].toDouble(), m[1].toDouble())
         var url = getImageUrl(it.memberHeaderUrl)
@@ -773,6 +775,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     }
 
     private fun fomatDistance(position: LatLng, markerPosition: LatLng): String? {
+        //距离转String工具
         var s = AMapUtils.calculateLineDistance(position, markerPosition)
         var distanceTv = ""
         if (s > 1000) {
@@ -787,6 +790,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
         when (view.id) {
             R.id.team_setting -> {
                 if (TeamInfo != null) {
+                    // 跳转到设置界面
                     var fr = viewModel?.mapActivity.parentFragment as BaseFragment<ViewDataBinding, BaseViewModel>
                     fr.start((ARouter.getInstance().build(RouterUtils.TeamModule.SETTING).navigation() as TeamSettingActivity).SettingValue(TeamInfo!!))
 //                    ARouter.getInstance().build(RouterUtils.TeamModule.SETTING).withSerializable(RouterUtils.TeamModule.TEAM_INFO, TeamInfo).navigation()
@@ -798,6 +802,7 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
     var xF = 0F
     var scrollerCallBack = BindingCommand(object : BindingConsumer<MotionEvent> {
         override fun call(event: MotionEvent) {
+            //
             var action = event.action
             var x = event.x
             when (action) {
@@ -871,7 +876,6 @@ class TeamItemModel : ItemViewModel<MapFrViewModel>() {
             sendOrder(so, false)
             closeMina()
             if(viewModel.TeamStatus!=null){
-                Log.e("result","TeamStatus不为空")
                 viewModel.TeamStatus!!.resetTeam()
             }
             viewModel.TeamStatus = null

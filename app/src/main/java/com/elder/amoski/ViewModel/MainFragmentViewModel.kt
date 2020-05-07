@@ -48,8 +48,9 @@ import org.cs.tec.library.Utils.ConvertUtils
 import java.util.ArrayList
 
 
-class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener, MapFragment.MapLoadedCallBack, HttpInteface.IRelogin {
+class MainFragmentViewModel : BaseViewModel(), RadioGroup.OnCheckedChangeListener, HttpInteface.IRelogin {
     override fun IReloginSuccess(t: String) {
+        //重新登录返回回调 服务器新版本未上线，该功能暂时无效
         var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
         PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
         PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
@@ -58,13 +59,8 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
     }
 
     override fun IReloginError() {
-
+          //重新登录错误回调
     }
-
-    override fun LoadedSuccess() {
-//        bottomVisible.set(false)
-    }
-
 
     var returnCheckId = 0
     var bottomVisible = ObservableField<Boolean>(true)
@@ -125,9 +121,9 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
 
 
     fun checkRelogin() {
+        //登录是否过期检测
         if (!BaseApplication.getInstance().TokenTimeOutCheck) {
             if (System.currentTimeMillis() - BaseApplication.getInstance().lastTokenTime >= BaseApplication.getInstance().TokenTimeOutLimit) {
-                Log.e("result", "登录过期")
                 BaseApplication.getInstance().TokenTimeOutCheck = true
                 var phone: String? = PreferenceUtils.getString(context, USER_PHONE) ?: return
                 var map = HashMap<String, String>()
@@ -141,6 +137,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
 
     var amapLocation: AMapLocation? = null
     fun setLocation(it: AMapLocation) {
+        //初始化定位点，解决界面获取定位点过慢的情况，第一次登陆无效
         amapLocation = it
         if (activityFragment != null) {
             activityFragment!!.viewModel?.receiveLocation(amapLocation!!)
@@ -157,10 +154,12 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
         super.doRxEven(it)
         when (it?.type) {
             RxBusEven.RxLocation -> {
+                //检测登录
                 checkRelogin()
                 setLocation(it.value as AMapLocation)
             }
             RxBusEven.DriverReturnRequest -> {
+                //骑行返回，切换到上一次切换的位置
                 CoroutineScope(uiContext).launch {
                     if (lastCheckediD == returnCheckId) {
                         mRadioGroup!!.check(R.id.same_city)
@@ -171,24 +170,29 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 }
             }
             RxBusEven.PartyWebViewReturn -> {
+                //以前party主界面是一个web页面，现在该方法无效了
                 bottomVisible.set(it.value as Boolean)
                 if (it.secondValue as Int == 1) {
                     mRadioGroup!!.check(lastCheckediD)
                 }
             }
             RxBusEven.ENTER_TO_SEARCH -> {
+                //跳转到路书搜索界面
 //                    homeActivity.start(SearchCategoryFragment())
                 homeActivity.start((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_SEARCH_ACTIVITY).navigation() as RoadBookSearchActivity))
             }
             RxBusEven.ENTER_TO_ROAD_HOME -> {
+                //跳转到路书首页
                 var loc = it.value as Location
                 var type = it.value2 as Int
                 homeActivity.start((ARouter.getInstance().build(RouterUtils.MapModuleConfig.ROAD_BOOK_ACTIVITY).navigation() as RoadHomeActivity).setLocation(loc).setType(type))
             }
             RxBusEven.ACTIVE_WEB_GO_TO_APP -> {
+                //标记下一次回到首页，切换到个人模块
                 returnPrivate = true
             }
             RxBusEven.NET_WORK_SUCCESS -> {
+                //监听网络变化，骑行状态下，重新获取定位请求
                 if (mapFr != null && mapFr!!.viewModel?.status!!.startDriver.get() != DriverCancle) {
                     var pos = ServiceEven()
                     pos.type = SERVICE_DRIVER
@@ -200,6 +204,7 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 }
             }
             RxBusEven.NET_WORK_ERROR -> {
+                //监听网络变化，网络异常，关闭定位
                 var pos = ServiceEven()
                 pos.type = SERVICE_STOP
                 RxBus.default?.post(pos)
@@ -306,7 +311,6 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 mapFr = ARouter.getInstance().build(RouterUtils.MapModuleConfig.MAP_FR).navigation() as MapFragment?
                 mapFr!!.arguments = bundle
                 mFragments.add(mapFr!!)
-                mapFr!!.loaded = this
                 mapFr?.setDriverStatus(home.resume)
                 if (home.resume == "road") {
                     mapFr!!.hotData = homeActivity.hot
@@ -380,37 +384,5 @@ class MainFragmentViewModel : BaseViewModel, RadioGroup.OnCheckedChangeListener,
                 changerFragment(1)
             }
         }
-    }
-
-    constructor() {
-        var m = RxBus.default?.toObservable(ActivityResultEven::class.java)?.subscribe {
-            when (it.name) {
-                CALL_BACK_STATUS -> {
-                    type = it.data as Int
-                    if (type == 2) {
-                        driverSelected.set(context.getDrawable(R.drawable.black_driver_icon))
-                    } else {
-                        driverSelected.set(context.getDrawable(R.drawable.driver_nomal_icon))
-                    }
-                }
-            }
-        }
-
-        var s = RxBus.default?.toObservable(String::class.java)?.subscribe {
-            if (it == "ShareFinish") {
-                mRadioGroup!!.check(R.id.same_city)
-                var log = mFragments[0] as LogRecodeFragment
-                log.loadDatas(log.viewModel?.location!!)
-                type = DriverCancle
-                driverSelected.set(context.getDrawable(R.drawable.black_driver_icon))
-                AppManager.get()?.finishOtherActivity(homeActivity.javaClass)
-            } else if (it == "ToUser") {
-              home.runOnUiThread {
-                    mRadioGroup!!.check(R.id.main_right)
-                }
-            }
-        }
-        RxSubscriptions.add(m)
-        RxSubscriptions.add(s)
     }
 }

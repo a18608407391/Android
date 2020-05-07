@@ -73,7 +73,6 @@ import java.io.File
 
 class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpInteface.IRelogin {
     override fun IReloginSuccess(t: String) {
-        Log.e("result", "重新获取Token成功")
         var resp = Gson().fromJson<BaseResponse>(t, BaseResponse::class.java)
         PreferenceUtils.putString(context, USER_TOKEN, resp.data.toString())
         PreferenceUtils.putLong(context, TOKEN_LIMIT, System.currentTimeMillis())
@@ -196,79 +195,7 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         }
     }
 
-
     var loc: AMapLocation? = null
-//    fun doMain() {
-//        //必要事情，请求权限
-////          goHome()
-//
-//        if (PreferenceUtils.getString(context, USERID) != null) {
-//            var location = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//            if (!location.isProviderEnabled(LocationManager.GPS_PROVIDER) || !location.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-//                Toast.makeText(context, getString(R.string.get_point_time_out), Toast.LENGTH_SHORT).show()
-//                var intent = Intent()
-//                intent.setAction(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-//                startActivity(intent)
-//            } else if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(context, getString(R.string.permisstion_error), Toast.LENGTH_SHORT).show()
-//                var intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-//                intent.data = Uri.parse("package:$packageName")
-//                startActivity(intent)
-//            } else {
-//            }
-//        }
-//        var flag = checkDriverStatus()
-//        if (flag) {
-//            Log.e("result", "token失效3")
-//            var pos = ServiceEven()
-//            pos.type = SERVICE_CREATE
-//            RxBus.default?.post(pos)
-//            dispose = RxBus.default?.toObservable(RxBusEven::class.java)?.subscribe {
-//                when (it.type) {
-//                    RxBusEven.RxLocation -> {
-//                        Log.e("result", "token失效4")
-//                        var loction = it.value as AMapLocation
-//                        var status = queryDriverStatus(PreferenceUtils.getString(context, USERID))
-//                        if (status[0].locationLat.size != 0) {
-//                            var driver = status[0].locationLat
-//                            var dis = AMapUtils.calculateLineDistance(LatLng(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLng(loction.latitude, loction.longitude))
-//                            if (dis < 1000) {
-//                                if (driver[driver.size - 1].time.toLong() - status[0].StartTime > 0) {
-//                                    status[0].second = (driver[driver.size - 1].time.toLong() - status[0].StartTime) / 1000
-//                                }
-//                                UpdateDriverStatus(status[0])
-//                                doStatus(status)
-//                            } else {
-//                                var mRoutePath = RouteSearch(this)
-//                                mRoutePath.setRouteSearchListener(this)
-//                                var fromAndTo = RouteSearch.FromAndTo(LatLonPoint(driver[driver.size - 1].latitude, driver[driver.size - 1].longitude), LatLonPoint(loction.latitude, loction.longitude))
-//                                var query = RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_MULTI_STRATEGY_FASTEST_SHORTEST_AVOID_CONGESTION,
-//                                        null, null, "")// 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
-//                                mRoutePath.calculateDriveRouteAsyn(query)// 异步路径规划驾车模式查询
-//                            }
-//                        } else {
-//                            doStatus(status)
-//                        }
-//                        dispose?.dispose()
-//                        RxSubscriptions.remove(dispose)
-//                    }
-//                }
-//            }
-//            RxSubscriptions.add(dispose)
-//        } else {
-////            Log.e("result", "token失效3")
-////            if (BaseApplication.getInstance().curActivity == 0) {
-////                goHome()
-////            } else {
-////                ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).navigation()
-////                if (teamCode != null) {
-////                    RxBus.default?.post(RxBusEven.getInstance(RxBusEven.BrowserSendTeamCode, teamCode!!))
-////                }
-////                finish()
-////            }
-//        }
-//    }
-
 
     fun Nomal() {
         var info = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -659,6 +586,9 @@ class SplashActivity : Activity(), RouteSearch.OnRouteSearchListener, HttpIntefa
         }
         RxSubscriptions.add(dispose)
     }
+
+
+
 
     private fun doStatusLocation(status: ArrayList<DriverDataStatus>, loction: AMapLocation) {
         ARouter.getInstance().build(RouterUtils.ActivityPath.HOME).withOptionsCompat(getScaleUpAnimation(splash_layout)).withParcelable(RouterUtils.ActivityPath.AMAP_LOCATION, loction).withString(RouterUtils.MapModuleConfig.RESUME_MAP_ACTIVITY, "continue").withString(RouterUtils.MapModuleConfig.RESUME_MAP_TEAMCODE, teamCode).navigation(this, object : NavCallback() {

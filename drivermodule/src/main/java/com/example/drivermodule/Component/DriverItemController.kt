@@ -37,6 +37,7 @@ class DriverItemController : Serializable {
     var line: Polyline? = null
 
     fun cancleDriver() {
+        //取消骑行，删除本地数据
         model.viewModel?.mapActivity.mapUtils!!.clearMarker()
         if (startMarker != null) {
             startMarker?.remove()

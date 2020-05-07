@@ -71,6 +71,7 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
             appBarLayout.addOnOffsetChangedListener(this)
             poketSwipeRefreshLayout.setOnRefreshListener(viewModel)
             toolbar.setOnTouchListener { v, event ->
+                //解决CoordinatorLayout 点击事件冲突
                 var g = isTouchPointInView(llSearch, event.x.toInt(), event.y.toInt())
                 if (g) {
                     if (System.currentTimeMillis() - CurrentClickTime < 1000) {
@@ -82,10 +83,6 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
                 return@setOnTouchListener llSearch.dispatchTouchEvent(event)
             }
         }
-        RxSubscriptions.add(RxBus.default?.toObservable(DriverDataStatus::class.java)?.subscribe {
-
-
-        })
     }
     private fun isTouchPointInView(view: View?, x: Int, y: Int): Boolean {
         if (view == null) {
@@ -108,6 +105,7 @@ class ActivityFragment : BaseFragment<FragmentActivityBinding, ActivityViewModel
     var lastColor = false
     override fun onOffsetChanged(p0: AppBarLayout?, p1: Int) {
         curOffset = p1
+        //顶部状态切换处理
         if (p1 >= -ConvertUtils.dp2px(122F)) {
             if (lastColor) {
                 Utils.setStatusTextColor(false, activity)

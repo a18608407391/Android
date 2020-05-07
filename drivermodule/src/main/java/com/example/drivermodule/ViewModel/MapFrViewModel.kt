@@ -147,12 +147,10 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
     }
 
     override fun onTabSelected(p0: TabLayout.Tab?) {
-        Log.e("result", "onTabSelected" + currentPosition)
         if (p0!!.position == currentPosition) {
             return
         }
         if (p0!!.position == 2 && currentPosition == 3) {
-            Log.e("result", "解散队伍" + currentPosition)
             return
         }
         when (p0?.position) {
@@ -166,6 +164,7 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
             }
             1 -> {
                 if (currentPosition == 0) {
+
                     mapActivity.getDrverController()?.GoTeam()
                 } else if (currentPosition == 2) {
                     mapActivity.getRoadBookController()?.backToDriver()
@@ -391,17 +390,13 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
                 var bundle = Bundle()
                 bundle.putSerializable(RouterUtils.MapModuleConfig.SHARE_ENTITY, fr?.share!!)
                 startFragment(mapActivity.parentFragment!!, RouterUtils.MapModuleConfig.SHARE_ACTIVITY, bundle)
-//                ARouter.getInstance().build(RouterUtils.MapModuleConfig.SHARE_ACTIVITY).navigation(mapActivity.activity, object : NavCallback() {
-//                    override fun onArrival(postcard: Postcard?) {
-//                        finish()
-//                    }
-//                })
             }
         }
     }
 
 
     fun resetDriver(fr: DriverItemModel) {
+        //骑行结束底部分享按钮
         showBottomSheet.set(false)
         fr.panelState.set(SlidingUpPanelLayout.PanelState.HIDDEN)
         fr.bottomLayoutVisible.set(true)
@@ -410,15 +405,6 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
         fr.driverDistance.set("0M")
         fr.driverTime.set("00:00")
     }
-
-
-    override fun doRxEven(it: RxBusEven?) {
-        super.doRxEven(it)
-        when (it!!.type) {
-
-        }
-    }
-
 
     fun startDriver(type: Int) {
         this.driverType = type
@@ -449,13 +435,17 @@ class MapFrViewModel : BaseViewModel(), AMap.OnMarkerClickListener, AMap.OnCamer
                 status.navigationType = 1
                 //组队页面点击开始导航
             } else if (b == 4) {
+                //路书界面点击开始导航
                 status.navigationType = 1
             }
             if (BaseApplication.MinaConnected) {
+                //组队状态下，队长分发导航信息
                 if (mapActivity.getTeamController().teamer.toString() == mapActivity.user.data!!.id) {
                     mapActivity.getTeamController().sendNavigationNotify()
                 }
             }
+
+            //开始导航
             mapActivity?.mAmap?.moveCamera(CameraUpdateFactory.changeLatLng(LatLng(status.navigationStartPoint!!.latitude, status.navigationStartPoint!!.longitude)))
             if (status.navigationStartPoint != null && status.navigationEndPoint != null) {
                 mapActivity.NavigationStart = true

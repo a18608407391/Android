@@ -56,6 +56,7 @@ import java.text.DecimalFormat
 
 class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.PanelSlideListener, BaseQuickAdapter.OnItemChildClickListener {
     override fun onItemChildClick(p0: BaseQuickAdapter<*, *>?, view: View?, position: Int) {
+        //顶部途经点列表点击事件
         pointList.removeAt(position)
         adapter?.setNewData(pointList)
         viewModel?.status!!.passPointDatas.removeAt(position)
@@ -67,6 +68,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
     }
 
     override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
+       //底部路线详情弹出窗
         when (newState) {
             SlidingUpPanelLayout.PanelState.COLLAPSED -> {
                 RoadDetailItems.clear()
@@ -96,25 +98,16 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
     }
 
     fun SearchResult(requestCode: Int, resultCode: Int, data: Bundle?) {
+        //搜索回调
         if (data != null) {
             var tip = data?.getSerializable("tip") as PoiItem
             if (tip != null) {
                 if (requestCode == RESULT_STR) {
+                    //搜索途径点或终点
                     if (finallyMarker == null) {
                         viewModel.status.navigationEndPoint = Location(tip.latLonPoint.latitude, tip.latLonPoint.longitude, System.currentTimeMillis().toString(), 0F, 0.0, 0F, tip.title)
-
                         finalyText?.set(tip.title)
-
                         mapFr.mapUtils?.setDriverRoute(converLatPoint(startMaker?.position!!), LatLonPoint(viewModel.status.navigationEndPoint!!.latitude, viewModel.status.navigationEndPoint!!.longitude), viewModel?.status?.passPointDatas!!)
-                        //                        finallyMarker = mapFr?.mAmap!!.addMarker(MarkerOptions().position(it.position).anchor(0.5f, 0.5f)
-//                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.select_point)))
-//
-//     viewModel.status.navigationEndPoint = Location(it.position.latitude, it.position.longitude, System.currentTimeMillis().toString(), 0F, 0.0, 0F, it.title)
-//                        finalyText?.set(it.title)
-//                        it.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.finaly_point))
-
-//                        mapFr?.mapUtils?.setDriverRoute(converLatPoint(startMaker?.position!!), LatLonPoint(viewModel.status.navigationEndPoint!!.latitude, viewModel.status.navigationEndPoint!!.longitude), viewModel?.status?.passPointDatas!!)
-
                     } else {
                         viewModel?.status?.passPointDatas?.add(Location(tip.latLonPoint.latitude, tip.latLonPoint.longitude, System.currentTimeMillis().toString(), 0F, 0.0, 0F, tip.title))
                         pointList?.add(PointEntity(tip.title, tip.latLonPoint))
@@ -125,6 +118,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
                         mapFr?.mapUtils?.setDriverRoute(converLatPoint(startMaker?.position!!), LatLonPoint(viewModel.status.navigationEndPoint!!.latitude, viewModel.status.navigationEndPoint!!.longitude), viewModel?.status?.passPointDatas!!)
                     }
                 } else if (requestCode == EDIT_FINAL_POINT) {
+                    //编辑终点
                     if (tip.latLonPoint?.latitude != null && tip.latLonPoint?.longitude != null) {
                         if (finallyMarker != null) {
                             finallyMarker?.position = AMapUtil.convertToLatLng(tip.latLonPoint)
@@ -359,6 +353,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
     var routeTime = 0            //规划路径时间
     var curRouteEntity: RouteEntity? = null        //规划路径的实体类
     private fun drawRouteLine(routeEntity: RouteEntity?) {
+        //绘制路线
         curRouteEntity = routeEntity
         var path = mapFr.mapUtils?.navi?.naviPaths!![routeEntity!!.id.get()]
         itemRestore?.clear()
@@ -434,7 +429,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
     }
 
     fun returnDriverFr() {
-        //关闭地图选点
+        //关闭地图选点 返回到骑行
         listvisible.set(false)
         RoadDetailItems.clear()
         panelState.set(SlidingUpPanelLayout.PanelState.HIDDEN)
@@ -477,7 +472,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
         SingleList[0] = t
         adapter.notifyDataSetChanged()
         if (viewModel?.backStatus!!) {
-            Log.e("Team", "返回team")
+            //该标记为返回到组队
             if (viewModel?.tab.selectedTabPosition == 1) {
                 viewModel.changerFragment(1)
                 var model = viewModel?.items[0] as DriverItemModel
@@ -491,6 +486,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
 
 
     fun reset() {
+        //初始化地图选点数据
         if (screenMaker != null) {
             screenMaker?.remove()
         }
@@ -534,6 +530,7 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
 
     var bindingCommand = BindingCommand(object : BindingConsumer<RouteEntity> {
         override fun call(t: RouteEntity) {
+            //底部线路选择点击事件回调
             if (!t.select.get()!!) {
                 var list = ArrayList<RouteEntity>()
                 items.forEach {
@@ -568,6 +565,6 @@ class MapPointItemModel : ItemViewModel<MapFrViewModel>(), SlidingUpPanelLayout.
         }
     }
 
-    var RoadDetailAdapter = BindingRecyclerViewAdapter<RouteDetailEntity>()
+    var RoadDetailAdapter = BindingRecyclerViewAdapter<RouteDetailEntity>()       //路线详情适配器
 
 }

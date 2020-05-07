@@ -25,6 +25,9 @@ import org.cs.tec.library.Bus.RxBus
 
 
 class HttpRequest {
+
+    //网络请求工具类
+
     companion object {
         val instance: HttpRequest by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
             HttpRequest()
